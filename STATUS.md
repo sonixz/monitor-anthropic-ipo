@@ -10,7 +10,7 @@
 | Version | 0.4.2 (tag `v0.4.2`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
-| SEC filings | **Not watched yet.** The watch is built (since 0.4.0) and off: it needs a contact address for sec.gov that only the owner can put on the machine |
+| SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |
 | IPO price | Not final: the page shows the filed range, $70 to $78. Pricing reported for 2026-11-18 |
 | AI | None yet |
 
@@ -39,7 +39,7 @@
 
 ## Known limits
 
-- **The service's own client has never talked to EDGAR.** A real answer for the registrant was read on 2026-11-16 through a web fetch tool and is replayed by the tests: it has the shape the reader expects (14 filings, the latest five are documents for investors filed on 2026-11-12). The client itself, with the contact address, runs for the first time when the owner has put the address on the machine.
+- **The service's own client first talked to EDGAR on 2026-11-16 at 23:29 UTC** and read the same list as below. Before that: A real answer for the registrant was read on 2026-11-16 through a web fetch tool and is replayed by the tests: it has the shape the reader expects (14 filings, the latest five are documents for investors filed on 2026-11-12). The client itself, with the contact address, runs for the first time when the owner has put the address on the machine.
 - The cover of Anthropic's final prospectus does not exist yet. The reader is built on the cover of Amendment No. 2, where the price is blank. If the final cover is laid out differently, the price is not taken and must be recorded by hand: the intended failure.
 - After a final prospectus, the page uses the final price with share counts and cash still taken from Amendment No. 2, until a full extraction reviewed by hand.
 - The About box of the GitHub repository (description, live link) is empty: the agent's GitHub access cannot change repository settings.
