@@ -11,6 +11,8 @@ from dataclasses import dataclass
 from ipo_monitor.facts import Facts
 
 PRICE_POINTS = ("low", "mid", "high")
+PRICED = "pricing.ipo_price"  # the final IPO price, once a sourced fact records it
+MARKET_PRICE = "market.price"  # the last share price, once the stock trades
 QUARTERS = ("2025q1", "2025q2", "2025q3", "2025q4", "2026q1", "2026q2", "2026q3")
 QUARTER_NAMES = {
     "2025q1": "Q1 2025",
@@ -52,6 +54,12 @@ class Calculator:
     def __init__(self, facts: Facts) -> None:
         self.facts = facts
         self.calcs: dict[str, Calc] = {}
+        priced = PRICED in facts
+        self.points = (*PRICE_POINTS, "final") if priced else PRICE_POINTS
+        self.at = "final" if priced else "mid"  # the price the headline figures use
+
+    def price_ref(self, point: str) -> str:
+        return PRICED if point == "final" else f"offering.price_{point}"
 
     # -- building blocks ----------------------------------------------------
 
@@ -115,6 +123,7 @@ class Calculator:
         self._value()
         self._growth()
         self._enterprise_value()
+        self._market()
         self._contracts()
         self._losses()
         return self.calcs
@@ -204,9 +213,8 @@ class Calculator:
             "shares reserved for future grants and leaves out the shares owed to Amazon.",
         )
 
-        for point in PRICE_POINTS:
-            price_ref = f"offering.price_{point}"
-            price = self.term("IPO price", price_ref)
+        for point in self.points:
+            price = self.term("IPO price", self.price_ref(point))
             label = f"at ${price.value:.2f}"
 
             if point == "mid":
@@ -412,8 +420,8 @@ class Calculator:
             "rounding.",
         )
         mid = self.facts.num("offering.price_mid")
-        for point in PRICE_POINTS:
-            price = self.term("IPO price", f"offering.price_{point}")
+        for point in self.points:
+            price = self.term("IPO price", self.price_ref(point))
             label = f"at ${price.value:.2f}"
             base = self.term("cash after the offering at $74.00", "balance.cash.as_adjusted")
             if point == "mid":
@@ -455,7 +463,8 @@ class Calculator:
                 "not debt here: see CONTRACTS.",
             )
 
-        ev = ("enterprise value at $74.00", "ev.enterprise_value.mid")
+        headline = self.facts.num(self.price_ref(self.at))
+        ev = (f"enterprise value at ${headline:.2f}", f"ev.enterprise_value.{self.at}")
         self.divide(
             "ev.multiple.run_rate",
             "Enterprise value as a multiple of Run-Rate Revenue",
@@ -473,6 +482,71 @@ class Calculator:
             "Enterprise value as a multiple of the last twelve months of revenue",
             ev,
             ("revenue of the last twelve months", "growth.ttm_revenue"),
+        )
+
+    def _market(self) -> None:
+        """The same values at the last share price. Only when the stock trades."""
+        if MARKET_PRICE not in self.facts:
+            return
+        at = self.at
+        price = self.term("market price", MARKET_PRICE)
+        ipo = self.term("IPO price", self.price_ref(at))
+        basis = "the IPO price" if at == "final" else "the middle of the IPO price range"
+        note = (
+            "The price is a delayed, unofficial quote. The share counts and the cash are those "
+            f"of the filing at {basis} (${ipo.value:.2f}): they do not move with the market."
+        )
+        out = self.term("shares outstanding after the offering", f"value.shares_out.{at}")
+        self.put(
+            "market.mcap_out",
+            "Value of the shares outstanding at the market price",
+            out.value * price.value,
+            "USD",
+            "shares outstanding after the offering × market price",
+            [out, price],
+            note,
+        )
+        diluted = self.term("diluted share count", f"value.shares_diluted.{at}")
+        self.put(
+            "market.equity_diluted",
+            "Diluted value at the market price",
+            diluted.value * price.value,
+            "USD",
+            "diluted share count × market price",
+            [diluted, price],
+            note,
+        )
+        equity = self.term("diluted value at the market price", "market.equity_diluted")
+        cash = self.term("cash after the offering", f"ev.cash_after.{at}")
+        proceeds = self.term("cash from option exercises", "ev.option_proceeds")
+        debt = self.term("borrowings drawn", "debt.credit_facility_drawn")
+        self.put(
+            "market.enterprise_value",
+            "Enterprise value at the market price",
+            equity.value - cash.value - proceeds.value + debt.value,
+            "USD",
+            "diluted value at the market price − cash after the offering "
+            "− cash from option exercises + borrowings drawn",
+            [equity, cash, proceeds, debt],
+            note,
+        )
+        self.put(
+            "market.vs_ipo",
+            f"Market price against {basis}",
+            (price.value / ipo.value - 1) * 100,
+            "percent",
+            "market price ÷ IPO price − 1",
+            [price, ipo],
+            None
+            if at == "final"
+            else "The final IPO price is not recorded here yet: this compares the market price "
+            "with the middle of the filed range.",
+        )
+        self.divide(
+            "market.multiple.run_rate",
+            "Enterprise value at the market price as a multiple of Run-Rate Revenue",
+            ("enterprise value at the market price", "market.enterprise_value"),
+            ("Run-Rate Revenue as of Oct 31", "metrics.run_rate_oct31"),
         )
 
     def _contracts(self) -> None:
@@ -541,7 +615,7 @@ class Calculator:
         self.divide(
             "contracts.cash_cover_12m",
             "Cash after the offering for each $1 due in the next 12 months",
-            ("cash after the offering at $74.00", "ev.cash_after.mid"),
+            ("cash after the offering", f"ev.cash_after.{self.at}"),
             ("due in the next 12 months", "commit.next_12m"),
         )
 

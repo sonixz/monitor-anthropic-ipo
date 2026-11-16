@@ -17,10 +17,12 @@ from jinja2 import Environment, PackageLoader, StrictUndefined, select_autoescap
 from markupsafe import Markup
 
 from ipo_monitor import __version__, fmt
-from ipo_monitor.calc import QUARTER_NAMES, QUARTERS, Calc, Term, compute
+from ipo_monitor.calc import PRICED, QUARTER_NAMES, QUARTERS, Calc, Term, compute
 from ipo_monitor.charts import Mark
 from ipo_monitor.facts import Fact, Facts
 from ipo_monitor.figures import Figures
+from ipo_monitor.market import Snapshot
+from ipo_monitor.market import facts as market_facts
 from ipo_monitor.reconcile import assert_consistent
 
 LOOP0_URL = "https://agmgd-on-loop0-22c0a8ea.fly.dev/"
@@ -194,15 +196,19 @@ class Numbers:
         return TermView(term.name, value, fact.label, self._short_where(fact))
 
     def _short_where(self, fact: Fact) -> str:
-        if fact.label == "PRESS":
-            return fact.outlet or "press"
+        if fact.label in {"PRESS", "MARKET"}:
+            return fact.outlet or fact.label.lower()
         document = self.facts.document_of(fact.id)
         form = document.form if document else "filing"
         return f"{form}, {fmt.page_ref(fact.page)}"
 
     def _fact_source(self, fact: Fact) -> Source:
         value = fact.as_filed + (f" ({fact.scale})" if fact.scale else "")
-        if fact.label == "PRESS":
+        if fact.label == "MARKET":
+            where = f"{fact.outlet} · delayed, unofficial · read {fact.accessed}"
+            link_text = "Open the quote at the source"
+            url = fact.url
+        elif fact.label == "PRESS":
             where = f"{fact.outlet}, published {fmt.iso_date(fact.published or '')}"
             if fact.accessed:
                 where += f" · read {fmt.iso_date(fact.accessed)}"
@@ -270,6 +276,7 @@ class Page:
     numbers: int
     filed: str
     charts: dict[str, tuple[Mark, ...]]
+    market: str  # off, awaiting, trading, closed or unavailable
 
 
 def _environment() -> Environment:
@@ -293,16 +300,30 @@ def asset_version() -> str:
     return digest.hexdigest()[:10]
 
 
-def render_page(facts: Facts, *, release: str = "dev") -> Page:
-    """Check the facts, compute, and render the dashboard."""
+def render_page(facts: Facts, *, release: str = "dev", market: Snapshot | None = None) -> Page:
+    """Check the facts, compute, and render the dashboard.
+
+    `market` is the last answer of the market source, or None when no source is connected.
+    """
     checks = assert_consistent(facts)
+    if market is not None:
+        facts = facts.plus(market_facts(market))
     calcs = compute(facts)
     numbers = Numbers(facts, calcs)
-    figures = Figures(numbers)
+    priced = PRICED in facts
+    at = "final" if priced else "mid"
+    price_ref = PRICED if priced else "offering.price_mid"
+    quote = market.quote if market else None
+    figures = Figures(numbers, at, price_ref, quote)
     document = facts.documents["s1a2"]
     context: dict[str, Any] = {
         "n": numbers,
         "chart": figures,
+        "market": market,
+        "quote": quote,
+        "priced": priced,
+        "at": at,
+        "price_ref": price_ref,
         "document": document,
         "quarters": [(q, QUARTER_NAMES[q]) for q in QUARTERS],
         "checks": len(checks),
@@ -321,4 +342,5 @@ def render_page(facts: Facts, *, release: str = "dev") -> Page:
         numbers=len(numbers.used),
         filed=document.filed,
         charts=figures.marks(),
+        market=market.state if market else "off",
     )

@@ -21,7 +21,7 @@
 <link rel="stylesheet" href="/static/app.css?v={{ asset_version }}">
 <script src="/static/app.js?v={{ asset_version }}" defer></script>
 </head>
-<body>
+<body data-market="{{ market.state if market else 'off' }}">
 <a class="skip" href="#main">Skip to the numbers</a>
 
 <header class="top">
@@ -34,6 +34,7 @@
 </header>
 
 <nav class="keys" aria-label="Panels">
+  {% if quote %}<a href="#market" class="desk"><kbd aria-hidden="true">m</kbd>market</a>{% endif %}
   <a href="#value"><kbd aria-hidden="true">v</kbd>value</a>
   <a href="#ev"><kbd aria-hidden="true">e</kbd>ev<span class="wide"> bridge</span></a>
   <a href="#contracts"><kbd aria-hidden="true">c</kbd>contracts</a>
@@ -47,17 +48,75 @@
 <section class="status" aria-label="Where the data comes from">
   <dl>
     <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
-    <div><dt>offer</dt><dd>{{ n("offering.shares_total", "m") }} shares at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
+    <div><dt>offer</dt><dd>{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
     <div><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} (applied) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
-    <div><dt>market</dt><dd><span class="wait">awaiting listing</span> · no share price exists yet</dd></div>
+    <div><dt>market</dt><dd>
+      {%- if not market -%}
+        no market source connected
+      {%- elif market.state == "awaiting" -%}
+        <span class="wait">awaiting listing</span> · no share price exists yet<span class="wide"> · {{ L(market.detail) }}</span>
+      {%- elif not quote -%}
+        <span class="wait">source unavailable</span> · no price is shown<span class="wide"> · {{ market.source }}: {{ L(market.detail) }}</span>
+      {%- else -%}
+        {% if market.state == "trading" %}<span class="live">trading</span>{% elif market.state == "closed" %}market closed{% else %}<span class="wait">source unavailable</span>, last quote{% endif %} · {{ n("market.price") }} · {{ n("market.time") }} · {{ market.source }}, delayed, unofficial
+      {%- endif -%}
+    </dd></div>
   </dl>
   <ul class="legend">
     <li>{{ tag("FILED") }} <span>copied from the SEC filing</span></li>
     <li>{{ tag("CALC") }} <span>our arithmetic, inputs shown</span></li>
     <li>{{ tag("PRESS") }} <span>reported by news media</span></li>
+    {% if quote %}<li>{{ tag("MARKET") }} <span>a delayed, unofficial quote</span></li>{% endif %}
     <li class="hint">Select a number or a chart to see where it comes from.</li>
   </ul>
 </section>
+
+{% if quote %}
+<section class="panel" id="market" tabindex="-1" aria-labelledby="market-h">
+  <h2 id="market-h"><kbd aria-hidden="true">m</kbd> MARKET <span class="q">What is the market paying now?</span></h2>
+  <p class="lede">{{ tag("MARKET") }} {{ market.source }} · delayed, unofficial · last trade {{ n("market.time") }}{% if market.state == "closed" %} · market closed{% elif market.state == "unavailable" %} · <span class="wait">the source is unavailable: this is the last quote it gave</span>{% endif %}</p>
+
+  <div class="tiles">
+    <div class="tile tile-key">
+      <h3>Last price</h3>
+      <p class="big">{{ n("market.price") }}</p>
+      <p class="sub">{{ n("market.vs_ipo", "signed", plus=true) }} against {% if priced %}the IPO price of {{ n(price_ref) }}{% else %}{{ n(price_ref) }}, the middle of the IPO range{% endif %}</p>
+    </div>
+    <div class="tile">
+      <h3>Value at that price</h3>
+      <p class="big">{{ n("market.mcap_out") }} <span class="to">to</span> {{ n("market.equity_diluted") }}</p>
+      <p class="sub">shares outstanding, then diluted</p>
+    </div>
+    <div class="tile">
+      <h3>Enterprise value at that price</h3>
+      <p class="big">{{ n("market.enterprise_value") }}</p>
+      <p class="sub">{{ n("market.multiple.run_rate") }} Run-Rate Revenue</p>
+    </div>
+  </div>
+
+  <div class="split">
+    {% if quote.points|length > 1 %}
+    <figure class="chart">
+      <figcaption>Price through the day</figcaption>
+      {{ chart("market.day") }}
+    </figure>
+    {% endif %}
+    <div>
+      <table class="lines">
+        <caption>The day so far</caption>
+        <tbody>
+          <tr><th scope="row">Last price</th><td>{{ n("market.price") }}</td></tr>
+          {% if quote.day_low is not none and quote.day_high is not none %}<tr><th scope="row">Range of the day</th><td>{{ n("market.day_low") }} <span class="to">to</span> {{ n("market.day_high") }}</td></tr>{% endif %}
+          {% if quote.volume is not none %}<tr><th scope="row">Shares traded</th><td>{{ n("market.volume") }}</td></tr>{% endif %}
+          {% if quote.previous_close is not none %}<tr><th scope="row">Previous close</th><td>{{ n("market.previous_close") }}</td></tr>{% endif %}
+          <tr><th scope="row">{% if priced %}IPO price{% else %}Middle of the IPO range{% endif %}</th><td>{{ n(price_ref) }}</td></tr>
+        </tbody>
+      </table>
+      <p class="aside">The share counts and the cash behind these values come from the filing; only the price moves. {% if not priced %}The final IPO price is not recorded here yet, so the comparison uses the middle of the filed range.{% endif %}</p>
+    </div>
+  </div>
+</section>
+{% endif %}
 
 <section class="panel" id="value" tabindex="-1" aria-labelledby="value-h">
   <h2 id="value-h"><kbd aria-hidden="true">v</kbd> VALUE <span class="q">What is Anthropic worth at the IPO price?</span></h2>
@@ -65,17 +124,27 @@
   <div class="tiles">
     <div class="tile">
       <h3>Shares that exist after the IPO</h3>
+      {% if priced %}
+      <p class="big">{{ n("value.mcap_out.final") }}</p>
+      <p class="sub">{{ n("value.shares_out.final") }} shares × the IPO price of {{ n(price_ref) }}</p>
+      {% else %}
       <p class="big">{{ n("value.mcap_out.low") }} <span class="to">to</span> {{ n("value.mcap_out.high") }}</p>
       <p class="sub">{{ n("value.shares_out.mid") }} shares × the price range</p>
+      {% endif %}
     </div>
     <div class="tile">
       <h3>Diluted: plus shares already owed or granted</h3>
+      {% if priced %}
+      <p class="big">{{ n("value.equity_diluted.final") }}</p>
+      <p class="sub">{{ n("value.shares_diluted.final") }} shares × the IPO price</p>
+      {% else %}
       <p class="big">{{ n("value.equity_diluted.low") }} <span class="to">to</span> {{ n("value.equity_diluted.high") }}</p>
       <p class="sub">{{ n("value.shares_diluted.mid") }} shares × the price range</p>
+      {% endif %}
     </div>
     <div class="tile tile-key">
-      <h3>Enterprise value at {{ n("offering.price_mid") }}</h3>
-      <p class="big">{{ n("ev.enterprise_value.mid") }}</p>
+      <h3>Enterprise value at {{ n(price_ref) }}</h3>
+      <p class="big">{{ n("ev.enterprise_value." ~ at) }}</p>
       <p class="sub">the business itself, net of its cash</p>
     </div>
   </div>
@@ -132,13 +201,13 @@
   <h2 id="ev-h"><kbd aria-hidden="true">e</kbd> EV BRIDGE <span class="q">What does that price really buy?</span></h2>
   <p class="lede">Enterprise value is the price of the business itself: every share, minus the cash that comes with the company.</p>
   <table class="lines bars bridge">
-    <caption>At the assumed {{ n("offering.price_mid") }} price</caption>
+    <caption>{% if priced %}At the IPO price of {{ n(price_ref) }}{% else %}At the assumed {{ n(price_ref) }} price{% endif %}</caption>
     <tbody>
-      <tr><th scope="row">Diluted value</th><td>{{ n("value.equity_diluted.mid", "b1") }}</td><td class="barcell">{{ chart.step("value.equity_diluted.mid") }}</td></tr>
-      <tr><th scope="row"><span class="op">−</span> cash after the offering</th><td>{{ n("ev.cash_after.mid", "b1") }}</td><td class="barcell">{{ chart.step("ev.cash_after.mid") }}</td></tr>
+      <tr><th scope="row">Diluted value</th><td>{{ n("value.equity_diluted." ~ at, "b1") }}</td><td class="barcell">{{ chart.step("value.equity_diluted." ~ at) }}</td></tr>
+      <tr><th scope="row"><span class="op">−</span> cash after the offering</th><td>{{ n("ev.cash_after." ~ at, "b1") }}</td><td class="barcell">{{ chart.step("ev.cash_after." ~ at) }}</td></tr>
       <tr><th scope="row"><span class="op">−</span> cash from option exercises</th><td>{{ n("ev.option_proceeds", "b1") }}</td><td class="barcell">{{ chart.step("ev.option_proceeds") }}</td></tr>
       <tr><th scope="row"><span class="op">+</span> borrowings drawn</th><td>{{ n("debt.credit_facility_drawn", "b1") }}</td><td class="barcell">{{ chart.step("debt.credit_facility_drawn") }}</td></tr>
-      <tr class="sum"><th scope="row"><span class="op">=</span> enterprise value</th><td>{{ n("ev.enterprise_value.mid", "b1") }}</td><td class="barcell">{{ chart.step("ev.enterprise_value.mid") }}</td></tr>
+      <tr class="sum"><th scope="row"><span class="op">=</span> enterprise value</th><td>{{ n("ev.enterprise_value." ~ at, "b1") }}</td><td class="barcell">{{ chart.step("ev.enterprise_value." ~ at) }}</td></tr>
     </tbody>
   </table>
   <figure class="chart chart-gap">
@@ -147,7 +216,7 @@
   </figure>
   <p class="aside">Across the range: {{ n("ev.enterprise_value.low") }} at {{ n("offering.price_low") }}, {{ n("ev.enterprise_value.high") }} at {{ n("offering.price_high") }}. The notes still owed to Amazon (carried at {{ n("capitalization.convertible_notes.as_adjusted", "b1") }}) are counted as shares above, so they are not added again as debt.</p>
 
-  <h3>The cash that comes with the company</h3>
+  <h3>The cash that comes with the company{% if priced %}, as filed at {{ n("offering.price_mid") }}{% endif %}</h3>
   <table class="lines">
     <tbody>
       <tr><th scope="row">Cash and short-term investments today</th><td>{{ n("balance.cash.actual", "b1") }}</td></tr>
@@ -394,6 +463,7 @@
 <div popover id="help" class="src help">
   <header><strong>Keys</strong></header>
   <dl class="keylist">
+    {% if quote %}<div><dt><kbd>m</kbd></dt><dd>market</dd></div>{% endif %}
     <div><dt><kbd>v</kbd></dt><dd>value</dd></div>
     <div><dt><kbd>e</kbd></dt><dd>enterprise value bridge</dd></div>
     <div><dt><kbd>c</kbd></dt><dd>contracts</dd></div>
@@ -407,6 +477,7 @@
 </div>
 
 <div id="tip" class="tip" hidden></div>
+<button type="button" id="fresh" class="fresh" hidden>New figures are in · reload</button>
 
 {% for s in n.sources() %}
 <div popover id="{{ s.slug }}" class="src src-{{ s.label|lower }}">

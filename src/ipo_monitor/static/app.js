@@ -4,7 +4,7 @@
 (() => {
   "use strict";
 
-  const PANELS = { v: "value", e: "ev", c: "contracts", g: "growth", l: "losses" };
+  const PANELS = { m: "market", v: "value", e: "ev", c: "contracts", g: "growth", l: "losses" };
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const supportsPopover = "showPopover" in HTMLElement.prototype;
   let invoker = null;
@@ -65,6 +65,26 @@
       const panel = document.getElementById(id);
       if (panel) observer.observe(panel);
     });
+  }
+
+  // -- market: say when the page has newer figures, never reload by surprise --------
+  const fresh = document.getElementById("fresh");
+  if (fresh && document.body.dataset.market !== "off" && "fetch" in window) {
+    let seen = null;
+    const look = () => {
+      if (document.visibilityState !== "visible") return;
+      fetch("/", { method: "HEAD", cache: "no-store" })
+        .then((response) => {
+          const tag = response.headers.get("ETag");
+          if (!tag) return;
+          if (seen === null) seen = tag;
+          else if (tag !== seen) fresh.hidden = false;
+        })
+        .catch(() => {});
+    };
+    fresh.addEventListener("click", () => window.location.reload());
+    look();
+    window.setInterval(look, 60000);
   }
 
   if (!supportsPopover) return;

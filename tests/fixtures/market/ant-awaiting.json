@@ -1,0 +1,56 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "currency": null,
+     "symbol": "ANT",
+     "exchangeName": "NAS",
+     "fullExchangeName": "Nasdaq",
+     "instrumentType": "EQUITY",
+     "firstTradeDate": null,
+     "regularMarketTime": null,
+     "hasPrePostMarketData": false,
+     "gmtoffset": -18000,
+     "timezone": "EST",
+     "exchangeTimezoneName": "America/New_York",
+     "longName": "Anthropic, PBC",
+     "shortName": "Anthropic, PBC",
+     "priceHint": 2,
+     "currentTradingPeriod": {
+      "pre": {
+       "timezone": "EST",
+       "end": 1794839400,
+       "start": 1794819600,
+       "gmtoffset": -18000
+      },
+      "regular": {
+       "timezone": "EST",
+       "end": 1794862800,
+       "start": 1794839400,
+       "gmtoffset": -18000
+      },
+      "post": {
+       "timezone": "EST",
+       "end": 1794877200,
+       "start": 1794862800,
+       "gmtoffset": -18000
+      }
+     },
+     "dataGranularity": "5m",
+     "range": "1d",
+     "validRanges": [
+      "1d",
+      "5d"
+     ]
+    },
+    "indicators": {
+     "quote": [
+      {}
+     ]
+    }
+   }
+  ],
+  "error": null
+ }
+}

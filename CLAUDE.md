@@ -33,6 +33,11 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data
   A value goes onto a chart only through `Numbers.mark`, and must also be a number in a table on
   the page. Axis ticks are the only digits without a source (`data-tick`). Charts are 320 units
   wide: look at them at 360 px and at 1280 px before calling them done.
+- **Market values** come only from `market.py`, as facts labeled MARKET built from the source's
+  answer. Never type a price. Tests replay recorded answers from `tests/fixtures/market/`; the
+  file with `TEST` in its name holds invented prices and names itself as test data on the page.
+  The final IPO price is recorded as the fact `pricing.ipo_price` in `data/facts/`, from an
+  article that was opened and quoted, or from the final prospectus.
 - Layout breakpoints are container queries on `.panel`, not media queries: a panel is as narrow
   on a laptop with two panels side by side as on a phone.
 - All user-facing text is in English. The owner's words are given in English, reworded.

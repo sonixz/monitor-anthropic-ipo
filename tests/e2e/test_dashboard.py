@@ -7,6 +7,7 @@ Keep screenshots:  E2E_SHOTS=devlog/img pytest -m e2e
 
 from __future__ import annotations
 
+import contextlib
 import os
 import socket
 import subprocess
@@ -60,14 +61,19 @@ def _free_port() -> int:
         return int(sock.getsockname()[1])
 
 
-@pytest.fixture(scope="module")
-def base_url() -> Iterator[str]:
-    external = os.environ.get("E2E_BASE_URL")
-    if external:
-        yield external.rstrip("/")
-        return
+MARKET = ROOT / "tests" / "fixtures" / "market"
+
+
+@contextlib.contextmanager
+def _serve(answer: str) -> Iterator[str]:
+    """Run the service with a recorded answer of the market source: no network in tests."""
     port = _free_port()
-    env = {**os.environ, "IPO_PORT": str(port), "IPO_RELEASE": "e2e"}
+    env = {
+        **os.environ,
+        "IPO_PORT": str(port),
+        "IPO_RELEASE": "e2e",
+        "IPO_MARKET": f"file:{MARKET / answer}",
+    }
     process = subprocess.Popen(
         [sys.executable, "-m", "ipo_monitor"],
         cwd=ROOT,
@@ -89,6 +95,24 @@ def base_url() -> Iterator[str]:
     finally:
         process.terminate()
         process.wait(timeout=10)
+
+
+@pytest.fixture(scope="module")
+def base_url() -> Iterator[str]:
+    """The site under test: a deployed one, or a local one as it is before the listing."""
+    external = os.environ.get("E2E_BASE_URL")
+    if external:
+        yield external.rstrip("/")
+        return
+    with _serve("ant-awaiting.json") as url:
+        yield url
+
+
+@pytest.fixture(scope="module")
+def trading_url() -> Iterator[str]:
+    """A local site on a made-up trading day. The data names itself as test data."""
+    with _serve("ant-trading-TEST.json") as url:
+        yield url
 
 
 @pytest.fixture(scope="module")
@@ -373,6 +397,71 @@ def test_loads_fast(browser: Browser, base_url: str) -> None:
     page.goto(base_url + "/", wait_until="load")
     elapsed = time.perf_counter() - begin
     assert elapsed < 1.0, f"page load took {elapsed:.2f}s"
+    context.close()
+
+
+def test_trading_day_on_a_phone(browser: Browser, trading_url: str) -> None:
+    context = browser.new_context(
+        viewport=PHONE, device_scale_factor=2, is_mobile=True, has_touch=True
+    )
+    page, errors = _open(context, trading_url)
+    assert page.locator("body").get_attribute("data-market") in {"trading", "closed"}
+    assert page.get_by_text("awaiting listing").count() == 0
+
+    # Without scrolling: the price, what it is worth at that price, and where the price comes from.
+    for ref in ("market.price", "market.vs_ipo", "market.mcap_out", "market.equity_diluted"):
+        box = page.locator(f'#market .tiles button[data-ref="{ref}"]').bounding_box()
+        assert box is not None, ref
+        assert box["y"] >= 0, ref
+        assert box["y"] + box["height"] <= PHONE["height"], f"{ref} is below the first screen"
+    note = page.locator("#market .lede")
+    expect(note).to_be_in_viewport()
+    assert "TEST DATA, not a real quote" in note.inner_text()
+    assert "delayed, unofficial" in note.inner_text()
+    _shot(page, "loop-002-test-trading-phone")
+
+    found = page.evaluate(OVERFLOW)
+    assert found["page"] <= PHONE["width"]
+    assert (found["wide"], found["scrolling"], found["cut"]) == ([], [], [])
+
+    # The price opens a card that says MARKET, the source, and the time of the quote.
+    page.locator('#market .tiles button[data-ref="market.price"]').tap()
+    card = page.locator("#src-market-price")
+    expect(card).to_be_visible()
+    text = card.inner_text()
+    assert "MARKET" in text
+    assert "delayed, unofficial" in text
+    assert "EST" in text
+    card.get_by_role("button", name="close").tap()
+
+    # A value at the market price shows the quote among its inputs.
+    page.locator('#market button[data-ref="market.enterprise_value"]').tap()
+    card = page.locator("#src-market-enterprise-value")
+    expect(card).to_be_visible()
+    assert "CALC" in card.inner_text()
+    assert "market price" in card.inner_text()
+    card.get_by_role("button", name="close").tap()
+
+    # The line of the day is drawn, and its last point is the price.
+    chart = page.locator("#market .chart-svg")
+    chart.scroll_into_view_if_needed()
+    assert chart.locator(".ln").count() == 1
+    assert chart.locator('.mark[data-ref="market.price"]').count() == 1
+
+    assert _serious(page) == []
+    assert errors == []
+    context.close()
+
+
+def test_trading_day_on_a_desktop(browser: Browser, trading_url: str) -> None:
+    context = browser.new_context(viewport=DESKTOP)
+    page, errors = _open(context, trading_url)
+    page.keyboard.press("m")
+    assert page.evaluate("document.activeElement.id") == "market"
+    assert page.evaluate(OVERFLOW)["cut"] == []
+    _shot(page, "loop-002-test-trading-desktop")
+    assert _serious(page) == []
+    assert errors == []
     context.close()
 
 

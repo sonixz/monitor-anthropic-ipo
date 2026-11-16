@@ -13,7 +13,7 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict
 
-Label = Literal["FILED", "PRESS"]
+Label = Literal["FILED", "PRESS", "MARKET"]
 Unit = Literal["USD", "USD/share", "shares", "percent", "count", "date", "text"]
 
 
@@ -91,6 +91,18 @@ class Facts:
         if not paths:
             raise FileNotFoundError(f"no fact files in {directory}")
         return cls([FactFile.model_validate(json.loads(p.read_text("utf-8"))) for p in paths])
+
+    def plus(self, extra: list[Fact]) -> Facts:
+        """The same facts with some more, such as a market quote. The original is unchanged."""
+        both = Facts([])
+        both._by_id = dict(self._by_id)
+        both.documents = dict(self.documents)
+        both._doc_of = dict(self._doc_of)
+        for fact in extra:
+            if fact.id in both._by_id:
+                raise ValueError(f"duplicate fact id: {fact.id}")
+            both._by_id[fact.id] = fact
+        return both
 
     def __contains__(self, fact_id: str) -> bool:
         return fact_id in self._by_id

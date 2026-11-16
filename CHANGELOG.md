@@ -4,6 +4,37 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-11-16
+
+A market panel ready for the first trade (Loop 002, second release).
+
+### Added
+
+- A market source behind a replaceable adapter: Yahoo Finance chart data, free, unofficial and
+  delayed. The service asks it on a timer (every five minutes before the listing, every two
+  minutes while the market is open) and renders the page again only when the answer changed.
+- Four states, shown in the status line: awaiting listing, trading, market closed, source
+  unavailable. Before the listing the page shows no price. If the source fails, the last quote
+  stays with a warning, or no price is shown at all.
+- A MARKET panel that appears with the first quote: last price, change against the IPO price,
+  the value of the shares outstanding and the diluted value at that price, the enterprise value
+  and its multiple, the range of the day, the volume and a line of the price through the day.
+- A fourth label, MARKET, for values that come from a quote. Each one names its source and the
+  time of the quote, with the words "delayed, unofficial". Values computed from a quote show it
+  among their inputs.
+- A price is shown only if the source names the company as expected, in dollars: the price of
+  another company under the same symbol is refused.
+- The final IPO price becomes the headline price once a sourced fact records it
+  (`pricing.ipo_price`): tiles, bridge, multiples and the comparison with the market use it.
+- A quiet notice when newer figures exist ("New figures are in · reload"); the page never reloads
+  by itself. `/health` reports the state of the market source.
+- `IPO_MARKET` chooses the source: `yahoo`, `off`, or `file:<path>` to replay a recorded answer.
+
+### Changed
+
+- The page is rendered again when the market data changes; a rendering that fails leaves the
+  previous page in place.
+
 ## [0.2.0] - 2026-11-16
 
 Charts and a phone-first layout (Loop 002, first release). The owner asked for a better layout,

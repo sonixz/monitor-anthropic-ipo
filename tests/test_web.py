@@ -155,6 +155,7 @@ def test_dashboard_response(client: TestClient) -> None:
     policy = response.headers["content-security-policy"]
     assert "default-src 'none'" in policy
     assert "unsafe-inline" not in policy
+    assert "connect-src 'self'" in policy  # the page may ask us, and only us, for newer figures
     assert response.headers["x-content-type-options"] == "nosniff"
     assert response.headers["referrer-policy"] == "no-referrer"
     assert "style=" not in response.text  # the policy forbids inline styles
@@ -172,6 +173,8 @@ def test_health(client: TestClient) -> None:
     assert body["release"] == "test"
     assert body["data"]["source_filed"] == "2026-11-10"
     assert body["data"]["checks_passed"] >= 120
+    assert body["market"]["state"] == "awaiting"
+    assert body["market"]["quote_time"] is None
     assert response.headers["cache-control"] == "no-store"
 
 
@@ -201,6 +204,7 @@ def test_configuration_is_checked(tmp_path: Path) -> None:
     good = {"IPO_FACTS_DIR": str(FACTS_DIR)}
     settings = Settings.from_env(good)
     assert (settings.host, settings.port, settings.release) == ("127.0.0.1", 8000, "dev")
+    assert settings.market == "yahoo"
     bad = [
         ({"IPO_PORT": "http"}, "IPO_PORT"),
         ({"IPO_PORT": "70000"}, "IPO_PORT"),
@@ -208,6 +212,7 @@ def test_configuration_is_checked(tmp_path: Path) -> None:
         ({"IPO_RELEASE": "not a release!"}, "IPO_RELEASE"),
         ({"IPO_LOG_LEVEL": "loud"}, "IPO_LOG_LEVEL"),
         ({"IPO_HOST": ""}, "IPO_HOST"),
+        ({"IPO_MARKET": "bloomberg"}, "IPO_MARKET"),
     ]
     for override, name in bad:
         with pytest.raises(ConfigError, match=name):

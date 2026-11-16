@@ -6,6 +6,7 @@ The drawing itself is in `charts.py`. Everything here goes through
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING
 
 from markupsafe import Markup
@@ -15,6 +16,7 @@ from ipo_monitor.calc import QUARTER_NAMES, QUARTERS
 from ipo_monitor.charts import Chart, Mark, Range
 
 if TYPE_CHECKING:
+    from ipo_monitor.market import Quote
     from ipo_monitor.render import Numbers
 
 BILLION = 1e9
@@ -22,14 +24,17 @@ YEARS = ("fy2023", "fy2024", "fy2025", "9m2026")
 YEAR_NAMES = {"fy2023": "2023", "fy2024": "2024", "fy2025": "2025", "9m2026": "9 mo. 2026"}
 DUE = ("2026", "2027", "2028", "2029", "2030", "thereafter")
 DUE_NAMES = {**{year: year for year in DUE}, "thereafter": "later"}
-# The enterprise value bridge, in order: (id, what the step does to the running total).
-BRIDGE = (
-    ("value.equity_diluted.mid", "total"),
-    ("ev.cash_after.mid", "minus"),
-    ("ev.option_proceeds", "minus"),
-    ("debt.credit_facility_drawn", "plus"),
-    ("ev.enterprise_value.mid", "total"),
-)
+
+
+def bridge(at: str) -> tuple[tuple[str, str], ...]:
+    """The enterprise value bridge, in order: (id, what the step does to the running total)."""
+    return (
+        (f"value.equity_diluted.{at}", "total"),
+        (f"ev.cash_after.{at}", "minus"),
+        ("ev.option_proceeds", "minus"),
+        ("debt.credit_facility_drawn", "plus"),
+        (f"ev.enterprise_value.{at}", "total"),
+    )
 
 
 def dollars_b(value: float) -> str:
@@ -46,8 +51,17 @@ def percent(value: float) -> str:
 class Figures:
     """The `chart(...)` function of the templates. Remembers what it drew."""
 
-    def __init__(self, numbers: Numbers) -> None:
+    def __init__(
+        self,
+        numbers: Numbers,
+        at: str = "mid",
+        price_ref: str = "offering.price_mid",
+        quote: Quote | None = None,
+    ) -> None:
         self.n = numbers
+        self.at = at  # the price point of the headline figures: mid, or final once priced
+        self.price_ref = price_ref
+        self.quote = quote
         self.drawn: dict[str, Chart] = {}
         self.steps: dict[str, list[Mark]] = {}
         self._quarter_slots = [QUARTER_NAMES[q].split()[0] for q in QUARTERS]
@@ -67,6 +81,7 @@ class Figures:
             "growth.margin": self._margin,
             "contracts.due_by_year": self._due_by_year,
             "losses.by_year": self._loss_by_year,
+            "market.day": self._market_day,
         }
         chart = builders[name]()
         self.drawn[name] = chart
@@ -259,13 +274,39 @@ class Figures:
             ),
         )
 
+    def _market_day(self) -> Chart:
+        quote = self.quote
+        if quote is None or len(quote.points) < 2:
+            raise ValueError("no price series to draw")
+        zone = timezone(timedelta(seconds=quote.offset))
+
+        def clock(moment: int) -> str:
+            local = datetime.fromtimestamp(moment, zone)
+            return f"{local.hour}:{local:%M}"
+
+        last = self.n.mark("market.price", f"Last price, {quote.when()}")
+        ipo = self.n.raw(self.price_ref)
+        name = "IPO price" if self.at == "final" else "middle of the IPO range"
+        return charts.trace(
+            quote.points,
+            last=last,
+            tick_fmt=lambda value: f"${value:,.2f}",
+            ends=(clock(quote.points[0][0]), f"{clock(quote.points[-1][0])} {quote.zone}"),
+            level=(ipo, name),
+            aria=(
+                "Share price through the trading day, as a line. The last price, the range of "
+                "the day and the volume are in the table."
+            ),
+        )
+
     # -- the bridge, drawn row by row inside its table ----------------------------
 
     def step(self, ref: str) -> Markup:
         """The bar of one row of the enterprise value bridge."""
-        top = self.n.raw(BRIDGE[0][0])
+        steps = bridge(self.at)
+        top = self.n.raw(steps[0][0])
         running = 0.0
-        for step_ref, kind in BRIDGE:
+        for step_ref, kind in steps:
             value = self.n.raw(step_ref)
             if kind == "total":
                 start, end, running = 0.0, value, value

@@ -12,6 +12,7 @@ flowchart LR
   reader(["Reader, any browser"])
   owner(["Owner"])
   sec[("sec.gov, EDGAR")]
+  quotes[("Market source: Yahoo Finance chart data")]
   subgraph repo["Public repository"]
     extract["Extractor, run locally"]
     facts[("data/facts, JSON")]
@@ -25,10 +26,11 @@ flowchart LR
   extract -->|"writes facts with page and quote"| facts
   facts -->|"deployed with the code"| service
   reader -->|"HTTPS"| door --> service
+  service -->|"asks for the share price, on a timer"| quotes
   reader -.->|"follows a source link"| sec
 ```
 
-*Scope: everything that touches the system. Last reviewed: 2026-11-15.* A reader only ever talks to the web service, through the HTTPS door that Fly.io and Agent Manager provide. The service reads nothing from the internet: its data is the fact files shipped with the code. The filing reaches the repository through one manual step, because sec.gov requires automated clients to declare a contact address, which must never be in a public repository. Trust boundaries: everything on the machine other than port 8000 is private; the repository holds no secret. Left out: an automatic EDGAR watcher, market data and AI, which do not exist yet.
+*Scope: everything that touches the system. Last reviewed: 2026-11-15.* A reader only ever talks to the web service, through the HTTPS door that Fly.io and Agent Manager provide. The service reads one thing from the internet: the share price, from a free market source, on a timer. Everything else is the fact files shipped with the code. The filing reaches the repository through one manual step, because sec.gov requires automated clients to declare a contact address, which must never be in a public repository. Trust boundaries: everything on the machine other than port 8000 is private; the repository holds no secret. Left out: an automatic EDGAR watcher and AI, which do not exist yet.
 
 ## Components and data flow
 
@@ -43,9 +45,12 @@ flowchart TB
   load["facts.py: load and validate"]
   reconcile["reconcile.py: figures must agree"]
   calc["calc.py: formulas with their inputs"]
+  market["market.py: the quote of the market source, as MARKET facts"]
   render["render.py, figures.py, charts.py and templates: numbers and chart marks, each with its source"]
   web["web.py: page, static files, health"]
   raw --> extract --> facts --> load --> reconcile --> calc --> render --> web
+  market -->|"added to the facts when a quote exists"| calc
+  web -->|"asks on a timer"| market
 ```
 
 *Scope: the code in this repository (`src/ipo_monitor`). Last reviewed: 2026-11-15.* Data moves one way. `extract.py` is the only code that reads the filing and it runs on a developer's machine, never on the server. `facts.py` knows nothing about the web; `calc.py` only combines facts; `render.py` is the only place where values become text. Templates cannot print a number by themselves: they call `n("id")`, which fails on an unknown id. Charts follow the same rule: `figures.py` asks `Numbers.mark` for each value, so a mark always has a source card, and `charts.py` only draws. `reconcile.py` sits before everything visible, so inconsistent data stops the service at startup.
@@ -59,15 +64,23 @@ title: Startup, then a request
 sequenceDiagram
   participant S as Service
   participant F as Fact files
+  participant M as Market source
   actor R as Reader
   S->>F: load facts
   S->>S: run reconciliation checks
-  S->>S: compute and render the page once
-  Note over S: any failure here stops the start
+  S->>M: ask for the share price
+  M-->>S: a quote, no price yet, or nothing
+  S->>S: compute and render the page
+  Note over S: any failure of the facts here stops the start
   R->>S: GET /
   S-->>R: the rendered page, compressed, with an ETag
   R->>S: select a number
   Note over R: the source card opens in the browser, no request
+  loop every few minutes
+    S->>M: ask again
+    M-->>S: answer
+    S->>S: render again only if what the page shows changed
+  end
 ```
 
 The page is rendered once, at startup, and served from memory. This is what makes it fast on a 256 MB machine and what turns a data error into a failed start instead of a wrong page: the deploy script then keeps the previous release. Source cards are part of the HTML and open through the browser's own popover behaviour, so the core works without JavaScript.
@@ -94,6 +107,7 @@ The page is rendered once, at startup, and served from memory. This is what make
 | `src/ipo_monitor/fmt.py` | Formatting only |
 | `src/ipo_monitor/render.py`, `templates/`, `static/` | The page, the source cards, the style |
 | `src/ipo_monitor/charts.py`, `figures.py` | SVG charts drawn on the server; which facts each chart draws |
+| `src/ipo_monitor/market.py` | The market source, the states of the market panel, the quote as MARKET facts, the timer |
 | `src/ipo_monitor/web.py`, `config.py`, `log.py` | HTTP service, environment configuration, JSON logs |
 | `data/facts/` | The dataset: `s1a2.json` (extracted), `press.json` (recorded by hand, with links) |
 | `deploy/` | `deploy.sh` and `start.sh`, run on the machine |

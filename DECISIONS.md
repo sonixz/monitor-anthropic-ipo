@@ -23,6 +23,9 @@
 | D-017 | 2026-11-16 | Charts are SVG drawn on the server, at phone width, without a library | proposed |
 | D-018 | 2026-11-16 | Axis ticks are the only digits without a source | proposed |
 | D-019 | 2026-11-16 | Layout follows the width of a panel; detail tables fold away on a phone | proposed |
+| D-020 | 2026-11-16 | Market data: Yahoo Finance chart data over plain HTTP, behind an adapter, asked sparingly | proposed |
+| D-021 | 2026-11-16 | A price is shown only when the source names the company; otherwise nothing | proposed |
+| D-022 | 2026-11-16 | Once the stock trades, the market panel comes first on the page | proposed |
 
 ## D-001 · A smooth dashboard of a few panels
 **Context.** The reference dashboard the owner looked at has 14 sections. **Decision.** A few panels, each answering a plain question: worth, contracts, valuation, growth. **Owner:** "I'd rather keep mine smoother"; "the five cards, and more". **Alternative.** Match the reference's depth; rejected as not what the owner wants. **Consequence.** Governance, competition and strategy are left to the filing for now.
@@ -80,3 +83,12 @@
 
 ## D-019 · Layout by panel width, tables folded on a phone
 **Context.** On a phone the owner had to scroll a table sideways; on a laptop two panels side by side are each as narrow as a phone. **Decision.** Breakpoints are container queries on the panel. Below 540 px of panel width, bars go under their labels and a chart sits above its table. The eight-column quarterly table is two tables at every size. On a phone, the tables that repeat a chart start folded behind a line that names them; without JavaScript they stay open. **Trade-off.** A phone page is longer than before (about nine screens instead of six) because it now carries nine charts; the panel bar and the folded tables keep it navigable.
+
+## D-020 · The market source
+**Owner (Loop 0):** "a free provider, like yfinance". **Decision.** The service asks Yahoo Finance's chart data directly over HTTP, the feed that yfinance reads, with the Python standard library: no pandas or numpy on a 256 MB machine. The source sits behind a small interface (`market.Source`) and is chosen by `IPO_MARKET`. **Found on 2026-11-16.** The source already lists ANT as "Anthropic, PBC" on Nasdaq, without a price. It limits how often one address may ask: it answered "too many requests" to this workstation after about ten questions in a quarter of an hour. So the service asks every five minutes before the listing, every two minutes while the market is open, every thirty minutes when it is closed, and waits longer and longer while the source fails. **Alternative kept for later.** Nasdaq's own public quote service answers too and would make a second source. **Risk.** Unofficial data, Yahoo's terms limit redistribution; every market value is labeled delayed and unofficial with its source.
+
+## D-021 · Never the price of someone else
+**Context.** A symbol can belong to another company at a given source, or change. **Decision.** A price is shown only if the source's answer is for the symbol, names a company containing "Anthropic", is in dollars and is a positive number. Anything else is "source unavailable" and no price is shown. Once a quote has been shown, an answer without a price is treated as a failure of the source, and the last quote stays with a warning.
+
+## D-022 · The market first, once it exists
+**Context.** The mission asked that the first screen of a phone show the value at the IPO price and, once the stock trades, the market price too. Both do not fit one screen. **Decision.** When a quote exists, the MARKET panel comes first: price, change against the IPO price, value and enterprise value at that price. The values at the IPO price follow. **Departure from the mission**, to confirm by the owner. Until the final IPO price is recorded, the comparison uses the middle of the filed range and says so.

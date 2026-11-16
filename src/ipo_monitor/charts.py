@@ -610,3 +610,82 @@ def ranges(rows: Sequence[Range], *, tick_fmt: TickFormat, between: str, aria: s
         + tag("g", "".join(texts), class_="labels")
     )
     return Chart(svg(content, height, aria), tuple(marks), tuple(printed))
+
+
+# -- a price through the day ------------------------------------------------------
+
+
+def trace(
+    points: Sequence[tuple[int, float]],
+    *,
+    last: Mark,
+    tick_fmt: TickFormat,
+    ends: tuple[str, str],
+    aria: str,
+    level: tuple[float, str] | None = None,
+    height: float = 150.0,
+) -> Chart:
+    """A line through many points, read against an optional named level.
+
+    The axis does not start at zero: a price moves within a narrow band. Only
+    the last point is a mark; the line is the source's own series.
+    """
+    left, right, top, bottom = 46.0, 8.0, 16.0, height - 20.0
+    values = [value for _, value in points]
+    lo, hi = min(values), max(values)
+    if level is not None and lo * 0.9 <= level[0] <= hi * 1.1:
+        lo, hi = min(lo, level[0]), max(hi, level[0])
+    else:
+        level = None
+    pad = (hi - lo) * 0.12 or hi * 0.01
+    lo, hi = lo - pad, hi + pad
+    y = Scale(lo, hi, bottom, top)
+    first, final = points[0][0], points[-1][0]
+    x = Scale(
+        float(first), float(final) if final > first else float(first) + 1, left, WIDTH - right
+    )
+    axis = []
+    for value in ticks(lo, hi, 3):
+        axis.append(tag("line", class_="grid", x1=left, x2=WIDTH - right, y1=y(value), y2=y(value)))
+        axis.append(
+            tag(
+                "text",
+                esc(tick_fmt(value)),
+                class_="tick",
+                x=left - 6,
+                y=y(value) + 3.5,
+                text_anchor="end",
+                data_tick=True,
+            )
+        )
+    for text, at, anchor in ((ends[0], left, "start"), (ends[1], WIDTH - right, "end")):
+        axis.append(
+            tag(
+                "text",
+                esc(text),
+                class_="xl",
+                x=at,
+                y=bottom + 14,
+                text_anchor=anchor,
+                data_label=True,
+            )
+        )
+    body = []
+    if level is not None:
+        body.append(
+            tag("line", class_="ref", x1=left, x2=WIDTH - right, y1=y(level[0]), y2=y(level[0]))
+        )
+        body.append(tag("text", esc(level[1]), class_="ref-label", x=left + 3, y=y(level[0]) - 4))
+    path = "M" + "L".join(f"{num(x(float(t)))},{num(y(v))}" for t, v in points)
+    body.append(tag("path", class_="ln s1", d=path))
+    end_x, end_y = x(float(final)), y(points[-1][1])
+    area = tag("circle", class_="hit", cx=end_x, cy=end_y, r=14.0)
+    body.append(mark_group(last, area + tag("circle", class_="dot s1", cx=end_x, cy=end_y, r=4.0)))
+    label_y = end_y - 9 if end_y - 9 - FONT > 0 else end_y + FONT + 7
+    printed, refs = place([(last, WIDTH - right, label_y, "end")])
+    content = (
+        tag("g", "".join(axis), class_="axis", aria_hidden="true")
+        + tag("g", "".join(body), class_="marks")
+        + tag("g", printed, class_="labels")
+    )
+    return Chart(svg(content, height, aria), (last,), refs)
