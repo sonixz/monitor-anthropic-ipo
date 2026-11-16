@@ -4,6 +4,18 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.1] - 2026-11-16
+
+### Changed
+
+- The FILINGS panel lists eight filings, not six: on the real list, five documents for investors
+  filed on the same day would have pushed the registration statements out of sight.
+
+### Added
+
+- A real answer of EDGAR for the registrant (2026-11-16, reduced to the columns the reader
+  uses) is replayed by the tests. It confirmed the shape the reader was written for.
+
 ## [0.4.0] - 2026-11-16
 
 The first step towards a dashboard that keeps itself current (Loop 003).
@@ -31,9 +43,9 @@ The first step towards a dashboard that keeps itself current (Loop 003).
 ### Notes
 
 - **The watch has not talked to the real EDGAR yet.** The address is the owner's and is not on
-  the machine or the workstation. The code follows the published shape of EDGAR's answer and is
-  tested on test data and on the real cover of Amendment No. 2. Until the address is there, the
-  live page says "not watched".
+  the machine. The code follows the published shape of EDGAR's answer and is tested on test data
+  and on the real cover of Amendment No. 2. Until the address is there, the live page says "not
+  watched".
 - If the page cannot be drawn with what the filing list brought, it is drawn without it: the
   figures and the market panel never depend on the SEC answering.
 

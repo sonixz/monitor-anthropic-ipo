@@ -1,0 +1,83 @@
+{
+ "_note": "Real. EDGAR's answer for the registrant on 2026-11-16, read through a web fetch tool and reduced to the fields the reader uses (the full answer has 24 top-level keys and 16 columns).",
+ "index": {
+  "cik": "0002130357",
+  "entityType": "other",
+  "name": "Anthropic, PBC",
+  "tickers": [
+   "ANT"
+  ],
+  "exchanges": [
+   null
+  ],
+  "filings": {
+   "recent": {
+    "accessionNumber": [
+     "0001628280-26-073045",
+     "0001628280-26-073040",
+     "0001628280-26-072953",
+     "0001628280-26-072952",
+     "0001628280-26-072949",
+     "0001628280-26-072484",
+     "0001628280-26-068676",
+     "0001628280-26-067168",
+     "0002130357-26-000014",
+     "0002130357-26-000009",
+     "0001628279-26-001111",
+     "0001628279-26-000993",
+     "0001628279-26-000861",
+     "0002130357-26-000005"
+    ],
+    "filingDate": [
+     "2026-11-12",
+     "2026-11-12",
+     "2026-11-12",
+     "2026-11-12",
+     "2026-11-12",
+     "2026-11-10",
+     "2026-11-02",
+     "2026-10-26",
+     "2026-10-09",
+     "2026-10-01",
+     "2026-09-04",
+     "2026-08-10",
+     "2026-07-13",
+     "2026-06-01"
+    ],
+    "form": [
+     "FWP",
+     "FWP",
+     "FWP",
+     "FWP",
+     "FWP",
+     "S-1/A",
+     "S-1/A",
+     "S-1",
+     "DRS/A",
+     "DRS/A",
+     "DRS/A",
+     "DRS/A",
+     "DRS/A",
+     "DRS"
+    ],
+    "primaryDocument": [
+     "anthropicpbc-fwpjapanamend.htm",
+     "anthropicpbc-fwpxeeaprospea.htm",
+     "anthropicpbc-fwpauswrapcap.htm",
+     "anthropicpbc-fwpukmaterials.htm",
+     "anthropicpbc-fwpipowebsi.htm",
+     "anthropicpbc-sx1ax2.htm",
+     "anthropicpbc-sx1ax1.htm",
+     "anthropicpbc-sx1.htm",
+     "filename1.htm",
+     "filename1.htm",
+     "filename1.htm",
+     "filename1.htm",
+     "filename1.htm",
+     "filename1.htm"
+    ]
+   },
+   "files": []
+  }
+ }
+}

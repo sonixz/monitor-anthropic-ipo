@@ -181,7 +181,7 @@ The owner starts every loop and is the only one who accepts it.
 | --- | --- | --- | --- |
 | 001 | The page: five panels, every number traced to the filing | 0.1.0 | [mission](loops/001-mission.md) · [report](loops/001-report.json) · [devlog](devlog/loop-001.html) |
 | 002 | Charts, a phone-first layout, a market panel ready for the first trade | 0.2.0 to 0.3.2 | [mission](loops/002-mission.md) · [report](loops/002-report.json) · [devlog](devlog/loop-002.html) |
-| 003 | In progress: the SEC filings watched by the service, the final price read from the prospectus, this documentation | 0.4.0 | [mission](loops/003-mission.md) |
+| 003 | In progress: the SEC filings watched by the service, the final price read from the prospectus, this documentation | 0.4.0, 0.4.1 | [mission](loops/003-mission.md) |
 
 Each loop leaves the same trail: the mission as it was given, a report that separates what was
 run from what was not, a devlog page with screenshots of the real application, and the decisions

@@ -7,10 +7,10 @@
 | | |
 | --- | --- |
 | Site | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev |
-| Version | 0.4.0 (tag `v0.4.0`) |
+| Version | 0.4.1 (tag `v0.4.1`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
-| SEC filings | **Not watched yet.** The watch is built (0.4.0) and off: it needs a contact address for sec.gov that only the owner can put on the machine |
+| SEC filings | **Not watched yet.** The watch is built (since 0.4.0) and off: it needs a contact address for sec.gov that only the owner can put on the machine |
 | IPO price | Not final: the page shows the filed range, $70 to $78. Pricing reported for 2026-11-18 |
 | AI | None yet |
 
@@ -23,8 +23,8 @@
 - The filings watch on test data: the list of filings, the notice of a newer prospectus, the final price read from a cover and refused in eight cases (another form, a preliminary cover, a blank price, a wrong total, and so on). The contact address appears in no log and on no page (tested).
 - 129 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
-- CI on GitHub: format, lint, strict types, 109 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
-- Deploy and rollback on the machine: five deployments on 2026-11-16, each healthy within seconds.
+- CI on GitHub: format, lint, strict types, 110 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
+- Deploy and rollback on the machine: six deployments on 2026-11-16, each healthy within seconds.
 
 ## Measured
 
@@ -38,7 +38,7 @@
 
 ## Known limits
 
-- **The filings watch has never talked to the real EDGAR.** It follows the published shape of EDGAR's answer; no real answer could be recorded without the contact address. Its first real check comes when the owner has put the address on the machine.
+- **The service's own client has never talked to EDGAR.** A real answer for the registrant was read on 2026-11-16 through a web fetch tool and is replayed by the tests: it has the shape the reader expects (14 filings, the latest five are documents for investors filed on 2026-11-12). The client itself, with the contact address, runs for the first time when the owner has put the address on the machine.
 - The cover of Anthropic's final prospectus does not exist yet. The reader is built on the cover of Amendment No. 2, where the price is blank. If the final cover is laid out differently, the price is not taken and must be recorded by hand: the intended failure.
 - After a final prospectus, the page uses the final price with share counts and cash still taken from Amendment No. 2, until a full extraction reviewed by hand.
 - The About box of the GitHub repository (description, live link) is empty: the agent's GitHub access cannot change repository settings.

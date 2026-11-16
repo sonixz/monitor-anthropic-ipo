@@ -1,7 +1,8 @@
 """The SEC's filing index: what is listed, what is noticed, and the price on a final cover.
 
-No test here talks to sec.gov. The index answers are test data in the shape of EDGAR's answer
-(only the Amendment No. 2 entry is real); the cover is a real excerpt of Amendment No. 2.
+No test here talks to sec.gov. `filings-2026-11-16.json` is what EDGAR really answered that day,
+reduced to the columns the reader uses. The files with TEST in their name are invented, in the
+same shape. The cover is a real excerpt of Amendment No. 2.
 """
 
 from __future__ import annotations
@@ -96,6 +97,25 @@ def test_the_index_lists_filings_newest_first(facts: Facts) -> None:
     assert filings[0].accession == facts.documents["s1a2"].accession == AMENDMENT_2
     assert filings[0].meaning == "amended registration statement"
     assert Filing("x", "NT 10-K", "2027-01-01", "u").meaning == ""  # shown by its name alone
+
+
+def test_the_real_index_of_the_registrant(facts: Facts) -> None:
+    # What EDGAR answered on 2026-11-16, reduced to the columns the reader uses.
+    watch = ask(RecordedIndex(EDGAR / "filings-2026-11-16.json"))
+    assert watch.state == "ok"
+    assert len(watch.filings) == 14
+    assert [f.form for f in watch.filings[:8]] == ["FWP"] * 5 + ["S-1/A", "S-1/A", "S-1"]
+    assert watch.filings[5].url == facts.documents["s1a2"].url  # the filing the page reads
+    assert watch.filings[-1].form == "DRS"
+    assert watch.filings[0].meaning == "free writing prospectus, extra material for investors"
+    # Material for investors filed after Amendment No. 2 does not change the figures.
+    assert watch.newer_than(AMENDMENT_2) is None
+    assert watch.prospectus is None
+    html = render_page(facts, release="test", filings=watch).html
+    assert "watching the SEC · latest:" in html
+    assert "new filing" not in html
+    panel = html[html.index('id="filings"') : html.index("</main>")]
+    assert panel.count("<tr>") == edgar.SHOWN == 8
 
 
 def test_an_index_that_is_not_the_registrant_or_not_understood_is_refused() -> None:
