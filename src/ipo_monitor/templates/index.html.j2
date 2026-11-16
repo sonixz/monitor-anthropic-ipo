@@ -50,6 +50,18 @@
     <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
     <div><dt>offer</dt><dd>{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
     <div><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} (applied) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
+    <div><dt>filings</dt><dd>
+      {%- if not filings -%}
+        not watched · this page does not check the SEC for new filings
+      {%- elif not filings.filings -%}
+        <span class="wait">source unavailable</span> · the SEC's list of filings could not be read<span class="wide"> · {{ L(filings.detail) }}</span>
+      {%- elif newer -%}
+        <span class="live">new filing</span> · <a href="{{ newer.url }}" rel="noopener" data-label>{{ newer.name }}</a>{% if newer.meaning %}, {{ L(newer.meaning) }}{% endif %} · filed {{ L(day(newer.filed)) }} · {% if filings.price and filings.prospectus == newer %}its price is used on this page; the other figures still come from {{ L(document.title) }}{% else %}its figures are not read by this page yet{% endif %}
+      {%- else -%}
+        watching the SEC · latest: <a href="{{ listed[0].url }}" rel="noopener" data-label>{{ listed[0].name }}</a> · filed {{ L(day(listed[0].filed)) }}<span class="wide"> · <a href="#filings">recent filings</a></span>
+      {%- endif -%}
+      {%- if filings and filings.filings and filings.state == "unavailable" %} · <span class="wait">the last check failed</span>{% endif -%}
+    </dd></div>
     <div><dt>market</dt><dd>
       {%- if not market -%}
         no market source connected
@@ -453,6 +465,21 @@
   </div>
 </section>
 
+{% if listed %}
+<section class="panel filed" id="filings" aria-labelledby="filings-h" tabindex="-1">
+  <h2 id="filings-h"><kbd aria-hidden="true">f</kbd> FILINGS <span class="q">What has the company filed with the SEC?</span></h2>
+  <table class="lines">
+    <caption>The latest filings, newest first</caption>
+    <tbody>
+      {% for filing in listed %}
+      <tr><th scope="row">{{ L(day(filing.filed)) }}</th><td><a href="{{ filing.url }}" rel="noopener" data-label>{{ filing.name }}</a>{% if filing.meaning %} <span class="what">{{ L(filing.meaning) }}</span>{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <p class="aside">{{ L(filings.source) }}: the list the SEC publishes for {{ document.company }}, asked every ten minutes. {% if filings.price %}The offering price comes from the cover of the final prospectus; the other figures of this page come from {{ L(document.title) }}{% else %}The figures of this page come from {{ L(document.title) }}{% endif %}. A newer filing is listed here before its figures are read{% if filings.prospectus and not filings.price %}; the price on the cover of the final prospectus was not taken ({{ L(filings.price_problem) }}){% endif %}.</p>
+</section>
+{% endif %}
+
 </main>
 
 <footer class="bottom">
@@ -469,6 +496,7 @@
     <div><dt><kbd>c</kbd></dt><dd>contracts</dd></div>
     <div><dt><kbd>g</kbd></dt><dd>growth</dd></div>
     <div><dt><kbd>l</kbd></dt><dd>losses</dd></div>
+    {% if listed %}<div><dt><kbd>f</kbd></dt><dd>filings</dd></div>{% endif %}
     <div><dt><kbd>Esc</kbd></dt><dd>close a source card</dd></div>
   </dl>
   <p>Every number is a button, and so is every mark on a chart. Select one to read the passage of the filing it was copied from, or the arithmetic behind it.</p>

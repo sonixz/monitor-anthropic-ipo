@@ -32,6 +32,7 @@ flowchart TD
   facts[("data/facts: JSON files in git")]
   press["A press article, opened and quoted by hand"]
   quotes[("Quote service: Nasdaq.com, then Yahoo Finance")]
+  index[("The SEC's list of the company's filings")]
   subgraph service["The live service, at start and at each new quote"]
     load["Load the facts"]
     check["129 consistency checks"]
@@ -43,6 +44,7 @@ flowchart TD
   press -->|"by hand"| facts
   facts --> load --> check --> calc --> render --> page
   quotes -->|"every few minutes, by itself"| load
+  index -->|"every ten minutes, by itself: what is new, and the price on a final cover"| load
   check -.->|"one check fails: no page"| stop(["The service refuses to start, or keeps the previous page"])
 ```
 
@@ -63,6 +65,8 @@ the web layer around the page.
 | Check that the figures agree (129 checks) | The service, `reconcile.py` | Yes, at every start and every new page |
 | Compute values, multiples and growth | The service, `calc.py` | Yes |
 | Ask for the share price | The service, `market.py` | Yes, every two to five minutes |
+| Ask the SEC what the company has filed | The service, `edgar.py` | Yes, every ten minutes, once the owner has put a contact address on the machine |
+| Read the final IPO price from the cover of the final prospectus | The service, `edgar.py` | Yes, and only if the total printed beside it is that price times the shares; otherwise by hand |
 | Draw the page and its charts | The service, `render.py`, `charts.py` | Yes |
 
 ## Who does what
@@ -71,7 +75,7 @@ the web layer around the page.
 | --- | --- | --- |
 | **The owner** | Starts each loop of work with a request in their own words; confirms or rejects decisions; saves filings; holds every secret; accepts or refuses the result | Write the code |
 | **The coding agent** (AI, at build time only) | Writes code, tests and documents; writes the extraction rules after reading the filing; records press figures; runs every check; deploys a release when all checks pass; reports what was not done | Type a figure into the page; change access, exposure or infrastructure without the owner; run inside the live service |
-| **The live service** (ordinary code) | Loads the facts, checks them, computes, draws the page, asks for the share price | Call an AI model; guess a missing figure; keep data between restarts |
+| **The live service** (ordinary code) | Loads the facts, checks them, computes, draws the page, asks for the share price and for the SEC's list of filings | Call an AI model; guess a missing figure; keep data between restarts |
 | **GitHub** | Runs the checks on every push (see below); scans for secrets and vulnerabilities; proposes dependency updates | Deploy: it holds no credential for the machine |
 | **The machine** | Runs one release at a time, built from this public repository; restarts the service if it stops | Hold a credential for GitHub |
 
@@ -99,8 +103,9 @@ can check any of them against the filing in a few seconds.
 | | Today | Next |
 | --- | --- | --- |
 | Share price and market values | By itself, every two to five minutes | A history of prices |
-| A new SEC filing | By hand: the owner saves it, the agent extracts it | Loop 003: the service watches the SEC's filing list and says when something new is filed |
-| The final IPO price | By hand, from an article or the final prospectus | Loop 003: read from the cover of the final prospectus, only if every check passes |
+| Noticing a new SEC filing | By itself, every ten minutes, once a contact address is on the machine; until then the page says the watch is off | |
+| The final IPO price | By itself from the cover of the final prospectus, only if every check passes; before that, by hand from an article | |
+| The other figures of a new filing | By hand: the owner saves it, the agent extracts it, the checks run | Later: more of it by itself, check by check |
 | Checks on every change | By itself, on GitHub | |
 | Putting a release online | The agent, by one command on the machine, after the checks | Later: by GitHub itself, once the owner approves that access |
 | Knowing that the site or a source is down | Nobody is told | Later: an alert |
@@ -176,7 +181,7 @@ The owner starts every loop and is the only one who accepts it.
 | --- | --- | --- | --- |
 | 001 | The page: five panels, every number traced to the filing | 0.1.0 | [mission](loops/001-mission.md) · [report](loops/001-report.json) · [devlog](devlog/loop-001.html) |
 | 002 | Charts, a phone-first layout, a market panel ready for the first trade | 0.2.0 to 0.3.2 | [mission](loops/002-mission.md) · [report](loops/002-report.json) · [devlog](devlog/loop-002.html) |
-| 003 | In progress: the SEC filings watched by the service, the final price read from the prospectus, this documentation | | [mission](loops/003-mission.md) |
+| 003 | In progress: the SEC filings watched by the service, the final price read from the prospectus, this documentation | 0.4.0 | [mission](loops/003-mission.md) |
 
 Each loop leaves the same trail: the mission as it was given, a report that separates what was
 run from what was not, a devlog page with screenshots of the real application, and the decisions

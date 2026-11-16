@@ -62,17 +62,19 @@ def _free_port() -> int:
 
 
 MARKET = ROOT / "tests" / "fixtures" / "market"
+EDGAR = ROOT / "tests" / "fixtures" / "edgar"
 
 
 @contextlib.contextmanager
-def _serve(answer: str) -> Iterator[str]:
-    """Run the service with a recorded answer of the market source: no network in tests."""
+def _serve(answer: str, filings: str = "") -> Iterator[str]:
+    """Run the service with recorded answers of its outside sources: no network in tests."""
     port = _free_port()
     env = {
         **os.environ,
         "IPO_PORT": str(port),
         "IPO_RELEASE": "e2e",
         "IPO_MARKET": f"file:{MARKET / answer}",
+        "IPO_FILINGS": f"file:{EDGAR / filings}" if filings else "off",
     }
     process = subprocess.Popen(
         [sys.executable, "-m", "ipo_monitor"],
@@ -104,7 +106,7 @@ def base_url() -> Iterator[str]:
     if external:
         yield external.rstrip("/")
         return
-    with _serve("ant-awaiting.json") as url:
+    with _serve("ant-awaiting.json", "filings-TEST.json") as url:
         yield url
 
 
@@ -112,6 +114,13 @@ def base_url() -> Iterator[str]:
 def trading_url() -> Iterator[str]:
     """A local site on a made-up trading day. The data names itself as test data."""
     with _serve("ant-trading-TEST.json") as url:
+        yield url
+
+
+@pytest.fixture(scope="module")
+def final_url() -> Iterator[str]:
+    """A local site after a made-up final prospectus. The data names itself as test data."""
+    with _serve("ant-awaiting.json", "filings-final-TEST.json") as url:
         yield url
 
 
@@ -448,6 +457,42 @@ def test_trading_day_on_a_phone(browser: Browser, trading_url: str) -> None:
     assert chart.locator(".ln").count() == 1
     assert chart.locator('.mark[data-ref="market.price"]').count() == 1
 
+    assert _serious(page) == []
+    assert errors == []
+    context.close()
+
+
+def test_a_final_prospectus_on_a_phone(browser: Browser, final_url: str) -> None:
+    context = browser.new_context(
+        viewport=PHONE, device_scale_factor=2, is_mobile=True, has_touch=True
+    )
+    page, errors = _open(context, final_url)
+
+    # On the first screen: the notice of the new filing, one tap away from the document.
+    expect(page.locator(".status").get_by_text("new filing")).to_be_in_viewport()
+    link = page.locator('.status a[href^="https://www.sec.gov/Archives/edgar/data/"]').first
+    expect(link).to_be_in_viewport()
+    assert "424B4" in link.inner_text()
+
+    # The price on the cover is the price of the page, and its card quotes the cover.
+    page.locator('.status button[data-ref="pricing.ipo_price"]').tap()
+    card = page.locator("#src-pricing-ipo-price")
+    expect(card).to_be_visible()
+    text = card.inner_text()
+    assert "FILED" in text
+    assert "Initial public offering price $74.00" in text
+    card.get_by_role("button", name="close").tap()
+
+    # The list of filings names its source, here test data.
+    panel = page.locator("#filings")
+    panel.scroll_into_view_if_needed()
+    assert panel.locator("tbody tr").count() == 5
+    assert "TEST DATA, not real filings" in panel.inner_text()
+    _shot(page, "loop-003-test-final-phone")
+
+    found = page.evaluate(OVERFLOW)
+    assert found["page"] <= PHONE["width"]
+    assert (found["wide"], found["scrolling"], found["cut"]) == ([], [], [])
     assert _serious(page) == []
     assert errors == []
     context.close()

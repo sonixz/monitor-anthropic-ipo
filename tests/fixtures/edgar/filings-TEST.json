@@ -1,0 +1,35 @@
+{
+ "_note": "TEST DATA. Invented filings in the shape of EDGAR's answer; only the Amendment No. 2 entry is real. Never real filings.",
+ "index": {
+  "cik": "2130357",
+  "name": "Anthropic, PBC",
+  "tickers": [
+   "ANT"
+  ],
+  "filings": {
+   "recent": {
+    "accessionNumber": [
+     "0001628280-26-072484",
+     "0001628280-26-999002",
+     "0001628280-26-999001"
+    ],
+    "filingDate": [
+     "2026-11-10",
+     "2026-11-03",
+     "2026-10-20"
+    ],
+    "form": [
+     "S-1/A",
+     "S-1/A",
+     "S-1"
+    ],
+    "primaryDocument": [
+     "anthropicpbc-sx1ax2.htm",
+     "test-sx1ax1.htm",
+     "test-sx1.htm"
+    ]
+   },
+   "files": []
+  }
+ }
+}

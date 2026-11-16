@@ -4,6 +4,39 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-11-16
+
+The first step towards a dashboard that keeps itself current (Loop 003).
+
+### Added
+
+- **Filings watch.** Every ten minutes the service asks the SEC's EDGAR for the list of the
+  company's filings. The page gets a "filings" line at the top (the latest filing, or a notice
+  when a prospectus newer than the one the page reads exists) and a FILINGS panel with the
+  latest filings in plain words, each linked to sec.gov (key `f`).
+- **The final price, read by the service.** When a final prospectus (Form 424B4) appears, the
+  service reads the offering price from its cover and the page switches to it, as a FILED number
+  whose source card quotes the cover. The price is taken only if the cover names the company, is
+  not preliminary, gives dollars and cents, and states a total equal to that price times the
+  shares on the same cover. Otherwise nothing is taken and the page says the prospectus is filed
+  and not read yet.
+- `SEC_CONTACT`, the contact address the SEC asks automated clients for, and `IPO_FILINGS`
+  (`auto`, `off`). Without the address the watch is off, nothing is asked from the SEC and the
+  page says so. On the machine the address lives in a root-only file read by the boot script.
+- `/health` reports the state of the filings watch.
+- `HOW-IT-WORKS.md`: the whole system in plain language, including where AI is involved (at build
+  time, as the coding agent) and where it is not (the live service runs no model). The README is
+  rewritten as a front page: badges, screenshots, panels, labels, workflows, release path.
+
+### Notes
+
+- **The watch has not talked to the real EDGAR yet.** The address is the owner's and is not on
+  the machine or the workstation. The code follows the published shape of EDGAR's answer and is
+  tested on test data and on the real cover of Amendment No. 2. Until the address is there, the
+  live page says "not watched".
+- If the page cannot be drawn with what the filing list brought, it is drawn without it: the
+  figures and the market panel never depend on the SEC answering.
+
 ## [0.3.2] - 2026-11-16
 
 Found by checking the Nasdaq source with the market open.

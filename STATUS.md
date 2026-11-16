@@ -1,15 +1,16 @@
 # STATUS · monitor-anthropic-ipo
 
-> Where the project stands, verified. Last reviewed: 2026-11-16 · after loop-002
+> Where the project stands, verified. Last reviewed: 2026-11-16 · during loop-003
 
 ## Live
 
 | | |
 | --- | --- |
 | Site | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev |
-| Version | 0.3.2 (tag `v0.3.2`) |
+| Version | 0.4.0 (tag `v0.4.0`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
+| SEC filings | **Not watched yet.** The watch is built (0.4.0) and off: it needs a contact address for sec.gov that only the owner can put on the machine |
 | IPO price | Not final: the page shows the filed range, $70 to $78. Pricing reported for 2026-11-18 |
 | AI | None yet |
 
@@ -19,10 +20,11 @@
 - 141 numbers on the page, each a button that opens its source. Nine charts drawn by the server; every mark opens the same source card, and every value a chart draws is also in a table.
 - On a phone (360 to 430 px): nothing scrolls sideways, tables included; a panel bar made for thumbs; source cards rise from the bottom; the tables behind the charts are folded until asked for.
 - The market panel in its four states (awaiting listing, trading, market closed, source unavailable), tested on recorded answers of the two sources, one of them a real answer with the market open. Live, the page says "awaiting listing" and shows no price.
+- The filings watch on test data: the list of filings, the notice of a newer prospectus, the final price read from a cover and refused in eight cases (another form, a preliminary cover, a blank price, a wrong total, and so on). The contact address appears in no log and on no page (tested).
 - 129 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
-- CI on GitHub: format, lint, strict types, 95 unit tests, 12 real-browser tests, secret scan, CodeQL: green on the released commit and on `main`.
-- Deploy and rollback on the machine: four deployments on 2026-11-16, each healthy within seconds.
+- CI on GitHub: format, lint, strict types, 109 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
+- Deploy and rollback on the machine: five deployments on 2026-11-16, each healthy within seconds.
 
 ## Measured
 
@@ -36,6 +38,10 @@
 
 ## Known limits
 
+- **The filings watch has never talked to the real EDGAR.** It follows the published shape of EDGAR's answer; no real answer could be recorded without the contact address. Its first real check comes when the owner has put the address on the machine.
+- The cover of Anthropic's final prospectus does not exist yet. The reader is built on the cover of Amendment No. 2, where the price is blank. If the final cover is laid out differently, the price is not taken and must be recorded by hand: the intended failure.
+- After a final prospectus, the page uses the final price with share counts and cash still taken from Amendment No. 2, until a full extraction reviewed by hand.
+- The About box of the GitHub repository (description, live link) is empty: the agent's GitHub access cannot change repository settings.
 - **No real quote of ANT has been seen yet**: the stock does not trade. The MARKET panel is proven on recorded answers, including invented prices that name themselves as test data.
 - The Nasdaq source was checked before the open and with the market open (2026-11-16), on a long-listed symbol and on a stock listed the Friday before. Its answers after the close and at night have not been seen, nor its answer for a stock that is listed but has not traded yet.
 - With the market open, the day's line can show trades made before the open; the range next to it counts regular hours only. The page says so.

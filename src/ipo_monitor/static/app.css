@@ -562,6 +562,24 @@ tr.muted th {
   color: var(--dim);
 }
 
+/* The list of filings: a date, then a link and what the form is. */
+.filed th {
+  width: 7.5rem;
+  padding-right: 10px;
+  white-space: nowrap;
+  color: var(--dim);
+}
+
+.filed td {
+  padding-left: 0;
+  text-align: left;
+  white-space: normal;
+}
+
+.filed .what {
+  color: var(--dim);
+}
+
 .op {
   display: inline-block;
   width: 1.2em;

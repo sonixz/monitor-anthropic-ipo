@@ -26,6 +26,10 @@
 | D-020 | 2026-11-16 | Market data: Nasdaq.com's quote service first, Yahoo Finance second, behind an adapter, asked sparingly | proposed |
 | D-021 | 2026-11-16 | A price is shown only when the source names the company; otherwise nothing | proposed |
 | D-022 | 2026-11-16 | Once the stock trades, the market panel comes first on the page | proposed |
+| D-023 | 2026-11-16 | The service publishes by itself only what passes every check; from a final prospectus, only the price on its cover | proposed |
+| D-024 | 2026-11-16 | A price read from the final prospectus replaces a price recorded from the press | proposed |
+| D-025 | 2026-11-16 | The SEC contact address lives in a root-only file on the machine; an unusable address switches the watch off, it does not stop the service | proposed |
+| D-026 | 2026-11-16 | The repository says how the system works and where AI is involved | confirmed by the owner |
 
 ## D-001 · A smooth dashboard of a few panels
 **Context.** The reference dashboard the owner looked at has 14 sections. **Decision.** A few panels, each answering a plain question: worth, contracts, valuation, growth. **Owner:** "I'd rather keep mine smoother"; "the five cards, and more". **Alternative.** Match the reference's depth; rejected as not what the owner wants. **Consequence.** Governance, competition and strategy are left to the filing for now.
@@ -92,3 +96,15 @@
 
 ## D-022 · The market first, once it exists
 **Context.** The mission asked that the first screen of a phone show the value at the IPO price and, once the stock trades, the market price too. Both do not fit one screen. **Decision.** When a quote exists, the MARKET panel comes first: price, change against the IPO price, value and enterprise value at that price. The values at the IPO price follow. **Departure from the mission**, to confirm by the owner. Until the final IPO price is recorded, the comparison uses the middle of the filed range and says so.
+
+## D-023 · What the service may publish by itself
+**Context.** The owner asked to make the dashboard automatic, and answered "ok go" to a plan whose limit was stated: the page must never show a wrong figure. **Decision (proposed).** The service publishes by itself only what passes every check; otherwise it keeps the page it had and says what it could not read. From a final prospectus it reads one figure, the offering price on the cover, and only if the form is a final prospectus of the registrant, the cover names the company, is not preliminary, gives the price in dollars and cents, states a total equal to the price times the shares on the same cover, and the price is not far from the filed range. **Alternative.** Extract every figure of the new filing automatically; rejected for now: the document does not exist yet, its figures change across hundreds of pages, and no check as simple as "price times shares" exists for them. **Consequence.** After the final prospectus the page shows the final price with share counts and cash still taken from Amendment No. 2, and says so, until an extraction reviewed by hand replaces them.
+
+## D-024 · Filed price over press price
+**Decision (proposed).** A price recorded by hand from the press on pricing night is replaced by the price of the final prospectus when the service reads it. **Why.** The prospectus is the legal document. **Consequence.** The source card of the price changes from PRESS to FILED on its own.
+
+## D-025 · Where the contact address lives
+**Context.** sec.gov asks automated clients for a contact address. It is the owner's, and Agent Manager cannot assign a secret to an existing machine. **Decision (proposed).** The owner types it into a root-only file on the machine's volume; the boot script reads known names only. The address is sent to sec.gov hosts only, never logged, never shown. An address that is not one e-mail address switches the filings watch off and logs why, without the value. **Departure.** Elsewhere an invalid setting stops the service at startup; here it does not, because a typing mistake in an optional secret must not take the public page down.
+
+## D-026 · The repository explains the system, AI included
+**Owner (2026-11-16):** asked for the public repository to be well documented, with the link and the workflows, then asked where AI is involved and whether a hosted AI service is used, and to document how the system works directly in the repository. **Decision.** [HOW-IT-WORKS.md](HOW-IT-WORKS.md) tells it in plain language: the path of a figure, who does what, where AI is involved (at build time, as the coding agent) and where it is not (the live service runs no model), what runs by itself, the workflows. The README is the front page and links to it.

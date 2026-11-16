@@ -1,0 +1,44 @@
+{
+ "_note": "TEST DATA. Invented filings and an invented cover with an invented price. Never real filings, never a real price.",
+ "index": {
+  "cik": "2130357",
+  "name": "Anthropic, PBC",
+  "tickers": [
+   "ANT"
+  ],
+  "filings": {
+   "recent": {
+    "accessionNumber": [
+     "0001628280-26-999004",
+     "9999999995-26-999003",
+     "0001628280-26-072484",
+     "0001628280-26-999002",
+     "0001628280-26-999001"
+    ],
+    "filingDate": [
+     "2026-11-19",
+     "2026-11-18",
+     "2026-11-10",
+     "2026-11-03",
+     "2026-10-20"
+    ],
+    "form": [
+     "424B4",
+     "EFFECT",
+     "S-1/A",
+     "S-1/A",
+     "S-1"
+    ],
+    "primaryDocument": [
+     "test-424b4.htm",
+     "",
+     "anthropicpbc-sx1ax2.htm",
+     "test-sx1ax1.htm",
+     "test-sx1.htm"
+    ]
+   },
+   "files": []
+  }
+ },
+ "cover": "<html><body><p>Filed Pursuant to Rule 424(b)(4)</p><p>TEST DATA. An invented cover, never a real prospectus.</p><p>Class A Common Stock</p><p>825,000,000 Shares</p><p>Anthropic, PBC</p><table><tr><td></td><td>Per share</td><td>Total</td></tr><tr><td>Initial public offering price</td><td>$74.00</td><td>$61,050,000,000</td></tr></table></body></html>"
+}

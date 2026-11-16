@@ -1,9 +1,10 @@
 # BACKLOG · monitor-anthropic-ipo
 
-> What is left, in order. Recommendations until the owner turns them into a mission. Last reviewed: 2026-11-16 · after loop-002
+> What is left, in order. Recommendations until the owner turns them into a mission. Last reviewed: 2026-11-16 · during loop-003
 
 ## Before the first trade (reported for 2026-11-19)
 
+0. **The owner puts the SEC contact address on the machine** (one command, in INFRASTRUCTURE.md) and, to let the agent test, in `.env` on the workstation. Then: check the filings watch against the real EDGAR, record real answers in the tests, and read the cover of a real final prospectus of a recently listed company.
 1. **Check the Nasdaq source after the close and at night** (after 16:00 and after 20:00 New York time): record real answers, add them to the tests, fix what differs. Done with the market open on 2026-11-16; the fix it led to is version 0.3.2.
 2. **Record the final IPO price** as soon as it is public (pricing reported for 2026-11-18): the fact `pricing.ipo_price` in `data/facts/`, from an article opened and quoted, or from the final prospectus (424B4) saved by the owner. The page then switches its headline figures to that price.
 3. **Watch the first trade**: the MARKET panel must appear by itself. Look at it on a phone, with real figures, and fix what real data breaks.
@@ -12,7 +13,7 @@
 
 ## Next
 
-6. **EDGAR watcher and "What changed".** Detect a new filing without anyone asking and show what moved. Needs a contact address for sec.gov as a secret on the machine.
+6. **"What changed".** When a new filing is read, show what moved against the previous one. The watch that notices a new filing exists since 0.4.0.
 7. **AI explanations**, following [ANALYSIS.md](ANALYSIS.md), labeled AI, each citing the figures it uses, with a daily budget in the application. Needs the owner's capped OpenAI key on the machine.
 8. **The "what you pay" slider.** If growth slows to a chosen rate, how many years until the price is covered?
 9. **A price history** beyond the current day: daily closes since the listing, kept by the service.

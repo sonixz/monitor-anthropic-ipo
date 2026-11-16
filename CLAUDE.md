@@ -39,6 +39,11 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data
   file with `TEST` in its name holds invented prices and names itself as test data on the page.
   The final IPO price is recorded as the fact `pricing.ipo_price` in `data/facts/`, from an
   article that was opened and quoted, or from the final prospectus.
+- **Filings** come only from `edgar.py`. It reads the SEC's list on a timer and one figure, the
+  price on the cover of a final prospectus, under the checks written in `read_price`. Never
+  loosen a check to make a document pass. The contact address (`SEC_CONTACT`) goes to sec.gov
+  hosts only and is never printed: not in a log, not in an error message, not in a test output.
+  Index fixtures with `TEST` in their name are invented; `s1a2-cover.html` is a real excerpt.
 - Layout breakpoints are container queries on `.panel`, not media queries: a panel is as narrow
   on a laptop with two panels side by side as on a phone.
 - All user-facing text is in English. The owner's words are given in English, reworded.
@@ -48,7 +53,8 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data
 ## Things that bite
 
 - sec.gov refuses automated downloads without a contact address in the User-Agent. The owner
-  saves filings by hand into `data/raw/sec/` (ignored by git).
+  saves filings by hand into `data/raw/sec/` (ignored by git). The service's own watch needs
+  `SEC_CONTACT`; to try it locally, load `.env` into the environment first (`set -a; . ./.env`).
 - On WSL with the repository under `/mnt/c`, keep the virtual environment on the Linux disk:
   `export UV_PROJECT_ENVIRONMENT=$HOME/.venvs/monitor-anthropic-ipo`.
 - If Chromium fails to start for lack of `libnss3`, `libnspr4` or `libasound2`, install them

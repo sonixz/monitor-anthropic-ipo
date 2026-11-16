@@ -27,6 +27,7 @@ from, or the arithmetic behind it.
 | **GROWTH** | How fast is it growing, and what does the growth cost? |
 | **LOSSES** | Is the huge loss real spending? |
 | **MARKET** | What is the market paying now? Appears by itself with the first trade |
+| **FILINGS** | What has the company filed with the SEC? Appears when the filings watch is on |
 
 Each number carries a label that says where it comes from:
 
@@ -45,6 +46,10 @@ Each number carries a label that says where it comes from:
   the derived values and draws one page with its charts. If a check fails, it does not start.
 - Every few minutes the service asks a public quote service for the share price. Until the stock
   trades, the page says "awaiting listing" and shows no price.
+- Every ten minutes, when a contact address is configured, it asks the SEC what the company has
+  filed and says when something new appears. From a final prospectus it reads one figure by
+  itself, the offering price on the cover, and only if the total printed beside it is that price
+  times the shares.
 
 **No AI model runs in the live service**: it is ordinary Python, and the same input always gives
 the same page. The code, the tests and these documents were written by an AI coding agent

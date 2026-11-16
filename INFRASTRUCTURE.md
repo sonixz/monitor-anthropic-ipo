@@ -90,16 +90,33 @@ E2E_BASE_URL=https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev uv run pytest -m e2e
 
 ## Configuration and secrets
 
-Configuration comes from environment variables only, checked at startup; `.env.example` lists every one. **The service needs no secret in Loop 001.**
+Configuration comes from environment variables only, checked at startup; `.env.example` lists every one.
 
-Since version 0.3.0 the service makes one kind of outbound request: it asks a market source over HTTPS for the share price every few minutes: the quote service behind nasdaq.com first, Yahoo Finance chart data if it fails. `IPO_MARKET` chooses (`auto` by default, `nasdaq`, `yahoo`, or `off` for none). The request carries no secret and no personal detail. `/health` reports the state of the source under `market`.
+The service makes two kinds of outbound requests, both over HTTPS and on a timer:
 
-Planned, not present yet (names only):
-
-| Name | For | Where it will live |
+| To | For | Carries |
 | --- | --- | --- |
-| `OPENAI_API_KEY` (final name to confirm) | AI summaries | Agent Manager secrets, never in the repository |
-| `SEC_CONTACT` | The contact address sec.gov requires from automated clients | Agent Manager secrets, never in the repository |
+| The quote service behind nasdaq.com, then Yahoo Finance chart data if it fails | The share price, every two to five minutes (`IPO_MARKET`: `auto`, `nasdaq`, `yahoo`, `off`) | No secret and no personal detail |
+| `data.sec.gov` and `www.sec.gov` | The list of the company's filings every ten minutes, and the top of a final prospectus once (`IPO_FILINGS`: `auto`, `off`) | The contact address the SEC asks automated clients for, in the User-Agent. Sent to these two hosts only |
+
+`/health` reports the state of each source and the time of its last check.
+
+### Secrets (names only)
+
+| Name | For | Where it lives |
+| --- | --- | --- |
+| `SEC_CONTACT` | The contact address sec.gov requires. Without it the filings watch is off and nothing is asked from the SEC | On the machine: `/data/secrets.env`, readable by root only. On a workstation: `.env`, ignored by git |
+| `OPENAI_API_KEY` (final name to confirm) | AI explanations. Planned, not present | To decide when it is built |
+
+Agent Manager cannot assign a secret to a machine that already exists, so the owner types the address into the machine's session, where it is not echoed:
+
+```sh
+( umask 077; read -rs -p "SEC contact address: " a; printf 'SEC_CONTACT=%s\n' "$a" > /data/secrets.env; echo; echo saved )
+```
+
+`start.sh` reads that file at every start of the service, takes only the names it knows and never prints a value. The service never logs the address and never shows it; a test proves it. An address that is not one e-mail address switches the filings watch off and logs why, without the value: the page does not go down for an optional source.
+
+When `start.sh` itself changes, the loop that is already running still executes the old script. It must be restarted once on the machine (stop the loop and the service, start `/data/start.sh` again the way `deploy.sh` does); a few seconds without the site.
 
 ## Observability and backups
 

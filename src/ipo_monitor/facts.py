@@ -92,16 +92,29 @@ class Facts:
             raise FileNotFoundError(f"no fact files in {directory}")
         return cls([FactFile.model_validate(json.loads(p.read_text("utf-8"))) for p in paths])
 
-    def plus(self, extra: list[Fact]) -> Facts:
-        """The same facts with some more, such as a market quote. The original is unchanged."""
+    def plus(
+        self, extra: list[Fact], document: Document | None = None, *, replacing: bool = False
+    ) -> Facts:
+        """The same facts with some more, such as a market quote. The original is unchanged.
+
+        `document` is the filing the extra facts were read from. `replacing` lets them take the
+        place of facts with the same id: a filed price replaces one recorded from the press.
+        """
         both = Facts([])
         both._by_id = dict(self._by_id)
         both.documents = dict(self.documents)
         both._doc_of = dict(self._doc_of)
+        if document is not None:
+            if document.id in both.documents:
+                raise ValueError(f"duplicate document id: {document.id}")
+            both.documents[document.id] = document
         for fact in extra:
-            if fact.id in both._by_id:
+            if fact.id in both._by_id and not replacing:
                 raise ValueError(f"duplicate fact id: {fact.id}")
             both._by_id[fact.id] = fact
+            both._doc_of.pop(fact.id, None)
+            if document is not None:
+                both._doc_of[fact.id] = document.id
         return both
 
     def __contains__(self, fact_id: str) -> bool:

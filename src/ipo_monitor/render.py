@@ -19,6 +19,8 @@ from markupsafe import Markup
 from ipo_monitor import __version__, fmt
 from ipo_monitor.calc import PRICED, QUARTER_NAMES, QUARTERS, Calc, Term, compute
 from ipo_monitor.charts import Mark
+from ipo_monitor.edgar import SHOWN as FILINGS_SHOWN
+from ipo_monitor.edgar import Watch, price_fact
 from ipo_monitor.facts import Fact, Facts
 from ipo_monitor.figures import Figures
 from ipo_monitor.market import Snapshot
@@ -277,6 +279,7 @@ class Page:
     filed: str
     charts: dict[str, tuple[Mark, ...]]
     market: str  # off, awaiting, trading, closed or unavailable
+    filings: str = "off"  # off, ok or unavailable
 
 
 def _environment() -> Environment:
@@ -300,12 +303,23 @@ def asset_version() -> str:
     return digest.hexdigest()[:10]
 
 
-def render_page(facts: Facts, *, release: str = "dev", market: Snapshot | None = None) -> Page:
+def render_page(
+    facts: Facts,
+    *,
+    release: str = "dev",
+    market: Snapshot | None = None,
+    filings: Watch | None = None,
+) -> Page:
     """Check the facts, compute, and render the dashboard.
 
-    `market` is the last answer of the market source, or None when no source is connected.
+    `market` is the last answer of the market source and `filings` the last answer of the SEC's
+    filing index; None when that source is not connected.
     """
     checks = assert_consistent(facts)
+    if filings is not None and filings.price is not None:
+        # The price on the cover of the final prospectus replaces one recorded from the press.
+        fact, final = price_fact(filings.price, facts.documents["s1a2"].company)
+        facts = facts.plus([fact], final, replacing=True)
     if market is not None:
         facts = facts.plus(market_facts(market))
     calcs = compute(facts)
@@ -319,6 +333,10 @@ def render_page(facts: Facts, *, release: str = "dev", market: Snapshot | None =
     context: dict[str, Any] = {
         "n": numbers,
         "chart": figures,
+        "filings": filings,
+        "newer": filings.newer_than(document.accession) if filings else None,
+        "listed": filings.filings[:FILINGS_SHOWN] if filings else (),
+        "day": fmt.iso_date,
         "market": market,
         "quote": quote,
         "priced": priced,
@@ -343,4 +361,5 @@ def render_page(facts: Facts, *, release: str = "dev", market: Snapshot | None =
         filed=document.filed,
         charts=figures.marks(),
         market=market.state if market else "off",
+        filings=filings.state if filings else "off",
     )

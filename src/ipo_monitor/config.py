@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import os
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+
+from ipo_monitor.edgar import valid_contact
 
 LOG_LEVELS = ("debug", "info", "warning", "error")
 
@@ -22,6 +24,10 @@ class Settings:
     release: str
     log_level: str
     market: str = "off"
+    filings: str = "off"
+    # The address the SEC asks automated clients for. Personal: never printed, never logged.
+    sec_contact: str = field(default="", repr=False)
+    sec_contact_refused: bool = False  # a value was given and is not one e-mail address
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> Settings:
@@ -59,6 +65,16 @@ class Settings:
                 f"got {market!r}"
             )
 
+        filings = source.get("IPO_FILINGS", "auto")
+        if not re.fullmatch(r"off|auto|file:.+", filings):
+            raise ConfigError(
+                f"IPO_FILINGS must be auto, off or file:<recorded answer>, got {filings!r}"
+            )
+        # An unusable address switches the filings watch off instead of stopping the service:
+        # the page must not go down for an optional source. The value is never shown.
+        sec_contact = source.get("SEC_CONTACT", "").strip()
+        refused = bool(sec_contact) and not valid_contact(sec_contact)
+
         host = source.get("IPO_HOST", "127.0.0.1")
         if not host:
             raise ConfigError("IPO_HOST must not be empty")
@@ -70,4 +86,7 @@ class Settings:
             release=release,
             log_level=log_level,
             market=market,
+            filings=filings,
+            sec_contact="" if refused else sec_contact,
+            sec_contact_refused=refused,
         )
