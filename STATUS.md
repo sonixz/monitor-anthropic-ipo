@@ -44,7 +44,7 @@
 - After a final prospectus, the page uses the final price with share counts and cash still taken from Amendment No. 2, until a full extraction reviewed by hand.
 - The About box of the GitHub repository (description, live link) is empty: the agent's GitHub access cannot change repository settings.
 - **No real quote of ANT has been seen yet**: the stock does not trade. The MARKET panel is proven on recorded answers, including invented prices that name themselves as test data.
-- The Nasdaq source was checked before the open and with the market open (2026-11-16), on a long-listed symbol and on a stock listed the Friday before. Its answers after the close and at night have not been seen, nor its answer for a stock that is listed but has not traded yet.
+- The Nasdaq source was checked before the open and with the market open (2026-11-16), on a long-listed symbol and on a stock listed the Friday before. After the close (16:12 on 2026-11-16) its first figure is a trade of the extended hours and the close comes apart: the page will name both from the next release. Its answer at night has not been seen, nor its answer for a stock that is listed but has not traded yet.
 - With the market open, the day's line can show trades made before the open; the range next to it counts regular hours only. The page says so.
 - Yahoo Finance refuses the production machine ("too many requests") after a handful of questions; it is only the second source.
 - Market values are unofficial and delayed by up to a few minutes: the page says so next to each one.
@@ -58,7 +58,8 @@
 ## Not verified yet
 
 - The decisions taken while the owner was away: D-017 to D-022 in [DECISIONS.md](DECISIONS.md). D-016 is confirmed.
-- The Nasdaq source after the close and at night; the memory of the service after a full day of refreshes.
+- The Nasdaq source at night; the memory of the service after a full day of refreshes.
+- **What the source calls the time of the last trade may be the time of its answer.** After the close on 2026-11-16, for a thinly traded stock, that time was the minute of the question while the last point of its series was two minutes older. One observation, not a proof; the answer at night will tell. Until then the page keeps the label "last trade".
 - Branch protection on `main`: recommended in CONTRIBUTING.md, to be set by the owner.
 
 Next steps are in [BACKLOG.md](BACKLOG.md).

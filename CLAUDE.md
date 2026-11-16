@@ -35,7 +35,8 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data
   wide: look at them at 360 px and at 1280 px before calling them done.
 - **Market values** come only from `market.py`, as facts labeled MARKET built from the source's
   answer. Never type a price. A chart of the day draws `Quote.line`, which ends at the last trade
-  the source states. Tests replay recorded answers from `tests/fixtures/market/`; the
+  the source states. Outside regular hours the last trade is named as such (`Quote.outside`)
+  and the close of the regular session is a fact of its own (`market.close`). Tests replay recorded answers from `tests/fixtures/market/`; the
   file with `TEST` in its name holds invented prices and names itself as test data on the page.
   The final IPO price is recorded as the fact `pricing.ipo_price` in `data/facts/`, from an
   article that was opened and quoted, or from the final prospectus.

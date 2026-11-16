@@ -4,6 +4,32 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+Found by recording the Nasdaq source after the close on 2026-11-16. Not online yet: the answer
+at night is recorded first, so that one release covers both.
+
+### Changed
+
+- **A trade made outside regular hours is named as such.** After the close and before the open,
+  the source's first figure is a trade of the extended hours, not the close. The page said
+  "market closed" beside it, which read as the closing price. It now says "traded after the
+  close" or "traded before the open" on the status line, in the MARKET panel and in the source
+  card of the price.
+- **The close of the regular session is its own number**, with its own time and source card,
+  when the source gives it beside a later trade: the row "Close of regular hours" in the table
+  of the day.
+
+### Fixed
+
+- The source card of a market value named the stock twice in one sentence.
+- A test of the service passed only between 9:30 and 16:00 in New York, the hours of the
+  recorded answer it replays. It no longer depends on the hour at which it runs.
+
+### Added
+
+- A real answer of the Nasdaq source at 16:12 in New York, replayed by the tests.
+
 ## [0.4.2] - 2026-11-16
 
 ### Changed

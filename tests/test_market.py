@@ -29,6 +29,7 @@ from ipo_monitor.render import Page, render_page
 from ipo_monitor.web import create_app
 
 from .conftest import FACTS_DIR, MARKET, TRADING_NOW, snapshot_of
+from .test_web import Audit
 
 
 class Fake:
@@ -161,6 +162,7 @@ def test_the_quote_becomes_facts_with_source_and_time() -> None:
         assert fact.period == "Nov 13, 2026, 16:00 EST"
         assert fact.url == "https://example.org/test-data/ANT"
         assert "as given by TEST DATA, not a real quote for ANT (Anthropic, PBC" in fact.quote
+        assert fact.quote.count("for ANT") == 1
         assert "delayed, unofficial" in (fact.context or "")
 
 
@@ -379,6 +381,13 @@ def test_nasdaq_before_the_listing_and_for_a_listed_symbol() -> None:
     assert len(quote.points) == 44
     assert quote.points[0][0] == 1794819600  # 4:00 in New York is 9:00 UTC
     assert quote.when(quote.points[0][0]) == "Nov 16, 2026, 4:00 EST"
+    # The trade was made before the open; the close beside it is the one of the Friday before.
+    assert quote.outside == "before the open"
+    assert (quote.close, quote.closed, quote.close_day) == (
+        356.27,
+        "Nov 13, 2026, 16:00 EST",
+        "Nov 13",
+    )
     assert market.check(source, "AAPL", "Anthropic", None, TRADING_NOW).state == "unavailable"
 
 
@@ -394,6 +403,7 @@ def test_nasdaq_with_the_market_open() -> None:
     assert (quote.day_low, quote.day_high) == (353.79, 357.10)
     assert quote.volume == 4970164
     assert quote.previous_close is None  # not read from this service
+    assert (quote.outside, quote.close, quote.closed) == ("", None, "")  # one figure, in session
     assert len(quote.points) == 335
     assert quote.when(quote.points[0][0]) == "Nov 16, 2026, 4:00 EST"  # early trading included
     # The range counts regular hours only: early trades went higher than its top.
@@ -401,6 +411,141 @@ def test_nasdaq_with_the_market_open() -> None:
     facts = {fact.id: fact for fact in market.facts(snapshot)}
     assert facts["market.day_high"].title == "Highest price in regular trading hours"
     assert facts["market.price"].as_filed == "$355.96"
+    assert facts["market.price"].title == "Last share price"
+    assert "market.close" not in facts
+
+
+def test_nasdaq_after_the_close() -> None:
+    source = RecordedAnswer(MARKET / "nasdaq-aapl-afterhours.json")  # a real answer, 16:12
+    now = 1794863566  # the moment it was recorded
+    snapshot = market.check(source, "AAPL", "Apple", None, now)
+    quote = snapshot.quote
+    assert quote is not None
+    assert snapshot.state == "closed"  # the answer says: After-Hours
+    # Its first figure is a trade made after the close, not the close.
+    assert quote.outside == "after the close"
+    assert (quote.price, quote.when()) == (352.2547, "Nov 16, 2026, 16:12 EST")
+    assert (quote.close, quote.closed, quote.close_day) == (
+        352.78,
+        "Nov 16, 2026, 16:00 EST",
+        "Nov 16",
+    )
+    assert (quote.day_low, quote.day_high) == (351.31, 357.10)
+    assert quote.volume == 44712960
+    assert len(quote.points) == 732
+    assert quote.when(quote.points[-1][0]) == "Nov 16, 2026, 16:11 EST"  # the line goes on
+    assert quote.line[-1] == (quote.time, quote.price)
+    facts = {fact.id: fact for fact in market.facts(snapshot)}
+    assert facts["market.price"].title == "Last share price, after the close"
+    assert facts["market.price"].period == "Nov 16, 2026, 16:12 EST"
+    close = facts["market.close"]
+    assert (close.title, close.value, close.as_filed, close.period) == (
+        "Closing price of the last regular session",
+        352.78,
+        "$352.78",
+        "Nov 16, 2026, 16:00 EST",  # its own time, not the time of the last trade
+    )
+    # A page is drawn again when the close appears or the side of the session changes.
+    assert snapshot.shown[-2:] == ("after the close", 352.78)
+
+
+def test_the_close_is_taken_only_as_the_source_states_it() -> None:
+    def close(**secondary: Any) -> tuple[float | None, str]:
+        answer = nasdaq(lastSalePrice="$81.25", lastTradeTimestamp="Nov 19, 2026 4:30 PM ET")
+        answer["info"]["data"]["marketStatus"] = "After-Hours"
+        answer["info"]["data"]["secondaryData"] = {
+            "lastSalePrice": "$80.10",
+            "lastTradeTimestamp": "Closed at Nov 19, 2026 4:00 PM ET",
+            **secondary,
+        }
+        quote = read_ant(answer).quote
+        assert quote is not None
+        assert (quote.price, quote.outside) == (81.25, "after the close")  # the trade stays
+        return quote.close, quote.closed
+
+    assert close() == (80.10, "Nov 19, 2026, 16:00 EST")
+    for change in (
+        {"lastTradeTimestamp": "Nov 19, 2026 4:00 PM ET"},  # does not say it is a close
+        {"lastTradeTimestamp": "Closed at 4 PM"},
+        {"lastTradeTimestamp": "Closed at Feb 30, 2026 4:00 PM ET"},
+        {"lastTradeTimestamp": "Closed at Nov 19, 2026 16:00 PM ET"},
+        {"lastTradeTimestamp": "Closed at Nov 20, 2026 4:00 PM ET"},  # later than the trade
+        {"lastSalePrice": ""},
+        {"lastSalePrice": "80.10"},
+        {"lastSalePrice": "$0.00"},
+    ):
+        assert close(**change) == (None, ""), change
+    absent = nasdaq(lastSalePrice="$81.25", lastTradeTimestamp="Nov 19, 2026 4:30 PM ET")
+    absent["info"]["data"]["secondaryData"] = None
+    quote = read_ant(absent).quote
+    assert quote is not None
+    assert (quote.close, quote.close_day) == (None, "")
+    # A status the reader does not know says nothing about the side of the session.
+    absent["info"]["data"]["marketStatus"] = "Closed"
+    quote = read_ant(absent).quote
+    assert quote is not None
+    assert quote.outside == ""
+
+
+def test_a_close_keeps_its_own_clock_across_a_change_of_hour() -> None:
+    # Friday, March 12, 2027 closes in winter time; the next trade, on Monday, is in summer time.
+    answer = nasdaq(lastSalePrice="$81.25", lastTradeTimestamp="Mar 15, 2027 8:05 AM ET")
+    answer["info"]["data"]["secondaryData"].update(
+        lastSalePrice="$80.10", lastTradeTimestamp="Closed at Mar 12, 2027 4:00 PM ET"
+    )
+    quote = read_ant(answer).quote
+    assert quote is not None
+    assert quote.when() == "Mar 15, 2027, 8:05 EDT"
+    assert (quote.closed, quote.close_day) == ("Mar 12, 2027, 16:00 EST", "Mar 12")
+    assert market.eastern_at(quote.time) == (-14400, "EDT")
+
+
+def test_the_page_after_the_close(facts: Facts) -> None:
+    day = snapshot_of("ant-trading-TEST.json")
+    assert day.quote is not None
+    late = dataclasses.replace(
+        day,
+        state="closed",
+        quote=dataclasses.replace(
+            day.quote,
+            price=82.40,
+            time=day.quote.time + 1800,
+            outside="after the close",
+            close=day.quote.price,
+            close_time=day.quote.time - 1,
+        ),
+    )
+    page = render_page(facts, release="test", market=late)
+    html = page.html
+    assert page.market == "closed"
+    status = html[html.index("<dt>market</dt>") : html.index('id="market"')]
+    assert "market closed · traded after the close ·" in status
+    panel = html[html.index('id="market"') : html.index('id="value"')]
+    assert ", after the close · market closed" in panel
+    assert "<h3>Last price, after the close</h3>" in panel
+    assert '<th scope="row">Last price, after the close</th>' in panel
+    assert '<th scope="row">Close of regular hours, <span data-label>Nov 13</span></th>' in panel
+    assert 'data-ref="market.close"' in panel
+    card = re.search(r'<div popover id="src-market-close".*?</div>', html, re.S)
+    assert card is not None
+    assert "Closing price of the last regular session" in card.group()
+    assert "$81.25" in card.group()
+    assert "Nov 13, 2026, 16:00 EST" in card.group()
+    card = re.search(r'<div popover id="src-market-price".*?</div>', html, re.S)
+    assert card is not None
+    assert "Last share price, after the close" in card.group()
+    assert "$82.40" in card.group()
+    assert "Nov 13, 2026, 16:30 EST" in card.group()
+    # The day in the row label is the only digit outside a sourced number.
+    checked = Audit()
+    checked.feed(html)
+    assert [text for text in checked.loose_text if re.search(r"\d", text)] == []
+    for button in checked.buttons:
+        assert button.get("popovertarget") in checked.popovers
+    # In session the page says none of this.
+    assert "after the close" not in render_page(facts, release="test", market=day).html.replace(
+        "before the open and after the close", ""
+    )
 
 
 def test_the_line_of_the_day_ends_at_the_last_trade() -> None:

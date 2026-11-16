@@ -5,7 +5,7 @@
 ## Before the first trade (reported for 2026-11-19)
 
 0. **The owner puts the SEC contact address on the machine** (one command, in INFRASTRUCTURE.md). Then: restart the service, check the filings watch live against EDGAR, and fix what differs. Still open after that: reading the cover of a real final prospectus of another, recently listed company (needs the raw document).
-1. **Check the Nasdaq source after the close and at night** (after 16:00 and after 20:00 New York time): record real answers, add them to the tests, fix what differs. Done with the market open on 2026-11-16; the fix it led to is version 0.3.2.
+1. **Check the Nasdaq source after the close and at night** (after 16:00 and after 20:00 New York time): record real answers, add them to the tests, fix what differs. Done with the market open on 2026-11-16 (version 0.3.2) and after the close the same day (trades outside regular hours named, the close shown apart: next release). Left: the answer at night.
 2. **Record the final IPO price** as soon as it is public (pricing reported for 2026-11-18): the fact `pricing.ipo_price` in `data/facts/`, from an article opened and quoted, or from the final prospectus (424B4) saved by the owner. The page then switches its headline figures to that price.
 3. **Watch the first trade**: the MARKET panel must appear by itself. Look at it on a phone, with real figures, and fix what real data breaks.
 4. **Measure the memory** of the service after a day of market refreshes.

@@ -70,7 +70,7 @@
       {%- elif not quote -%}
         <span class="wait">source unavailable</span> · no price is shown<span class="wide"> · {{ market.source }}: {{ L(market.detail) }}</span>
       {%- else -%}
-        {% if market.state == "trading" %}<span class="live">trading</span>{% elif market.state == "closed" %}market closed{% else %}<span class="wait">source unavailable</span>, last quote{% endif %} · {{ n("market.price") }} · {{ n("market.time") }} · {{ market.source }}, delayed, unofficial
+        {% if market.state == "trading" %}<span class="live">trading</span>{% elif market.state == "closed" %}market closed{% if quote.outside %} · traded {{ quote.outside }}{% endif %}{% else %}<span class="wait">source unavailable</span>, last quote{% endif %} · {{ n("market.price") }} · {{ n("market.time") }} · {{ market.source }}, delayed, unofficial
       {%- endif -%}
     </dd></div>
   </dl>
@@ -86,11 +86,11 @@
 {% if quote %}
 <section class="panel" id="market" tabindex="-1" aria-labelledby="market-h">
   <h2 id="market-h"><kbd aria-hidden="true">m</kbd> MARKET <span class="q">What is the market paying now?</span></h2>
-  <p class="lede">{{ tag("MARKET") }} {{ market.source }} · delayed, unofficial · last trade {{ n("market.time") }}{% if market.state == "closed" %} · market closed{% elif market.state == "unavailable" %} · <span class="wait">the source is unavailable: this is the last quote it gave</span>{% endif %}</p>
+  <p class="lede">{{ tag("MARKET") }} {{ market.source }} · delayed, unofficial · last trade {{ n("market.time") }}{% if quote.outside %}, {{ quote.outside }}{% endif %}{% if market.state == "closed" %} · market closed{% elif market.state == "unavailable" %} · <span class="wait">the source is unavailable: this is the last quote it gave</span>{% endif %}</p>
 
   <div class="tiles">
     <div class="tile tile-key">
-      <h3>Last price</h3>
+      <h3>Last price{% if quote.outside %}, {{ quote.outside }}{% endif %}</h3>
       <p class="big">{{ n("market.price") }}</p>
       <p class="sub">{{ n("market.vs_ipo", "signed", plus=true) }} against {% if priced %}the IPO price of {{ n(price_ref) }}{% else %}{{ n(price_ref) }}, the middle of the IPO range{% endif %}</p>
     </div>
@@ -117,7 +117,8 @@
       <table class="lines">
         <caption>The day so far</caption>
         <tbody>
-          <tr><th scope="row">Last price</th><td>{{ n("market.price") }}</td></tr>
+          <tr><th scope="row">Last price{% if quote.outside %}, {{ quote.outside }}{% endif %}</th><td>{{ n("market.price") }}</td></tr>
+          {% if quote.close is not none %}<tr><th scope="row">Close of regular hours, {{ L(quote.close_day) }}</th><td>{{ n("market.close") }}</td></tr>{% endif %}
           {% if quote.day_low is not none and quote.day_high is not none %}<tr><th scope="row">Range in regular hours</th><td>{{ n("market.day_low") }} <span class="to">to</span> {{ n("market.day_high") }}</td></tr>{% endif %}
           {% if quote.volume is not none %}<tr><th scope="row">Shares traded</th><td>{{ n("market.volume") }}</td></tr>{% endif %}
           {% if quote.previous_close is not none %}<tr><th scope="row">Previous close</th><td>{{ n("market.previous_close") }}</td></tr>{% endif %}

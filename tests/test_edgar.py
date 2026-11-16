@@ -443,7 +443,8 @@ def test_the_service_with_filings_and_a_market(facts: Facts) -> None:
         "final_prospectus": "2026-11-19",
         "final_price_read": True,
     }
-    assert health["market"]["state"] == "trading"
+    # Not the state: with a recorded answer it depends on the hour at which the test runs.
+    assert health["market"]["quote_time"] == "2026-11-13T21:00:01+00:00"
     assert 'id="filings"' in page
     assert 'id="market"' in page
 

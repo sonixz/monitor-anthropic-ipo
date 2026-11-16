@@ -41,6 +41,11 @@ class SourceError(Exception):
     """The source could not be reached or did not answer as expected."""
 
 
+def _when(moment: int, offset: int, zone: str) -> str:
+    local = datetime.fromtimestamp(moment, timezone(timedelta(seconds=offset)))
+    return f"{local:%b} {local.day}, {local.year}, {local.hour}:{local:%M} {zone}"
+
+
 @dataclass(frozen=True)
 class Quote:
     """What the source said about the last trade."""
@@ -57,12 +62,27 @@ class Quote:
     volume: float | None = None
     previous_close: float | None = None
     points: tuple[tuple[int, float], ...] = ()  # (time, price) through the day
+    # Outside regular hours the last trade is not the close. When the source says which side of
+    # the session it is on, the page says it too: "before the open" or "after the close".
+    outside: str = ""
+    close: float | None = None  # of the last regular session, when the source gives it apart
+    close_time: int | None = None
 
     def when(self, moment: int | None = None) -> str:
         """A time in the exchange's zone: 'Nov 19, 2026, 11:32 EST'."""
-        zone = timezone(timedelta(seconds=self.offset))
-        local = datetime.fromtimestamp(self.time if moment is None else moment, zone)
-        return f"{local:%b} {local.day}, {local.year}, {local.hour}:{local:%M} {self.zone}"
+        return _when(self.time if moment is None else moment, self.offset, self.zone)
+
+    @property
+    def closed(self) -> str:
+        """When the last regular session closed: 'Nov 19, 2026, 16:00 EST'. Empty if unknown."""
+        if self.close_time is None:
+            return ""
+        return _when(self.close_time, *eastern_at(self.close_time))
+
+    @property
+    def close_day(self) -> str:
+        """The day of that close: 'Nov 19'."""
+        return self.closed.split(",")[0]
 
     @property
     def line(self) -> tuple[tuple[int, float], ...]:
@@ -101,6 +121,8 @@ class Snapshot:
             quote.day_low,
             quote.volume,
             len(quote.points),
+            quote.outside,
+            quote.close,
         )
 
 
@@ -148,6 +170,8 @@ def _named(name: str, company: str, symbol: str) -> None:
 
 MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 STAMP = re.compile(r"([A-Z][a-z]{2}) (\d{1,2}), (\d{4}) (\d{1,2}):(\d{2}) (AM|PM) ET")
+# How Nasdaq.com names the hours around the regular session, and how the page says it.
+OUTSIDE = {"pre-market": "before the open", "after-hours": "after the close"}
 
 
 def eastern(year: int, month: int, day: int) -> tuple[int, str]:
@@ -159,6 +183,58 @@ def eastern(year: int, month: int, day: int) -> tuple[int, str]:
 
     summer = (3, sunday(3, 2)) <= (month, day) < (11, sunday(11, 1))
     return (-14400, "EDT") if summer else (-18000, "EST")
+
+
+def eastern_at(moment: int) -> tuple[int, str]:
+    """New York's offset from UTC and its name at a moment given in seconds since 1970."""
+    for offset, zone in ((-18000, "EST"), (-14400, "EDT")):
+        local = datetime.fromtimestamp(moment, timezone(timedelta(seconds=offset)))
+        if eastern(local.year, local.month, local.day) == (offset, zone):
+            return offset, zone
+    return -18000, "EST"
+
+
+def _moment(text: object) -> tuple[int, int, str] | None:
+    """'Nov 16, 2026 4:12 PM ET' as (seconds since 1970, offset from UTC, zone name)."""
+    stamp = STAMP.search(str(text or ""))
+    if stamp is None or stamp[1] not in MONTHS:
+        return None
+    month, day, year = MONTHS.index(stamp[1]) + 1, int(stamp[2]), int(stamp[3])
+    hour, minute = int(stamp[4]), int(stamp[5])
+    if not (1 <= hour <= 12 and minute <= 59):
+        return None
+    try:
+        offset, zone = eastern(year, month, day)
+        local = datetime(
+            year,
+            month,
+            day,
+            hour % 12 + (12 if stamp[6] == "PM" else 0),
+            minute,
+            tzinfo=timezone(timedelta(seconds=offset)),
+        )
+    except ValueError:
+        return None
+    return int(local.timestamp()), offset, zone
+
+
+def _regular_close(secondary: object, traded: int) -> tuple[float, int] | None:
+    """The close of the last regular session, which the service gives beside a later trade.
+
+    Before the open and after the close its first figure is a trade outside regular hours, and a
+    second one reads "Closed at Nov 16, 2026 4:00 PM ET". Anything else is left out, not guessed.
+    """
+    if not isinstance(secondary, dict):
+        return None
+    said = str(secondary.get("lastTradeTimestamp") or "").strip()
+    moment = _moment(said) if said.startswith("Closed at ") else None
+    try:
+        price = _dollars(secondary.get("lastSalePrice"))
+    except SourceError:
+        return None
+    if moment is None or price is None or price <= 0 or moment[0] > traded:
+        return None
+    return price, moment[0]
 
 
 def _dollars(text: object) -> float | None:
@@ -196,16 +272,12 @@ def read_nasdaq(
         return Snapshot("awaiting", name, page, now, None, detail)
     if price <= 0:
         raise SourceError("price not in dollars")
-    stamp = STAMP.search(str(primary.get("lastTradeTimestamp") or ""))
+    stamp = _moment(primary.get("lastTradeTimestamp"))
     if stamp is None:
         raise SourceError("time of the trade not understood")
-    month, day, year = MONTHS.index(stamp[1]) + 1, int(stamp[2]), int(stamp[3])
-    hour = int(stamp[4]) % 12 + (12 if stamp[6] == "PM" else 0)
-    offset, zone = eastern(year, month, day)
-    local = datetime(
-        year, month, day, hour, int(stamp[5]), tzinfo=timezone(timedelta(seconds=offset))
-    )
-    traded = int(local.timestamp())
+    traded, offset, zone = stamp
+    status = str(data.get("marketStatus") or "").strip().lower()
+    closed = _regular_close(data.get("secondaryData"), traded)
 
     span = re.fullmatch(
         r"\$?([\d,.]+)\s*[-/]\s*\$?([\d,.]+)",
@@ -238,8 +310,11 @@ def read_nasdaq(
         day_low=ends[0] if ends else None,
         volume=round(volume) if volume is not None else None,
         points=tuple(points),
+        outside=OUTSIDE.get(status, ""),
+        close=closed[0] if closed else None,
+        close_time=closed[1] if closed else None,
     )
-    is_open = str(data.get("marketStatus") or "").strip().lower() in {"open", "market open"}
+    is_open = status in {"open", "market open"}
     return Snapshot("trading" if is_open else "closed", name, page, now, quote)
 
 
@@ -474,7 +549,9 @@ def facts(snapshot: Snapshot) -> list[Fact]:
     when = quote.when()
     read_at = quote.when(snapshot.checked)
 
-    def fact(key: str, title: str, value: float | str, unit: str, shown: str, field: str) -> Fact:
+    def fact(
+        key: str, title: str, value: float | str, unit: str, shown: str, period: str = when
+    ) -> Fact:
         return Fact.model_validate(
             {
                 "id": f"market.{key}",
@@ -483,8 +560,11 @@ def facts(snapshot: Snapshot) -> list[Fact]:
                 "value": value,
                 "unit": unit,
                 "as_filed": shown,
-                "period": when,
-                "quote": f"{field} for {quote.symbol} ({quote.name}, {quote.exchange})",
+                "period": period,
+                "quote": (
+                    f"{title}: {shown}, as given by {snapshot.source} "
+                    f"for {quote.symbol} ({quote.name}, {quote.exchange})"
+                ),
                 "context": f"{snapshot.source}: delayed, unofficial",
                 "outlet": snapshot.source,
                 "url": snapshot.page,
@@ -492,17 +572,16 @@ def facts(snapshot: Snapshot) -> list[Fact]:
             }
         )
 
-    def said(what: str, shown: str) -> str:
-        where = f"{quote.symbol} ({quote.name}, {quote.exchange})"
-        return f"{what}: {shown}, as given by {snapshot.source} for {where}"
-
     price = f"${quote.price:,.2f}"
+    last = f"Last share price, {quote.outside}" if quote.outside else "Last share price"
     out = [
-        fact(
-            "price", "Last share price", quote.price, "USD/share", price, said("Last price", price)
-        ),
-        fact("time", "Time of the last trade", when, "text", when, said("Last trade", when)),
+        fact("price", last, quote.price, "USD/share", price),
+        fact("time", "Time of the last trade", when, "text", when),
     ]
+    if quote.close is not None and quote.close_time is not None:
+        closed = f"${quote.close:,.2f}"
+        title = "Closing price of the last regular session"
+        out.append(fact("close", title, quote.close, "USD/share", closed, quote.closed))
     optional = (
         ("day_high", "Highest price in regular trading hours", quote.day_high, "USD/share"),
         ("day_low", "Lowest price in regular trading hours", quote.day_low, "USD/share"),
@@ -512,7 +591,7 @@ def facts(snapshot: Snapshot) -> list[Fact]:
     for key, title, value, unit in optional:
         if value is not None:
             shown = f"{value:,.0f}" if unit == "count" else f"${value:,.2f}"
-            out.append(fact(key, title, value, unit, shown, said(title, shown)))
+            out.append(fact(key, title, value, unit, shown))
     return out
 
 
