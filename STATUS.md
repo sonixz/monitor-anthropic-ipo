@@ -1,13 +1,13 @@
 # STATUS · monitor-anthropic-ipo
 
-> Where the project stands, verified. Last reviewed: 2026-11-16 · after loop-003
+> Where the project stands, verified. Last reviewed: 2026-11-16 · after loop-004
 
 ## Live
 
 | | |
 | --- | --- |
 | Site | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev |
-| Version | 0.4.2 (tag `v0.4.2`) |
+| Version | 0.5.0 (tag `v0.5.0`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |
@@ -16,14 +16,14 @@
 
 ## What works (checked on 2026-11-16)
 
-- Five panels on one page: VALUE, EV BRIDGE, CONTRACTS, GROWTH, LOSSES, and a sixth, MARKET, that appears with the first quote.
-- 141 numbers on the page, each a button that opens its source. Nine charts drawn by the server; every mark opens the same source card, and every value a chart draws is also in a table.
+- Nine panels on one page: VALUE, EV BRIDGE, SHARES, UNLOCK, CONTROL, CONTRACTS, GROWTH, LOSSES, TIMELINE; MARKET appears with the first quote and FILINGS with the SEC's list. A strip of key figures and the stage of the IPO at the top (Loop 004).
+- 207 numbers on the page, each a button that opens its source. Eleven charts drawn by the server; every mark opens the same source card, and every value a chart draws is also in a table.
 - On a phone (360 to 430 px): nothing scrolls sideways, tables included; a panel bar made for thumbs; source cards rise from the bottom; the tables behind the charts are folded until asked for.
 - The market panel in its four states (awaiting listing, trading, market closed, source unavailable), tested on recorded answers of the two sources, one of them a real answer with the market open. Live, the page says "awaiting listing" and shows no price.
 - The filings watch on test data: the list of filings, the notice of a newer prospectus, the final price read from a cover and refused in eight cases (another form, a preliminary cover, a blank price, a wrong total, and so on). The contact address appears in no log and on no page (tested).
-- 129 consistency checks pass at every rendering; the service refuses to start if one fails.
+- 159 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
-- CI on GitHub: format, lint, strict types, 110 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
+- CI on GitHub: format, lint, strict types, 120 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
 - Deploy and rollback on the machine: seven deployments on 2026-11-16, each healthy within seconds.
 - **Seen by the owner on a phone** (2026-11-16, version 0.4.2): asked to find what the company is worth, what it owes and how fast it grows, to check that nothing scrolls sideways and to open a source card, they reported that everything looked fine and made no remark. No time was recorded.
 

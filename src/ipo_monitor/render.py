@@ -21,7 +21,7 @@ from ipo_monitor.calc import PRICED, QUARTER_NAMES, QUARTERS, Calc, Term, comput
 from ipo_monitor.charts import Mark
 from ipo_monitor.edgar import Watch, batches, price_fact
 from ipo_monitor.facts import Fact, Facts
-from ipo_monitor.figures import Figures
+from ipo_monitor.figures import Figures, unlock_label, unlock_steps
 from ipo_monitor.market import Snapshot
 from ipo_monitor.market import facts as market_facts
 from ipo_monitor.reconcile import assert_consistent
@@ -140,6 +140,8 @@ class Numbers:
         tone = ""
         if plus and not isinstance(value, str) and value != 0:
             tone = " up" if value > 0 else " down"
+        if isinstance(value, str) and len(text) > 16:
+            tone = " long"  # words, not a figure: they may wrap
         return BUTTON.format(kind=kind, tone=tone, target=slug(ref), ref=ref, text=text)
 
     def text(self, ref: str, style: str = "") -> str:
@@ -281,6 +283,55 @@ class Page:
     filings: str = "off"  # off, ok or unavailable
 
 
+@dataclass(frozen=True)
+class Moment:
+    """One line of the timeline of the IPO."""
+
+    what: str  # in words; may hold a form name, shown as a label
+    state: str  # done, next or later
+    day: str = ""  # an ISO date read from EDGAR's list, or
+    ref: str = ""  # the id of a fact that holds the date (or what happens)
+    url: str = ""
+    count: int = 1  # filings of the same form in a row
+    last_day: str = ""  # the date of the last of them
+
+
+def timeline(watch: Watch | None, priced: bool, trading: bool) -> list[Moment]:
+    """The IPO from the first filing to the first lock-up step, in order.
+
+    Filings come from EDGAR's list when the watch has one, filings of one form in a row on one
+    line; otherwise from the document the page reads. Then the dates the press reported, and the
+    first step at which existing shares may be sold, as the filing words it.
+    """
+    moments: list[Moment] = []
+    filed = list(reversed(watch.filings)) if watch and watch.filings else []
+    for filing in filed:
+        last = moments[-1] if moments else None
+        if last is not None and last.what == filing.name:
+            moments[-1] = Moment(
+                last.what,
+                "done",
+                last.day,
+                url=last.url,
+                count=last.count + 1,
+                last_day=filing.filed,
+            )
+        else:
+            moments.append(Moment(filing.name, "done", filing.filed, url=filing.url))
+    if not filed:
+        moments.append(Moment("Form S-1/A, Amendment No. 2", "done", ref="doc.filed_date"))
+    moments.append(Moment("priced", "done" if priced else "next", ref="press.cnbc.pricing_date"))
+    moments.append(
+        Moment(
+            "first trade",
+            "done" if trading else ("next" if priced else "later"),
+            ref="press.cnbc.trading_date",
+        )
+    )
+    moments.append(Moment("first existing shares may be sold", "later", ref="unlock.01"))
+    return moments
+
+
 def _environment() -> Environment:
     return Environment(
         loader=PackageLoader("ipo_monitor", "templates"),
@@ -336,6 +387,11 @@ def render_page(
         "newer": filings.newer_than(document.accession) if filings else None,
         "listed": batches(filings.filings) if filings else (),
         "day": fmt.iso_date,
+        "moments": timeline(filings, priced, quote is not None),
+        "unlock": [
+            (key, unlock_label(facts.text(key + ".when"))) for key in unlock_steps(facts.ids())
+        ],
+        "banks": facts.text("underwriting.banks").split("; "),
         "market": market,
         "quote": quote,
         "priced": priced,

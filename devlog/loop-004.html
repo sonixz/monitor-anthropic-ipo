@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 004 — A richer front: the IPO at a glance, where the shares go, when they unlock, who controls the company · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 004 — A richer front: the IPO at a glance, where the shares go, when they unlock, who controls the company</h1>
+<p class="lead">2026-11-16 · More of the filing on the page, without losing what the owner likes: a strip of key figures and the stage of the IPO at the top, a panel bar that follows the reader, and four new panels (where the offered shares go, when existing shares may be sold, who controls the company, and the timeline). Every new number opens its source. Version 0.5.0, live at <a href="https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev">agmgd-on-ipo-monitor-ba4eccd0.fly.dev</a>.</p>
+
+<h2>Why</h2>
+<blockquote>
+<p>Could we enrich the header a little, and the navigation? I like the site right now, it is really good: dense, clean, very code-like. Could we put more stats at the top, the expected date? Maybe a bar chart of the official distribution: where do these 825 million shares go? What other information could we add that we are able to validate? And maybe a little more visual, not necessarily branding.</p>
+<p>Do you have blockers for 1 to 6? Let's go. If it is all information you can validate and that is in the document, that is fine.</p>
+</blockquote>
+<p><small>The owner spoke in French; their words are reworded in English, with the meaning unchanged.</small></p>
+
+<h2>What changed</h2>
+<div class="pair">
+  <figure><img src="img/loop-004-phone.png" alt="The first screen on a phone: the project mark, a strip of six key figures, the stage of the IPO, the panel bar, and the value at the IPO price."><figcaption>Phone, first screen: the strip, the stage bar, and the value still visible without scrolling.</figcaption></figure>
+  <figure><img src="img/loop-004-unlock-phone.png" alt="The UNLOCK panel on a phone: 23 columns grouped by the event they count from, with three peaks of 1.7, 3.0 and 1.9 billion shares."><figcaption>UNLOCK: the filing's schedule, step by step.</figcaption></figure>
+</div>
+<figure><img src="img/loop-004-desktop.png" alt="The top of the page on a desktop: the strip of key figures across the width, the stage bar and the panel bar with ten panels."><figcaption>Desktop: the strip, the stage bar and the panel bar with its new panels.</figcaption></figure>
+<ul>
+  <li><strong>At the top:</strong> price range, shares offered, amount raised, value at the range, and the reported dates of pricing and first trade. Below, the stage reached: filed, priced, trading, first unlock. It moves on events the service sees (a final prospectus, a first quote), not on a clock.</li>
+  <li><strong>SHARES:</strong> the 825 million shares of the IPO are 801.4 million new shares (the money goes to the company) and 23.6 million sold by existing stockholders (the money goes to them). On top: the underwriters' option (123.8 million) and the private placement (351.4 million at the middle of the range, to Google, NVIDIA, AMD, Broadcom, Micron, Microsoft and TSMC). After the IPO: existing holders 91.0%, IPO buyers 6.3%, private placement 2.7%. The 22 banks are listed; how many shares each takes is blank in this filing. Insiders may buy up to $303 million, not binding.</li>
+  <li><strong>UNLOCK:</strong> 23 steps, from up to 316 million shares on the first trading day to the big steps of 1.7, 3.0 and 1.9 billion after results releases. The table keeps the filing's wording for each step.</li>
+  <li><strong>CONTROL:</strong> the single Class F share of the co-founders' company holds 50.1% of the votes; all Class A shares together 49.9%, of which the shares sold in the IPO about 5.5%. The Long-Term Benefit Trust elects a majority of the board through Class T; Class N has no vote; Class E votes on limited matters.</li>
+  <li><strong>TIMELINE:</strong> the filings from the SEC's list, from the draft of June 1 to the documents for investors of November 12, then the reported pricing and first trade, then the first unlock.</li>
+  <li><strong>A mark of the project's own</strong>: a frame and a line climbing in steps. Nothing from Anthropic's logo or colors.</li>
+</ul>
+<div class="pair">
+  <figure><img src="img/loop-004-shares-desktop.png" alt="The SHARES panel on a desktop: four columns for new shares, sellers, option and placement, the table, the holders after the IPO and the list of banks."><figcaption>SHARES.</figcaption></figure>
+  <figure><img src="img/loop-004-control-phone.png" alt="The CONTROL panel on a phone: a bar split between Class F, Class A and the IPO shares, and the rights of Classes T, N and E."><figcaption>CONTROL.</figcaption></figure>
+</div>
+<figure><img src="img/loop-004-timeline-desktop.png" alt="The TIMELINE panel: Form DRS on June 1, five amendments, Form S-1 on October 26, two amendments, five documents on November 12, then priced and first trade as reported, then the first unlock."><figcaption>TIMELINE, from the SEC's list.</figcaption></figure>
+
+<h2>How each figure is checked</h2>
+<p>56 new facts are copied by the extraction script with their page and passage. Thirty new consistency checks run at every rendering: the banks' total equals the shares sold by the company and by existing stockholders (825,000,000 both ways); existing holders, IPO buyers and the private placement add up to all shares after the IPO (two shares apart, within the allowed ten); the percentages the filing states match the arithmetic; Class F and Class A make 100% of the votes; each unlock step is smaller than the shares outstanding.</p>
+<p>One thing was left out on purpose: a total of the unlock steps. They add up to 15.5 billion shares, more than exist after the IPO even with options and RSUs, and the filing does not say they add up. The page shows each step's maximum and says so.</p>
+
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Format, lint, strict types</td><td>passed</td><td>ruff, mypy, locally.</td></tr>
+  <tr><td>Unit tests, local</td><td>passed</td><td>120, six of them new (facts, arithmetic by hand, step labels, timeline, panels).</td></tr>
+  <tr><td>Real-browser tests, local</td><td>passed</td><td>13 in Chromium, at 360, 390 and 430 px and on a desktop. Two were adjusted: the panel bar may scroll inside itself, and on a phone the final price is tapped in the strip.</td></tr>
+  <tr><td>Looked at in a browser</td><td>passed</td><td>Each new panel at 390 and 1280 px; the first two layouts of UNLOCK and SHARES were too narrow and were stacked.</td></tr>
+  <tr><td>CI, live deployment, real-browser tests against the live site</td><td>see below</td><td>Added after the release.</td></tr>
+  <tr><td>The owner looks at the new page</td><td>not_run</td><td>Only the owner can.</td></tr>
+</table>
+
+<h2>What is left</h2>
+<ul>
+  <li>The owner's look at the new front, and answers on D-028 to D-031.</li>
+  <li>The allocation among banks and the final price, from the final prospectus (watched).</li>
+  <li>The Nasdaq source at night; the first trade, reported for November 19.</li>
+</ul>
+
+<p class="nav">Mission: <code>loops/004-mission.md</code> · Report: <code>loops/004-report.json</code></p>
+</main>
+</body>
+</html>

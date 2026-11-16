@@ -542,10 +542,10 @@ def test_the_page_after_the_close(facts: Facts) -> None:
     assert [text for text in checked.loose_text if re.search(r"\d", text)] == []
     for button in checked.buttons:
         assert button.get("popovertarget") in checked.popovers
-    # In session the page says none of this.
-    assert "after the close" not in render_page(facts, release="test", market=day).html.replace(
-        "before the open and after the close", ""
-    )
+    # In session the page says none of this (the lock-up table has its own "after the close").
+    html = render_page(facts, release="test", market=day).html
+    top = html[html.index("<dt>market</dt>") : html.index('id="value"')]
+    assert "after the close" not in top.replace("before the open and after the close", "")
 
 
 def test_the_line_of_the_day_ends_at_the_last_trade() -> None:

@@ -35,7 +35,8 @@ OVERFLOW = """() => {
   document.querySelectorAll('main *, header *, nav *, footer *').forEach((el) => {
     const r = el.getBoundingClientRect();
     const out = r.right > innerWidth + 1 || r.left < -1;
-    if (r.width && out) wide.push(el.tagName + '.' + el.className);
+    // The panel bar scrolls by itself, by design: its links may sit past the edge.
+    if (r.width && out && !el.closest('.keys')) wide.push(el.tagName + '.' + el.className);
   });
   const cut = [];
   document.querySelectorAll('svg.chart-svg').forEach((svg) => {
@@ -51,6 +52,8 @@ OVERFLOW = """() => {
   document.querySelectorAll('main table, main figure, main .panel').forEach((el) => {
     if (el.scrollWidth > el.clientWidth + 1) scrolling.push(el.tagName + '.' + el.className);
   });
+  const bar = document.querySelector('.keys').getBoundingClientRect();
+  if (bar.right > innerWidth + 1) wide.push('the panel bar itself');
   return { wide, cut, scrolling, page: document.documentElement.scrollWidth };
 }"""
 
@@ -475,7 +478,8 @@ def test_a_final_prospectus_on_a_phone(browser: Browser, final_url: str) -> None
     assert "424B4" in link.inner_text()
 
     # The price on the cover is the price of the page, and its card quotes the cover.
-    page.locator('.status button[data-ref="pricing.ipo_price"]').tap()
+    # On a phone the price is in the strip at the top (the offer line is hidden there).
+    page.locator('.glance button[data-ref="pricing.ipo_price"]').tap()
     card = page.locator("#src-pricing-ipo-price")
     expect(card).to_be_visible()
     text = card.inner_text()

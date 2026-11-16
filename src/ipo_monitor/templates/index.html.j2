@@ -26,20 +26,41 @@
 
 <header class="top">
   <div class="brand">
-    <span class="prompt" aria-hidden="true">&gt;_</span>
-    <h1>ANT IPO MONITOR</h1>
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
+    <h1><span class="w1">ANT</span> <span class="w2">IPO</span> <span class="w3">MONITOR</span></h1>
   </div>
   <p class="tagline">Anthropic's IPO in numbers you can trace.</p>
   <p class="disclaimer">Unofficial · not affiliated with Anthropic · not investment advice</p>
 </header>
 
+<section class="glance" aria-label="The IPO at a glance">
+  <dl class="stats">
+    <div><dt>{% if priced %}IPO price{% else %}price range{% endif %}</dt><dd>{% if priced %}{{ n(price_ref) }}{% else %}{{ n("offering.price_low") }}<span class="to">–</span>{{ n("offering.price_high") }}{% endif %}</dd></div>
+    <div><dt>shares offered</dt><dd>{{ n("offering.shares_total", "m") }}</dd></div>
+    <div><dt>raises</dt><dd>{% if priced %}{{ n("offering.size.final") }}{% else %}{{ n("offering.size.low") }}<span class="to">–</span>{{ n("offering.size.high") }}{% endif %}</dd></div>
+    <div><dt>value</dt><dd>{% if priced %}{{ n("value.mcap_out.final") }}{% else %}{{ n("value.mcap_out.low") }}<span class="to">–</span>{{ n("value.mcap_out.high") }}{% endif %}</dd></div>
+    <div><dt>prices</dt><dd>{{ n("press.cnbc.pricing_date", "short") }}</dd></div>
+    <div><dt>trades</dt><dd>{{ n("press.cnbc.trading_date", "short") }}</dd></div>
+  </dl>
+  {% set stages = moments[-4:] %}
+  <ol class="stages" aria-label="Stage of the IPO">
+    {% for m in stages %}
+    <li class="st-{{ m.state }}"><span class="dot" aria-hidden="true"></span><span class="st-what">{% if m.ref == "unlock.01" %}unlock{% elif m.state == "done" and loop.first %}filed{% elif m.what == "first trade" %}trading{% else %}{{ L(m.what) }}{% endif %}</span><span class="vh"> ({{ "done" if m.state == "done" else ("next" if m.state == "next" else "to come") }})</span></li>
+    {% endfor %}
+  </ol>
+</section>
+
 <nav class="keys" aria-label="Panels">
   {% if quote %}<a href="#market" class="desk"><kbd aria-hidden="true">m</kbd>market</a>{% endif %}
   <a href="#value"><kbd aria-hidden="true">v</kbd>value</a>
   <a href="#ev"><kbd aria-hidden="true">e</kbd>ev<span class="wide"> bridge</span></a>
+  <a href="#shares"><kbd aria-hidden="true">s</kbd>shares</a>
+  <a href="#unlock"><kbd aria-hidden="true">u</kbd>unlock</a>
+  <a href="#control"><kbd aria-hidden="true">k</kbd>control</a>
   <a href="#contracts"><kbd aria-hidden="true">c</kbd>contracts</a>
   <a href="#growth"><kbd aria-hidden="true">g</kbd>growth</a>
   <a href="#losses"><kbd aria-hidden="true">l</kbd>losses</a>
+  <a href="#timeline"><kbd aria-hidden="true">t</kbd>timeline</a>
   <button type="button" class="help-key" popovertarget="help" aria-label="Help"><kbd aria-hidden="true">?</kbd><span class="wide">help</span></button>
 </nav>
 
@@ -48,8 +69,8 @@
 <section class="status" aria-label="Where the data comes from">
   <dl>
     <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
-    <div><dt>offer</dt><dd>{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
-    <div><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} (applied) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
+    <div class="dup"><dt>offer</dt><dd>{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
+    <div class="dup"><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} (applied) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
     <div><dt>filings</dt><dd>
       {%- if not filings -%}
         not watched · this page does not check the SEC for new filings
@@ -251,6 +272,91 @@
     </tbody>
   </table>
   <p class="aside">The faster revenue grows, the further apart these three measures sit. Which one fits depends on whether the growth lasts.</p>
+</section>
+
+<section class="panel" id="shares" tabindex="-1" aria-labelledby="shares-h">
+  <h2 id="shares-h"><kbd aria-hidden="true">s</kbd> SHARES <span class="q">Where do the offered shares go?</span></h2>
+  <div class="stacked">
+    <figure class="chart">
+      <figcaption>Shares in the deal, by where they come from</figcaption>
+      {{ chart("deal.shares") }}
+    </figure>
+    <details class="fold" open>
+    <summary>The same, in figures</summary>
+    <table class="lines bars">
+      <caption class="vh">Shares in the deal</caption>
+      <tbody>
+        <tr><th scope="row">New shares sold by the company</th><td>{{ n("offering.shares_company", "m") }}</td><td class="barcell">{{ bar(n.share("offering.shares_company", "deal.shares_all"), "fg-base") }}</td></tr>
+        <tr><th scope="row">Sold by existing stockholders</th><td>{{ n("offering.shares_selling", "m") }}</td><td class="barcell">{{ bar(n.share("offering.shares_selling", "deal.shares_all"), "fg-base") }}</td></tr>
+        <tr class="sum"><th scope="row"><span class="op">=</span> the IPO, taken by the underwriters</th><td>{{ n("underwriting.total", "m") }}</td><td class="barcell"></td></tr>
+        <tr><th scope="row"><span class="op">+</span> underwriters' option, if demand allows</th><td>{{ n("offering.greenshoe", "m") }}</td><td class="barcell">{{ bar(n.share("offering.greenshoe", "deal.shares_all"), "fg-mid") }}</td></tr>
+        <tr><th scope="row"><span class="op">+</span> private placement, at the middle of the range</th><td>{{ n("offering.private_placement_shares_mid", "m") }}</td><td class="barcell">{{ bar(n.share("offering.private_placement_shares_mid", "deal.shares_all"), "fg-far") }}</td></tr>
+        <tr class="sum"><th scope="row"><span class="op">=</span> all shares in the deal</th><td>{{ n("deal.shares_all", "m") }}</td><td class="barcell"></td></tr>
+      </tbody>
+    </table>
+    </details>
+  </div>
+  <p class="aside">The money for the new shares goes to the company; the money for the shares of existing stockholders goes to them. The private placement is sold outside the IPO, at the IPO price, to {{ n("placement.buyers") }}, for {{ n("offering.private_placement") }}.</p>
+
+  <h3>Who holds the shares after the IPO</h3>
+  {{ stack([(n.share("holders.existing_after", "shares.total_after"), "fg-base"), (n.share("holders.new_after", "shares.total_after"), "fg-pos"), (n.share("offering.private_placement_shares_mid", "shares.total_after"), "fg-far")]) }}
+  <table class="lines">
+    <tbody>
+      <tr><th scope="row"><span class="sw fg-base" aria-hidden="true"></span>Existing stockholders</th><td>{{ n("holders.existing_after") }} · {{ n("holders.existing_after_pct", "one") }}</td></tr>
+      <tr><th scope="row"><span class="sw fg-pos" aria-hidden="true"></span>Buyers in the IPO</th><td>{{ n("holders.new_after") }} · {{ n("holders.new_after_pct", "one") }}</td></tr>
+      <tr><th scope="row"><span class="sw fg-far" aria-hidden="true"></span>Private placement buyers</th><td>{{ n("offering.private_placement_shares_mid") }} · {{ n("holders.placement_after_pct", "one") }}</td></tr>
+      <tr class="sum"><th scope="row"><span class="op">=</span> all shares after the IPO</th><td>{{ n("shares.total_after") }}</td></tr>
+    </tbody>
+  </table>
+
+  <h3>The banks</h3>
+  <p class="banks">{% for bank in banks %}<span class="bank">{{ bank }}</span>{% endfor %}</p>
+  <p class="aside">The underwriters take {{ n("underwriting.total", "m") }} shares together. How many each bank takes is left blank in this filing; it is filled in the final prospectus. Directors and entities linked to them have said they may buy up to {{ n("offering.insider_interest", "m") }} of shares in the IPO; that is not a commitment.</p>
+</section>
+
+<section class="panel" id="unlock" tabindex="-1" aria-labelledby="unlock-h">
+  <h2 id="unlock-h"><kbd aria-hidden="true">u</kbd> UNLOCK <span class="q">When may existing holders sell?</span></h2>
+  <p class="lede">Most shares that exist before the IPO cannot be sold at once. The filing gives a schedule: at each step, up to this many shares become available for sale.</p>
+  <div class="stacked">
+    <figure class="chart">
+      <figcaption>Shares that may be sold, step by step</figcaption>
+      {{ chart("unlock.steps") }}
+    </figure>
+    <details class="fold" open>
+    <summary>The filing's table</summary>
+    <table class="lines unlock">
+      <caption class="vh">Shares eligible for sale after the IPO</caption>
+      <tbody>
+        {% for key, (short, event) in unlock %}
+        <tr><th scope="row"><span class="step" data-label>{{ event }} · {{ short }}</span> {{ n(key ~ ".when") }}</th><td>{{ n(key, "m") }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </details>
+  </div>
+  <p class="aside">Days count from the date of the final prospectus, not known yet, or from a results release. <span data-label>R</span> is the release day as the filing defines it; <span data-label>R*</span> is the earlier of a release and a day counted from the prospectus. Each step is a maximum, and the filing does not say the steps add up, so no total is given here.</p>
+</section>
+
+<section class="panel" id="control" tabindex="-1" aria-labelledby="control-h">
+  <h2 id="control-h"><kbd aria-hidden="true">k</kbd> CONTROL <span class="q">Who controls the company?</span></h2>
+  <h3>Votes on matters put to stockholders</h3>
+  {{ stack([(n.raw("control.class_f_pct"), "fg-neg"), (n.raw("control.class_a_pct") - n.raw("control.ipo_votes_pct"), "fg-base"), (n.raw("control.ipo_votes_pct"), "fg-pos")]) }}
+  <table class="lines">
+    <tbody>
+      <tr><th scope="row"><span class="sw fg-neg" aria-hidden="true"></span>Class F, one share held by the co-founders' company</th><td>{{ n("control.class_f_pct", "one") }}</td></tr>
+      <tr><th scope="row"><span class="sw fg-base" aria-hidden="true"></span>Class A, all shares together, {{ n("control.class_a") }} vote each</th><td>{{ n("control.class_a_pct", "one") }}</td></tr>
+      <tr><th scope="row"><span class="sw fg-pos" aria-hidden="true"></span>of which the shares sold in the IPO</th><td>{{ n("control.ipo_votes_pct", "one") }}</td></tr>
+    </tbody>
+  </table>
+  <h3>The other classes</h3>
+  <table class="lines words">
+    <tbody>
+      <tr><th scope="row">Class T, held by the Long-Term Benefit Trust</th><td>elects {{ n("control.class_t") }} of the board</td></tr>
+      <tr><th scope="row">Class N, strategic partners and the private placement</th><td>{{ n("control.class_n") }}</td></tr>
+      <tr><th scope="row">Class E, employees</th><td>votes {{ n("control.class_e") }}</td></tr>
+    </tbody>
+  </table>
+  <p class="aside">Shares bought in the IPO are Class A. The Class F share's voting power is fixed by the company's charter, and the trust elects a majority of the board through Class T, apart from these votes.</p>
 </section>
 
 <section class="panel" id="contracts" tabindex="-1" aria-labelledby="contracts-h">
@@ -466,6 +572,19 @@
   </div>
 </section>
 
+<section class="panel" id="timeline" tabindex="-1" aria-labelledby="timeline-h">
+  <h2 id="timeline-h"><kbd aria-hidden="true">t</kbd> TIMELINE <span class="q">Where is the IPO now?</span></h2>
+  <ol class="tl">
+    {% for m in moments %}
+    <li class="tl-{{ m.state }}">
+      <span class="tl-day">{% if m.day and m.count > 1 and m.last_day != m.day %}{{ L(day(m.day, "short")) }} <span class="to">→</span> {{ L(day(m.last_day)) }}{% elif m.day %}{{ L(day(m.day)) }}{% elif m.ref == "unlock.01" %}first trading day{% else %}{{ n(m.ref) }}{% endif %}</span>
+      <span class="tl-what">{% if m.url %}<a href="{{ m.url }}" rel="noopener" data-label>{{ m.what }}</a>{% else %}{{ L(m.what) }}{% endif %}{% if m.count > 1 %} <span class="what" data-label>× {{ m.count }}</span>{% endif %}{% if m.ref.startswith("press.") %} <span class="what">(reported)</span>{% elif m.ref == "unlock.01" %} <span class="what">· up to {{ n("unlock.01", "m") }} shares</span>{% endif %}</span>
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="aside">{% if listed %}Filings come from the SEC's list, read by this page; filings of the same form in a row share a line.{% else %}The SEC's list of filings is not read by this page right now; the line shows the filing the figures come from.{% endif %} The dates of pricing and of the first trade are those reported by the press.</p>
+</section>
+
 {% if listed %}
 <section class="panel filed" id="filings" aria-labelledby="filings-h" tabindex="-1">
   <h2 id="filings-h"><kbd aria-hidden="true">f</kbd> FILINGS <span class="q">What has the company filed with the SEC?</span></h2>
@@ -495,9 +614,13 @@
     {% if quote %}<div><dt><kbd>m</kbd></dt><dd>market</dd></div>{% endif %}
     <div><dt><kbd>v</kbd></dt><dd>value</dd></div>
     <div><dt><kbd>e</kbd></dt><dd>enterprise value bridge</dd></div>
+    <div><dt><kbd>s</kbd></dt><dd>shares</dd></div>
+    <div><dt><kbd>u</kbd></dt><dd>unlock</dd></div>
+    <div><dt><kbd>k</kbd></dt><dd>control</dd></div>
     <div><dt><kbd>c</kbd></dt><dd>contracts</dd></div>
     <div><dt><kbd>g</kbd></dt><dd>growth</dd></div>
     <div><dt><kbd>l</kbd></dt><dd>losses</dd></div>
+    <div><dt><kbd>t</kbd></dt><dd>timeline</dd></div>
     {% if listed %}<div><dt><kbd>f</kbd></dt><dd>filings</dd></div>{% endif %}
     <div><dt><kbd>Esc</kbd></dt><dd>close a source card</dd></div>
   </dl>

@@ -6,6 +6,7 @@ The drawing itself is in `charts.py`. Everything here goes through
 
 from __future__ import annotations
 
+import re
 from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING
 
@@ -35,6 +36,75 @@ def bridge(at: str) -> tuple[tuple[str, str], ...]:
         ("debt.credit_facility_drawn", "plus"),
         (f"ev.enterprise_value.{at}", "total"),
     )
+
+
+MILLION = 1e6
+DEAL_PARTS = (
+    ("offering.shares_company", "New shares sold by the company"),
+    ("offering.shares_selling", "Shares sold by existing stockholders"),
+    ("offering.greenshoe", "Underwriters' option to buy more"),
+    ("offering.private_placement_shares_mid", "Private placement, at the assumed price"),
+)
+DEAL_SHORT = (
+    ("offering.shares_company", "company", "new"),
+    ("offering.shares_selling", "sellers", "sellers"),
+    ("offering.greenshoe", "option", "option"),
+    ("offering.private_placement_shares_mid", "placement", "placement"),
+)
+# What each group of lock-up steps counts from: words of the filing, and the chart's short name.
+UNLOCK_EVENTS = (
+    ("fiscal quarter ending September 30, 2027", "Q3"),
+    ("fiscal quarter ending June 30, 2027", "Q2 27"),
+    ("Q2 Earnings Release Date", "Q2 27"),
+    ("fiscal quarter ending March 31, 2027", "Q1 27"),
+    ("Q1 Earnings Release Date", "Q1 27"),
+    ("fiscal year ending December 31, 2026", "FY26"),
+    ("FY26 Earnings Release Date", "FY26"),
+    ("date of this prospectus", "prospectus"),
+)
+
+
+def unlock_steps(ids: list[str]) -> list[str]:
+    """The lock-up steps in the filing's order: unlock.01, unlock.02..."""
+    return sorted(key for key in ids if re.fullmatch(r"unlock\.\d{2}", key))
+
+
+def unlock_label(when: str) -> tuple[str, str]:
+    """A short label for a step and the event it counts from, both read from its wording.
+
+    "27th day after the FY26 Earnings Release Date" -> ("27", "FY26"). The day of a release is
+    "R"; a step at "the earlier of" a release and a day after the prospectus is "R*".
+    """
+    event = next((name for words, name in UNLOCK_EVENTS if words in when), "")
+    if not event:
+        raise ValueError(f"lock-up step not understood: {when}")
+    if when.startswith("The earlier of"):
+        return "R*", event
+    day = re.match(r"(\d+)(?:st|nd|rd|th) day after", when)
+    if day:
+        return day.group(1), event
+    return ("1" if when.startswith("The first trading day") else "R"), event
+
+
+def unlock_groups(labels: list[tuple[str, str]]) -> list[tuple[str, int, int]]:
+    """Consecutive steps that count from the same event, as (name, first slot, last slot)."""
+    groups: list[tuple[str, int, int]] = []
+    for slot, (_, event) in enumerate(labels):
+        if groups and groups[-1][0] == event:
+            groups[-1] = (event, groups[-1][1], slot)
+        else:
+            groups.append((event, slot, slot))
+    return groups
+
+
+def shares_m(value: float) -> str:
+    """An axis tick in millions of shares."""
+    return f"{value:,.0f}M"
+
+
+def shares_b(value: float) -> str:
+    """An axis tick in billions of shares, from millions."""
+    return "0" if value == 0 else f"{value / 1000:,.1f}B"
 
 
 def dollars_b(value: float) -> str:
@@ -82,6 +152,8 @@ class Figures:
             "contracts.due_by_year": self._due_by_year,
             "losses.by_year": self._loss_by_year,
             "market.day": self._market_day,
+            "deal.shares": self._deal_shares,
+            "unlock.steps": self._unlock_steps,
         }
         chart = builders[name]()
         self.drawn[name] = chart
@@ -297,6 +369,45 @@ class Figures:
             aria=(
                 "Share price through the trading day, as a line. The last price, the range of "
                 "the day and the volume are in the table."
+            ),
+        )
+
+    def _deal_shares(self) -> Chart:
+        marks = [self.n.mark(ref, name, "m", divide=MILLION) for ref, name in DEAL_PARTS]
+        return charts.columns(
+            marks,
+            xlabels=[short for _, _, short in DEAL_SHORT],
+            tick_fmt=shares_m,
+            label=[0, 1, 2, 3],
+            apart=[2],
+            height=154.0,
+            aria=(
+                "Shares in the deal, by where they come from: new shares from the company, "
+                "shares from existing stockholders, the underwriters' option (muted: used only "
+                "if demand allows) and the private placement. The values are in the table."
+            ),
+        )
+
+    def _unlock_steps(self) -> Chart:
+        steps = unlock_steps(self.n.facts.ids())
+        marks = [
+            self.n.mark(key, f"Step {index}: {self.n.text(key + '.when')}", "m", divide=MILLION)
+            for index, key in enumerate(steps, start=1)
+        ]
+        labels = [unlock_label(self.n.facts.text(key + ".when")) for key in steps]
+        groups = unlock_groups(labels)
+        biggest = sorted(range(len(marks)), key=lambda i: -marks[i].value)[:3]
+        return charts.columns(
+            marks,
+            xlabels=[""] * len(labels),  # too many for a phone: the table names each step
+            tick_fmt=shares_b,
+            label=biggest,
+            groups=groups,
+            height=168.0,
+            aria=(
+                "Shares that may be sold at each step after the IPO, as the filing's table "
+                "gives them, each a maximum. Steps are grouped by the event they count from. "
+                "The values and the filing's wording are in the table."
             ),
         )
 

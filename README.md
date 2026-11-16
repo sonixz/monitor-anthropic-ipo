@@ -13,8 +13,8 @@ from, or the arithmetic behind it.
 > **Unofficial.** Not affiliated with Anthropic. **Not investment advice.**
 
 <p>
-  <img src="devlog/img/loop-002-desktop.png" alt="The dashboard on a desktop: value at the IPO price, enterprise value bridge, charts" width="66%">
-  <img src="devlog/img/loop-002-phone-source.png" alt="The dashboard on a phone, with the source card of a number open" width="25%">
+  <img src="devlog/img/loop-004-desktop.png" alt="The dashboard on a desktop: the strip of key figures, the stage of the IPO, the panel bar and the value at the IPO price" width="66%">
+  <img src="devlog/img/loop-004-phone.png" alt="The dashboard on a phone: the strip of key figures and the value at the IPO price on the first screen" width="25%">
 </p>
 
 ## What the page shows
@@ -27,6 +27,10 @@ from, or the arithmetic behind it.
 | **GROWTH** | How fast is it growing, and what does the growth cost? |
 | **LOSSES** | Is the huge loss real spending? |
 | **MARKET** | What is the market paying now? Appears by itself with the first trade |
+| **SHARES** | Where do the offered shares go, and who holds the shares after the IPO? |
+| **UNLOCK** | When may existing holders sell? The filing's schedule, step by step |
+| **CONTROL** | Who controls the company? Votes by class, the trust's board seats |
+| **TIMELINE** | Where is the IPO now? Filings in order, then the reported dates |
 | **FILINGS** | What has the company filed with the SEC? Appears when the filings watch is on |
 
 Each number carries a label that says where it comes from:
@@ -42,7 +46,7 @@ Each number carries a label that says where it comes from:
 
 - The owner saves the filing from sec.gov. A script copies each figure with its page and the
   exact passage into `data/facts/`.
-- At startup the service checks that the figures agree with each other (129 checks), computes
+- At startup the service checks that the figures agree with each other (159 checks), computes
   the derived values and draws one page with its charts. If a check fails, it does not start.
 - Every few minutes the service asks a public quote service for the share price. Until the stock
   trades, the page says "awaiting listing" and shows no price.

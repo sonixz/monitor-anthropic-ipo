@@ -45,6 +45,9 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data
   loosen a check to make a document pass. The contact address (`SEC_CONTACT`) goes to sec.gov
   hosts only and is never printed: not in a log, not in an error message, not in a test output.
   Index fixtures with `TEST` in their name are invented; `s1a2-cover.html` is a real excerpt.
+- **Deal structure** (Loop 004): underwriters, holders, voting by class and the lock-up schedule
+  come from `_structure` in `extract.py`. Lock-up steps keep the filing's wording and are never
+  summed or dated: the filing gives each as a maximum, counted from events not dated yet.
 - Layout breakpoints are container queries on `.panel`, not media queries: a panel is as narrow
   on a laptop with two panels side by side as on a phone.
 - All user-facing text is in English. The owner's words are given in English, reworded.

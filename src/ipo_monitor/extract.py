@@ -399,6 +399,7 @@ def extract(filing: Filing) -> list[Fact]:
     _statements(c)
     _metrics(c)
     _commitments(c)
+    _structure(c)
     return c.facts
 
 
@@ -1155,6 +1156,253 @@ def _commitments(c: Collector) -> None:
         ],
         section=section,
     )
+
+
+UNLOCK_SHARES_RE = re.compile(r"^Up to ([\d.]+) (million|billion) shares of Class A common stock")
+
+
+def _structure(c: Collector) -> None:
+    """Who gets the offered shares, when existing shares may be sold, who controls the company."""
+    f = c.filing
+
+    # The underwriters and the total they take. Their allocation is blank before pricing.
+    section = "Underwriting"
+    start = f.index_of(r"^Underwriters \| Number of Shares of Class A Common Stock$")
+    names: list[str] = []
+    for item in f.items[start + 1 : start + 60]:
+        if item.kind != "row":
+            break
+        if item.cells[0] == "Total":
+            raw = _first(r"^([\d,]+)$", item.cells[1])
+            c.add(
+                "underwriting.total",
+                "Shares the underwriters take, all banks together",
+                float(raw.replace(",", "")),
+                "shares",
+                f"{raw} shares",
+                page=item.page,
+                quote=item.text,
+                section=section,
+            )
+            break
+        if len(item.cells) != 1:
+            raise ExtractionError(f"underwriter row with an allocation: {item.text}")
+        names.append(item.cells[0])
+    else:
+        raise ExtractionError("underwriting table: no total row")
+    if len(names) < 10:
+        raise ExtractionError(f"underwriting table: only {len(names)} names")
+    c.add(
+        "underwriting.banks",
+        "Underwriters named in the filing",
+        "; ".join(names),
+        "text",
+        "; ".join(names),
+        page=f.items[start].page,
+        quote=f"Underwriters: {'; '.join(names)}. Their number of shares is left blank.",
+        section=section,
+    )
+
+    # Who holds the shares after the offering.
+    section = "Dilution"
+    hit = f.sentence(
+        r"by existing stockholders to be reduced to ([\d,]+) shares, or approximately "
+        r"([\d.]+)% of the total"
+    )
+    c.count(
+        "holders.existing_after",
+        "Shares held by existing stockholders after the IPO",
+        hit,
+        1,
+        section=section,
+        suffix=" shares",
+    )
+    c.count(
+        "holders.existing_after_pct",
+        "Share of all shares held by existing stockholders",
+        hit,
+        2,
+        section=section,
+        unit="percent",
+        suffix="%",
+    )
+    hit = f.sentence(
+        r"increase the number of shares held by new investors to ([\d,]+) shares, or "
+        r"approximately ([\d.]+)%"
+    )
+    c.count(
+        "holders.new_after",
+        "Shares held by new investors after the IPO",
+        hit,
+        1,
+        section=section,
+        suffix=" shares",
+    )
+    c.count(
+        "holders.new_after_pct",
+        "Share of all shares held by new investors",
+        hit,
+        2,
+        section=section,
+        unit="percent",
+        suffix="%",
+    )
+
+    # The private placement's buyers, and the insiders who may buy in the IPO.
+    section = "Underwriting — Concurrent Private Placement"
+    hit = f.sentence(r"Each of (Google LLC, [^.]*?) has entered into an agreement with us")
+    c.add(
+        "placement.buyers",
+        "Buyers of the private placement",
+        hit.match.group(1),
+        "text",
+        hit.match.group(1),
+        page=hit.page,
+        quote=hit.quote,
+        section=section,
+    )
+    hit = f.sentence(
+        r"Certain members of our board of directors and entities affiliated or associated with "
+        r"them have indicated an interest in purchasing shares of our Class A common stock in "
+        r"this offering at the initial public offering price at an aggregate purchase price of "
+        r"up to \$([\d,]+) million"
+    )
+    c.millions(
+        "offering.insider_interest",
+        "Insiders' indicated interest in buying IPO shares (not binding)",
+        hit,
+        1,
+        section="Prospectus cover",
+    )
+
+    # Who controls the company.
+    section = "Description of Capital Stock"
+    hit = f.sentence(
+        r"Each share of Class A common stock is entitled to (one) vote and shares of "
+        r"Class N common stock have (no voting rights)"
+    )
+    c.add(
+        "control.class_a",
+        "Votes per Class A share",
+        1.0,
+        "count",
+        hit.match.group(1),
+        page=hit.page,
+        quote=hit.quote,
+        section=section,
+    )
+    c.add(
+        "control.class_n",
+        "Votes of Class N shares",
+        hit.match.group(2),
+        "text",
+        hit.match.group(2),
+        page=hit.page,
+        quote=hit.quote,
+        section=section,
+    )
+    hit = f.sentence(
+        r"Class F common stock, which will be held by the Founder LLC, will be entitled "
+        r"to an aggregate number of votes that equals ([\d.]+)% of the total voting"
+    )
+    c.count(
+        "control.class_f_pct",
+        "Voting power of the single Class F share (co-founders)",
+        hit,
+        1,
+        section=section,
+        unit="percent",
+        suffix="%",
+    )
+    hit = f.sentence(
+        r"the voting power of the holders of Class A common stock is limited to an "
+        r"aggregate of ([\d.]+)% of the total outstanding voting power"
+    )
+    c.count(
+        "control.class_a_pct",
+        "Voting power of all Class A shares together",
+        hit,
+        1,
+        section=section,
+        unit="percent",
+        suffix="%",
+    )
+    hit = f.sentence(
+        r"the LTBT generally has the authority to elect and remove the Class T "
+        r"directors, who together will constitute (a majority) of the authorized"
+    )
+    c.add(
+        "control.class_t",
+        "Board seats elected by the Long-Term Benefit Trust (Class T)",
+        hit.match.group(1),
+        "text",
+        hit.match.group(1),
+        page=hit.page,
+        quote=hit.quote,
+        section=section,
+    )
+    hit = f.sentence(
+        r"Our Class E common stock will be entitled to vote (only on certain limited "
+        r"matters)"
+    )
+    c.add(
+        "control.class_e",
+        "Votes of Class E shares (employees)",
+        hit.match.group(1),
+        "text",
+        hit.match.group(1),
+        page=hit.page,
+        quote=hit.quote,
+        section=section,
+    )
+
+    # When existing shares may be sold: the filing's table, step by step.
+    section = "Shares Eligible for Future Sale"
+    start = f.index_of(
+        r"^Earliest Date Available for Sale in the Public Market \| Approximate Number of Shares"
+    )
+    context = (
+        "As the filing words it: shares that become available for sale at each step, "
+        "subject to the lock-up and market standoff agreements, Rules 144 and 701 and the "
+        'insider trading policy. The filing gives each step as a maximum ("up to").'
+    )
+    step = 0
+    for item in f.items[start + 1 : start + 60]:
+        if item.kind == "text" and item.text.startswith("____"):
+            break
+        if item.kind != "row" or item.cells[0].startswith("Earliest Date Available"):
+            continue
+        if len(item.cells) != 2:
+            raise ExtractionError(f"unlock row not understood: {item.text}")
+        found = UNLOCK_SHARES_RE.match(item.cells[1])
+        if found is None:
+            raise ExtractionError(f"unlock shares not understood: {item.cells[1]}")
+        step += 1
+        number, scale = found.group(1), found.group(2)
+        key = f"unlock.{step:02d}"
+        c.add(
+            key,
+            f"Shares that may be sold at step {step}",
+            round(float(number) * (MILLION if scale == "million" else BILLION)),
+            "shares",
+            f"up to {number} {scale}",
+            page=item.page,
+            quote=item.text,
+            section=section,
+            context=context,
+        )
+        c.add(
+            f"{key}.when",
+            f"When step {step} comes",
+            strip_footnotes(item.cells[0]),
+            "text",
+            strip_footnotes(item.cells[0]),
+            page=item.page,
+            quote=item.text,
+            section=section,
+        )
+    if step < 10:
+        raise ExtractionError(f"unlock table: only {step} steps")
 
 
 def _search(pattern: str, text: str) -> re.Match[str]:

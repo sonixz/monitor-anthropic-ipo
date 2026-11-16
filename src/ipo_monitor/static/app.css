@@ -106,8 +106,144 @@ main,
 
 .brand {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 0.6rem;
+}
+
+/* The project's own mark: a frame and a line that climbs in steps. */
+.mark {
+  width: 22px;
+  height: 22px;
+  flex: none;
+}
+
+.mk-frame {
+  fill: var(--panel);
+  stroke: var(--line-strong);
+  stroke-width: 1.5;
+}
+
+.mk-line {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2.4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.mk-dot {
+  fill: var(--text);
+}
+
+h1 .w1 {
+  color: var(--text);
+}
+
+h1 .w2 {
+  color: var(--accent);
+}
+
+h1 .w3 {
+  color: var(--dim);
+  font-weight: 400;
+}
+
+/* ---- the IPO at a glance ---------------------------------------------- */
+
+.glance {
+  max-width: 1360px;
+  margin: 10px auto 0;
+  padding: 0 16px;
+}
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.stats > div {
+  background: var(--panel);
+  padding: 6px 10px 7px;
+  min-width: 0;
+}
+
+.stats dt {
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.stats dd {
+  margin: 1px 0 0;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.stats .to {
+  color: var(--faint);
+  padding: 0 0.15em;
+}
+
+.stages {
+  display: flex;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 12px;
+  color: var(--faint);
+}
+
+.stages li {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: nowrap;
+}
+
+.stages li + li::before {
+  content: "";
+  flex: 1 1 3rem;
+  min-width: 0.4rem;
+  margin-left: 0.4em;
+  border-top: 1px dashed var(--line-strong);
+  margin-right: 0.4em;
+}
+
+.stages .dot {
+  width: 0.62em;
+  height: 0.62em;
+  flex: none;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
+}
+
+.st-done {
+  color: var(--dim);
+}
+
+.st-done .dot {
+  background: var(--pos);
+  border-color: var(--pos);
+}
+
+.st-next {
+  color: var(--text);
+}
+
+.st-next .dot {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(217, 179, 108, 0.25);
+}
+
+.st-what {
+  flex: none;
 }
 
 .prompt {
@@ -144,6 +280,13 @@ h1 {
   margin-top: 6px;
   background: var(--bg);
   border-bottom: 1px solid var(--line);
+  /* More panels than a phone is wide: the bar scrolls by itself, never the page. */
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.keys::-webkit-scrollbar {
+  display: none;
 }
 
 .keys a,
@@ -1287,4 +1430,174 @@ span.fg-far {
     background: #fff;
     color: #000;
   }
+}
+
+/* ---- shares, unlock, control, timeline ---------------------------------- */
+
+span.fg-base {
+  background: #7d8ba0;
+}
+
+span.fg-pos {
+  background: var(--pos);
+}
+
+.banks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+  margin: 6px 0 0;
+  font-size: 12px;
+}
+
+.bank {
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  color: var(--dim);
+}
+
+.lines.unlock th[scope="row"] {
+  font-weight: 400;
+  color: var(--dim);
+}
+
+.unlock .step {
+  display: block;
+  color: var(--faint);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+
+.tl {
+  margin: 4px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tl li {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  gap: 0 0.8rem;
+  position: relative;
+  padding: 5px 0 5px 1.2rem;
+  border-left: 1px solid var(--line-strong);
+  margin-left: 0.3rem;
+}
+
+.tl li::before {
+  content: "";
+  position: absolute;
+  left: -0.36rem;
+  top: 0.75em;
+  width: 0.62rem;
+  height: 0.62rem;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+}
+
+.tl-done::before {
+  background: var(--pos) !important;
+  border-color: var(--pos) !important;
+}
+
+.tl-next::before {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 2px rgba(217, 179, 108, 0.25);
+}
+
+.tl-later {
+  color: var(--dim);
+  border-left-style: dashed !important;
+}
+
+.tl-day {
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+@container (max-width: 540px) {
+  .tl li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.n.long {
+  white-space: normal;
+  text-align: left;
+}
+
+.lines td:has(> .n.long) {
+  white-space: normal;
+}
+
+@media (max-width: 640px) {
+  /* The tags alone on one line; the help card says what each means. */
+  .legend {
+    gap: 0 0.6rem;
+    margin-top: 4px;
+  }
+
+  .legend li > span:not(.tag) {
+    display: none;
+  }
+
+  .stages li + li::before {
+    flex-basis: 0.9rem;
+    min-width: 0.4rem;
+  }
+
+  .status {
+    margin-bottom: 12px;
+  }
+}
+
+/* On a phone the strip at the top already gives the offer and the dates. */
+@media (max-width: 640px) {
+  .status .dup {
+    display: none;
+  }
+
+  .stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .stats > div {
+    padding: 4px 6px 5px;
+  }
+
+  .stats dt {
+    font-size: 10px;
+  }
+
+  .stats dd {
+    font-size: 12px;
+  }
+
+  .glance {
+    margin-top: 6px;
+  }
+
+  .stages {
+    margin-top: 6px;
+    font-size: 11px;
+  }
+}
+
+/* A chart over its table, both full width: for tables with long wording. */
+.stacked > .chart {
+  max-width: 760px;
+  margin: 0 0 6px;
+}
+
+.stacked > .fold {
+  margin-top: 4px;
+}
+
+.lines.words th[scope="row"] {
+  width: 55%;
+}
+
+.lines.words td {
+  text-align: left;
 }

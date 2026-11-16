@@ -8,6 +8,7 @@ fails, instead of publishing a wrong figure.
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 
 from ipo_monitor.facts import Facts
@@ -241,6 +242,59 @@ def run_checks(f: Facts) -> list[Check]:
             0,
         ),
     ]
+
+    # 7. The deal's structure: the underwriters' table, who holds what, who votes.
+    total_after = f.num("shares.total_after")
+    checks += [
+        _close(
+            "underwriters' total = shares sold by the company + by existing stockholders",
+            f.num("underwriting.total"),
+            f.num("offering.shares_company") + f.num("offering.shares_selling"),
+            0,
+        ),
+        _close(
+            "shares held by new investors = underwriters' total",
+            f.num("holders.new_after"),
+            f.num("underwriting.total"),
+            0,
+        ),
+        _close(
+            "existing + new investors + private placement = all shares after the IPO",
+            f.num("holders.existing_after")
+            + f.num("holders.new_after")
+            + f.num("offering.private_placement_shares_mid"),
+            total_after,
+            10,
+        ),
+        _close(
+            "new investors' share, stated vs computed (x1000)",
+            f.num("holders.new_after_pct") * 1000,
+            f.num("holders.new_after") / total_after * 100_000,
+            50,
+        ),
+        _close(
+            "existing stockholders' share, stated vs computed (x1000)",
+            f.num("holders.existing_after_pct") * 1000,
+            f.num("holders.existing_after") / total_after * 100_000,
+            50,
+        ),
+        _close(
+            "voting power of Class F + Class A = 100% (x10)",
+            (f.num("control.class_f_pct") + f.num("control.class_a_pct")) * 10,
+            1000,
+            0,
+        ),
+    ]
+    steps = sorted(k for k in f.ids() if re.fullmatch(r"unlock\.\d{2}", k))
+    checks.append(Check("lock-up table has its steps", len(steps) >= 10, f"{len(steps)} steps"))
+    for key in steps:
+        checks.append(
+            Check(
+                f"{key}: fewer shares than exist after the IPO",
+                0 < f.num(key) < total_after,
+                f"{f.num(key):,.0f}",
+            )
+        )
     return checks
 
 

@@ -126,6 +126,7 @@ class Calculator:
         self._market()
         self._contracts()
         self._losses()
+        self._structure()
         return self.calcs
 
     def _offering(self) -> None:
@@ -137,12 +138,14 @@ class Calculator:
                 ("shares sold by existing stockholders", "offering.shares_selling"),
             ],
         )
-        for point in ("low", "high"):
+        for point in ("low", "high", *(("final",) if "final" in self.points else ())):
             shares = self.term("shares offered", "offering.shares_total")
-            price = self.term("IPO price", f"offering.price_{point}")
+            price = self.term("IPO price", self.price_ref(point))
             self.put(
                 f"offering.size.{point}",
-                f"Size of the IPO at the {point} end of the range",
+                "Size of the IPO at the IPO price"
+                if point == "final"
+                else f"Size of the IPO at the {point} end of the range",
                 shares.value * price.value,
                 "USD",
                 "shares offered × IPO price",
@@ -648,6 +651,47 @@ class Calculator:
                 f"{a.name} ÷ {b.name}",
                 [a, b],
             )
+
+    def _structure(self) -> None:
+        """Where the shares of the deal go, and what the IPO buyers' votes weigh."""
+        self.total(
+            "deal.shares_all",
+            "All shares in the deal, if the underwriters use their option",
+            [
+                ("new shares sold by the company", "offering.shares_company"),
+                ("shares sold by existing stockholders", "offering.shares_selling"),
+                ("the underwriters' option", "offering.greenshoe"),
+                (
+                    "the private placement, at the assumed price",
+                    "offering.private_placement_shares_mid",
+                ),
+            ],
+            "The option is used only if demand allows. The private placement's share count "
+            "depends on the IPO price; this one is at the middle of the range.",
+        )
+        placed = self.term("private placement shares", "offering.private_placement_shares_mid")
+        everyone = self.term("all shares after the IPO", "shares.total_after")
+        self.put(
+            "holders.placement_after_pct",
+            "Share of all shares held by the private placement's buyers",
+            placed.value / everyone.value * 100,
+            "percent",
+            "private placement shares ÷ all shares after the IPO",
+            [placed, everyone],
+        )
+        bought = self.term("shares sold in the IPO", "holders.new_after")
+        class_a = self.term("Class A shares after the IPO", "shares.class_a_after")
+        power = self.term("voting power of all Class A shares", "control.class_a_pct")
+        self.put(
+            "control.ipo_votes_pct",
+            "Voting power of the shares sold in the IPO",
+            bought.value / class_a.value * power.value,
+            "percent",
+            "shares sold in the IPO ÷ Class A shares × voting power of all Class A shares",
+            [bought, class_a, power],
+            "Each Class A share has one vote, and all of them together hold the voting power "
+            "the filing states. Assumes no IPO share is bought by an existing holder.",
+        )
 
 
 def compute(facts: Facts) -> dict[str, Calc]:

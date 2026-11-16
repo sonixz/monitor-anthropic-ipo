@@ -4,7 +4,10 @@
 (() => {
   "use strict";
 
-  const PANELS = { m: "market", v: "value", e: "ev", c: "contracts", g: "growth", l: "losses", f: "filings" };
+  const PANELS = {
+    m: "market", v: "value", e: "ev", s: "shares", u: "unlock", k: "control",
+    c: "contracts", g: "growth", l: "losses", t: "timeline", f: "filings",
+  };
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const supportsPopover = "showPopover" in HTMLElement.prototype;
   let invoker = null;

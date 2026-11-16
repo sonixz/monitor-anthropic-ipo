@@ -106,5 +106,20 @@
 ## D-025 · Where the contact address lives
 **Context.** sec.gov asks automated clients for a contact address. It is the owner's, and Agent Manager cannot assign a secret to an existing machine. **Decision (proposed).** The owner types it into a root-only file on the machine's volume; the boot script reads known names only. The address is sent to sec.gov hosts only, never logged, never shown. An address that is not one e-mail address switches the filings watch off and logs why, without the value. **Departure.** Elsewhere an invalid setting stops the service at startup; here it does not, because a typing mistake in an optional secret must not take the public page down.
 
+## D-027 · A richer front, from the filing only (Loop 004)
+**Owner (2026-11-16):** asked for more figures at the top, a better navigation, a chart of where the offered shares go and other information that can be checked; then, to six proposals: "let's go, if it is all information you can validate and that is in the document." **Decision (confirmed).** Header strip, stage bar, SHARES, UNLOCK, CONTROL, TIMELINE, a project mark. Every new figure is a FILED fact or a CALC.
+
+## D-028 · The stage of the IPO, not a countdown (proposed)
+The header shows the stage reached from events the service sees (filings, final prospectus, first quote) and the dates the press reported. A countdown would be stale on a page rendered on the server, or need a script, and a clock proves nothing.
+
+## D-029 · Lock-up steps as the filing words them (proposed)
+No calendar date for the steps: they count from the final prospectus, not dated yet, or from results releases. The chart shows each step's maximum; no total, because the filing does not say the steps add up (their sum, 15.5 billion, is larger than the 13.1 billion shares outstanding plus those that options and RSUs could add).
+
+## D-030 · On a phone, the strip replaces two status lines (proposed)
+The strip at the top gives the offer and the dates, so the "offer" and "listing" lines are hidden on a phone, and the legend keeps its tags only. This keeps the value at the IPO price on the first screen, as PRODUCT.md requires. The panel bar scrolls inside itself.
+
+## D-031 · The project's own mark (proposed)
+A frame and a line that climbs in steps, in the page's palette. Nothing from Anthropic's logo or colors: the page is unofficial and must look it.
+
 ## D-026 · The repository explains the system, AI included
 **Owner (2026-11-16):** asked for the public repository to be well documented, with the link and the workflows, then asked where AI is involved and whether a hosted AI service is used, and to document how the system works directly in the repository. **Decision.** [HOW-IT-WORKS.md](HOW-IT-WORKS.md) tells it in plain language: the path of a figure, who does what, where AI is involved (at build time, as the coding agent) and where it is not (the live service runs no model), what runs by itself, the workflows. The README is the front page and links to it.

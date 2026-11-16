@@ -4,10 +4,41 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.5.0] - 2026-11-16
 
-Found by recording the Nasdaq source after the close on 2026-11-16. Not online yet: the answer
-at night is recorded first, so that one release covers both.
+A richer front (Loop 004). The owner asked for more figures at the top, a better navigation,
+a chart of where the offered shares go, and anything else that can be checked in the filing.
+
+### Added
+
+- **A strip of key figures at the top**: price range, shares offered, amount raised, value at
+  the range, and the reported dates of pricing and first trade. Below it, the stage of the IPO
+  (filed, priced, trading, first unlock), driven by what the service has seen, not by a clock.
+- **SHARES**: where the shares of the deal come from (new shares, existing stockholders, the
+  underwriters' option, the private placement), who holds the shares after the IPO, the 22
+  banks named as underwriters, and the insiders' indicated interest (up to $303 million, not
+  binding). The allocation among banks is blank in this filing and shown as such.
+- **UNLOCK**: the filing's schedule of shares that may be sold after the IPO, 23 steps, as a
+  chart and as the filing's table with its wording. No calendar date is invented: the steps count
+  from the final prospectus or from results releases.
+- **CONTROL**: votes by class (Class F 50.1%, Class A 49.9%, of which the IPO shares about 5.5%),
+  and what Classes T, N and E can do.
+- **TIMELINE**: the filings from the SEC's list in order, then the reported dates and the first
+  unlock step.
+- A mark of the project's own (a frame and a line climbing in steps) and a new favicon.
+- 56 facts copied from the filing by `extract.py`, 3 calculations, 30 consistency checks
+  (159 in all): the underwriters' total equals the shares offered; existing holders, IPO buyers
+  and the private placement add up to all shares after the IPO; stated percentages match.
+
+### Changed
+
+- The panel bar has ten panels and scrolls by itself on a phone; the page never does.
+- On a phone, the "offer" and "listing" lines of the status block are hidden (the strip gives
+  the same figures) and the label legend shows the tags alone, so the value at the IPO price
+  stays on the first screen.
+- Worded values (for example "a majority") wrap instead of running past the screen.
+
+Also in this release, found by recording the Nasdaq source after the close on 2026-11-16:
 
 ### Changed
 
