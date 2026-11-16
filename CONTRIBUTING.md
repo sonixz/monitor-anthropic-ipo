@@ -2,6 +2,8 @@
 
 Work happens in loops, as described in [LOOP.md](LOOP.md): one mission, built, checked,
 documented and reported. Read [VISION.md](VISION.md) first; it changes only with the owner.
+[HOW-IT-WORKS.md](HOW-IT-WORKS.md) shows how the checks, the GitHub workflows and the release
+path fit together, and who does what.
 
 ## Setup
 
@@ -13,7 +15,9 @@ uv run pre-commit install
 ## Before you commit
 
 The pre-commit hooks run the formatter, the linter, the type checker and a secret scan on staged
-files. The same checks, plus the tests, run in CI:
+files. The same checks, plus the tests, run on GitHub at every push and pull request
+([CI](.github/workflows/ci.yml)), next to a security analysis
+([CodeQL](.github/workflows/codeql.yml)):
 
 ```sh
 uv run ruff format --check .
@@ -31,6 +35,8 @@ checks it against arithmetic done by hand from the filing.
 - **No number in a template.** Templates call `n("id")`. A figure is a fact in `data/facts/` or a
   calculation in `calc.py`, with its source.
 - **No figure typed by hand** into the FILED dataset. Change `extract.py` and re-run it.
+- **No price typed by hand.** Market values come from `market.py`, built from what the quote
+  service answered. Tests replay recorded answers; the one file with invented prices says so.
 - **No secret, contact address or internal access detail** in the repository, the devlog or the
   page. The repository is public.
 - **English** for everything a reader of the site or of the repository sees.
