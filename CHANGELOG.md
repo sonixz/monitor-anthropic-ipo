@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.2] - 2026-11-16
+
+### Changed
+
+- In the FILINGS panel, filings of the same form made on the same day share one line, each
+  document with its own link. On the real list, five documents for investors filed the same
+  day read as five identical lines.
+
 ## [0.4.1] - 2026-11-16
 
 ### Changed

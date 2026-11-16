@@ -1,6 +1,6 @@
 # BACKLOG · monitor-anthropic-ipo
 
-> What is left, in order. Recommendations until the owner turns them into a mission. Last reviewed: 2026-11-16 · during loop-003
+> What is left, in order. Recommendations until the owner turns them into a mission. Last reviewed: 2026-11-16 · after loop-003
 
 ## Before the first trade (reported for 2026-11-19)
 

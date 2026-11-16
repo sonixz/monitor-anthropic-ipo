@@ -58,7 +58,7 @@
       {%- elif newer -%}
         <span class="live">new filing</span> · <a href="{{ newer.url }}" rel="noopener" data-label>{{ newer.name }}</a>{% if newer.meaning %}, {{ L(newer.meaning) }}{% endif %} · filed {{ L(day(newer.filed)) }} · {% if filings.price and filings.prospectus == newer %}its price is used on this page; the other figures still come from {{ L(document.title) }}{% else %}its figures are not read by this page yet{% endif %}
       {%- else -%}
-        watching the SEC · latest: <a href="{{ listed[0].url }}" rel="noopener" data-label>{{ listed[0].name }}</a> · filed {{ L(day(listed[0].filed)) }}<span class="wide"> · <a href="#filings">recent filings</a></span>
+        watching the SEC · latest: <a href="{{ listed[0].first.url }}" rel="noopener" data-label>{{ listed[0].first.name }}</a> · filed {{ L(day(listed[0].first.filed)) }}<span class="wide"> · <a href="#filings">recent filings</a></span>
       {%- endif -%}
       {%- if filings and filings.filings and filings.state == "unavailable" %} · <span class="wait">the last check failed</span>{% endif -%}
     </dd></div>
@@ -471,8 +471,9 @@
   <table class="lines">
     <caption>The latest filings, newest first</caption>
     <tbody>
-      {% for filing in listed %}
-      <tr><th scope="row">{{ L(day(filing.filed)) }}</th><td><a href="{{ filing.url }}" rel="noopener" data-label>{{ filing.name }}</a>{% if filing.meaning %} <span class="what">{{ L(filing.meaning) }}</span>{% endif %}</td></tr>
+      {% for batch in listed %}
+      {% set filing = batch.first %}
+      <tr><th scope="row">{{ L(day(filing.filed)) }}</th><td><a href="{{ filing.url }}" rel="noopener" data-label>{{ filing.name }}</a>{% if filing.meaning %} <span class="what">{{ L(filing.meaning) }}</span>{% endif %}{% if batch.others %} <span class="more">· same day:{% for other in batch.others %} <a href="{{ other.url }}" rel="noopener" data-label aria-label="{{ other.name }}, document {{ loop.index + 1 }} of that day">{{ loop.index + 1 }}</a>{% endfor %}</span>{% endif %}</td></tr>
       {% endfor %}
     </tbody>
   </table>

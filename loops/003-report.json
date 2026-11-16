@@ -1,0 +1,180 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-003",
+  "summary": "Versions 0.4.0 and 0.4.1 went live, and 0.4.2 follows this report, at https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev on 2026-11-16. The service can now watch the SEC's list of the company's filings and read the final IPO price from the cover of a final prospectus, only if every check passes; the public repository explains how the whole system works, including where AI is involved. The filings watch is live and switched off: it needs a contact address for sec.gov that only the owner can put on the machine, so the service's own client has not talked to EDGAR yet. Not run for that reason: the watch on the live site, and the price read from a real final prospectus of another company. Failed: setting the About box of the repository (the agent's GitHub access cannot change repository settings; nothing was changed). The owner's look at the page on a phone is still not run.",
+  "delivered": [
+    "A filings watch (edgar.py): every ten minutes the service asks EDGAR for the registrant's filing list; strict reading of the answer; a failure becomes the 'unavailable' state and keeps what was known.",
+    "On the page: a 'filings' line in the status block (latest filing, or a notice when a prospectus newer than the one the page reads exists) and a FILINGS panel with the latest filings in plain words, linked to sec.gov, same-day filings of one form on one line (key f).",
+    "The final price read by the service from the cover of a final prospectus (Form 424B4 or 424B1) as the fact pricing.ipo_price labeled FILED, with the cover quoted. Refused unless the cover names the company, is not preliminary, gives dollars and cents, states a total equal to price times the shares on the same cover, and the price is within half the low and twice the high of the filed range.",
+    "A filed price replaces a price recorded from the press (Facts.plus with a document and replacing).",
+    "The watch cannot break the page: if rendering fails with the filing list, the page is rendered without it; the market panel is untouched.",
+    "SEC_CONTACT and IPO_FILINGS settings. The address is sent to data.sec.gov and www.sec.gov only, never logged, never shown, kept out of repr. An unusable address switches the watch off and logs why without the value.",
+    "deploy/start.sh reads known secret names from /data/secrets.env (root-only), never printing a value. The boot loop on the machine was restarted once to pick it up.",
+    "/health reports the filings watch: state, source, time of the last check, latest filing, final prospectus, whether its price was read.",
+    "HOW-IT-WORKS.md: the path of a figure, who does what, where AI is involved (build time, the coding agent) and where it is not (the live service runs no model), what runs by itself, the path of a change, the GitHub workflows one by one, the loop method. Two diagrams.",
+    "README rewritten as a front page: live link, CI and CodeQL badges, current screenshots, panels, labels, workflows, release path, loop method. CONTRIBUTING updated.",
+    "Version 0.3.2, the fix found at the market open, deployed at the start of the loop once the owner confirmed D-016.",
+    "Three deployments on the existing machine before this report (0.3.2, 0.4.0, 0.4.1), each healthy within seconds; 0.4.2 is deployed right after it."
+  ],
+  "changedFiles": [
+    ".env.example",
+    "ARCHITECTURE.md",
+    "BACKLOG.md",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "DECISIONS.md",
+    "HOW-IT-WORKS.md",
+    "INFRASTRUCTURE.md",
+    "README.md",
+    "STATUS.md",
+    "deploy/start.sh",
+    "devlog/img/loop-003-filings-desktop.png",
+    "devlog/img/loop-003-filings-phone.png",
+    "devlog/img/loop-003-live-phone.png",
+    "devlog/img/loop-003-status-watching-phone.png",
+    "devlog/img/loop-003-test-final-phone.png",
+    "devlog/index.html",
+    "devlog/loop-003.html",
+    "loops/003-mission.md",
+    "loops/003-report.json",
+    "pyproject.toml",
+    "src/ipo_monitor/__init__.py",
+    "src/ipo_monitor/config.py",
+    "src/ipo_monitor/edgar.py",
+    "src/ipo_monitor/facts.py",
+    "src/ipo_monitor/render.py",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/static/app.js",
+    "src/ipo_monitor/templates/index.html.j2",
+    "src/ipo_monitor/web.py",
+    "tests/e2e/test_dashboard.py",
+    "tests/fixtures/edgar/filings-2026-11-16.json",
+    "tests/fixtures/edgar/filings-TEST.json",
+    "tests/fixtures/edgar/filings-final-TEST.json",
+    "tests/fixtures/edgar/s1a2-cover.html",
+    "tests/test_edgar.py",
+    "uv.lock"
+  ],
+  "decisions": [
+    "Confirmed by the owner on 2026-11-16: D-016, a release whose checks all pass is deployed without asking ('Oui, déploie seul'). Access, exposure and infrastructure changes still need approval.",
+    "Confirmed by the owner on 2026-11-16: before the first trade, only the filings watch and the final prospectus; deployment by GitHub, alerts and history after it ('ok go').",
+    "Confirmed by the owner on 2026-11-16: document the public repository well, the link, the workflows, and how the system works including the part of AI (D-026).",
+    "Proposed, D-023: the service publishes by itself only what passes every check; from a final prospectus, only the price on the cover.",
+    "Proposed, D-024: a price read from the final prospectus replaces a price recorded from the press.",
+    "Proposed, D-025: the contact address lives in a root-only file on the machine; an unusable address switches the watch off instead of stopping the service.",
+    "Assumed and not carried out: the agent would set the About box of the repository. Its GitHub access cannot change repository settings, so nothing was changed.",
+    "Assumed: filings of one form made on one day share one line in the panel; eight lines are shown.",
+    "Still proposed from Loop 002: D-017 to D-022."
+  ],
+  "tests": [
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run mypy",
+      "result": "passed",
+      "notes": "All checks passed; strict mypy: no issues in 28 source files. Also green in GitHub Actions."
+    },
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "110 passed. New in tests/test_edgar.py: the real list of the registrant, refused indexes, newer filings, the price on a cover and eight refusals, a cover read once, the SEC not answering, the watcher, the contact address sent to the SEC only and never echoed, in no log and on no page, the page with filings, the final price switching the page, the service with filings and a market."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "13 passed in Chromium against local servers. New: a phone after an invented final prospectus. The local pages now include the filings line and panel in the sideways-scroll, first-screen and accessibility tests."
+    },
+    {
+      "command": "E2E_BASE_URL=https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "13 passed after the 0.4.0 deployment and again after 0.4.1. The live page has the filings line in its 'not watched' form."
+    },
+    {
+      "command": "WebFetch https://data.sec.gov/submissions/CIK0002130357.json",
+      "result": "passed",
+      "notes": "A real answer of EDGAR for the registrant on 2026-11-16: 14 filings, cik and name as expected, the columns the reader uses present. Reduced to those columns and replayed by the tests. Read through a fetch tool that reports the content, not as raw bytes."
+    },
+    {
+      "command": "The price reader on the real cover of Amendment No. 2 (tests/fixtures/edgar/s1a2-cover.html)",
+      "result": "passed",
+      "notes": "Refused as preliminary and as blank; read as 74.00 with 825,000,000 shares once the same markup is made final with an invented price and the matching total."
+    },
+    {
+      "command": "Screenshots at 360, 390, 430 and 1280 px looked at one by one",
+      "result": "passed",
+      "notes": "Status block and FILINGS panel on the invented final prospectus and on the real list replayed locally; the live page at 390 px. One defect found and fixed: five identical lines for five documents filed the same day."
+    },
+    {
+      "command": "lint_diagrams on the diagrams of HOW-IT-WORKS.md and ARCHITECTURE.md",
+      "result": "passed",
+      "notes": "Five diagrams checked in two calls, no issue."
+    },
+    {
+      "command": "Link check of README, HOW-IT-WORKS, CONTRIBUTING, SECURITY, INFRASTRUCTURE, ARCHITECTURE, DECISIONS, STATUS, BACKLOG",
+      "result": "passed",
+      "notes": "Every relative link and anchor exists; the eight web links answer."
+    },
+    {
+      "command": "GitHub Actions: CI and CodeQL on commits f573d82, 7ab56f4, 80e6257",
+      "result": "passed",
+      "notes": "All runs succeeded."
+    },
+    {
+      "command": "On the machine: sh /data/deploy.sh v0.3.2, v0.4.0, v0.4.1",
+      "result": "passed",
+      "notes": "Each release healthy within seconds; /health showed 0.3.2, 0.4.0, 0.4.1 in turn; filings state 'off'; service memory 57 MB."
+    },
+    {
+      "command": "The service's own EDGAR client on the live site, with the contact address",
+      "result": "not_run",
+      "notes": "The address is the owner's and is not on the machine (/data/secrets.env is absent). No request has gone from the service to sec.gov."
+    },
+    {
+      "command": "The price read from the cover of a real final prospectus of a recently listed company",
+      "result": "not_run",
+      "notes": "Needs the raw document from sec.gov, which needs the contact address. The fetch tool does not give raw bytes."
+    },
+    {
+      "command": "gh repo edit: description, live link and topics of the repository",
+      "result": "failed",
+      "notes": "HTTP 403: the agent's GitHub access cannot change repository settings. Nothing was changed; the owner has the values to paste."
+    },
+    {
+      "command": "Real-people test: the owner looks at the page on a phone; the 60-second test of Loop 001",
+      "result": "not_run",
+      "notes": "Only the owner can run them. Carried over."
+    }
+  ],
+  "blockers": [
+    "The contact address sec.gov requires (SEC_CONTACT) is the owner's and is not on the machine: the filings watch is off on the live site and has never been checked against EDGAR by the service itself.",
+    "The agent's GitHub access cannot change repository settings: the About box stays empty until the owner fills it.",
+    "CI cannot reach the machine: deployment stays manual, from the coding agent's session (planned for the next loop, with the owner's approval of that access)."
+  ],
+  "remainingWork": [
+    "Acceptance criterion not met: with SEC_CONTACT set, the live page lists the filings as EDGAR gives them. Waits for the owner's address on the machine; then restart the service, check /health and the page, fix what differs.",
+    "Acceptance criterion not met: the price read from a real final prospectus of a recently listed company.",
+    "Acceptance criterion not met: the About box of the repository shows a description and the live link.",
+    "The cover of Anthropic's final prospectus does not exist yet: if it is laid out differently, the price is not taken and must be recorded by hand.",
+    "After a final prospectus, share counts and cash still come from Amendment No. 2 until a full extraction reviewed by hand.",
+    "The owner's look at the page on a phone and the 60-second test; the owner's answer on D-017 to D-025.",
+    "The Nasdaq source after the close and at night (two recordings scheduled for 2026-11-16); its answer for a stock listed but not yet traded.",
+    "Record the final IPO price when it is public (reported for 2026-11-18); watch the first trade (reported for 2026-11-19).",
+    "LOOP.md still says 'never deploy'; branch protection is not set; no uptime monitoring; no history of market data.",
+    "Still to build: 'what changed', AI explanations, the 'what you pay' slider, the 'How We Build' page, automated deployment, alerts, storage and history."
+  ],
+  "recommendedNextSteps": [
+    "Owner: put the contact address on the machine with the one command in INFRASTRUCTURE.md, then say so; the agent restarts the service and checks the watch live.",
+    "Owner: fill the About box of the repository; confirm or reject D-017 to D-025; open the live page on a phone.",
+    "2026-11-18 (reported): record the final IPO price from an opened, quoted article; the final prospectus then confirms it by itself.",
+    "2026-11-19 (reported): watch the first trade and the MARKET panel with real figures.",
+    "Next loop, after the first trade: deployment by GitHub itself (needs the owner's approval of that access), alerts when the site or a source fails, a history of prices."
+  ],
+  "reportedAt": "2026-11-16T16:25:00Z",
+  "submittedBy": "Claude Code (Claude Fable 5.2)",
+  "cost": {
+    "durationSeconds": null,
+    "inputTokens": null,
+    "outputTokens": null,
+    "usd": null
+  }
+}

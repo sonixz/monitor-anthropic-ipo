@@ -19,8 +19,7 @@ from markupsafe import Markup
 from ipo_monitor import __version__, fmt
 from ipo_monitor.calc import PRICED, QUARTER_NAMES, QUARTERS, Calc, Term, compute
 from ipo_monitor.charts import Mark
-from ipo_monitor.edgar import SHOWN as FILINGS_SHOWN
-from ipo_monitor.edgar import Watch, price_fact
+from ipo_monitor.edgar import Watch, batches, price_fact
 from ipo_monitor.facts import Fact, Facts
 from ipo_monitor.figures import Figures
 from ipo_monitor.market import Snapshot
@@ -335,7 +334,7 @@ def render_page(
         "chart": figures,
         "filings": filings,
         "newer": filings.newer_than(document.accession) if filings else None,
-        "listed": filings.filings[:FILINGS_SHOWN] if filings else (),
+        "listed": batches(filings.filings) if filings else (),
         "day": fmt.iso_date,
         "market": market,
         "quote": quote,

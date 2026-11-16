@@ -1,13 +1,13 @@
 # STATUS · monitor-anthropic-ipo
 
-> Where the project stands, verified. Last reviewed: 2026-11-16 · during loop-003
+> Where the project stands, verified. Last reviewed: 2026-11-16 · after loop-003
 
 ## Live
 
 | | |
 | --- | --- |
 | Site | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev |
-| Version | 0.4.1 (tag `v0.4.1`) |
+| Version | 0.4.2 (tag `v0.4.2`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Not watched yet.** The watch is built (since 0.4.0) and off: it needs a contact address for sec.gov that only the owner can put on the machine |
@@ -24,7 +24,7 @@
 - 129 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
 - CI on GitHub: format, lint, strict types, 110 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
-- Deploy and rollback on the machine: six deployments on 2026-11-16, each healthy within seconds.
+- Deploy and rollback on the machine: seven deployments on 2026-11-16, each healthy within seconds.
 
 ## Measured
 

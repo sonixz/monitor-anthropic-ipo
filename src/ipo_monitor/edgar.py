@@ -33,7 +33,7 @@ HOSTS = ("data.sec.gov", "www.sec.gov")
 CLIENT = "ANT IPO Monitor"  # the name the SEC sees, followed by the contact address
 EVERY = 600  # seconds between two questions; the SEC allows far more
 LONGEST_WAIT = 3600
-SHOWN = 8  # filings listed on the page
+SHOWN = 8  # lines of filings listed on the page
 COVER_BYTES = 1_000_000  # the cover is at the top of the document; the rest is not read
 FINAL_PROSPECTUS = ("424B4", "424B1")
 PROSPECTUS_FORMS = ("S-1", "S-1/A", *FINAL_PROSPECTUS)
@@ -99,6 +99,28 @@ class Filing:
 
 
 @dataclass(frozen=True)
+class Batch:
+    """Filings of one form made on one day: one line on the page."""
+
+    first: Filing
+    others: tuple[Filing, ...] = ()
+
+
+def batches(filings: tuple[Filing, ...], limit: int = SHOWN) -> tuple[Batch, ...]:
+    """The newest filings, those of the same form and day together, as `limit` lines at most."""
+    lines: list[Batch] = []
+    for filing in filings:
+        last = lines[-1].first if lines else None
+        if last is not None and (last.form, last.filed) == (filing.form, filing.filed):
+            lines[-1] = Batch(last, (*lines[-1].others, filing))
+        elif len(lines) < limit:
+            lines.append(Batch(filing))
+        else:
+            break
+    return tuple(lines)
+
+
+@dataclass(frozen=True)
 class Price:
     """The offering price read from the cover of a final prospectus."""
 
@@ -129,7 +151,7 @@ class Watch:
         """What the page displays. The page is rendered again only when this changes."""
         return (
             self.state,
-            tuple(filing.accession for filing in self.filings[:SHOWN]),
+            tuple(filing.accession for filing in self.filings),
             self.prospectus.accession if self.prospectus else None,
             self.price.value if self.price else None,
             self.price_problem,

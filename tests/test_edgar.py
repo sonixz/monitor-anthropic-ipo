@@ -114,8 +114,17 @@ def test_the_real_index_of_the_registrant(facts: Facts) -> None:
     html = render_page(facts, release="test", filings=watch).html
     assert "watching the SEC · latest:" in html
     assert "new filing" not in html
+    # Five documents of the same form and day take one line, each with its own link.
+    lines = edgar.batches(watch.filings)
+    assert len(lines) == edgar.SHOWN == 8
+    assert (lines[0].first.form, len(lines[0].others)) == ("FWP", 4)
+    assert [line.first.form for line in lines[1:]] == ["S-1/A", "S-1/A", "S-1"] + ["DRS/A"] * 4
     panel = html[html.index('id="filings"') : html.index("</main>")]
-    assert panel.count("<tr>") == edgar.SHOWN == 8
+    assert panel.count("<tr>") == 8
+    assert panel.count("anthropicpbc-fwp") == 5
+    assert "same day:" in panel
+    checked = audit(html)
+    assert [text for text in checked.loose_text if re.search(r"\d", text)] == []
 
 
 def test_an_index_that_is_not_the_registrant_or_not_understood_is_refused() -> None:

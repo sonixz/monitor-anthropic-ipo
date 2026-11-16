@@ -576,8 +576,17 @@ tr.muted th {
   white-space: normal;
 }
 
-.filed .what {
+.filed .what,
+.filed .more {
   color: var(--dim);
+}
+
+/* Other documents of the same form and day: small links, still large enough for a thumb. */
+.filed .more a {
+  display: inline-block;
+  min-width: 24px;
+  min-height: 24px;
+  text-align: center;
 }
 
 .op {

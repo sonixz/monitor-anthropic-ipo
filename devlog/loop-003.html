@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 003 — Filings found without anyone asking, the final price read from the prospectus, and a repository that explains itself · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 003 — Filings found without anyone asking, the final price read from the prospectus, and a repository that explains itself</h1>
+<p class="lead">2026-11-16 · The first step towards a dashboard that keeps itself current: the service can watch the SEC's list of filings and read the final IPO price from the cover of the final prospectus, and the repository now says how the whole system works. The watch is built and switched off: it waits for a contact address that only the owner can provide. Versions 0.4.0 to 0.4.2, live at <a href="https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev">agmgd-on-ipo-monitor-ba4eccd0.fly.dev</a>.</p>
+
+<h2>Why</h2>
+<blockquote>
+<p>So we would now be at the point of automating the dashboard and making it autonomous?</p>
+<p>OK, go. Do you have any blockers?</p>
+<p>Also, the public GitHub repository should be well documented. Put the link, the workflows and so on.</p>
+<p>Where are the AI processes and what is their part? Do we use the OpenAI API, or do you do everything and then publish? Document well how the system works, directly in the repository.</p>
+</blockquote>
+<p><small>The owner spoke in French; these are their words reworded in English at their request, with the meaning unchanged. Asked whether a version whose checks all pass may go live without them, the owner answered: "Yes, deploy on your own."</small></p>
+
+<h2>What changed</h2>
+<ul>
+  <li><strong>A filings watch.</strong> Every ten minutes the service can ask the SEC's EDGAR what the company has filed. The page gets a "filings" line at the top and a FILINGS panel: the latest filings in plain words, each linked to sec.gov. A prospectus newer than the one the page reads is announced on the first screen of a phone.</li>
+  <li><strong>The final price, read by the service.</strong> When a final prospectus appears, the offering price is read from its cover and the page switches to it, as a FILED number whose card quotes the cover. It is taken only if the cover names the company, is not preliminary, gives dollars and cents, states a total equal to that price times the shares on the same cover, and is not far from the filed range. Otherwise nothing is taken and the page says the prospectus is filed and not read yet.</li>
+  <li><strong>Only that one figure.</strong> Everything else in a new filing still waits for an extraction reviewed by hand. After the final prospectus the page will use the final price with share counts and cash from Amendment No. 2, and say so.</li>
+  <li><strong>The watch cannot break the page.</strong> If the page cannot be drawn with what the filing list brought, it is drawn without it. The figures and the market panel never depend on the SEC answering.</li>
+  <li><strong>A contact address that stays private.</strong> The SEC asks automated clients to say who they are. The address is sent to sec.gov hosts only, is never logged and never shown; a test proves it. On the machine it lives in a root-only file that the owner types.</li>
+  <li><strong>A repository that explains itself.</strong> <code>HOW-IT-WORKS.md</code> tells the system in plain language: the path of a figure, who does what, the GitHub workflows one by one, what runs by itself. The README became a front page with the live link, status badges and current screenshots.</li>
+  <li><strong>Where AI is involved, in writing.</strong> The live service runs no AI model and calls no AI service. AI is involved at build time: the code, the tests, the extraction rules and the documents are written by a coding agent directed by the owner. The document also says that this agent is made by the company the dashboard is about.</li>
+</ul>
+
+<div class="pair">
+<figure>
+  <img src="img/loop-003-live-phone.png" alt="The live page on a phone: the status block has a new line that reads filings, not watched, this page does not check the SEC for new filings.">
+  <figcaption>The live site today, version 0.4.1: the watch is off and the page says so.</figcaption>
+</figure>
+<figure>
+  <img src="img/loop-003-filings-phone.png" alt="The FILINGS panel on a phone: eight lines, from five documents for investors of November 12 on one line down to the draft registration statements of the summer.">
+  <figcaption>The FILINGS panel on the real list of 2026-11-16, replayed on a local copy. A replayed file always calls itself test data on the page; this one holds what EDGAR really answered.</figcaption>
+</figure>
+</div>
+
+<div class="pair">
+<figure>
+  <img src="img/loop-003-test-final-phone.png" alt="A phone page after an invented final prospectus: the filings line says new filing, Form 424B4, its price is used on this page, and the offer line says priced at 74 dollars.">
+  <figcaption>Test data, invented: what the first screen will look like after a final prospectus. The price shown is not real.</figcaption>
+</figure>
+<figure>
+  <img src="img/loop-003-status-watching-phone.png" alt="The status block with the filings line reading watching the SEC, latest Form FWP, filed November 12, 2026.">
+  <figcaption>The filings line when nothing newer than the page's own filing changes the figures (real list, replayed).</figcaption>
+</figure>
+</div>
+
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Notes</th></tr>
+  <tr><td>Format, lint, strict types</td><td>passed</td><td>No issue in 28 source files. Also green in GitHub Actions.</td></tr>
+  <tr><td>Unit tests</td><td>passed</td><td>110. Fifteen are new: the list of filings, what counts as a newer filing, the price on a cover and eight refusals, a cover read once, the SEC not answering, the contact address.</td></tr>
+  <tr><td>Real-browser tests, local</td><td>passed</td><td>13 in Chromium. One is new: a phone after a final prospectus (notice on the first screen, the price card quotes the cover, no sideways scroll, no serious accessibility issue).</td></tr>
+  <tr><td>Real-browser tests against the live site</td><td>passed</td><td>After the 0.4.0 and the 0.4.1 deployments.</td></tr>
+  <tr><td>A real answer of EDGAR for the registrant</td><td>passed</td><td>Read on 2026-11-16 through a web fetch tool, reduced to the columns the reader uses, replayed by the tests. Fourteen filings; it has the shape the reader was written for.</td></tr>
+  <tr><td>The price reader on the real cover of Amendment No. 2</td><td>passed</td><td>Refused as it should be: preliminary, price blank. Read correctly once the same cover is made final with an invented price.</td></tr>
+  <tr><td>The contact address is in no log and on no page</td><td>passed</td><td>A test starts the service with an address, makes the SEC refuse, and searches the page, the health answer and every log line.</td></tr>
+  <tr><td>Screenshots at 360, 390, 430 and 1280 px, looked at one by one</td><td>passed</td><td>They showed five identical lines for five documents filed the same day: grouped on one line in 0.4.2.</td></tr>
+  <tr><td>GitHub Actions: CI and CodeQL on the released commits</td><td>passed</td><td>Commits f573d82, 7ab56f4 and 80e6257.</td></tr>
+  <tr><td>Links of README, HOW-IT-WORKS, CONTRIBUTING and the project documents</td><td>passed</td><td>Every relative link exists, every web link answers.</td></tr>
+  <tr><td>The service's own client against the real EDGAR, with the contact address</td><td>not_run</td><td>The address is the owner's and is not on the machine. The live page says "not watched".</td></tr>
+  <tr><td>The price read from a real final prospectus of another, recently listed company</td><td>not_run</td><td>Needs the raw document from sec.gov, which needs the address.</td></tr>
+  <tr><td>The About box of the GitHub repository</td><td>not_run</td><td>The agent's GitHub access cannot change repository settings. The owner has the two values to paste.</td></tr>
+  <tr><td>The owner looks at the page on a phone; the 60-second test of Loop 001</td><td>not_run</td><td>Only the owner can run them. Carried over again.</td></tr>
+</table>
+
+<h2>Departures from the mission</h2>
+<ul>
+  <li>The mission asked for the watch to be shown working on the live site. It is live and off: nothing can be asked from the SEC without the owner's address.</li>
+  <li>The mission asked for a real final prospectus of another company in the tests. Not done, for the same reason.</li>
+  <li>The owner asked, after the mission was saved, where AI is involved and to document how the system works in the repository. Done in <code>HOW-IT-WORKS.md</code> and recorded as decision D-026.</li>
+  <li>An address that is not one e-mail address switches the watch off instead of stopping the service, unlike every other setting: a typing mistake in an optional secret must not take the page down (D-025).</li>
+  <li>The boot loop of the machine was restarted once by hand so that it reads the secrets file. The site was unreachable for a few seconds, as at each of the four deployments of this loop.</li>
+</ul>
+
+<h2>What is left</h2>
+<ul>
+  <li>The owner puts the contact address on the machine (one command, in <code>INFRASTRUCTURE.md</code>). Then the watch is checked live against EDGAR.</li>
+  <li>The owner fills the About box of the repository, confirms or rejects decisions D-017 to D-025, and looks at the page on a phone.</li>
+  <li>The Nasdaq source after the close and at night; the final IPO price when it is public (reported for 2026-11-18); the first trade (reported for 2026-11-19).</li>
+  <li>After the first trade: deployment by GitHub itself, alerts, a history of prices. The full list is in <code>BACKLOG.md</code>.</li>
+</ul>
+
+<p class="nav">Mission: <code>loops/003-mission.md</code> · Report: <code>loops/003-report.json</code></p>
+</main>
+</body>
+</html>
