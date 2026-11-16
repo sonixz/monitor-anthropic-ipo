@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import dataclasses
 import json
 import re
 from typing import Any
@@ -379,6 +380,63 @@ def test_nasdaq_before_the_listing_and_for_a_listed_symbol() -> None:
     assert quote.points[0][0] == 1794819600  # 4:00 in New York is 9:00 UTC
     assert quote.when(quote.points[0][0]) == "Nov 16, 2026, 4:00 EST"
     assert market.check(source, "AAPL", "Anthropic", None, TRADING_NOW).state == "unavailable"
+
+
+def test_nasdaq_with_the_market_open() -> None:
+    source = RecordedAnswer(MARKET / "nasdaq-aapl-open.json")  # a real answer, 9:34 in New York
+    now = 1794839695  # the moment it was recorded
+    snapshot = market.check(source, "AAPL", "Apple", None, now)
+    quote = snapshot.quote
+    assert quote is not None
+    assert snapshot.state == "trading"  # the answer says: Open
+    assert quote.price == 355.9601  # the service gives more than two decimals at times
+    assert quote.when() == "Nov 16, 2026, 9:34 EST"
+    assert (quote.day_low, quote.day_high) == (353.79, 357.10)
+    assert quote.volume == 4970164
+    assert quote.previous_close is None  # not read from this service
+    assert len(quote.points) == 335
+    assert quote.when(quote.points[0][0]) == "Nov 16, 2026, 4:00 EST"  # early trading included
+    # The range counts regular hours only: early trades went higher than its top.
+    assert max(value for _, value in quote.points) > 357.10
+    facts = {fact.id: fact for fact in market.facts(snapshot)}
+    assert facts["market.day_high"].title == "Highest price in regular trading hours"
+    assert facts["market.price"].as_filed == "$355.96"
+
+
+def test_the_line_of_the_day_ends_at_the_last_trade() -> None:
+    source = RecordedAnswer(MARKET / "nasdaq-aapl-open.json")
+    quote = market.check(source, "AAPL", "Apple", None, 1794839695).quote
+    assert quote is not None
+    # The series has a point for the minute of the last trade, at another price.
+    assert quote.points[-1] == (quote.time, 355.57)
+    assert quote.line[-1] == (quote.time, quote.price)
+    assert quote.line[:-1] == quote.points[:-1]
+    # A series that runs past the last trade is cut there; a trade with no series gives no line.
+    late = dataclasses.replace(quote, time=quote.points[100][0] + 30)
+    assert len(late.line) == 102
+    assert late.line[-1] == (late.time, quote.price)
+    assert late.line[-2] == quote.points[100]
+    assert dataclasses.replace(quote, points=()).line == ()
+    assert dataclasses.replace(quote, time=quote.points[0][0]).line == ()
+
+
+def test_no_previous_close_on_a_first_trading_day() -> None:
+    answer = recorded("aapl-listed.json")
+    meta = answer["chart"]["result"][0]["meta"]
+    assert meta["previousClose"] == 354.88
+
+    def previous(first_trade: int | None) -> float | None:
+        meta["firstTradeDate"] = first_trade
+        quote = market.read_yahoo(
+            answer, symbol="AAPL", company="Apple", name="Yahoo Finance", page="p", now=TRADING_NOW
+        ).quote
+        assert quote is not None
+        return quote.previous_close
+
+    traded = meta["regularMarketTime"]  # 16:00 in New York
+    assert previous(traded - 86400) == 354.88  # first traded the day before
+    assert previous(traded - 6 * 3600) is None  # first traded that morning
+    assert previous(None) is None
 
 
 def nasdaq(**primary: Any) -> dict[str, Any]:

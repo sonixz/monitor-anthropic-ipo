@@ -95,7 +95,7 @@
   </div>
 
   <div class="split">
-    {% if quote.points|length > 1 %}
+    {% if quote.line|length > 1 %}
     <figure class="chart">
       <figcaption>Price through the day</figcaption>
       {{ chart("market.day") }}
@@ -106,13 +106,13 @@
         <caption>The day so far</caption>
         <tbody>
           <tr><th scope="row">Last price</th><td>{{ n("market.price") }}</td></tr>
-          {% if quote.day_low is not none and quote.day_high is not none %}<tr><th scope="row">Range of the day</th><td>{{ n("market.day_low") }} <span class="to">to</span> {{ n("market.day_high") }}</td></tr>{% endif %}
+          {% if quote.day_low is not none and quote.day_high is not none %}<tr><th scope="row">Range in regular hours</th><td>{{ n("market.day_low") }} <span class="to">to</span> {{ n("market.day_high") }}</td></tr>{% endif %}
           {% if quote.volume is not none %}<tr><th scope="row">Shares traded</th><td>{{ n("market.volume") }}</td></tr>{% endif %}
           {% if quote.previous_close is not none %}<tr><th scope="row">Previous close</th><td>{{ n("market.previous_close") }}</td></tr>{% endif %}
           <tr><th scope="row">{% if priced %}IPO price{% else %}Middle of the IPO range{% endif %}</th><td>{{ n(price_ref) }}</td></tr>
         </tbody>
       </table>
-      <p class="aside">The share counts and the cash behind these values come from the filing; only the price moves. {% if not priced %}The final IPO price is not recorded here yet, so the comparison uses the middle of the filed range.{% endif %}</p>
+      <p class="aside">The share counts and the cash behind these values come from the filing; only the price moves. {% if quote.day_high is not none and quote.line|length > 1 %}The range counts regular trading hours only; the line can also show trades made before the open and after the close. {% endif %}{% if not priced %}The final IPO price is not recorded here yet, so the comparison uses the middle of the filed range.{% endif %}</p>
     </div>
   </div>
 </section>

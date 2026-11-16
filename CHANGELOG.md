@@ -4,6 +4,30 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+Found by checking the Nasdaq source with the market open, on 2026-11-16. Not deployed yet:
+0.3.1 is the live version.
+
+### Fixed
+
+- The line of the price through the day now ends at the last trade the source states. The
+  source's series lags its last price by a minute or two (and at the open it still ended on an
+  early trade), so the last point was drawn beside the price it named.
+- A "previous close" is no longer shown on a first trading day, whatever the source puts in that
+  field. Nasdaq.com's own is not read: before the open it was the close of an older session.
+
+### Changed
+
+- "Range of the day" is now "Range in regular hours", and the panel says that the line can also
+  show trades made before the open and after the close. Seen on a real answer: Nasdaq.com's range
+  leaves early trades out, its series includes them.
+
+### Added
+
+- A real answer of Nasdaq.com with the market open (a listed symbol, 9:34 in New York) is
+  replayed by the tests: state, price, time, range, volume and the 335 points of the day.
+
 ## [0.3.1] - 2026-11-16
 
 ### Fixed

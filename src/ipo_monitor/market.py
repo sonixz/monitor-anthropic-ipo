@@ -64,6 +64,16 @@ class Quote:
         local = datetime.fromtimestamp(self.time if moment is None else moment, zone)
         return f"{local:%b} {local.day}, {local.year}, {local.hour}:{local:%M} {self.zone}"
 
+    @property
+    def line(self) -> tuple[tuple[int, float], ...]:
+        """The series of the day, ending at the last trade.
+
+        The source's series lags its last price by a minute or two. A chart that ends on the
+        series would put its last point beside the price it names, not on it.
+        """
+        earlier = tuple(point for point in self.points if point[0] < self.time)
+        return (*earlier, (self.time, self.price)) if earlier else ()
+
 
 @dataclass(frozen=True)
 class Snapshot:
@@ -214,6 +224,8 @@ def read_nasdaq(
         if moment is not None and value is not None and value > 0:
             # The service stamps its points with New York wall-clock time written as if it were UTC.
             points.append((int(moment / 1000) - offset, value))
+    # No previous close is read here. The service gives one with its chart only, and before the
+    # open it was seen to be the close of the session before the last one (2026-11-16).
     quote = Quote(
         symbol=symbol,
         name=listed_as,
@@ -299,6 +311,11 @@ def read_yahoo(
         for moment, raw in zip(result.get("timestamp") or [], closes, strict=False)
         if (close := _number(raw)) is not None and _number(moment) is not None
     )
+    offset = int(_number(meta.get("gmtoffset")) or 0)
+    # A previous close needs a previous trading day. Without a first trading day before this
+    # one, whatever the field holds is not shown.
+    first = _number(meta.get("firstTradeDate"))
+    seasoned = first is not None and (first + offset) // 86400 < (traded + offset) // 86400
     quote = Quote(
         symbol=symbol,
         name=listed_as,
@@ -306,11 +323,11 @@ def read_yahoo(
         price=price,
         time=int(traded),
         zone=str(meta.get("timezone") or "UTC"),
-        offset=int(_number(meta.get("gmtoffset")) or 0),
+        offset=offset,
         day_high=_number(meta.get("regularMarketDayHigh")),
         day_low=_number(meta.get("regularMarketDayLow")),
         volume=_number(meta.get("regularMarketVolume")),
-        previous_close=_number(meta.get("previousClose")),
+        previous_close=_number(meta.get("previousClose")) if seasoned else None,
         points=points,
     )
     hours = ((meta.get("currentTradingPeriod") or {}).get("regular")) or {}
@@ -487,8 +504,8 @@ def facts(snapshot: Snapshot) -> list[Fact]:
         fact("time", "Time of the last trade", when, "text", when, said("Last trade", when)),
     ]
     optional = (
-        ("day_high", "Highest price of the day", quote.day_high, "USD/share"),
-        ("day_low", "Lowest price of the day", quote.day_low, "USD/share"),
+        ("day_high", "Highest price in regular trading hours", quote.day_high, "USD/share"),
+        ("day_low", "Lowest price in regular trading hours", quote.day_low, "USD/share"),
         ("previous_close", "Previous close", quote.previous_close, "USD/share"),
         ("volume", "Shares traded today", quote.volume, "count"),
     )

@@ -276,8 +276,9 @@ class Figures:
 
     def _market_day(self) -> Chart:
         quote = self.quote
-        if quote is None or len(quote.points) < 2:
+        if quote is None or len(quote.line) < 2:
             raise ValueError("no price series to draw")
+        line = quote.line
         zone = timezone(timedelta(seconds=quote.offset))
 
         def clock(moment: int) -> str:
@@ -288,10 +289,10 @@ class Figures:
         ipo = self.n.raw(self.price_ref)
         name = "IPO price" if self.at == "final" else "middle of the IPO range"
         return charts.trace(
-            quote.points,
+            line,
             last=last,
             tick_fmt=lambda value: f"${value:,.2f}",
-            ends=(clock(quote.points[0][0]), f"{clock(quote.points[-1][0])} {quote.zone}"),
+            ends=(clock(line[0][0]), f"{clock(line[-1][0])} {quote.zone}"),
             level=(ipo, name),
             aria=(
                 "Share price through the trading day, as a line. The last price, the range of "

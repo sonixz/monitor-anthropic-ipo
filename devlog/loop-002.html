@@ -140,6 +140,16 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px
   <li>Still blocked on two secrets: AI explanations and the EDGAR watcher. The full list is in <code>BACKLOG.md</code>.</li>
 </ul>
 
+<h2>Follow-up at the open (14:35 UTC the same day)</h2>
+<p>The check that could not run before 9:30 in New York ran when the market opened, on a long-listed symbol and on a stock listed the Friday before. Nothing was deployed: version 0.3.1 stays live, and the fix waits on <code>main</code>.</p>
+<ul>
+  <li>Read correctly from a real answer: the state ("trading"), the last price, its time, the volume, the range and 335 points of the day. That answer is now replayed by the tests.</li>
+  <li>Two differences found. The source's series lags its last price, so the dot at the end of the line sat beside the price it named: the line now ends at the last trade. And the source's range leaves out trades made before the open, while its series includes them: the row is now named "Range in regular hours" and the panel says so.</li>
+  <li>A "previous close" is no longer shown on a first trading day.</li>
+  <li>Memory after an hour and thirteen checks of the source: 57 MB, unchanged since start.</li>
+  <li>Still not seen: the source's answers after the close and at night, and for a stock that is listed but has not traded yet.</li>
+</ul>
+
 <p class="nav">Mission: <code>loops/002-mission.md</code> · Report: <code>loops/002-report.json</code></p>
 </main>
 </body>
