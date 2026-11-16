@@ -1,0 +1,202 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-001",
+  "summary": "The placeholder at https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev was replaced by the first real dashboard (version 0.1.0, tag v0.1.0): five panels on Anthropic's IPO in a calm terminal style, 125 numbers, each a button that opens its source. 276 figures are extracted by code from Form S-1/A Amendment No. 2 with page and quote; 129 consistency checks stop the service if they disagree. Lint, strict types, 56 unit tests and 4 real-browser tests pass locally, in GitHub Actions and against the live site. Not run: the owner's 60-second test on the live page. Departures approved by the owner: Loop 001 deployed, and there is no fly.toml. Departures decided during the build: a fifth panel (LOSSES) and a PRESS label for four reported figures.",
+  "delivered": [
+    "Dashboard live at https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev: panels VALUE, EV BRIDGE, CONTRACTS, GROWTH and LOSSES; status lines with the source filing, its date and 'awaiting listing'; disclaimer; footer link 'Built with the Loop0 Method'; /health kept.",
+    "Source cards for every number: FILED (quoted passage, page, link to sec.gov), CALC (formula and inputs), PRESS (quote and article). A test fails if a digit appears outside a sourced number or a period label.",
+    "Extraction script (python -m ipo_monitor.extract) and dataset data/facts/s1a2.json: 276 facts with id, value, unit, period, page, section and quote; a re-run on the saved filing reproduces the committed file byte for byte.",
+    "129 reconciliation checks (statements add up, quarters add up to the year, text matches tables, commitments and share counts add up); the service refuses to start if one fails.",
+    "80 calculations in code with tests: share counts and implied value at $70, $74 and $78 (outstanding, diluted, press basis), enterprise value bridge, three revenue multiples, growth rates, revenue per compute dollar, margins, commitment horizons, loss breakdown.",
+    "An explanation of why press valuations differ: about $1.02T counts shares outstanding; up to $1.405T is reproduced only by adding 2.05B shares reserved for future grants and leaving out 1.56B shares owed to Amazon.",
+    "Terminal design: monospace, dark, one accent, keyboard keys v e c g l and ?, phone layout with the key values on the first screen, works without JavaScript, strict Content-Security-Policy, no external request.",
+    "Deployment on the existing Agent Manager machine: deploy.sh (build a tag in its own folder, switch after the build, health check, automatic return to the previous release on failure, rollback command) and start.sh (restarts the service if it stops). The placeholder is retired.",
+    "Repository foundation: MIT LICENSE, pyproject with Ruff, strict mypy and pytest, pre-commit hooks, .env.example, GitHub Actions CI (format, lint, types, unit and real-browser tests, gitleaks), CodeQL, Dependabot, actions pinned to commit hashes, branch protection guide.",
+    "Documents: VISION, PRODUCT, ARCHITECTURE, INFRASTRUCTURE, DECISIONS, ANALYSIS (first version of the analysis method), LOOP, README, CONTRIBUTING, SECURITY, CHANGELOG, CLAUDE.md, STATUS, BACKLOG; five Mermaid diagrams checked with lint_diagrams.",
+    "Devlog: devlog/index.html and devlog/loop-001.html with six screenshots taken from the live site."
+  ],
+  "changedFiles": [
+    ".editorconfig",
+    ".env.example",
+    ".github/dependabot.yml",
+    ".github/workflows/ci.yml",
+    ".github/workflows/codeql.yml",
+    ".pre-commit-config.yaml",
+    ".python-version",
+    "ANALYSIS.md",
+    "ARCHITECTURE.md",
+    "BACKLOG.md",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "CONTRIBUTING.md",
+    "DECISIONS.md",
+    "INFRASTRUCTURE.md",
+    "LICENSE",
+    "LOOP.md",
+    "PRODUCT.md",
+    "README.md",
+    "SECURITY.md",
+    "STATUS.md",
+    "VISION.md",
+    "data/facts/press.json",
+    "data/facts/s1a2.json",
+    "deploy/README.md",
+    "deploy/deploy.sh",
+    "deploy/placeholder/serve.py",
+    "deploy/placeholder/start.sh",
+    "deploy/placeholder/www/index.html",
+    "deploy/start.sh",
+    "devlog/img/loop-001-desktop-full.png",
+    "devlog/img/loop-001-desktop.png",
+    "devlog/img/loop-001-phone-source.png",
+    "devlog/img/loop-001-phone.png",
+    "devlog/img/loop-001-source-calc.png",
+    "devlog/img/loop-001-source-filed.png",
+    "devlog/index.html",
+    "devlog/loop-001.html",
+    "loops/001-mission.md",
+    "loops/001-report.json",
+    "pyproject.toml",
+    "src/ipo_monitor/__init__.py",
+    "src/ipo_monitor/__main__.py",
+    "src/ipo_monitor/calc.py",
+    "src/ipo_monitor/config.py",
+    "src/ipo_monitor/extract.py",
+    "src/ipo_monitor/facts.py",
+    "src/ipo_monitor/fmt.py",
+    "src/ipo_monitor/log.py",
+    "src/ipo_monitor/reconcile.py",
+    "src/ipo_monitor/render.py",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/static/app.js",
+    "src/ipo_monitor/static/favicon.svg",
+    "src/ipo_monitor/templates/index.html.j2",
+    "src/ipo_monitor/web.py",
+    "tests/__init__.py",
+    "tests/conftest.py",
+    "tests/e2e/__init__.py",
+    "tests/e2e/test_dashboard.py",
+    "tests/test_calc.py",
+    "tests/test_extract.py",
+    "tests/test_facts.py",
+    "tests/test_fmt.py",
+    "tests/test_reconcile.py",
+    "tests/test_web.py",
+    "uv.lock"
+  ],
+  "decisions": [
+    "Confirmed by the owner before the build: Loop 001 deploys to the already exposed machine; no fly.toml because Agent Manager owns the Fly.io app (DECISIONS D-005). LOOP.md still carries the template line 'never deploy'.",
+    "Confirmed by the owner: MIT license, the foundation profile, Python/FastAPI/SQLite, terminal style 'not neon', the owner's words given in English in repository documents.",
+    "Proposed, applied: 'diluted' counts what is already owed or granted (Amazon notes, options, RSUs, shares issued since Sep 30) and not shares reserved for future grants (D-010).",
+    "Proposed, applied: enterprise value = diluted value - cash after the offering (filed) - cash from option exercises + borrowings drawn (none); the Amazon notes are counted as shares, not debt (D-011).",
+    "Proposed, applied, beyond the mission: a fifth panel LOSSES (D-012) and a PRESS label for four reported figures, two valuations and two dates (D-006).",
+    "Proposed, applied: facts extracted into versioned JSON, raw filing out of git (D-007); page rendered once at startup, inconsistent data stops the service (D-008); strict CSP and native popovers (D-009).",
+    "Not built in this loop although confirmed by the owner: market data from a free source such as yfinance (D-013) and AI with the owner's capped key (D-014). SQLite is in the stack but unused."
+  ],
+  "tests": [
+    {
+      "command": "uv run ruff format --check . && uv run ruff check .",
+      "result": "passed",
+      "notes": "All checks passed, zero warnings; also green in GitHub Actions on commit 64be1a8."
+    },
+    {
+      "command": "uv run mypy",
+      "result": "passed",
+      "notes": "Strict mode: no issues found in 21 source files."
+    },
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "56 passed. Includes the extraction re-run against the saved filing (reproduces data/facts/s1a2.json exactly), ten tampered figures each refused by a reconciliation check, and 'no number without a source'."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "4 passed in Chromium against a local server: desktop reading and keyboard keys, FILED and CALC source cards, keyboard-only use, phone first screen at 390x844 without scrolling and without sideways scroll, no JavaScript, load under 1 s, axe with no serious or critical issue, no console error."
+    },
+    {
+      "command": "E2E_BASE_URL=https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev E2E_SHOTS=devlog/img uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "The same 4 tests against the live site, after deployment. The devlog screenshots come from this run."
+    },
+    {
+      "command": "GitHub Actions: CI and CodeQL on commit 64be1a8",
+      "result": "passed",
+      "notes": "CI: format, lint, types, unit tests, browser tests, gitleaks: success. CodeQL: success."
+    },
+    {
+      "command": "gitleaks protect --staged (8.30.1) and a search for contact addresses",
+      "result": "passed",
+      "notes": "No leaks found; no e-mail address in the tracked files."
+    },
+    {
+      "command": "curl https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev/health and /",
+      "result": "passed",
+      "notes": "status ok, version 0.1.0, 129 checks passed; page 200, 16 KB compressed, about 0.23 s; security headers present; footer shows the release."
+    },
+    {
+      "command": "Spot-check of 17 numbers on the live page against the filing and hand arithmetic",
+      "result": "passed",
+      "notes": "FILED: $70.00, $78.00, 13,086.7M shares, $900.9B, $13.8B, 16,956, -$104.0B, $212.7B cash after the offering (filed 212,684). CALC recomputed by hand: $968B, 17,527.7M diluted shares, EV $1,079.2B, 13.3x, $449.3B, +47%, +1,127%, $1.72, 90.7%."
+    },
+    {
+      "command": "On the machine: sh /data/deploy.sh v0.1.0; deploy of an older commit; sh /data/deploy.sh rollback",
+      "result": "passed",
+      "notes": "Each switch became healthy within about 3 seconds; rollback returned to release 64be1a850a47; lines written to /data/deploy.log."
+    },
+    {
+      "command": "On the machine: a release with one wrong figure (deliberately broken)",
+      "result": "passed",
+      "notes": "The service refused to start (ReconciliationError in the log); deploy.sh reported 'did not become healthy', put the previous release back and exited 1. The site was unreachable for under a minute during this test."
+    },
+    {
+      "command": "Memory and disk on the machine",
+      "result": "passed",
+      "notes": "Service about 50 MB resident; 101 MB available of 209; 62 MB used of the 1 GB volume."
+    },
+    {
+      "command": "lint_diagrams on PRODUCT.md, ARCHITECTURE.md, INFRASTRUCTURE.md",
+      "result": "passed",
+      "notes": "5 diagrams, no issue."
+    },
+    {
+      "command": "uv run pre-commit run --all-files",
+      "result": "passed",
+      "notes": "Format (ruff), lint (ruff), types (mypy) and 'Detect hardcoded secrets' (gitleaks 8.30.1): all Passed on all files. The hooks are not installed in the working clone used for this loop."
+    },
+    {
+      "command": "Real-people test: the owner answers 'what is it worth, what does it owe, is it growing' within 60 seconds on the live page",
+      "result": "not_run",
+      "notes": "Only the owner can run it. Carried over."
+    }
+  ],
+  "blockers": [
+    "Agent Manager cannot assign a secret to an existing Online machine: the capped OpenAI key and a contact address for sec.gov cannot reach the machine yet. This blocks AI explanations and the EDGAR watcher, not this loop.",
+    "CI cannot reach the machine (Agent Manager owns access): automated deployment needs a design with the owner."
+  ],
+  "remainingWork": [
+    "The owner's 60-second test on the live page (acceptance criterion, not run).",
+    "Experience criterion only partly met: several explanatory lines run to three lines on desktop and more on a phone; the mission asked for two at most.",
+    "LOOP.md says 'never deploy' (Loop0 template) while the owner approved deploying: ask Loop0 for a version that allows deployment within approved limits.",
+    "Branch protection on main is documented in CONTRIBUTING.md but not set (the owner's action).",
+    "The Reuters valuation is quoted from a secondary article (INDmoney) that relays it; CNN and Forbes could not be opened and are not cited.",
+    "Options and RSUs are counted in full in the diluted figure; a treasury-stock view is not shown.",
+    "Deployment is manual; there is no uptime monitoring from outside the machine.",
+    "Out of scope and still to build: market data, final IPO price, EDGAR watcher and 'what changed', AI explanations, the 'what you pay' slider, the 'How We Build' page, automated deployment, SQLite storage."
+  ],
+  "recommendedNextSteps": [
+    "Owner: open the live page, do the 60-second test, and say what is unclear.",
+    "Loop 002 before the first trade (reported for 2026-11-19): market panel behind an adapter with the real price flowing into VALUE and EV BRIDGE; the final price from the 424B4; a 'what changed' panel.",
+    "Owner: put the two secrets on the machine (hidden prompt in the machine's session, or after Agent Manager is fixed), then add the EDGAR watcher and AI explanations following ANALYSIS.md.",
+    "Review ANALYSIS.md and decisions D-010 and D-011 (what 'diluted' and 'enterprise value' mean here): they shape the headline numbers."
+  ],
+  "reportedAt": "2026-11-16T05:05:00Z",
+  "submittedBy": "Claude Code (Claude Fable 5.2)",
+  "cost": {
+    "durationSeconds": null,
+    "inputTokens": null,
+    "outputTokens": null,
+    "usd": null
+  }
+}

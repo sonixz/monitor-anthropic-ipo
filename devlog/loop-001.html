@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 001 — Sourced value terminal: the first real dashboard, live · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}.entry{display:block;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:14px 0;color:inherit;text-decoration:none}
+.entry:hover{border-color:var(--accent)}.entry small{color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+@media(max-width:640px){.pair{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 001 — Sourced value terminal: the first real dashboard, live</h1>
+<p class="lead">2026-11-15 · The placeholder became a real dashboard: five panels on Anthropic's IPO, 125 numbers, each one a button that opens its source. Live at <a href="https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev">agmgd-on-ipo-monitor-ba4eccd0.fly.dev</a>.</p>
+
+<h2>Why</h2>
+<blockquote>
+<p>When I look at a dashboard like the one I showed you, I want to know whether Anthropic is undervalued. I have a small stake in the IPO, and I mainly want to try using AI to build a system that monitors all of this. That dashboard is very complete; I'd rather keep mine smoother. Tell me: what is it worth right now? What contracts does it have? What is the valuation, and is it really overvalued?</p>
+<p>Yes to the objective, but we'll be online well before the listing. The five cards, and more: I want to see the value of the contracts and the real value of the company. I'd also like a very different style: a terminal, code-like look — not neon. Let's stay efficient and light.</p>
+</blockquote>
+<p><small>The owner spoke in French; these are their words reworded in English at their request, with the meaning unchanged.</small></p>
+
+<h2>What changed</h2>
+<ul>
+  <li><strong>Five panels answer five plain questions.</strong> VALUE (what is it worth at the IPO price), EV BRIDGE (what does that price really buy), CONTRACTS (what is signed, both ways), GROWTH (how fast, at what cost) and LOSSES (is the huge loss real spending). The mission planned four; LOSSES was added because the owner had asked about the losses.</li>
+  <li><strong>Every number is a button.</strong> A FILED number opens the passage of the SEC filing with its page. A CALC number opens the formula and every input. A PRESS number opens the quote and the article. A test fails if a digit appears on the page outside a sourced number or a period label.</li>
+  <li><strong>The figures are extracted by code, not typed.</strong> A script reads the owner's saved copy of Form S-1/A, Amendment No. 2 (filed 2026-11-10) and writes 276 facts, each with its page and quote. If a figure is not where it is expected, the extraction stops.</li>
+  <li><strong>The figures must agree with each other.</strong> 129 checks compare what the filing says in two places: quarters against the year, a sentence against a table, parts against their total. The service does not start if one fails.</li>
+  <li><strong>Why headlines disagree.</strong> Reading the filing explained the gap between the reported valuations. About $1.02 trillion counts the shares that exist after the IPO. Up to $1.405 trillion is reproduced, to four digits, only by adding 2.05 billion shares reserved for future grants and leaving out 1.56 billion shares still owed to Amazon on its convertible notes. The page shows the three counts side by side.</li>
+  <li><strong>A calm terminal.</strong> Monospace, dark, one sand accent for our arithmetic, green and red only for changes. Keys <code>v</code> <code>e</code> <code>c</code> <code>g</code> <code>l</code> jump to the panels. The page works without JavaScript and loads one stylesheet and one script, nothing external.</li>
+  <li><strong>A repeatable deployment.</strong> One script on the machine builds a tagged release in its own folder, switches to it only once built, checks its health and puts the previous one back if it fails.</li>
+  <li><strong>The foundation of a public repository.</strong> MIT license, CI with real-browser tests and a secret scan, CodeQL, Dependabot, pre-commit hooks, and the project documents.</li>
+</ul>
+
+<figure>
+  <img src="img/loop-001-desktop.png" alt="The top of the dashboard on a desktop screen: the status lines, then the VALUE panel with three tiles and the table of implied value by IPO price.">
+  <figcaption>The live page on a desktop screen. The status lines say which filing the data comes from and that the market is awaiting listing.</figcaption>
+</figure>
+
+<div class="pair">
+<figure>
+  <img src="img/loop-001-phone.png" alt="The first screen on a phone: value of the shares outstanding, diluted value and enterprise value, all visible without scrolling.">
+  <figcaption>The first screen on a phone (390×844): the value at the price range, outstanding and diluted, and the enterprise value, without scrolling.</figcaption>
+</figure>
+<figure>
+  <img src="img/loop-001-phone-source.png" alt="A source card on a phone for the $900.9 billion of committed spend, quoting the filing with its page.">
+  <figcaption>One tap on a number: the passage of the filing, the page and a link to sec.gov.</figcaption>
+</figure>
+</div>
+
+<figure>
+  <img src="img/loop-001-source-calc.png" alt="The source card of the enterprise value: the formula, each input with its label and where it comes from.">
+  <figcaption>A calculated number shows its formula and inputs. Each input is itself filed or calculated.</figcaption>
+</figure>
+
+<figure>
+  <img src="img/loop-001-source-filed.png" alt="The source card of the third-quarter revenue, quoting the row of the quarterly table on page 164.">
+  <figcaption>A filed number quotes the table row it was copied from: $16,956 million, page 164.</figcaption>
+</figure>
+
+<figure>
+  <img src="img/loop-001-desktop-full.png" alt="The whole page: VALUE, EV BRIDGE and CONTRACTS side by side, GROWTH with the quarterly table, LOSSES.">
+  <figcaption>The whole page.</figcaption>
+</figure>
+
+<h2>What the real browser caught</h2>
+<p>The unit tests passed while two defects were on the page. The browser tests found both:</p>
+<ul>
+  <li>On a phone the page scrolled sideways by 145 pixels. Hidden helper text inside the wide quarterly table was positioned against the page instead of the table. Fixed by containing it.</li>
+  <li>Nine labels failed the contrast check (2.3 to 1 where 4.5 to 1 is required). Fixed with a lighter grey.</li>
+</ul>
+<p>The strict Content-Security-Policy also blocked one of the test's own helpers, which evaluated a string as script. The test was changed; the policy stayed.</p>
+
+<h2>Checks</h2>
+<table>
+  <tr><th>Command or check</th><th>Result</th><th>Notes</th></tr>
+  <tr><td><code>uv run ruff format --check .</code> · <code>uv run ruff check .</code></td><td>passed</td><td>No warning. Locally and in GitHub Actions.</td></tr>
+  <tr><td><code>uv run mypy</code></td><td>passed</td><td>Strict; 21 source files, no issue.</td></tr>
+  <tr><td><code>uv run pytest</code></td><td>passed</td><td>56 tests, including the extraction re-run against the saved filing, which reproduces the committed dataset byte for byte.</td></tr>
+  <tr><td><code>uv run pytest -m e2e</code> (local server)</td><td>passed</td><td>4 real-browser tests: desktop and keyboard, phone first screen, no JavaScript, load time.</td></tr>
+  <tr><td><code>E2E_BASE_URL=… uv run pytest -m e2e</code> (live site)</td><td>passed</td><td>The same 4 tests against the public URL. The screenshots on this page come from that run.</td></tr>
+  <tr><td>Accessibility (axe, in the browser tests)</td><td>passed</td><td>No serious or critical issue on desktop and phone, after the contrast fix.</td></tr>
+  <tr><td>GitHub Actions: CI and CodeQL on the released commit</td><td>passed</td><td>Format, lint, types, unit tests, browser tests, gitleaks; CodeQL on Python, JavaScript and workflows.</td></tr>
+  <tr><td>Secret scan of the staged changes (gitleaks 8.30.1)</td><td>passed</td><td>No leak found; no contact address in the repository.</td></tr>
+  <tr><td>Seventeen numbers read off the live page</td><td>passed</td><td>Filed ones match the filing; calculated ones match arithmetic done by hand.</td></tr>
+  <tr><td><code>curl</code> of <code>/health</code> and <code>/</code> on the public URL</td><td>passed</td><td>Release 0.1.0; 16 KB compressed; about 0.2 s.</td></tr>
+  <tr><td>Deploy, roll back, and a release with a wrong figure, on the machine</td><td>passed</td><td>The wrong figure stopped the service; the script put the previous release back.</td></tr>
+  <tr><td>Memory on the machine</td><td>passed</td><td>The service uses about 50 MB of 256 MB.</td></tr>
+  <tr><td><code>uv run pre-commit run --all-files</code></td><td>passed</td><td>Format, lint, types and the gitleaks hook, on all files.</td></tr>
+  <tr><td>The owner answers "worth, owes, growing" in under 60 seconds</td><td>not_run</td><td>Only the owner can run it, on the live page.</td></tr>
+</table>
+
+<h2>Departures from the mission</h2>
+<ul>
+  <li>Loop 001 deployed to the machine, and there is no <code>fly.toml</code>. Loop0's template for a first loop says otherwise; the owner approved both before the build.</li>
+  <li>A fifth panel (LOSSES) and a third label (PRESS, for four reported figures) were added.</li>
+  <li>SQLite is part of the chosen stack but is not used yet: nothing changes at runtime.</li>
+  <li>Some explanatory lines run to three lines on a desktop screen and more on a phone; the mission asked for two at most.</li>
+  <li>The site was unreachable for about a minute in total during the deployment tests, including the deliberate failure.</li>
+</ul>
+
+<h2>What is left</h2>
+<ul>
+  <li>The owner's 60-second test on the live page.</li>
+  <li>Before the first trade (reported for 2026-11-19): the market panel, the final price, the EDGAR watcher with "what changed", AI explanations.</li>
+  <li>Two secrets must reach the machine first (the AI key and a contact address for sec.gov); Agent Manager cannot assign them to an existing machine yet.</li>
+  <li>Automated deployment from CI, a "How We Build" page, storage and history.</li>
+  <li>The full list is in <code>BACKLOG.md</code>.</li>
+</ul>
+
+<p class="nav">Mission: <code>loops/001-mission.md</code> · Report: <code>loops/001-report.json</code></p>
+</main>
+</body>
+</html>
