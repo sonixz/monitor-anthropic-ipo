@@ -25,6 +25,7 @@
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
 - CI on GitHub: format, lint, strict types, 110 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
 - Deploy and rollback on the machine: seven deployments on 2026-11-16, each healthy within seconds.
+- **Seen by the owner on a phone** (2026-11-16, version 0.4.2): asked to find what the company is worth, what it owes and how fast it grows, to check that nothing scrolls sideways and to open a source card, they reported that everything looked fine and made no remark. No time was recorded.
 
 ## Measured
 
@@ -56,7 +57,6 @@
 
 ## Not verified yet
 
-- The owner's look at the page on a phone (acceptance criterion of Loop 002) and the 60-second test (Loop 001).
 - The decisions taken while the owner was away: D-017 to D-022 in [DECISIONS.md](DECISIONS.md). D-016 is confirmed.
 - The Nasdaq source after the close and at night; the memory of the service after a full day of refreshes.
 - Branch protection on `main`: recommended in CONTRIBUTING.md, to be set by the owner.

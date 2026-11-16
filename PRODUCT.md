@@ -67,7 +67,7 @@ flowchart LR
 
 | Goal | Measure | Status at Loop 001 |
 | --- | --- | --- |
-| A newcomer gets the three answers quickly | "Worth, owes, growing" answered in under 60 seconds | To be tested by the owner on the live page |
+| A newcomer gets the three answers quickly | "Worth, owes, growing" answered in under 60 seconds | Tried by the owner on a phone on 2026-11-16 (version 0.4.2): no difficulty reported, no time recorded |
 | Every number is traceable | A test fails if a digit appears outside a sourced number or a period label | In place (`tests/test_web.py`) |
 | The figures agree with each other | Reconciliation checks pass; one failure blocks the start | 129 checks pass |
 | The first screen is enough on a phone | Value range and enterprise value visible at 390×844 without scrolling | In place (real-browser test) |

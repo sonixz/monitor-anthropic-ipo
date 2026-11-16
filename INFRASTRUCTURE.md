@@ -108,10 +108,10 @@ The service makes two kinds of outbound requests, both over HTTPS and on a timer
 | `SEC_CONTACT` | The contact address sec.gov requires. Without it the filings watch is off and nothing is asked from the SEC | On the machine: `/data/secrets.env`, readable by root only. On a workstation: `.env`, ignored by git |
 | `OPENAI_API_KEY` (final name to confirm) | AI explanations. Planned, not present | To decide when it is built |
 
-Agent Manager cannot assign a secret to a machine that already exists, so the owner types the address into the machine's session, where it is not echoed:
+Agent Manager cannot assign a secret to a machine that already exists, so the owner types the address into the machine's session, where it is not echoed. The command answers `saved` only if the file was written; typed in another terminal, it says so:
 
 ```sh
-( umask 077; read -rs -p "SEC contact address: " a; printf 'SEC_CONTACT=%s\n' "$a" > /data/secrets.env; echo; echo saved )
+( umask 077; read -rs -p "SEC contact address: " a; echo; printf 'SEC_CONTACT=%s\n' "$a" > /data/secrets.env && echo saved || echo "NOT saved: is this the ipo-monitor machine?" )
 ```
 
 `start.sh` reads that file at every start of the service, takes only the names it knows and never prints a value. The service never logs the address and never shows it; a test proves it. An address that is not one e-mail address switches the filings watch off and logs why, without the value: the page does not go down for an optional source.
