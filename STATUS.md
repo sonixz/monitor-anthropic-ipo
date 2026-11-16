@@ -7,7 +7,7 @@
 | | |
 | --- | --- |
 | Site | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev |
-| Version | 0.3.1 (tag `v0.3.1`). `main` holds a later fix of the market panel, not deployed (CHANGELOG, Unreleased) |
+| Version | 0.3.2 (tag `v0.3.2`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | IPO price | Not final: the page shows the filed range, $70 to $78. Pricing reported for 2026-11-18 |
@@ -22,7 +22,7 @@
 - 129 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
 - CI on GitHub: format, lint, strict types, 95 unit tests, 12 real-browser tests, secret scan, CodeQL: green on the released commit and on `main`.
-- Deploy and rollback on the machine: three deployments on 2026-11-16, each healthy within seconds.
+- Deploy and rollback on the machine: four deployments on 2026-11-16, each healthy within seconds.
 
 ## Measured
 
@@ -38,20 +38,20 @@
 
 - **No real quote of ANT has been seen yet**: the stock does not trade. The MARKET panel is proven on recorded answers, including invented prices that name themselves as test data.
 - The Nasdaq source was checked before the open and with the market open (2026-11-16), on a long-listed symbol and on a stock listed the Friday before. Its answers after the close and at night have not been seen, nor its answer for a stock that is listed but has not traded yet.
-- With the market open, the day's line can show trades made before the open; the range next to it counts regular hours only. The page says so (not deployed yet).
+- With the market open, the day's line can show trades made before the open; the range next to it counts regular hours only. The page says so.
 - Yahoo Finance refuses the production machine ("too many requests") after a handful of questions; it is only the second source.
 - Market values are unofficial and delayed by up to a few minutes: the page says so next to each one.
 - The final IPO price is not recorded. When it is, a fact file must be added by hand from an opened article or from the final prospectus; until then the market price is compared with the middle of the filed range.
 - The data is one filing, saved and extracted by hand. A new amendment or the final prospectus does not appear by itself.
 - "Diluted" and "enterprise value" follow choices explained in [ANALYSIS.md](ANALYSIS.md) and [DECISIONS.md](DECISIONS.md) (D-010, D-011). They are our arithmetic, not filed figures.
 - Deployment is manual, from the coding agent's session on the machine; each one makes the site unreachable for a few seconds.
-- `LOOP.md` still says "never deploy" (Loop0's template); the owner approved deploying in Loop 001, and Loop 002 assumed the same (D-016).
+- `LOOP.md` still says "never deploy" (Loop0's template); the owner approved deploying in Loop 001 and, on 2026-11-16, every release whose checks all pass (D-016).
 - Browsers from before 2024 show the numbers and charts but cannot open the source cards.
 
 ## Not verified yet
 
 - The owner's look at the page on a phone (acceptance criterion of Loop 002) and the 60-second test (Loop 001).
-- The decisions taken while the owner was away: D-016 to D-022 in [DECISIONS.md](DECISIONS.md).
+- The decisions taken while the owner was away: D-017 to D-022 in [DECISIONS.md](DECISIONS.md). D-016 is confirmed.
 - The Nasdaq source after the close and at night; the memory of the service after a full day of refreshes.
 - Branch protection on `main`: recommended in CONTRIBUTING.md, to be set by the owner.
 

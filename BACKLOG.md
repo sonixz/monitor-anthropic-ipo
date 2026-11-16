@@ -4,7 +4,7 @@
 
 ## Before the first trade (reported for 2026-11-19)
 
-1. **Check the Nasdaq source after the close and at night** (after 16:00 and after 20:00 New York time): record real answers, add them to the tests, fix what differs. Done with the market open on 2026-11-16; the fix it led to is on `main`, to deploy.
+1. **Check the Nasdaq source after the close and at night** (after 16:00 and after 20:00 New York time): record real answers, add them to the tests, fix what differs. Done with the market open on 2026-11-16; the fix it led to is version 0.3.2.
 2. **Record the final IPO price** as soon as it is public (pricing reported for 2026-11-18): the fact `pricing.ipo_price` in `data/facts/`, from an article opened and quoted, or from the final prospectus (424B4) saved by the owner. The page then switches its headline figures to that price.
 3. **Watch the first trade**: the MARKET panel must appear by itself. Look at it on a phone, with real figures, and fix what real data breaks.
 4. **Measure the memory** of the service after a day of market refreshes.

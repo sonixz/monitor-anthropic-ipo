@@ -4,10 +4,9 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.3.2] - 2026-11-16
 
-Found by checking the Nasdaq source with the market open, on 2026-11-16. Not deployed yet:
-0.3.1 is the live version.
+Found by checking the Nasdaq source with the market open.
 
 ### Fixed
 
