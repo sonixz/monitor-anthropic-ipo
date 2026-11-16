@@ -29,6 +29,12 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data
   `tests/test_calc.py` checked against arithmetic done by hand.
 - When figures can be cross-checked, add the check to `reconcile.py`.
 - No inline style or script: the Content-Security-Policy forbids it. Draw with SVG attributes.
+- **Charts** are built in `charts.py` (drawing) and `figures.py` (which facts each chart draws).
+  A value goes onto a chart only through `Numbers.mark`, and must also be a number in a table on
+  the page. Axis ticks are the only digits without a source (`data-tick`). Charts are 320 units
+  wide: look at them at 360 px and at 1280 px before calling them done.
+- Layout breakpoints are container queries on `.panel`, not media queries: a panel is as narrow
+  on a laptop with two panels side by side as on a phone.
 - All user-facing text is in English. The owner's words are given in English, reworded.
 - Conventional Commits. Update `CHANGELOG.md` with each release.
 - Public repository: no secret, contact address or internal access detail anywhere.

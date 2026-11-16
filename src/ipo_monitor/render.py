@@ -18,7 +18,9 @@ from markupsafe import Markup
 
 from ipo_monitor import __version__, fmt
 from ipo_monitor.calc import QUARTER_NAMES, QUARTERS, Calc, Term, compute
+from ipo_monitor.charts import Mark
 from ipo_monitor.facts import Fact, Facts
+from ipo_monitor.figures import Figures
 from ipo_monitor.reconcile import assert_consistent
 
 LOOP0_URL = "https://agmgd-on-loop0-22c0a8ea.fly.dev/"
@@ -137,6 +139,38 @@ class Numbers:
             tone = " up" if value > 0 else " down"
         return BUTTON.format(kind=kind, tone=tone, target=slug(ref), ref=ref, text=text)
 
+    def text(self, ref: str, style: str = "") -> str:
+        """A value as plain text, for the description of a chart mark."""
+        _, value, unit = self._lookup(ref)
+        self.used[ref] = None
+        return display(value, unit, style)
+
+    def mark(
+        self,
+        ref: str,
+        label: str,
+        style: str = "",
+        *,
+        plus: bool = False,
+        mag: bool = False,
+        divide: float = 1.0,
+    ) -> Mark:
+        """A value to draw on a chart. Its source card is rendered like any other."""
+        kind, value, unit = self._lookup(ref)
+        if isinstance(value, str):
+            raise TypeError(f"{ref} is not numeric")
+        if mag:
+            value = abs(value)
+        self.used[ref] = None
+        return Mark(
+            ref=ref,
+            src=slug(ref),
+            label=label,
+            value=value / divide,
+            text=display(value, unit, style, plus=plus),
+            kind=kind.lower(),
+        )
+
     def raw(self, ref: str) -> float:
         """A value for drawing only (bar widths). Never printed."""
         _, value, _ = self._lookup(ref)
@@ -235,6 +269,7 @@ class Page:
     checks: int
     numbers: int
     filed: str
+    charts: dict[str, tuple[Mark, ...]]
 
 
 def _environment() -> Environment:
@@ -263,9 +298,11 @@ def render_page(facts: Facts, *, release: str = "dev") -> Page:
     checks = assert_consistent(facts)
     calcs = compute(facts)
     numbers = Numbers(facts, calcs)
+    figures = Figures(numbers)
     document = facts.documents["s1a2"]
     context: dict[str, Any] = {
         "n": numbers,
+        "chart": figures,
         "document": document,
         "quarters": [(q, QUARTER_NAMES[q]) for q in QUARTERS],
         "checks": len(checks),
@@ -283,4 +320,5 @@ def render_page(facts: Facts, *, release: str = "dev") -> Page:
         checks=len(checks),
         numbers=len(numbers.used),
         filed=document.filed,
+        charts=figures.marks(),
     )

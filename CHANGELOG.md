@@ -4,6 +4,36 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.0] - 2026-11-16
+
+Charts and a phone-first layout (Loop 002, first release). The owner asked for a better layout,
+better behaviour on phones, and charts.
+
+### Added
+
+- Nine charts drawn on the server as SVG, without a chart library: the value across the price
+  range for three share counts with the two press figures; the enterprise value bridge as a
+  waterfall; diluted value against enterprise value; payments due by year; revenue by quarter;
+  growth over the prior quarter; revenue against compute cost; operating margin; operating loss
+  against net loss by period.
+- Every mark on a chart opens the same source card as its number. One tab stop per chart, arrow
+  keys between its marks, a readout on hover and on focus.
+- New figures on the page, all from the filing: payments already running by year, operating loss
+  and net loss for 2023, 2024, 2025 and the first nine months of 2026, and what the revenue of
+  those nine months went to.
+- On a phone: a panel bar made for thumbs that shows where the reader is, source cards that rise
+  from the bottom with a close button, bars under their labels, and the tables behind the charts
+  folded until asked for.
+
+### Changed
+
+- No sideways scrolling anywhere from 360 px up, tables included: the eight-column quarterly table
+  became two narrow tables.
+- Layout breakpoints follow the width of a panel, not of the screen, so two panels side by side on
+  a laptop get the same treatment as one panel on a phone.
+- The page uses wider screens (up to 1360 px).
+- Chart colors were checked for color-blind safety against the panel surface.
+
 ## [0.1.0] - 2026-11-15
 
 The first real dashboard (Loop 001).

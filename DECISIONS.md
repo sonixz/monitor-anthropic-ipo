@@ -1,6 +1,6 @@
 # DECISIONS · monitor-anthropic-ipo
 
-> Significant choices, newest last. Status is **confirmed** only when the owner confirmed it; otherwise **proposed** (the agent's recommendation, applied until the owner says otherwise). Last reviewed: 2026-11-15 · Loop: loop-001
+> Significant choices, newest last. Status is **confirmed** only when the owner confirmed it; otherwise **proposed** (the agent's recommendation, applied until the owner says otherwise). Last reviewed: 2026-11-16 · Loop: loop-002
 
 | Id | Date | Decision | Status |
 | --- | --- | --- | --- |
@@ -19,6 +19,10 @@
 | D-013 | 2026-11-15 | Market data from a free source such as yfinance, behind an adapter | confirmed, not built |
 | D-014 | 2026-11-15 | AI by OpenAI with the owner's capped key, plus an app-level budget | confirmed, not built |
 | D-015 | 2026-11-15 | The owner's words appear in English, reworded, in repository documents | confirmed |
+| D-016 | 2026-11-16 | One Loop 002 for charts, layout and the market panel; each release deployed once checks pass | assumed |
+| D-017 | 2026-11-16 | Charts are SVG drawn on the server, at phone width, without a library | proposed |
+| D-018 | 2026-11-16 | Axis ticks are the only digits without a source | proposed |
+| D-019 | 2026-11-16 | Layout follows the width of a panel; detail tables fold away on a phone | proposed |
 
 ## D-001 · A smooth dashboard of a few panels
 **Context.** The reference dashboard the owner looked at has 14 sections. **Decision.** A few panels, each answering a plain question: worth, contracts, valuation, growth. **Owner:** "I'd rather keep mine smoother"; "the five cards, and more". **Alternative.** Match the reference's depth; rejected as not what the owner wants. **Consequence.** Governance, competition and strategy are left to the filing for now.
@@ -64,3 +68,15 @@
 
 ## D-015 · The owner's words in English
 **Owner:** asked that their dictated French be corrected and put in English in the mission file. **Decision.** Repository documents give the owner's words reworded in English, with the meaning unchanged; the exact French quotes stay in the owner's notes.
+
+## D-016 · One Loop 002, deployed as it goes
+**Owner (2026-11-16):** loves the result, asks for a better layout and better behaviour on phones, says "Go!", then adds charts. **Assumed while the owner is away:** charts, layout and the market panel announced for the listing are one Loop 002, released twice (0.2.0, then 0.3.0), and each release is deployed on the existing machine once every check passes, as approved for Loop 001. No new exposure or infrastructure. **To confirm or reject by the owner.**
+
+## D-017 · Charts drawn on the server
+**Context.** The owner asked for charts and curves; the Content-Security-Policy forbids inline styles; the page must stay light and work without JavaScript; every value must keep its source. **Decision.** A small Python module (`charts.py`) writes SVG with attributes only. Each mark carries the id of its fact or calculation and opens the same source card as the number. Charts are designed 320 units wide and shown side by side on wider screens, so their text stays readable on a phone. **Alternatives.** A JavaScript chart library (heavier, needs script to show anything, harder to tie to sources); one wide chart per panel shrunk on phones (unreadable labels). **Colors.** Two series colors, `#5a8fd6` and `#cf7a3a`, passed the color-blind validator against the panel surface; green and red stay reserved for the sign of a value.
+
+## D-018 · Axis ticks are scale marks
+**Context.** The rule of Loop 001: no digit on the page without a source. A chart axis needs round values that are not facts. **Decision.** Tick labels are the single exception. They carry `data-tick`, and a test accepts them only inside the axis of a chart. Values printed on a chart are not ticks: they carry `data-ref` and open their source card.
+
+## D-019 · Layout by panel width, tables folded on a phone
+**Context.** On a phone the owner had to scroll a table sideways; on a laptop two panels side by side are each as narrow as a phone. **Decision.** Breakpoints are container queries on the panel. Below 540 px of panel width, bars go under their labels and a chart sits above its table. The eight-column quarterly table is two tables at every size. On a phone, the tables that repeat a chart start folded behind a line that names them; without JavaScript they stay open. **Trade-off.** A phone page is longer than before (about nine screens instead of six) because it now carries nine charts; the panel bar and the folded tables keep it navigable.

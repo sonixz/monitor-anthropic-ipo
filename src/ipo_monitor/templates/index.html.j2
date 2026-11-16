@@ -34,29 +34,29 @@
 </header>
 
 <nav class="keys" aria-label="Panels">
-  <a href="#value"><kbd>v</kbd> value</a>
-  <a href="#ev"><kbd>e</kbd> ev bridge</a>
-  <a href="#contracts"><kbd>c</kbd> contracts</a>
-  <a href="#growth"><kbd>g</kbd> growth</a>
-  <a href="#losses"><kbd>l</kbd> losses</a>
-  <button type="button" class="help-key" popovertarget="help"><kbd>?</kbd> help</button>
+  <a href="#value"><kbd aria-hidden="true">v</kbd>value</a>
+  <a href="#ev"><kbd aria-hidden="true">e</kbd>ev<span class="wide"> bridge</span></a>
+  <a href="#contracts"><kbd aria-hidden="true">c</kbd>contracts</a>
+  <a href="#growth"><kbd aria-hidden="true">g</kbd>growth</a>
+  <a href="#losses"><kbd aria-hidden="true">l</kbd>losses</a>
+  <button type="button" class="help-key" popovertarget="help" aria-label="Help"><kbd aria-hidden="true">?</kbd><span class="wide">help</span></button>
 </nav>
 
 <main id="main">
 
 <section class="status" aria-label="Where the data comes from">
   <dl>
-    <div><dt>source</dt><dd>SEC {{ L(document.title) }}, filed {{ n("doc.filed_date") }} · figures as of {{ L("Sep 30, 2026") }} unless noted</dd></div>
-    <div><dt>offer</dt><dd>{{ n("offering.shares_total", "m") }} shares at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · {{ n("offering.size.low") }} to {{ n("offering.size.high") }} · plus a {{ n("offering.private_placement") }} private placement</dd></div>
-    <div><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} (applied) · pricing {{ n("press.cnbc.pricing_date", "short") }}, first trade {{ n("press.cnbc.trading_date", "short") }} (reported, not filed)</dd></div>
+    <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
+    <div><dt>offer</dt><dd>{{ n("offering.shares_total", "m") }} shares at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
+    <div><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} (applied) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
     <div><dt>market</dt><dd><span class="wait">awaiting listing</span> · no share price exists yet</dd></div>
   </dl>
-  <p class="legend">
-    {{ tag("FILED") }} copied from the SEC filing
-    {{ tag("CALC") }} our arithmetic, inputs shown
-    {{ tag("PRESS") }} reported by news media
-    <span class="hint">Select any number to see where it comes from.</span>
-  </p>
+  <ul class="legend">
+    <li>{{ tag("FILED") }} <span>copied from the SEC filing</span></li>
+    <li>{{ tag("CALC") }} <span>our arithmetic, inputs shown</span></li>
+    <li>{{ tag("PRESS") }} <span>reported by news media</span></li>
+    <li class="hint">Select a number or a chart to see where it comes from.</li>
+  </ul>
 </section>
 
 <section class="panel" id="value" tabindex="-1" aria-labelledby="value-h">
@@ -80,32 +80,39 @@
     </div>
   </div>
 
-  <div class="scroll" tabindex="0" role="group" aria-label="Implied value by IPO price, scrollable">
-  <table class="grid">
-    <caption>Implied value by IPO price</caption>
-    <thead>
-      <tr><th scope="col">Counting</th><th scope="col">at {{ n("offering.price_low") }}</th><th scope="col">at {{ n("offering.price_mid") }}</th><th scope="col">at {{ n("offering.price_high") }}</th><th scope="col">Shares</th></tr>
-    </thead>
-    <tbody>
-      <tr><th scope="row">Shares outstanding</th><td>{{ n("value.mcap_out.low") }}</td><td>{{ n("value.mcap_out.mid") }}</td><td>{{ n("value.mcap_out.high") }}</td><td>{{ n("value.shares_out.mid") }}</td></tr>
-      <tr><th scope="row">Diluted (owed or granted)</th><td>{{ n("value.equity_diluted.low") }}</td><td>{{ n("value.equity_diluted.mid") }}</td><td>{{ n("value.equity_diluted.high") }}</td><td>{{ n("value.shares_diluted.mid") }}</td></tr>
-      <tr class="muted"><th scope="row">Press “fully diluted” basis</th><td>{{ n("value.headline.low") }}</td><td>{{ n("value.headline.mid") }}</td><td>{{ n("value.headline.high") }}</td><td>{{ n("value.headline_shares") }}</td></tr>
-    </tbody>
-  </table>
+  <div class="split">
+    <figure class="chart">
+      <figcaption>Three share counts, across the price range</figcaption>
+      {{ chart("value.ranges") }}
+    </figure>
+    <div>
+      <table class="grid">
+        <caption>Implied value by IPO price</caption>
+        <thead>
+          <tr><th scope="col">Counting</th><th scope="col">{{ n("offering.price_low") }}</th><th scope="col">{{ n("offering.price_mid") }}</th><th scope="col">{{ n("offering.price_high") }}</th><th scope="col">Shares</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Outstanding</th><td>{{ n("value.mcap_out.low") }}</td><td>{{ n("value.mcap_out.mid") }}</td><td>{{ n("value.mcap_out.high") }}</td><td>{{ n("value.shares_out.mid") }}</td></tr>
+          <tr><th scope="row">Diluted</th><td>{{ n("value.equity_diluted.low") }}</td><td>{{ n("value.equity_diluted.mid") }}</td><td>{{ n("value.equity_diluted.high") }}</td><td>{{ n("value.shares_diluted.mid") }}</td></tr>
+          <tr class="muted"><th scope="row">Press basis</th><td>{{ n("value.headline.low") }}</td><td>{{ n("value.headline.mid") }}</td><td>{{ n("value.headline.high") }}</td><td>{{ n("value.headline_shares") }}</td></tr>
+        </tbody>
+      </table>
+      <p class="aside">Outstanding counts the shares that exist after the IPO. Diluted adds the shares already owed or granted. The press basis is the count that reproduces the largest headline.</p>
+    </div>
   </div>
 
   <div class="cols">
     <div>
       <h3>How the share count builds up</h3>
-      <table class="lines">
+      <table class="lines bars">
         <tbody>
           <tr><th scope="row">Outstanding after the IPO</th><td>{{ n("shares.total_after", "m") }}</td><td class="barcell">{{ bar(n.share("shares.total_after", "value.shares_diluted.mid"), "fg-base") }}</td></tr>
-          <tr><th scope="row"><span class="op">+</span> owed to Amazon on its convertible notes</th><td>{{ n("notes.shares_remaining", "m") }}</td><td class="barcell">{{ bar(n.share("notes.shares_remaining", "value.shares_diluted.mid")) }}</td></tr>
+          <tr><th scope="row"><span class="op">+</span> owed to Amazon on its notes</th><td>{{ n("notes.shares_remaining", "m") }}</td><td class="barcell">{{ bar(n.share("notes.shares_remaining", "value.shares_diluted.mid")) }}</td></tr>
           <tr><th scope="row"><span class="op">+</span> employee stock options</th><td>{{ n("shares.options", "m") }}</td><td class="barcell">{{ bar(n.share("shares.options", "value.shares_diluted.mid")) }}</td></tr>
           <tr><th scope="row"><span class="op">+</span> employee RSUs not yet vested</th><td>{{ n("value.rsu_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.rsu_shares", "value.shares_diluted.mid")) }}</td></tr>
           <tr><th scope="row"><span class="op">+</span> issued since {{ L("Sep 30") }}</th><td>{{ n("value.issued_since_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.issued_since_shares", "value.shares_diluted.mid")) }}</td></tr>
           <tr class="sum"><th scope="row"><span class="op">=</span> diluted share count</th><td>{{ n("value.shares_diluted.mid", "m") }}</td><td class="barcell">{{ bar(100, "fg-sum") }}</td></tr>
-          <tr class="muted"><th scope="row">Not counted: reserved for future grants</th><td>{{ n("value.reserve_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.reserve_shares", "value.shares_diluted.mid"), "fg-muted") }}</td></tr>
+          <tr class="muted"><th scope="row">Not counted: reserved for grants</th><td>{{ n("value.reserve_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.reserve_shares", "value.shares_diluted.mid"), "fg-muted") }}</td></tr>
         </tbody>
       </table>
     </div>
@@ -113,7 +120,7 @@
       <h3>Why headlines disagree</h3>
       <ul class="notes">
         <li>Reuters put the value near {{ n("press.reuters.outstanding_high") }} at the top of the range. That counts only the shares outstanding: our {{ n("value.mcap_out.high") }}.</li>
-        <li>CNBC reported up to {{ n("press.cnbc.fully_diluted_high", "b1") }} “fully diluted”. We reproduce it ({{ n("value.headline.high", "b1") }}) only by adding the {{ n("value.reserve_shares") }} shares reserved for grants that do not exist yet, and by leaving out the {{ n("notes.shares_remaining") }} shares still owed to Amazon.</li>
+        <li>CNBC reported up to {{ n("press.cnbc.fully_diluted_high", "b1") }} “fully diluted”. We reproduce it <span class="nw">({{ n("value.headline.high", "b1") }})</span> only by adding the {{ n("value.reserve_shares") }} shares reserved for grants that do not exist yet, and by leaving out the {{ n("notes.shares_remaining") }} shares still owed to Amazon.</li>
         <li>Same filing, three share counts. Our diluted figure counts what is already owed or granted, and nothing else.</li>
       </ul>
     </div>
@@ -124,16 +131,20 @@
 <section class="panel" id="ev" tabindex="-1" aria-labelledby="ev-h">
   <h2 id="ev-h"><kbd aria-hidden="true">e</kbd> EV BRIDGE <span class="q">What does that price really buy?</span></h2>
   <p class="lede">Enterprise value is the price of the business itself: every share, minus the cash that comes with the company.</p>
-  <table class="lines bridge">
+  <table class="lines bars bridge">
     <caption>At the assumed {{ n("offering.price_mid") }} price</caption>
     <tbody>
-      <tr><th scope="row">Diluted value</th><td>{{ n("value.equity_diluted.mid", "b1") }}</td></tr>
-      <tr><th scope="row"><span class="op">−</span> cash after the offering</th><td>{{ n("ev.cash_after.mid", "b1") }}</td></tr>
-      <tr><th scope="row"><span class="op">−</span> cash from option exercises</th><td>{{ n("ev.option_proceeds", "b1") }}</td></tr>
-      <tr><th scope="row"><span class="op">+</span> borrowings drawn</th><td>{{ n("debt.credit_facility_drawn", "b1") }}</td></tr>
-      <tr class="sum"><th scope="row"><span class="op">=</span> enterprise value</th><td>{{ n("ev.enterprise_value.mid", "b1") }}</td></tr>
+      <tr><th scope="row">Diluted value</th><td>{{ n("value.equity_diluted.mid", "b1") }}</td><td class="barcell">{{ chart.step("value.equity_diluted.mid") }}</td></tr>
+      <tr><th scope="row"><span class="op">−</span> cash after the offering</th><td>{{ n("ev.cash_after.mid", "b1") }}</td><td class="barcell">{{ chart.step("ev.cash_after.mid") }}</td></tr>
+      <tr><th scope="row"><span class="op">−</span> cash from option exercises</th><td>{{ n("ev.option_proceeds", "b1") }}</td><td class="barcell">{{ chart.step("ev.option_proceeds") }}</td></tr>
+      <tr><th scope="row"><span class="op">+</span> borrowings drawn</th><td>{{ n("debt.credit_facility_drawn", "b1") }}</td><td class="barcell">{{ chart.step("debt.credit_facility_drawn") }}</td></tr>
+      <tr class="sum"><th scope="row"><span class="op">=</span> enterprise value</th><td>{{ n("ev.enterprise_value.mid", "b1") }}</td><td class="barcell">{{ chart.step("ev.enterprise_value.mid") }}</td></tr>
     </tbody>
   </table>
+  <figure class="chart chart-gap">
+    <figcaption>Before and after the cash, across the price range</figcaption>
+    {{ chart("ev.ranges") }}
+  </figure>
   <p class="aside">Across the range: {{ n("ev.enterprise_value.low") }} at {{ n("offering.price_low") }}, {{ n("ev.enterprise_value.high") }} at {{ n("offering.price_high") }}. The notes still owed to Amazon (carried at {{ n("capitalization.convertible_notes.as_adjusted", "b1") }}) are counted as shares above, so they are not added again as debt.</p>
 
   <h3>The cash that comes with the company</h3>
@@ -147,14 +158,14 @@
   </table>
 
   <h3>That price, measured against revenue</h3>
-  <table class="lines">
+  <table class="lines bars bars-wide">
     <thead>
-      <tr><th scope="col">Revenue measure</th><th scope="col">Revenue</th><th scope="col">Price ÷ revenue</th></tr>
+      <tr><th scope="col">Revenue measure</th><th scope="col">Revenue</th><th scope="col">Price ÷ revenue</th><th scope="col" class="barcol"><span class="vh">Price ÷ revenue, drawn</span></th></tr>
     </thead>
     <tbody>
-      <tr><th scope="row">Run-Rate Revenue, {{ L("Oct 31") }}</th><td>{{ n("metrics.run_rate_oct31") }}</td><td>{{ n("ev.multiple.run_rate") }}</td></tr>
-      <tr><th scope="row">Latest quarter × four</th><td>{{ n("growth.q3_annualized") }}</td><td>{{ n("ev.multiple.q3_annualized") }}</td></tr>
-      <tr><th scope="row">Last twelve months</th><td>{{ n("growth.ttm_revenue") }}</td><td>{{ n("ev.multiple.ttm") }}</td></tr>
+      <tr><th scope="row">Run-Rate Revenue, {{ L("Oct 31") }}</th><td>{{ n("metrics.run_rate_oct31") }}</td><td>{{ n("ev.multiple.run_rate") }}</td><td class="barcell">{{ bar(n.share("ev.multiple.run_rate", "ev.multiple.ttm"), "fg-s1") }}</td></tr>
+      <tr><th scope="row">Latest quarter × four</th><td>{{ n("growth.q3_annualized") }}</td><td>{{ n("ev.multiple.q3_annualized") }}</td><td class="barcell">{{ bar(n.share("ev.multiple.q3_annualized", "ev.multiple.ttm"), "fg-s1") }}</td></tr>
+      <tr><th scope="row">Last twelve months</th><td>{{ n("growth.ttm_revenue") }}</td><td>{{ n("ev.multiple.ttm") }}</td><td class="barcell">{{ bar(100, "fg-s1") }}</td></tr>
     </tbody>
   </table>
   <p class="aside">The faster revenue grows, the further apart these three measures sit. Which one fits depends on whether the growth lasts.</p>
@@ -162,7 +173,7 @@
 
 <section class="panel" id="contracts" tabindex="-1" aria-labelledby="contracts-h">
   <h2 id="contracts-h"><kbd aria-hidden="true">c</kbd> CONTRACTS <span class="q">What is signed, in both directions?</span></h2>
-  <table class="lines">
+  <table class="lines bars">
     <tbody>
       <tr><th scope="row">Customers have committed to pay Anthropic</th><td>{{ n("rpo.total", "b1") }}</td><td class="barcell">{{ bar(n.share("rpo.total", "commit.total"), "fg-pos") }}</td></tr>
       <tr><th scope="row">Anthropic has committed to pay suppliers</th><td>{{ n("commit.total", "b1") }}</td><td class="barcell">{{ bar(100, "fg-neg") }}</td></tr>
@@ -179,6 +190,29 @@
       <tr><th scope="row"><span class="sw fg-far" aria-hidden="true"></span>{{ L("2031 to 2045") }}</th><td>{{ n("contracts.after_2030", "b1") }}</td></tr>
     </tbody>
   </table>
+
+  <h3>Payments already running, by year due</h3>
+  <div class="split split-tight">
+    <figure class="chart">
+      {{ chart("contracts.due_by_year") }}
+    </figure>
+    <details class="fold" open>
+    <summary>The same, in figures</summary>
+    <table class="lines due">
+      <caption class="vh">Payments already running, by year due</caption>
+      <tbody>
+        <tr><th scope="row">{{ L("2026, Oct to Dec") }}</th><td>{{ n("obligations.total.2026", "b1") }}</td></tr>
+        <tr><th scope="row">{{ L("2027") }}</th><td>{{ n("obligations.total.2027", "b1") }}</td></tr>
+        <tr><th scope="row">{{ L("2028") }}</th><td>{{ n("obligations.total.2028", "b1") }}</td></tr>
+        <tr><th scope="row">{{ L("2029") }}</th><td>{{ n("obligations.total.2029", "b1") }}</td></tr>
+        <tr><th scope="row">{{ L("2030") }}</th><td>{{ n("obligations.total.2030", "b1") }}</td></tr>
+        <tr><th scope="row">Later years</th><td>{{ n("obligations.total.thereafter", "b1") }}</td></tr>
+        <tr class="sum"><th scope="row"><span class="op">=</span> already running</th><td>{{ n("obligations.total.total", "b1") }}</td></tr>
+      </tbody>
+    </table>
+    </details>
+  </div>
+  <p class="aside">The filing gives a schedule by year for the payments already running. The last column adds up every later year, so it is not comparable with a single year.</p>
 
   <h3>What it is made of</h3>
   <table class="lines">
@@ -215,57 +249,139 @@
     </div>
   </div>
 
-  <div class="scroll" tabindex="0" role="group" aria-label="Quarterly results, scrollable">
-  <table class="grid quarters">
-    <caption>Quarter by quarter, in millions of dollars</caption>
-    <thead>
-      <tr>
-        <th scope="col">Quarter</th>
-        <th scope="col">Revenue</th>
-        <th scope="col" class="barcol"><span class="vh">Revenue, drawn</span></th>
-        <th scope="col">vs prior quarter</th>
-        <th scope="col">vs year before</th>
-        <th scope="col">Compute cost</th>
-        <th scope="col">Revenue per compute dollar</th>
-        <th scope="col">Operating result</th>
-        <th scope="col">Margin</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for key, name in quarters %}
-      <tr>
-        <th scope="row">{{ L(name) }}</th>
-        <td>{{ n("q.revenue." ~ key, "t") }}</td>
-        <td class="barcell">{{ bar(n.share("q.revenue." ~ key, "q.revenue.2026q3"), "fg-base") }}</td>
-        <td>{% if loop.index0 >= 1 %}{{ n("growth.qoq." ~ key, "signed", plus=true) }}{% else %}<span class="na">n/a</span>{% endif %}</td>
-        <td>{% if loop.index0 >= 4 %}{{ n("growth.yoy." ~ key, "signed", plus=true) }}{% else %}<span class="na">n/a</span>{% endif %}</td>
-        <td>{{ n("q.compute." ~ key, "t") }}</td>
-        <td>{{ n("growth.revenue_per_compute." ~ key, "usd") }}</td>
-        <td>{{ n("q.operating_income." ~ key, "t", plus=true) }}</td>
-        <td>{{ n("growth.operating_margin." ~ key, "signed", plus=true) }}</td>
-      </tr>
-    {% endfor %}
-    </tbody>
-  </table>
+  <div class="charts">
+    <figure class="chart">
+      <figcaption>Revenue by quarter</figcaption>
+      {{ chart("growth.revenue") }}
+    </figure>
+    <figure class="chart">
+      <figcaption>Growth over the prior quarter</figcaption>
+      {{ chart("growth.qoq") }}
+    </figure>
+    <figure class="chart">
+      <figcaption><span class="key s1" aria-hidden="true"></span>Revenue against <span class="key s2" aria-hidden="true"></span>compute cost</figcaption>
+      {{ chart("growth.revenue_vs_compute") }}
+    </figure>
+    <figure class="chart">
+      <figcaption>Operating margin</figcaption>
+      {{ chart("growth.margin") }}
+    </figure>
   </div>
-  <p class="aside">Full years: {{ n("is.revenue.fy2023", "m") }} in {{ L("2023") }}, {{ n("is.revenue.fy2024", "m") }} in {{ L("2024") }} ({{ n("growth.annual.fy2024", "signed", plus=true) }}), {{ n("is.revenue.fy2025", "m") }} in {{ L("2025") }} ({{ n("growth.annual.fy2025", "signed", plus=true) }}). First nine months of {{ L("2026") }}: {{ n("is.revenue.9m2026", "m") }} ({{ n("growth.annual.9m2026", "signed", plus=true) }}).</p>
+
+  <div class="cols cols-even cols-end">
+    <details class="fold" open>
+    <summary>Revenue and growth, in millions of dollars</summary>
+    <table class="grid quarters">
+      <caption class="vh">Revenue and growth, in millions of dollars</caption>
+      <thead>
+        <tr>
+          <th scope="col">Quarter</th>
+          <th scope="col">Revenue</th>
+          <th scope="col">vs prior quarter</th>
+          <th scope="col">vs year before</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for key, name in quarters %}
+        <tr>
+          <th scope="row">{{ L(name) }}</th>
+          <td>{{ n("q.revenue." ~ key, "t") }}</td>
+          <td>{% if loop.index0 >= 1 %}{{ n("growth.qoq." ~ key, "signed", plus=true) }}{% else %}<span class="na">n/a</span>{% endif %}</td>
+          <td>{% if loop.index0 >= 4 %}{{ n("growth.yoy." ~ key, "signed", plus=true) }}{% else %}<span class="na">n/a</span>{% endif %}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </details>
+    <details class="fold" open>
+    <summary>Cost and margin, in millions of dollars</summary>
+    <table class="grid quarters">
+      <caption class="vh">Cost and margin, in millions of dollars</caption>
+      <thead>
+        <tr>
+          <th scope="col">Quarter</th>
+          <th scope="col">Compute cost</th>
+          <th scope="col">Revenue per compute dollar</th>
+          <th scope="col">Operating result</th>
+          <th scope="col">Margin</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for key, name in quarters %}
+        <tr>
+          <th scope="row">{{ L(name) }}</th>
+          <td>{{ n("q.compute." ~ key, "t") }}</td>
+          <td>{{ n("growth.revenue_per_compute." ~ key, "usd") }}</td>
+          <td>{{ n("q.operating_income." ~ key, "t", plus=true) }}</td>
+          <td>{{ n("growth.operating_margin." ~ key, "signed", plus=true) }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </details>
+  </div>
+  <p class="aside">Full years: {{ n("is.revenue.fy2023", "m") }} in {{ L("2023") }}, {{ n("is.revenue.fy2024", "m") }} in {{ L("2024") }} <span class="nw">({{ n("growth.annual.fy2024", "signed", plus=true) }})</span>, {{ n("is.revenue.fy2025", "m") }} in {{ L("2025") }} <span class="nw">({{ n("growth.annual.fy2025", "signed", plus=true) }})</span>. First nine months of {{ L("2026") }}: {{ n("is.revenue.9m2026", "m") }} <span class="nw">({{ n("growth.annual.9m2026", "signed", plus=true) }})</span>.</p>
   <p class="aside">Growth over the prior quarter slowed from {{ n("growth.qoq.2026q2", "signed", plus=true) }} to {{ n("growth.qoq.2026q3", "signed", plus=true) }}, and revenue per compute dollar slipped from {{ n("growth.revenue_per_compute.2026q2", "usd") }} to {{ n("growth.revenue_per_compute.2026q3", "usd") }}.</p>
 </section>
 
 <section class="panel" id="losses" tabindex="-1" aria-labelledby="losses-h">
   <h2 id="losses-h"><kbd aria-hidden="true">l</kbd> LOSSES <span class="q">Is the huge loss real spending?</span></h2>
   <p class="lede">Net loss for the nine months to {{ L("Sep 30, 2026") }}: {{ n("is.net_loss.9m2026", "b1") }}. Most of it is an accounting charge, not money spent running the business.</p>
-  <table class="lines">
-    <thead>
-      <tr><th scope="col">Where the loss comes from</th><th scope="col">Amount</th><th scope="col">Share</th><th scope="col" class="barcol"><span class="vh">Share, drawn</span></th></tr>
-    </thead>
-    <tbody>
-      <tr><th scope="row">Fair-value changes on convertible notes and derivatives</th><td>{{ n("is.fv_change.9m2026", "b1") }}</td><td>{{ n("losses.share.fair_value", "one") }}</td><td class="barcell">{{ bar(n.share("is.fv_change.9m2026", "is.net_loss.9m2026"), "fg-muted") }}</td></tr>
-      <tr><th scope="row">Interest, other items and taxes, net</th><td>{{ n("losses.other_net", "b1") }}</td><td>{{ n("losses.share.other", "one") }}</td><td class="barcell">{{ bar(n.share("losses.other_net", "is.net_loss.9m2026"), "fg-mid") }}</td></tr>
-      <tr><th scope="row">Operating loss: running the business</th><td>{{ n("is.operating_income.9m2026", "b1") }}</td><td>{{ n("losses.share.operating", "one") }}</td><td class="barcell">{{ bar(n.share("is.operating_income.9m2026", "is.net_loss.9m2026"), "fg-neg") }}</td></tr>
-    </tbody>
-  </table>
-  <p class="aside">The filing ties the fair-value changes to the rise in the company's own valuation: the more Anthropic is worth, the larger this charge. Of the {{ n("deficit.accumulated", "b1") }} accumulated deficit, {{ n("deficit.fair_value_part", "b1") }} comes from them.</p>
+  <div class="split">
+    <figure class="chart">
+      <figcaption><span class="key s1" aria-hidden="true"></span>Operating loss and <span class="key s2" aria-hidden="true"></span>net loss, by period</figcaption>
+      {{ chart("losses.by_year") }}
+    </figure>
+    <div>
+      <details class="fold" open>
+      <summary>The same, in figures</summary>
+      <table class="grid">
+        <caption class="vh">Operating loss and net loss, by period</caption>
+        <thead>
+          <tr><th scope="col">Period</th><th scope="col">Operating loss</th><th scope="col">Net loss</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">{{ L("2023") }}</th><td>{{ n("is.operating_income.fy2023", "b1") }}</td><td>{{ n("is.net_loss.fy2023", "b1") }}</td></tr>
+          <tr><th scope="row">{{ L("2024") }}</th><td>{{ n("is.operating_income.fy2024", "b1") }}</td><td>{{ n("is.net_loss.fy2024", "b1") }}</td></tr>
+          <tr><th scope="row">{{ L("2025") }}</th><td>{{ n("is.operating_income.fy2025", "b1") }}</td><td>{{ n("is.net_loss.fy2025", "b1") }}</td></tr>
+          <tr><th scope="row">{{ L("First nine months of 2026") }}</th><td>{{ n("is.operating_income.9m2026", "b1") }}</td><td>{{ n("is.net_loss.9m2026", "b1") }}</td></tr>
+        </tbody>
+      </table>
+      </details>
+      <p class="aside">The operating loss is what running the business cost beyond its revenue. The gap up to the net loss comes mostly from the accounting charge described below.</p>
+    </div>
+  </div>
+
+  <div class="cols cols-even">
+    <div>
+      <h3>Where the nine-month loss comes from</h3>
+      <table class="lines bars bars-wide">
+        <thead>
+          <tr><th scope="col">Source</th><th scope="col">Amount</th><th scope="col">Share</th><th scope="col" class="barcol"><span class="vh">Share, drawn</span></th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Fair-value changes on notes and derivatives</th><td>{{ n("is.fv_change.9m2026", "b1") }}</td><td>{{ n("losses.share.fair_value", "one") }}</td><td class="barcell">{{ bar(n.share("is.fv_change.9m2026", "is.net_loss.9m2026"), "fg-muted") }}</td></tr>
+          <tr><th scope="row">Interest, other items and taxes, net</th><td>{{ n("losses.other_net", "b1") }}</td><td>{{ n("losses.share.other", "one") }}</td><td class="barcell">{{ bar(n.share("losses.other_net", "is.net_loss.9m2026"), "fg-mid") }}</td></tr>
+          <tr><th scope="row">Operating loss: running the business</th><td>{{ n("is.operating_income.9m2026", "b1") }}</td><td>{{ n("losses.share.operating", "one") }}</td><td class="barcell">{{ bar(n.share("is.operating_income.9m2026", "is.net_loss.9m2026"), "fg-neg") }}</td></tr>
+        </tbody>
+      </table>
+      <p class="aside">The filing ties the fair-value changes to the rise in the company's own valuation: the more Anthropic is worth, the larger this charge. Of the {{ n("deficit.accumulated", "b1") }} accumulated deficit, {{ n("deficit.fair_value_part", "b1") }} comes from them.</p>
+    </div>
+    <div>
+      <h3>Running the business, first nine months of {{ L("2026") }}</h3>
+      <table class="lines bars">
+        <tbody>
+          <tr><th scope="row">Revenue</th><td>{{ n("is.revenue.9m2026", "b1") }}</td><td class="barcell">{{ bar(100, "fg-pos") }}</td></tr>
+          <tr><th scope="row"><span class="op">−</span> compute and infrastructure</th><td>{{ n("is.compute.9m2026", "b1") }}</td><td class="barcell">{{ bar(n.share("is.compute.9m2026", "is.revenue.9m2026"), "fg-s2") }}</td></tr>
+          <tr><th scope="row"><span class="op">−</span> sales, marketing, partnerships</th><td>{{ n("is.sales.9m2026", "b1") }}</td><td class="barcell">{{ bar(n.share("is.sales.9m2026", "is.revenue.9m2026"), "fg-s2") }}</td></tr>
+          <tr><th scope="row"><span class="op">−</span> other operating costs</th><td>{{ n("is.other_opex.9m2026", "b1") }}</td><td class="barcell">{{ bar(n.share("is.other_opex.9m2026", "is.revenue.9m2026"), "fg-s2") }}</td></tr>
+          <tr><th scope="row"><span class="op">−</span> personnel</th><td>{{ n("is.personnel.9m2026", "b1") }}</td><td class="barcell">{{ bar(n.share("is.personnel.9m2026", "is.revenue.9m2026"), "fg-s2") }}</td></tr>
+          <tr class="sum"><th scope="row"><span class="op">=</span> operating result</th><td>{{ n("is.operating_income.9m2026", "b1") }}</td><td class="barcell">{{ bar(n.share("is.operating_income.9m2026", "is.revenue.9m2026"), "fg-neg") }}</td></tr>
+        </tbody>
+      </table>
+      <p class="aside">Compute takes more than half of every dollar of revenue. The other costs together take the rest, and a little more.</p>
+    </div>
+  </div>
 </section>
 
 </main>
@@ -285,8 +401,12 @@
     <div><dt><kbd>l</kbd></dt><dd>losses</dd></div>
     <div><dt><kbd>Esc</kbd></dt><dd>close a source card</dd></div>
   </dl>
-  <p>Every number is a button. Select it to read the passage of the filing it was copied from, or the arithmetic behind it.</p>
+  <p>Every number is a button, and so is every mark on a chart. Select one to read the passage of the filing it was copied from, or the arithmetic behind it.</p>
+  <p>{{ tag("FILED") }} copied from the SEC filing · {{ tag("CALC") }} our arithmetic · {{ tag("PRESS") }} reported by news media</p>
+  <p><button type="button" class="close" popovertarget="help" popovertargetaction="hide">close</button></p>
 </div>
+
+<div id="tip" class="tip" hidden></div>
 
 {% for s in n.sources() %}
 <div popover id="{{ s.slug }}" class="src src-{{ s.label|lower }}">
@@ -307,7 +427,7 @@
   {% endif %}
   {% if s.note %}<p class="src-note">{{ s.note }}</p>{% endif %}
   {% if s.where %}<p class="src-where">{{ s.where }}</p>{% endif %}
-  {% if s.url %}<p class="src-link"><a href="{{ s.url }}" rel="noopener">{{ s.link_text }} ↗</a></p>{% endif %}
+  <p class="src-end">{% if s.url %}<a href="{{ s.url }}" rel="noopener">{{ s.link_text }} ↗</a>{% endif %}<button type="button" class="close" popovertarget="{{ s.slug }}" popovertargetaction="hide">close</button></p>
 </div>
 {% endfor %}
 

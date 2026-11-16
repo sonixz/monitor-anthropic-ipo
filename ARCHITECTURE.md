@@ -1,6 +1,6 @@
 # ARCHITECTURE · monitor-anthropic-ipo
 
-> How the system is built and why. Read this before changing structure. Last reviewed: 2026-11-15 · Loop: loop-001
+> How the system is built and why. Read this before changing structure. Last reviewed: 2026-11-16 · Loop: loop-002
 
 ## System context
 
@@ -43,12 +43,12 @@ flowchart TB
   load["facts.py: load and validate"]
   reconcile["reconcile.py: figures must agree"]
   calc["calc.py: formulas with their inputs"]
-  render["render.py and templates: every number is a button with its source"]
+  render["render.py, figures.py, charts.py and templates: numbers and chart marks, each with its source"]
   web["web.py: page, static files, health"]
   raw --> extract --> facts --> load --> reconcile --> calc --> render --> web
 ```
 
-*Scope: the code in this repository (`src/ipo_monitor`). Last reviewed: 2026-11-15.* Data moves one way. `extract.py` is the only code that reads the filing and it runs on a developer's machine, never on the server. `facts.py` knows nothing about the web; `calc.py` only combines facts; `render.py` is the only place where values become text. Templates cannot print a number by themselves: they call `n("id")`, which fails on an unknown id. `reconcile.py` sits before everything visible, so inconsistent data stops the service at startup.
+*Scope: the code in this repository (`src/ipo_monitor`). Last reviewed: 2026-11-15.* Data moves one way. `extract.py` is the only code that reads the filing and it runs on a developer's machine, never on the server. `facts.py` knows nothing about the web; `calc.py` only combines facts; `render.py` is the only place where values become text. Templates cannot print a number by themselves: they call `n("id")`, which fails on an unknown id. Charts follow the same rule: `figures.py` asks `Numbers.mark` for each value, so a mark always has a source card, and `charts.py` only draws. `reconcile.py` sits before everything visible, so inconsistent data stops the service at startup.
 
 ## Main flow
 
@@ -93,6 +93,7 @@ The page is rendered once, at startup, and served from memory. This is what make
 | `src/ipo_monitor/calc.py` | Every CALC value with formula and inputs |
 | `src/ipo_monitor/fmt.py` | Formatting only |
 | `src/ipo_monitor/render.py`, `templates/`, `static/` | The page, the source cards, the style |
+| `src/ipo_monitor/charts.py`, `figures.py` | SVG charts drawn on the server; which facts each chart draws |
 | `src/ipo_monitor/web.py`, `config.py`, `log.py` | HTTP service, environment configuration, JSON logs |
 | `data/facts/` | The dataset: `s1a2.json` (extracted), `press.json` (recorded by hand, with links) |
 | `deploy/` | `deploy.sh` and `start.sh`, run on the machine |

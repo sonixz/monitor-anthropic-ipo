@@ -20,7 +20,7 @@ from ipo_monitor.web import create_app
 
 from .conftest import FACTS_DIR
 
-VOID = {"meta", "link", "br", "img", "input", "hr", "rect", "path"}
+VOID = {"meta", "link", "br", "img", "input", "hr", "rect", "path", "line", "circle"}
 
 
 class Audit(HTMLParser):
@@ -34,6 +34,9 @@ class Audit(HTMLParser):
         self.popovers: set[str] = set()
         self.links: list[str] = []
         self.lang: str | None = None
+        self.path: list[str] = []
+        self.chart_sources: list[str] = []
+        self.ticks: list[tuple[str, ...]] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         a = dict(attrs)
@@ -46,18 +49,27 @@ class Audit(HTMLParser):
             self.popovers.add(str(a["id"]))
         if tag == "button" and "n" in classes:
             self.buttons.append(a)
+        if "data-src" in a:
+            self.chart_sources.append(str(a["data-src"]))
+        if "data-tick" in a:
+            self.ticks.append(tuple(self.path))
         exempt = (
             (tag == "button" and "n" in classes)
             or "data-label" in a
+            or "data-ref" in a  # a value drawn on a chart
+            or "data-tick" in a  # a scale mark of a chart axis
             or "popover" in a
             or tag in {"script", "style", "head", "kbd"}
         )
+        if tag not in VOID:
+            self.path.append(f"{tag}.{'.'.join(classes)}" if classes else tag)
         if tag not in VOID:
             self.stack.append(exempt or (bool(self.stack) and self.stack[-1]))
 
     def handle_endtag(self, tag: str) -> None:
         if tag not in VOID and self.stack:
             self.stack.pop()
+            self.path.pop()
 
     def handle_data(self, data: str) -> None:
         if not (self.stack and self.stack[-1]) and data.strip():
@@ -75,6 +87,16 @@ def test_no_number_without_a_source(audit: Audit) -> None:
     """Outside sourced numbers and period labels, the page shows no digit at all."""
     offenders = [text for text in audit.loose_text if re.search(r"\d", text)]
     assert offenders == []
+
+
+def test_chart_marks_open_a_source_card_and_ticks_stay_on_axes(audit: Audit) -> None:
+    assert len(audit.chart_sources) >= 60
+    for source in audit.chart_sources:
+        assert source in audit.popovers, source
+    # A digit without a source is accepted in one place only: the axis of a chart.
+    assert len(audit.ticks) >= 20
+    for path in audit.ticks:
+        assert path[-2:] == ("svg.chart-svg", "g.axis"), path
 
 
 def test_every_number_opens_a_source_card(audit: Audit, page: Page) -> None:

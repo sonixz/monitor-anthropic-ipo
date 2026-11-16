@@ -1,5 +1,6 @@
 // ANT IPO Monitor: small enhancements. The page works without this file:
-// numbers open their source card through the native popover attribute.
+// numbers open their source card through the native popover attribute, and
+// every value a chart draws is also in a table.
 (() => {
   "use strict";
 
@@ -29,6 +30,42 @@
     panel.scrollIntoView({ block: "start" });
     history.replaceState(null, "", "#" + id);
   });
+
+  // -- phone: the tables behind the charts start folded ------------------------
+  if (window.matchMedia("(max-width: 640px)").matches) {
+    document.querySelectorAll("details.fold").forEach((fold) => fold.removeAttribute("open"));
+  }
+
+  // -- panel bar: show where the reader is ------------------------------------
+  const links = new Map();
+  document.querySelectorAll('.keys a[href^="#"]').forEach((link) => {
+    links.set(link.getAttribute("href").slice(1), link);
+  });
+  if ("IntersectionObserver" in window && links.size) {
+    const visible = new Set();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) visible.add(entry.target.id);
+          else visible.delete(entry.target.id);
+        });
+        // The first panel in page order that crosses the reading line.
+        let current = null;
+        links.forEach((link, id) => {
+          if (!current && visible.has(id)) current = id;
+        });
+        links.forEach((link, id) => {
+          if (id === current) link.setAttribute("aria-current", "true");
+          else link.removeAttribute("aria-current");
+        });
+      },
+      { rootMargin: "-30% 0px -65% 0px" },
+    );
+    links.forEach((link, id) => {
+      const panel = document.getElementById(id);
+      if (panel) observer.observe(panel);
+    });
+  }
 
   if (!supportsPopover) return;
 
@@ -83,6 +120,106 @@
     },
     true,
   );
+
+  // -- charts: a mark opens the same source card as its number -------------
+  const tip = document.getElementById("tip");
+  const sourced = (target) => (target instanceof Element ? target.closest(".chart-svg [data-src]") : null);
+  let pressed = null;
+
+  function openSource(mark) {
+    const card = document.getElementById(mark.getAttribute("data-src"));
+    if (!card) return;
+    hideTip();
+    invoker = mark;
+    hoverOpened = null;
+    if (!card.matches(":popover-open")) card.showPopover();
+  }
+
+  function showTip(mark) {
+    const text = mark.getAttribute("data-tip");
+    if (!tip || !text) return;
+    const shape = mark.querySelector(".col, .dot, .pointer") || mark;
+    const rect = shape.getBoundingClientRect();
+    tip.textContent = text;
+    tip.hidden = false;
+    const width = tip.offsetWidth;
+    const left = Math.min(Math.max(8, rect.left + rect.width / 2 - width / 2), window.innerWidth - width - 8);
+    const above = rect.top - tip.offsetHeight - 8;
+    tip.style.left = Math.round(left) + "px";
+    tip.style.top = Math.round(above >= 8 ? above : rect.bottom + 8) + "px";
+  }
+
+  function hideTip() {
+    if (tip) tip.hidden = true;
+  }
+
+  // A press on a mark whose card is open closes it; the click must not reopen it.
+  document.addEventListener(
+    "pointerdown",
+    (event) => {
+      const mark = sourced(event.target);
+      const card = mark ? document.getElementById(mark.getAttribute("data-src")) : null;
+      pressed = card && card.matches(":popover-open") ? mark : null;
+    },
+    true,
+  );
+
+  document.addEventListener("click", (event) => {
+    const mark = sourced(event.target);
+    if (!mark) return;
+    if (pressed === mark) {
+      pressed = null;
+      return;
+    }
+    openSource(mark);
+  });
+
+  // One tab stop per chart; the arrow keys move between its marks.
+  document.querySelectorAll(".chart-svg").forEach((chart) => {
+    const marks = Array.from(chart.querySelectorAll(".mark"));
+    if (!marks.length) return;
+    chart.setAttribute("role", "group");
+    marks.forEach((mark, index) => {
+      mark.setAttribute("role", "button");
+      mark.setAttribute("tabindex", index === 0 ? "0" : "-1");
+      mark.setAttribute(
+        "aria-label",
+        mark.getAttribute("data-tip") + " (" + mark.getAttribute("data-kind") + ", show source)",
+      );
+      mark.addEventListener("focus", () => showTip(mark));
+      mark.addEventListener("blur", hideTip);
+      mark.addEventListener("keydown", (event) => {
+        let next = null;
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") next = marks[index + 1];
+        else if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = marks[index - 1];
+        else if (event.key === "Home") next = marks[0];
+        else if (event.key === "End") next = marks[marks.length - 1];
+        else if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          openSource(mark);
+          return;
+        } else return;
+        event.preventDefault();
+        if (!next) return;
+        mark.setAttribute("tabindex", "-1");
+        next.setAttribute("tabindex", "0");
+        next.focus();
+      });
+    });
+  });
+
+  if (canHover) {
+    document.addEventListener("mouseover", (event) => {
+      const mark = event.target instanceof Element ? event.target.closest(".chart-svg .mark") : null;
+      if (mark) showTip(mark);
+    });
+    document.addEventListener("mouseout", (event) => {
+      const mark = event.target instanceof Element ? event.target.closest(".chart-svg .mark") : null;
+      const to = event.relatedTarget instanceof Element ? event.relatedTarget.closest(".chart-svg .mark") : null;
+      if (mark && mark !== to) hideTip();
+    });
+    window.addEventListener("scroll", hideTip, { passive: true });
+  }
 
   // -- hover (desktop only): open after a short pause ----------------------
   if (canHover) {

@@ -26,6 +26,32 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 PANELS = {"v": "value", "e": "ev", "c": "contracts", "g": "growth", "l": "losses"}
 PHONE: ViewportSize = {"width": 390, "height": 844}
 DESKTOP: ViewportSize = {"width": 1280, "height": 900}
+PHONE_WIDTHS = (360, 390, 430)
+
+# Everything that must stay inside the screen and inside its chart.
+OVERFLOW = """() => {
+  const wide = [];
+  document.querySelectorAll('main *, header *, nav *, footer *').forEach((el) => {
+    const r = el.getBoundingClientRect();
+    const out = r.right > innerWidth + 1 || r.left < -1;
+    if (r.width && out) wide.push(el.tagName + '.' + el.className);
+  });
+  const cut = [];
+  document.querySelectorAll('svg.chart-svg').forEach((svg) => {
+    const box = svg.getBoundingClientRect();
+    svg.querySelectorAll('text').forEach((text) => {
+      const r = text.getBoundingClientRect();
+      const across = r.left < box.left - 1 || r.right > box.right + 1;
+      const down = r.top < box.top - 1 || r.bottom > box.bottom + 1;
+      if (across || down) cut.push(text.textContent);
+    });
+  });
+  const scrolling = [];
+  document.querySelectorAll('main table, main figure, main .panel').forEach((el) => {
+    if (el.scrollWidth > el.clientWidth + 1) scrolling.push(el.tagName + '.' + el.className);
+  });
+  return { wide, cut, scrolling, page: document.documentElement.scrollWidth };
+}"""
 
 
 def _free_port() -> int:
@@ -111,8 +137,8 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     footer_link = page.get_by_role("link", name="Built with the Loop0 Method")
     assert footer_link.get_attribute("href") == "https://agmgd-on-loop0-22c0a8ea.fly.dev/"
     assert page.get_by_text("awaiting listing").is_visible()
-    _shot(page, "loop-001-desktop")
-    _shot(page, "loop-001-desktop-full", full=True)
+    _shot(page, "loop-002-desktop")
+    _shot(page, "loop-002-desktop-full", full=True)
 
     # One key per panel, no mouse.
     for key, panel in PANELS.items():
@@ -132,7 +158,6 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     href = card.get_by_role("link").get_attribute("href")
     assert href is not None
     assert href.startswith("https://www.sec.gov/Archives/edgar/data/2130357/")
-    _shot(page, "loop-001-source-filed")
     page.keyboard.press("Escape")
     assert not card.is_visible()
 
@@ -145,7 +170,6 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     assert "CALC" in text
     assert "diluted value" in text
     assert "cash after the offering" in text
-    _shot(page, "loop-001-source-calc")
     page.keyboard.press("Escape")
 
     # Keyboard only: focus a number and open its card with Enter.
@@ -157,6 +181,93 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     assert page.locator("[popover]:popover-open").count() == 0
 
     assert _serious(page) == []
+    assert errors == []
+    context.close()
+
+
+def test_charts_open_the_same_sources(browser: Browser, base_url: str) -> None:
+    context = browser.new_context(viewport=DESKTOP)
+    page, errors = _open(context, base_url)
+    assert page.locator("svg.chart-svg").count() >= 8
+    assert page.evaluate(OVERFLOW)["cut"] == []
+
+    # Mouse: pointing at a column names it, selecting it opens the card of the filed figure.
+    column = page.locator('#growth .chart-svg .mark[data-ref="q.revenue.2026q3"]').first
+    column.scroll_into_view_if_needed()
+    column.hover()
+    tip = page.locator("#tip")
+    expect(tip).to_be_visible()
+    assert "Q3 2026" in tip.inner_text()
+    assert "$17.0B" in tip.inner_text()
+    _shot(page, "loop-002-chart-hover")
+    column.click()
+    card = page.locator("#src-q-revenue-2026q3")
+    expect(card).to_be_visible()
+    assert "p. 164" in card.inner_text()
+    _shot(page, "loop-002-chart-source")
+    # Selecting the same column again closes the card instead of reopening it.
+    column.click()
+    expect(card).to_be_hidden()
+
+    # A value printed on a chart is a way in too.
+    page.locator('#value .chart-svg text[data-ref="press.cnbc.fully_diluted_high"]').click()
+    card = page.locator("#src-press-cnbc-fully-diluted-high")
+    expect(card).to_be_visible()
+    assert "PRESS" in card.inner_text()
+    card.get_by_role("button", name="close").click()
+    expect(card).to_be_hidden()
+
+    # Keyboard: one stop per chart, arrows between its marks, Enter opens the card.
+    marks = page.locator("#losses .chart-svg .mark")
+    assert marks.first.get_attribute("tabindex") == "0"
+    assert marks.nth(1).get_attribute("tabindex") == "-1"
+    assert "show source" in (marks.first.get_attribute("aria-label") or "")
+    marks.first.focus()
+    page.keyboard.press("ArrowRight")
+    assert page.evaluate("document.activeElement.getAttribute('data-ref')") == "is.net_loss.fy2023"
+    page.keyboard.press("End")
+    assert page.evaluate("document.activeElement.getAttribute('data-ref')") == "is.net_loss.9m2026"
+    page.keyboard.press("Enter")
+    card = page.locator("#src-is-net-loss-9m2026")
+    expect(card).to_be_visible()
+    assert "FILED" in card.inner_text()
+    page.keyboard.press("Escape")
+    expect(card).to_be_hidden()
+
+    # The panel bar shows where the reader is.
+    page.keyboard.press("g")
+    expect(page.locator('.keys a[href="#growth"]')).to_have_attribute("aria-current", "true")
+    _shot(page, "loop-002-growth")
+
+    assert _serious(page) == []
+    assert errors == []
+    context.close()
+
+
+@pytest.mark.parametrize("width", PHONE_WIDTHS)
+def test_phone_never_scrolls_sideways(browser: Browser, base_url: str, width: int) -> None:
+    context = browser.new_context(
+        viewport={"width": width, "height": 800},
+        device_scale_factor=2,
+        is_mobile=True,
+        has_touch=True,
+    )
+    page, errors = _open(context, base_url)
+    found = page.evaluate(OVERFLOW)
+    assert found["page"] <= width
+    assert found["wide"] == []
+    assert found["scrolling"] == []
+    assert found["cut"] == []
+    # The tables behind the charts start folded, and open in place: still nothing sideways.
+    folds = page.locator("details.fold")
+    assert folds.count() >= 4
+    assert page.locator("details.fold[open]").count() == 0
+    for index in range(folds.count()):
+        folds.nth(index).locator("summary").tap()
+    assert page.locator("details.fold[open]").count() == folds.count()
+    found = page.evaluate(OVERFLOW)
+    assert (found["page"], found["wide"], found["scrolling"]) == (found["page"], [], [])
+    assert found["page"] <= width
     assert errors == []
     context.close()
 
@@ -180,19 +291,46 @@ def test_phone_first_screen(browser: Browser, base_url: str) -> None:
         assert box["y"] >= 0, ref
         assert box["y"] + box["height"] <= PHONE["height"], f"{ref} is below the first screen"
     assert page.evaluate("window.scrollY") == 0
-    _shot(page, "loop-001-phone")
+    _shot(page, "loop-002-phone")
 
     # No sideways scrolling of the page itself.
     assert page.evaluate("document.documentElement.scrollWidth") <= PHONE["width"]
 
-    # One tap on a panel name, one tap on a number.
-    page.get_by_role("link", name="c contracts").tap()
+    # A bar made for thumbs: five names, tall enough, no keyboard keys.
+    for name in ("value", "ev", "contracts", "growth", "losses"):
+        link = page.get_by_role("link", name=name, exact=True)
+        box = link.bounding_box()
+        assert box is not None, name
+        assert box["height"] >= 44, name
+    assert page.locator(".keys a kbd").first.is_hidden()
+
+    # One tap on a panel name, one tap on a number: the card rises from the bottom.
+    page.get_by_role("link", name="contracts", exact=True).tap()
     expect(page.locator("#contracts-h")).to_be_in_viewport()
+    expect(page.locator('.keys a[href="#contracts"]')).to_have_attribute("aria-current", "true")
     page.locator('#contracts button[data-ref="commit.total"]').first.tap()
     card = page.locator("#src-commit-total")
     assert card.is_visible()
     assert "$900.9 billion" in card.inner_text()
-    _shot(page, "loop-001-phone-source")
+    sheet = card.bounding_box()
+    assert sheet is not None
+    assert sheet["x"] == 0
+    assert sheet["width"] == PHONE["width"]
+    assert abs(sheet["y"] + sheet["height"] - PHONE["height"]) <= 1
+    _shot(page, "loop-002-phone-source")
+    card.get_by_role("button", name="close").tap()
+    expect(card).to_be_hidden()
+
+    # One tap on a chart: the same kind of card.
+    column = page.locator('#contracts .chart-svg .mark[data-ref="obligations.total.2029"]')
+    column.scroll_into_view_if_needed()
+    _shot(page, "loop-002-phone-chart")
+    column.tap()
+    card = page.locator("#src-obligations-total-2029")
+    expect(card).to_be_visible()
+    assert "FILED" in card.inner_text()
+    page.mouse.click(10, 10)  # anywhere outside closes it
+    expect(card).to_be_hidden()
 
     assert _serious(page) == []
     assert errors == []
@@ -207,6 +345,24 @@ def test_works_without_javascript(browser: Browser, base_url: str) -> None:
     # The source card still opens: it relies on the browser, not on our script.
     page.locator('button[data-ref="rpo.total"]').first.click()
     assert page.locator("#src-rpo-total").is_visible()
+    page.locator("#src-rpo-total").get_by_role("button", name="close").click()
+    assert page.locator("#src-rpo-total").is_hidden()
+    # The charts are drawn by the server, and every table behind them is open.
+    assert page.locator("svg.chart-svg").count() >= 8
+    assert page.locator("svg.chart-svg .col").first.is_visible()
+    assert page.locator("details.fold:not([open])").count() == 0
+    assert page.locator('button[data-ref="obligations.total.2029"]').first.is_visible()
+    context.close()
+
+
+def test_phone_without_javascript(browser: Browser, base_url: str) -> None:
+    context = browser.new_context(
+        viewport=PHONE, is_mobile=True, has_touch=True, java_script_enabled=False
+    )
+    page, _ = _open(context, base_url)
+    found = page.evaluate(OVERFLOW)
+    assert found["page"] <= PHONE["width"]
+    assert (found["wide"], found["scrolling"], found["cut"]) == ([], [], [])
     context.close()
 
 
@@ -218,3 +374,11 @@ def test_loads_fast(browser: Browser, base_url: str) -> None:
     elapsed = time.perf_counter() - begin
     assert elapsed < 1.0, f"page load took {elapsed:.2f}s"
     context.close()
+
+
+def test_page_weight(base_url: str) -> None:
+    request = urllib.request.Request(base_url + "/", headers={"Accept-Encoding": "gzip"})  # noqa: S310
+    with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
+        assert response.headers["Content-Encoding"] == "gzip"
+        compressed = len(response.read())
+    assert compressed < 60_000, f"the page weighs {compressed} bytes compressed"
