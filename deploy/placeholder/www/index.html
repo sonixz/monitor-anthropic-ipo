@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ANT IPO Monitor</title>
+<meta name="description" content="An independent, unofficial dashboard following Anthropic's IPO. Every number sourced.">
+<style>
+:root{--bg:#0b0e13;--panel:#121722;--line:#222b3a;--text:#e6e9ef;--muted:#8b95a7;--accent:#d97757;--ok:#3fb68b}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;min-height:100vh;display:flex;flex-direction:column}
+main{flex:1;max-width:880px;width:100%;margin:0 auto;padding:48px 16px}
+.tag{display:inline-block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px}
+h1{font-size:clamp(28px,5vw,40px);margin:18px 0 8px;letter-spacing:-.02em}
+.lead{color:var(--muted);margin:0 0 32px;max-width:60ch}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px}
+.k{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.v{font-size:22px;font-weight:600;margin-top:6px;font-variant-numeric:tabular-nums}
+.s{font-size:12px;color:var(--muted);margin-top:6px}
+.s a,.src a,footer a{color:var(--muted)}
+.src{margin-top:20px;font-size:13px;color:var(--muted)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ok);margin-right:6px;vertical-align:middle}
+footer{border-top:1px solid var(--line);padding:18px 16px;text-align:center;font-size:12px;color:var(--muted)}
+footer p{margin:4px 0}
+</style>
+</head>
+<body>
+<main>
+  <span class="tag"><span class="dot"></span>Launching soon</span>
+  <h1>ANT IPO Monitor</h1>
+  <p class="lead">An independent dashboard following Anthropic's IPO: what it's worth, what the contracts are, and whether the price makes sense. Every number traced to its source.</p>
+  <div class="grid">
+    <div class="card"><div class="k">Latest SEC filing</div><div class="v">S-1/A No. 2</div><div class="s">Filed Nov 10, 2026 · <span title="Filed">Filed</span></div></div>
+    <div class="card"><div class="k">Price range</div><div class="v">$70.00 – $78.00</div><div class="s">per share · Filed (S-1/A No. 2, cover page)</div></div>
+    <div class="card"><div class="k">Shares offered</div><div class="v">825.0M</div><div class="s">801.4M company + 23.6M selling holders · Filed</div></div>
+    <div class="card"><div class="k">Listing</div><div class="v">Nasdaq: ANT</div><div class="s">Applied for · Filed (S-1/A No. 2)</div></div>
+  </div>
+  <p class="src">Source: Anthropic, PBC, Form S-1/A Amendment No. 2, SEC accession 0001628280-26-072484, filed Nov 10, 2026 · <a href="https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&amp;CIK=0002130357" rel="noopener">EDGAR filings</a></p>
+</main>
+<footer>
+  <p>Unofficial. Not affiliated with Anthropic. Not investment advice.</p>
+  <p><a href="https://agmgd-on-loop0-22c0a8ea.fly.dev/" rel="noopener">Built with the Loop0 Method</a></p>
+</footer>
+</body>
+</html>
