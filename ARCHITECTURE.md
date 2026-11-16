@@ -12,7 +12,7 @@ flowchart LR
   reader(["Reader, any browser"])
   owner(["Owner"])
   sec[("sec.gov, EDGAR")]
-  quotes[("Market source: Yahoo Finance chart data")]
+  quotes[("Market sources: Nasdaq.com, then Yahoo Finance")]
   subgraph repo["Public repository"]
     extract["Extractor, run locally"]
     facts[("data/facts, JSON")]
@@ -30,7 +30,7 @@ flowchart LR
   reader -.->|"follows a source link"| sec
 ```
 
-*Scope: everything that touches the system. Last reviewed: 2026-11-15.* A reader only ever talks to the web service, through the HTTPS door that Fly.io and Agent Manager provide. The service reads one thing from the internet: the share price, from a free market source, on a timer. Everything else is the fact files shipped with the code. The filing reaches the repository through one manual step, because sec.gov requires automated clients to declare a contact address, which must never be in a public repository. Trust boundaries: everything on the machine other than port 8000 is private; the repository holds no secret. Left out: an automatic EDGAR watcher and AI, which do not exist yet.
+*Scope: everything that touches the system. Last reviewed: 2026-11-15.* A reader only ever talks to the web service, through the HTTPS door that Fly.io and Agent Manager provide. The service reads one thing from the internet: the share price, from free market sources (Nasdaq.com first, Yahoo Finance if it fails), on a timer. Everything else is the fact files shipped with the code. The filing reaches the repository through one manual step, because sec.gov requires automated clients to declare a contact address, which must never be in a public repository. Trust boundaries: everything on the machine other than port 8000 is private; the repository holds no secret. Left out: an automatic EDGAR watcher and AI, which do not exist yet.
 
 ## Components and data flow
 

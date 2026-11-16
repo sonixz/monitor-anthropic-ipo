@@ -52,10 +52,11 @@ class Settings:
                 f"IPO_LOG_LEVEL must be one of {', '.join(LOG_LEVELS)}, got {log_level!r}"
             )
 
-        market = source.get("IPO_MARKET", "yahoo")
-        if not re.fullmatch(r"off|yahoo|file:.+", market):
+        market = source.get("IPO_MARKET", "auto")
+        if not re.fullmatch(r"off|auto|nasdaq|yahoo|file:.+", market):
             raise ConfigError(
-                f"IPO_MARKET must be yahoo, off or file:<path of a recorded answer>, got {market!r}"
+                "IPO_MARKET must be auto, nasdaq, yahoo, off or file:<recorded answer>, "
+                f"got {market!r}"
             )
 
         host = source.get("IPO_HOST", "127.0.0.1")

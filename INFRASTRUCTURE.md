@@ -92,7 +92,7 @@ E2E_BASE_URL=https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev uv run pytest -m e2e
 
 Configuration comes from environment variables only, checked at startup; `.env.example` lists every one. **The service needs no secret in Loop 001.**
 
-Since version 0.3.0 the service makes one kind of outbound request: it asks the market source (Yahoo Finance chart data, over HTTPS) for the share price every few minutes. `IPO_MARKET` chooses the source (`yahoo` by default, `off` for none). The request carries no secret and no personal detail. `/health` reports the state of the source under `market`.
+Since version 0.3.0 the service makes one kind of outbound request: it asks a market source over HTTPS for the share price every few minutes: the quote service behind nasdaq.com first, Yahoo Finance chart data if it fails. `IPO_MARKET` chooses (`auto` by default, `nasdaq`, `yahoo`, or `off` for none). The request carries no secret and no personal detail. `/health` reports the state of the source under `market`.
 
 Planned, not present yet (names only):
 

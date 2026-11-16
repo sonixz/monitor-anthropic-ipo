@@ -14,7 +14,16 @@ from ipo_monitor import market
 from ipo_monitor.calc import Calc, compute
 from ipo_monitor.config import Settings
 from ipo_monitor.facts import Fact, Facts
-from ipo_monitor.market import Quote, RecordedAnswer, Snapshot, SourceError, Watcher, YahooChart
+from ipo_monitor.market import (
+    Chain,
+    NasdaqQuote,
+    Quote,
+    RecordedAnswer,
+    Snapshot,
+    SourceError,
+    Watcher,
+    YahooChart,
+)
 from ipo_monitor.render import Page, render_page
 from ipo_monitor.web import create_app
 
@@ -33,11 +42,18 @@ class Fake:
     def page(self, symbol: str) -> str:
         return f"https://example.org/{symbol}"
 
-    def fetch(self, symbol: str) -> dict[str, Any]:
+    def ask(self, symbol: str, company: str, now: int) -> Snapshot:
         self.asked += 1
         if isinstance(self.answer, Exception):
             raise self.answer
-        return self.answer  # type: ignore[no-any-return]
+        return market.read_yahoo(
+            self.answer,
+            symbol=symbol,
+            company=company,
+            name=self.name,
+            page=self.page(symbol),
+            now=now,
+        )
 
 
 def recorded(name: str) -> dict[str, Any]:
@@ -142,7 +158,8 @@ def test_the_quote_becomes_facts_with_source_and_time() -> None:
     for fact in by_id.values():
         assert fact.outlet == "TEST DATA, not a real quote"
         assert fact.period == "Nov 13, 2026, 16:00 EST"
-        assert fact.url == "https://finance.yahoo.com/quote/ANT/"
+        assert fact.url == "https://example.org/test-data/ANT"
+        assert "as given by TEST DATA, not a real quote for ANT (Anthropic, PBC" in fact.quote
         assert "delayed, unofficial" in (fact.context or "")
 
 
@@ -223,7 +240,7 @@ def test_the_page_on_a_trading_day(trading_page: Page) -> None:
     assert "$81.25" in card.group()
     assert "Nov 13, 2026, 16:00 EST" in card.group()
     assert "delayed, unofficial" in card.group()
-    assert "https://finance.yahoo.com/quote/ANT/" in card.group()
+    assert "https://example.org/test-data/ANT" in card.group()
     # A value computed from the quote shows the quote among its inputs, with its label.
     card = re.search(r'<div popover id="src-market-mcap-out".*?</div>', html, re.S)
     assert card is not None
@@ -317,6 +334,11 @@ def test_the_service_follows_the_market_and_survives_a_bad_render(
 def test_sources_by_name() -> None:
     assert market.source_from("off") is None
     assert isinstance(market.source_from("yahoo"), YahooChart)
+    assert isinstance(market.source_from("nasdaq"), NasdaqQuote)
+    both = market.source_from("auto")
+    assert isinstance(both, Chain)
+    assert both.name == "Nasdaq.com and Yahoo Finance"
+    assert both.page("ANT") == "https://www.nasdaq.com/market-activity/stocks/ant"
     assert isinstance(market.source_from("file:somewhere.json"), RecordedAnswer)
     with pytest.raises(ValueError, match="unknown market source"):
         market.source_from("guess")
@@ -325,3 +347,100 @@ def test_sources_by_name() -> None:
     assert YahooChart().page("ANT") == "https://finance.yahoo.com/quote/ANT/"
     quote = Quote("ANT", "Anthropic, PBC", "NasdaqGS", 81.25, 1794603601, "EST", -18000)
     assert quote.when(1794580200) == "Nov 13, 2026, 9:30 EST"
+
+
+def test_new_york_time_through_the_year() -> None:
+    assert market.eastern(2026, 11, 16) == (-18000, "EST")
+    assert market.eastern(2026, 7, 1) == (-14400, "EDT")
+    assert market.eastern(2026, 3, 7) == (-18000, "EST")  # the day before the clocks move
+    assert market.eastern(2026, 3, 8) == (-14400, "EDT")  # second Sunday of March
+    assert market.eastern(2026, 10, 31) == (-14400, "EDT")
+    assert market.eastern(2026, 11, 1) == (-18000, "EST")  # first Sunday of November
+    assert market.eastern(2027, 3, 14) == (-14400, "EDT")
+
+
+def test_nasdaq_before_the_listing_and_for_a_listed_symbol() -> None:
+    unknown = snapshot_of("nasdaq-ant-unknown.json")  # recorded on 2026-11-16
+    assert (unknown.state, unknown.quote) == ("awaiting", None)
+    assert unknown.detail == "TEST DATA, not a real quote does not list ANT yet"
+
+    source = RecordedAnswer(MARKET / "nasdaq-aapl-premarket.json")  # a real answer, before the open
+    snapshot = market.check(source, "AAPL", "Apple", None, TRADING_NOW)
+    quote = snapshot.quote
+    assert quote is not None
+    assert snapshot.state == "closed"  # the answer says: Pre-Market
+    assert (quote.name, quote.exchange) == ("Apple Inc. Common Stock", "NASDAQ-GS")
+    assert quote.price == 357.70
+    assert quote.when() == "Nov 16, 2026, 8:20 EST"
+    assert quote.time == 1794835200  # 13:20 UTC
+    assert (quote.day_low, quote.day_high) == (None, None)  # "NA" before the open
+    assert quote.volume == 2981347
+    assert len(quote.points) == 44
+    assert quote.points[0][0] == 1794819600  # 4:00 in New York is 9:00 UTC
+    assert quote.when(quote.points[0][0]) == "Nov 16, 2026, 4:00 EST"
+    assert market.check(source, "AAPL", "Anthropic", None, TRADING_NOW).state == "unavailable"
+
+
+def nasdaq(**primary: Any) -> dict[str, Any]:
+    answer = recorded("nasdaq-aapl-premarket.json")
+    answer["info"]["data"].update(symbol="ANT", companyName="Anthropic, PBC Class A Common Stock")
+    answer["info"]["data"]["primaryData"].update(primary)
+    return answer
+
+
+def read_ant(answer: dict[str, Any]) -> Snapshot:
+    return market.read_nasdaq(
+        answer, symbol="ANT", company="Anthropic", name="Nasdaq.com", page="p", now=TRADING_NOW
+    )
+
+
+def test_nasdaq_answers_that_are_not_a_price() -> None:
+    # Listed, no trade yet: the morning of the first day.
+    for empty in ("", "N/A"):
+        waiting = read_ant(nasdaq(lastSalePrice=empty))
+        assert waiting.state == "awaiting"
+        assert waiting.detail == (
+            "Nasdaq.com lists ANT as Anthropic, PBC Class A Common Stock, with no trade yet"
+        )
+    for change, problem in (
+        ({"lastSalePrice": "357.70"}, "price not in dollars"),
+        ({"lastSalePrice": "$0.00"}, "price not in dollars"),
+        ({"lastTradeTimestamp": "a moment ago"}, "time of the trade not understood"),
+    ):
+        with pytest.raises(SourceError, match=problem):
+            read_ant(nasdaq(**change))
+    with pytest.raises(SourceError, match="unexpected answer"):
+        read_ant({"info": {"data": None, "status": {"rCode": 500}}})
+    with pytest.raises(SourceError, match="unexpected answer"):
+        read_ant({"chart": {}})
+
+    # During the session the answer carries a range, and the state follows the market status.
+    session = nasdaq(lastSalePrice="$81.25", lastTradeTimestamp="Nov 19, 2026 2:05 PM ET")
+    session["info"]["data"]["marketStatus"] = "Open"
+    session["info"]["data"]["keyStats"]["dayrange"]["value"] = "79.50 - 84.10"
+    session["chart"] = None  # the line of the day is optional
+    snapshot = read_ant(session)
+    assert snapshot.state == "trading"
+    assert snapshot.quote is not None
+    assert snapshot.quote.when() == "Nov 19, 2026, 14:05 EST"
+    assert (snapshot.quote.day_low, snapshot.quote.day_high) == (79.5, 84.1)
+    assert snapshot.quote.points == ()
+
+
+def test_the_second_source_answers_when_the_first_fails() -> None:
+    down, good = Fake(SourceError("HTTP 429")), Fake(recorded("ant-trading-TEST.json"))
+    snapshot = market.check(Chain([down, good]), "ANT", "Anthropic", None, TRADING_NOW)
+    assert snapshot.state == "trading"
+    assert snapshot.source == "Fake source"
+    assert (down.asked, good.asked) == (1, 1)
+    # An answer of the first source is final, even "not listed yet": the second is not asked.
+    first = Fake({"chart": {"result": None, "error": {"code": "Not Found"}}})
+    snapshot = market.check(Chain([first, good]), "ANT", "Anthropic", None, TRADING_NOW)
+    assert snapshot.state == "awaiting"
+    assert good.asked == 1
+    # Both down: no price, and the page says which sources were asked.
+    both = Chain([Fake(SourceError("HTTP 403")), Fake(SourceError("HTTP 429"))])
+    snapshot = market.check(both, "ANT", "Anthropic", None, TRADING_NOW)
+    assert (snapshot.state, snapshot.quote) == ("unavailable", None)
+    assert snapshot.source == "Fake source and Fake source"
+    assert snapshot.detail == "HTTP 403, HTTP 429"

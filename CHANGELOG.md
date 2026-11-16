@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.1] - 2026-11-16
+
+### Fixed
+
+- Minutes after 0.3.0 went live, Yahoo Finance answered "too many requests" to the production
+  machine, as it had to the workstation. The page said so and showed no price, as designed, but
+  it would have had no quote on the listing day.
+
+### Changed
+
+- The first market source is now the quote service behind nasdaq.com, the exchange where the
+  stock lists; Yahoo Finance is asked only if it fails. `IPO_MARKET` accepts `auto` (the
+  default), `nasdaq`, `yahoo`, `off` and `file:<path>`.
+- The page names the source that answered. A source card of a MARKET value quotes what that
+  source gave.
+
 ## [0.3.0] - 2026-11-16
 
 A market panel ready for the first trade (Loop 002, second release).

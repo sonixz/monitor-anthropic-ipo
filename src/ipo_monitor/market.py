@@ -1,4 +1,4 @@
-"""Market data: the share price, from a free and unofficial source.
+"""Market data: the share price, from free and unofficial sources.
 
 Nothing here invents a value. A quote is shown only if the source returned a
 price for the symbol, in dollars, and names the company as expected. Otherwise
@@ -9,8 +9,10 @@ unavailable. The source sits behind a small interface so it can be replaced.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import math
+import re
 import time
 import urllib.error
 import urllib.request
@@ -93,83 +95,30 @@ class Snapshot:
 
 
 class Source(Protocol):
-    """Anything that can answer for a symbol with the JSON of a chart request."""
+    """Anything that can say what a symbol trades at. It raises SourceError when it cannot."""
 
     name: str
 
     def page(self, symbol: str) -> str: ...
 
-    def fetch(self, symbol: str) -> dict[str, Any]: ...
+    def ask(self, symbol: str, company: str, now: int) -> Snapshot: ...
 
 
-# -- sources -------------------------------------------------------------------
-
-
-class YahooChart:
-    """Yahoo Finance chart data, the feed behind yfinance. Free, unofficial, delayed."""
-
-    name = "Yahoo Finance"
-    hosts = ("query2.finance.yahoo.com", "query1.finance.yahoo.com")
-
-    def page(self, symbol: str) -> str:
-        return f"https://finance.yahoo.com/quote/{symbol}/"
-
-    def fetch(self, symbol: str) -> dict[str, Any]:
-        problem = "no answer"
-        for host in self.hosts:
-            url = f"https://{host}/v8/finance/chart/{symbol}?range=1d&interval=5m&includePrePost=false"
-            request = urllib.request.Request(
-                url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"}
-            )
-            try:
-                with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
-                    payload = json.loads(response.read(2_000_000))
-            except urllib.error.HTTPError as error:
-                if error.code == 404:  # the source's way of saying: unknown symbol
-                    return {"chart": {"result": None, "error": {"code": "Not Found"}}}
-                problem = f"HTTP {error.code}"
-            except (OSError, ValueError) as error:
-                problem = type(error).__name__
-            else:
-                if isinstance(payload, dict):
-                    return payload
-                problem = "unexpected answer"
-        raise SourceError(problem)
-
-
-class RecordedAnswer:
-    """A saved answer, for tests. It names itself so it can never pass for a real quote."""
-
-    name = "TEST DATA, not a real quote"
-
-    def __init__(self, path: Path) -> None:
-        self.path = path
-
-    def page(self, symbol: str) -> str:
-        return f"https://finance.yahoo.com/quote/{symbol}/"
-
-    def fetch(self, symbol: str) -> dict[str, Any]:
-        try:
-            payload = json.loads(self.path.read_text("utf-8"))
-        except (OSError, ValueError) as error:
-            raise SourceError(type(error).__name__) from error
-        if not isinstance(payload, dict):
-            raise SourceError("unexpected answer")
-        return payload
-
-
-def source_from(setting: str) -> Source | None:
-    """`off`, `yahoo`, or `file:<path>` for a recorded answer."""
-    if setting == "off":
-        return None
-    if setting == "yahoo":
-        return YahooChart()
-    if setting.startswith("file:"):
-        return RecordedAnswer(Path(setting[5:]))
-    raise ValueError(f"unknown market source: {setting}")
-
-
-# -- reading an answer -----------------------------------------------------------
+def get_json(url: str) -> Any:
+    """One HTTPS request for JSON. Raises SourceError with a short reason."""
+    headers = {
+        "User-Agent": USER_AGENT,
+        "Accept": "application/json, text/plain, */*",
+        "Accept-Language": "en-US,en;q=0.9",
+    }
+    request = urllib.request.Request(url, headers=headers)  # noqa: S310 - fixed https addresses
+    try:
+        with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
+            return json.loads(response.read(2_000_000))
+    except urllib.error.HTTPError as error:
+        raise SourceError(f"HTTP {error.code}") from error
+    except (OSError, ValueError) as error:
+        raise SourceError(type(error).__name__) from error
 
 
 def _number(value: object) -> float | None:
@@ -179,13 +128,148 @@ def _number(value: object) -> float | None:
     return number if math.isfinite(number) else None
 
 
-def read(
-    payload: dict[str, Any], *, symbol: str, company: str, source: Source, now: int
+def _named(name: str, company: str, symbol: str) -> None:
+    """The symbol must belong to the expected company: never show someone else's price."""
+    if company.lower() not in name.lower():
+        raise SourceError(f"{symbol} is not {company} at this source")
+
+
+# -- Nasdaq.com --------------------------------------------------------------------
+
+MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
+STAMP = re.compile(r"([A-Z][a-z]{2}) (\d{1,2}), (\d{4}) (\d{1,2}):(\d{2}) (AM|PM) ET")
+
+
+def eastern(year: int, month: int, day: int) -> tuple[int, str]:
+    """Offset from UTC and name of New York time on a date (the switch days count as whole)."""
+
+    def sunday(month: int, nth: int) -> int:
+        first = datetime(year, month, 1).weekday()  # Monday is 0
+        return 1 + (6 - first) % 7 + 7 * (nth - 1)
+
+    summer = (3, sunday(3, 2)) <= (month, day) < (11, sunday(11, 1))
+    return (-14400, "EDT") if summer else (-18000, "EST")
+
+
+def _dollars(text: object) -> float | None:
+    """'$357.70' as a number; None when the source gives no price."""
+    if not isinstance(text, str) or text.strip() in {"", "N/A", "NA", "--"}:
+        return None
+    if not re.fullmatch(r"\$[\d,]+(\.\d+)?", text.strip()):
+        raise SourceError("price not in dollars")
+    return float(text.strip()[1:].replace(",", ""))
+
+
+def read_nasdaq(
+    payload: dict[str, Any], *, symbol: str, company: str, name: str, page: str, now: int
 ) -> Snapshot:
-    """Turn the source's answer into a snapshot. Raises SourceError when it cannot be trusted."""
+    """Read the answer of Nasdaq.com's quote service: {"info": ..., "chart": ...}."""
+    info = payload.get("info")
+    if not isinstance(info, dict):
+        raise SourceError("unexpected answer")
+    data = info.get("data")
+    if not isinstance(data, dict):
+        codes = ((info.get("status") or {}).get("bCodeMessage")) or []
+        if any(isinstance(c, dict) and c.get("code") == 1001 for c in codes):
+            return Snapshot("awaiting", name, page, now, None, f"{name} does not list {symbol} yet")
+        raise SourceError("unexpected answer")
+    if data.get("symbol") != symbol:
+        raise SourceError("answer for another symbol")
+    listed_as = str(data.get("companyName") or "")
+    _named(listed_as, company, symbol)
+    primary = data.get("primaryData")
+    if not isinstance(primary, dict):
+        raise SourceError("unexpected answer")
+    price = _dollars(primary.get("lastSalePrice"))
+    if price is None:
+        detail = f"{name} lists {symbol} as {listed_as}, with no trade yet"
+        return Snapshot("awaiting", name, page, now, None, detail)
+    if price <= 0:
+        raise SourceError("price not in dollars")
+    stamp = STAMP.search(str(primary.get("lastTradeTimestamp") or ""))
+    if stamp is None:
+        raise SourceError("time of the trade not understood")
+    month, day, year = MONTHS.index(stamp[1]) + 1, int(stamp[2]), int(stamp[3])
+    hour = int(stamp[4]) % 12 + (12 if stamp[6] == "PM" else 0)
+    offset, zone = eastern(year, month, day)
+    local = datetime(
+        year, month, day, hour, int(stamp[5]), tzinfo=timezone(timedelta(seconds=offset))
+    )
+    traded = int(local.timestamp())
+
+    span = re.fullmatch(
+        r"\$?([\d,.]+)\s*[-/]\s*\$?([\d,.]+)",
+        str(((data.get("keyStats") or {}).get("dayrange") or {}).get("value") or "").strip(),
+    )
+    ends = sorted(float(part.replace(",", "")) for part in span.groups()) if span else None
+    volume_text = str(primary.get("volume") or "").replace(",", "")
+    volume = float(volume_text) if re.fullmatch(r"\d+(\.\d+)?", volume_text) else None
+
+    points = []
+    chart = (
+        (payload.get("chart") or {}).get("data") if isinstance(payload.get("chart"), dict) else None
+    )
+    for point in (chart or {}).get("chart") or [] if isinstance(chart, dict) else []:
+        moment, value = _number(point.get("x")), _number(point.get("y"))
+        if moment is not None and value is not None and value > 0:
+            # The service stamps its points with New York wall-clock time written as if it were UTC.
+            points.append((int(moment / 1000) - offset, value))
+    quote = Quote(
+        symbol=symbol,
+        name=listed_as,
+        exchange=str(data.get("exchange") or ""),
+        price=price,
+        time=traded,
+        zone=zone,
+        offset=offset,
+        day_high=ends[1] if ends else None,
+        day_low=ends[0] if ends else None,
+        volume=round(volume) if volume is not None else None,
+        points=tuple(points),
+    )
+    is_open = str(data.get("marketStatus") or "").strip().lower() in {"open", "market open"}
+    return Snapshot("trading" if is_open else "closed", name, page, now, quote)
+
+
+class NasdaqQuote:
+    """The quote service behind nasdaq.com, the exchange where the stock lists. Unofficial use."""
+
+    name = "Nasdaq.com"
+    host = "https://api.nasdaq.com/api/quote"
+
+    def page(self, symbol: str) -> str:
+        return f"https://www.nasdaq.com/market-activity/stocks/{symbol.lower()}"
+
+    def fetch(self, symbol: str) -> dict[str, Any]:
+        info = get_json(f"{self.host}/{symbol}/info?assetclass=stocks")
+        chart = None
+        has_price = isinstance(info, dict) and isinstance(info.get("data"), dict)
+        if has_price:
+            with contextlib.suppress(SourceError):  # the page works without the line of the day
+                chart = get_json(f"{self.host}/{symbol}/chart?assetclass=stocks")
+        return {"info": info, "chart": chart}
+
+    def ask(self, symbol: str, company: str, now: int) -> Snapshot:
+        return read_nasdaq(
+            self.fetch(symbol),
+            symbol=symbol,
+            company=company,
+            name=self.name,
+            page=self.page(symbol),
+            now=now,
+        )
+
+
+# -- Yahoo Finance -------------------------------------------------------------------
+
+
+def read_yahoo(
+    payload: dict[str, Any], *, symbol: str, company: str, name: str, page: str, now: int
+) -> Snapshot:
+    """Read the answer of Yahoo Finance's chart data."""
 
     def snapshot(state: State, quote: Quote | None = None, detail: str = "") -> Snapshot:
-        return Snapshot(state, source.name, source.page(symbol), now, quote, detail)
+        return Snapshot(state, name, page, now, quote, detail)
 
     chart = payload.get("chart")
     if not isinstance(chart, dict):
@@ -193,20 +277,18 @@ def read(
     results = chart.get("result")
     if not results:
         if chart.get("error"):
-            return snapshot("awaiting", detail=f"{source.name} does not list {symbol} yet")
+            return snapshot("awaiting", detail=f"{name} does not list {symbol} yet")
         raise SourceError("unexpected answer")
     result = results[0]
     meta = result.get("meta") if isinstance(result, dict) else None
     if not isinstance(meta, dict) or meta.get("symbol") != symbol:
         raise SourceError("answer for another symbol")
-    name = str(meta.get("longName") or meta.get("shortName") or "")
-    if company.lower() not in name.lower():
-        # The symbol belongs to someone else at this source: never show that price.
-        raise SourceError(f"{symbol} is not {company} at this source")
+    listed_as = str(meta.get("longName") or meta.get("shortName") or "")
+    _named(listed_as, company, symbol)
     price, traded = _number(meta.get("regularMarketPrice")), _number(meta.get("regularMarketTime"))
     if price is None or traded is None:
         return snapshot(
-            "awaiting", detail=f"{source.name} lists {symbol} as {name}, with no trade yet"
+            "awaiting", detail=f"{name} lists {symbol} as {listed_as}, with no trade yet"
         )
     if price <= 0 or meta.get("currency") != "USD":
         raise SourceError("price not in dollars")
@@ -219,7 +301,7 @@ def read(
     )
     quote = Quote(
         symbol=symbol,
-        name=name,
+        name=listed_as,
         exchange=str(meta.get("fullExchangeName") or meta.get("exchangeName") or ""),
         price=price,
         time=int(traded),
@@ -237,15 +319,121 @@ def read(
     return snapshot("trading" if is_open else "closed", quote)
 
 
+class YahooChart:
+    """Yahoo Finance chart data, the feed behind yfinance. Free, unofficial, delayed.
+
+    It answers "too many requests" to addresses that ask without a browser session, so it
+    comes second.
+    """
+
+    name = "Yahoo Finance"
+    hosts = ("query2.finance.yahoo.com", "query1.finance.yahoo.com")
+
+    def page(self, symbol: str) -> str:
+        return f"https://finance.yahoo.com/quote/{symbol}/"
+
+    def fetch(self, symbol: str) -> dict[str, Any]:
+        problem = "no answer"
+        for host in self.hosts:
+            url = f"https://{host}/v8/finance/chart/{symbol}?range=1d&interval=5m&includePrePost=false"
+            try:
+                payload = get_json(url)
+            except SourceError as error:
+                if str(error) == "HTTP 404":  # the source's way of saying: unknown symbol
+                    return {"chart": {"result": None, "error": {"code": "Not Found"}}}
+                problem = str(error)
+            else:
+                if isinstance(payload, dict):
+                    return payload
+                problem = "unexpected answer"
+        raise SourceError(problem)
+
+    def ask(self, symbol: str, company: str, now: int) -> Snapshot:
+        return read_yahoo(
+            self.fetch(symbol),
+            symbol=symbol,
+            company=company,
+            name=self.name,
+            page=self.page(symbol),
+            now=now,
+        )
+
+
+# -- several sources, and recorded answers ----------------------------------------------
+
+
+class Chain:
+    """Ask the sources in order; the first that answers wins."""
+
+    def __init__(self, sources: list[Source]) -> None:
+        self.sources = sources
+        self.name = " and ".join(source.name for source in sources)
+
+    def page(self, symbol: str) -> str:
+        return self.sources[0].page(symbol)
+
+    def ask(self, symbol: str, company: str, now: int) -> Snapshot:
+        problems = []
+        for source in self.sources:
+            try:
+                return source.ask(symbol, company, now)
+            except SourceError as error:
+                problems.append(str(error))
+            except (KeyError, TypeError, ValueError, AttributeError, IndexError) as error:
+                problems.append(f"unexpected answer ({type(error).__name__})")
+        raise SourceError(", ".join(problems))
+
+
+class RecordedAnswer:
+    """A saved answer, for tests. It names itself so it can never pass for a real quote."""
+
+    name = "TEST DATA, not a real quote"
+
+    def __init__(self, path: Path) -> None:
+        self.path = path
+
+    def page(self, symbol: str) -> str:
+        return f"https://example.org/test-data/{symbol}"
+
+    def fetch(self, symbol: str) -> dict[str, Any]:
+        try:
+            payload = json.loads(self.path.read_text("utf-8"))
+        except (OSError, ValueError) as error:
+            raise SourceError(type(error).__name__) from error
+        if not isinstance(payload, dict):
+            raise SourceError("unexpected answer")
+        return payload
+
+    def ask(self, symbol: str, company: str, now: int) -> Snapshot:
+        payload = self.fetch(symbol)
+        reader = read_nasdaq if "info" in payload else read_yahoo
+        return reader(
+            payload, symbol=symbol, company=company, name=self.name, page=self.page(symbol), now=now
+        )
+
+
+def source_from(setting: str) -> Source | None:
+    """`auto` (Nasdaq.com, then Yahoo Finance), `nasdaq`, `yahoo`, `off`, or `file:<path>`."""
+    if setting == "off":
+        return None
+    if setting == "auto":
+        return Chain([NasdaqQuote(), YahooChart()])
+    if setting == "nasdaq":
+        return NasdaqQuote()
+    if setting == "yahoo":
+        return YahooChart()
+    if setting.startswith("file:"):
+        return RecordedAnswer(Path(setting[5:]))
+    raise ValueError(f"unknown market source: {setting}")
+
+
 def check(
     source: Source, symbol: str, company: str, previous: Snapshot | None, now: int
 ) -> Snapshot:
     """Ask the source once. A failure never raises: it becomes the `unavailable` state."""
     last = previous.quote if previous else None
     try:
-        snapshot = read(
-            source.fetch(symbol), symbol=symbol, company=company, source=source, now=now
-        )
+        snapshot = source.ask(symbol, company, now)
     except SourceError as error:
         problem = str(error)
     except (KeyError, TypeError, ValueError, AttributeError, IndexError) as error:
@@ -287,40 +475,27 @@ def facts(snapshot: Snapshot) -> list[Fact]:
             }
         )
 
+    def said(what: str, shown: str) -> str:
+        where = f"{quote.symbol} ({quote.name}, {quote.exchange})"
+        return f"{what}: {shown}, as given by {snapshot.source} for {where}"
+
+    price = f"${quote.price:,.2f}"
     out = [
         fact(
-            "price",
-            "Last share price",
-            quote.price,
-            "USD/share",
-            f"${quote.price:,.2f}",
-            f"regularMarketPrice: {quote.price}",
+            "price", "Last share price", quote.price, "USD/share", price, said("Last price", price)
         ),
-        fact(
-            "time",
-            "Time of the last trade",
-            when,
-            "text",
-            when,
-            f"regularMarketTime: {quote.time}",
-        ),
+        fact("time", "Time of the last trade", when, "text", when, said("Last trade", when)),
     ]
     optional = (
-        (
-            "day_high",
-            "Highest price of the day",
-            quote.day_high,
-            "USD/share",
-            "regularMarketDayHigh",
-        ),
-        ("day_low", "Lowest price of the day", quote.day_low, "USD/share", "regularMarketDayLow"),
-        ("previous_close", "Previous close", quote.previous_close, "USD/share", "previousClose"),
-        ("volume", "Shares traded today", quote.volume, "count", "regularMarketVolume"),
+        ("day_high", "Highest price of the day", quote.day_high, "USD/share"),
+        ("day_low", "Lowest price of the day", quote.day_low, "USD/share"),
+        ("previous_close", "Previous close", quote.previous_close, "USD/share"),
+        ("volume", "Shares traded today", quote.volume, "count"),
     )
-    for key, title, value, unit, field in optional:
+    for key, title, value, unit in optional:
         if value is not None:
             shown = f"{value:,.0f}" if unit == "count" else f"${value:,.2f}"
-            out.append(fact(key, title, value, unit, shown, f"{field}: {value}"))
+            out.append(fact(key, title, value, unit, shown, said(title, shown)))
     return out
 
 

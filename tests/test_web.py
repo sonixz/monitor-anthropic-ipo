@@ -204,7 +204,7 @@ def test_configuration_is_checked(tmp_path: Path) -> None:
     good = {"IPO_FACTS_DIR": str(FACTS_DIR)}
     settings = Settings.from_env(good)
     assert (settings.host, settings.port, settings.release) == ("127.0.0.1", 8000, "dev")
-    assert settings.market == "yahoo"
+    assert settings.market == "auto"
     bad = [
         ({"IPO_PORT": "http"}, "IPO_PORT"),
         ({"IPO_PORT": "70000"}, "IPO_PORT"),
