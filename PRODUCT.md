@@ -16,7 +16,7 @@ Anthropic's IPO filing (Form S-1/A, Amendment No. 2, filed 2026-11-10) runs to 4
 
 ## What it gives them
 
-One page, five panels, each answering one question:
+One page, five panels, each answering one question, and a sixth that appears when the stock trades:
 
 | Panel | Question | What it shows |
 | --- | --- | --- |
@@ -25,8 +25,13 @@ One page, five panels, each answering one question:
 | CONTRACTS | What is signed, in both directions? | $13.8B owed to Anthropic, $900.9B owed by it, when it falls due and what it is made of |
 | GROWTH | How fast is it growing, and what does growth cost? | Seven quarters of revenue, growth, compute cost and operating result |
 | LOSSES | Is the huge loss real spending? | The $104.0B nine-month loss split into accounting charge and operating loss |
+| MARKET (once the stock trades) | What is the market paying now? | The last price, its change against the IPO price, the value and enterprise value at that price, the day's range, volume and price line |
 
-Every number is a button. It opens the passage of the filing it was copied from (FILED), the formula and inputs behind it (CALC), or the article that reported it (PRESS).
+Every number is a button. It opens the passage of the filing it was copied from (FILED), the formula and inputs behind it (CALC), the article that reported it (PRESS), or the quote of the market source with its time (MARKET, delayed and unofficial).
+
+Each panel leads with a chart or a large figure: nine charts drawn from the same facts. Every mark on a chart is a button too, and every value a chart draws is also in a table. On a phone nothing scrolls sideways; the tables behind the charts stay folded until asked for.
+
+Before the listing the page shows no price and says "awaiting listing". It never shows a price that a source did not give for this company.
 
 ## User journey
 

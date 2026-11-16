@@ -7,7 +7,7 @@
 Make the dashboard readable at a glance, above all on a phone: add charts and curves, and rework the layout so that nothing has to be scrolled sideways or pinched. Then have a market panel in place before the first trade (reported for 2026-11-19), so that the real share price appears and flows into VALUE and EV BRIDGE as soon as the stock lists. The page keeps its promise: every number can be traced, and no price is ever invented.
 
 ## Context
-- Loop 001 delivered version 0.1.0, live at https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev: five panels, 125 numbers, each a button that opens its source. The owner's reaction on 2026-11-16: he loves it and finds it clean; he asks for a better layout, better behaviour on phones, and charts.
+- Loop 001 delivered version 0.1.0, live at https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev: five panels, 125 numbers, each a button that opens its source. The owner's reaction on 2026-11-16: they love it and find it clean; they ask for a better layout, better behaviour on phones, and charts.
 - Seen in a real browser on 2026-11-16: the page has no chart apart from thin bars, and those are hidden on a phone. On a 390 px screen the quarterly table needs sideways scrolling, row labels wrap over three lines, the status block fills a third of the first screen, and the panel bar shows keyboard keys that a phone does not have. The page is six screens long on a phone.
 - The data already holds what charts need: seven quarters of revenue, compute cost and operating result; four annual periods of the income statement; payments due by year from 2026 to after 2030; the value at three prices for three share counts.
 - The filing says the company applied to list on the Nasdaq Global Select Market under the symbol ANT. CNBC reported pricing for 2026-11-18 and the first trade for 2026-11-19. No share price exists before that.
@@ -27,7 +27,7 @@ The product's promise makes these mandatory. They are in scope even if the loop 
 
 ## Decisions
 ### Confirmed by the user — requirements
-- **Go on this loop:** The owner said 'Go!' on 2026-11-16 after asking for a better layout and better phone behaviour, then added charts. — His own words, quoted above.
+- **Go on this loop:** The owner said 'Go!' on 2026-11-16 after asking for a better layout and better phone behaviour, then added charts. — The owner's own words, quoted above.
 - **Market data source:** A free unofficial source such as yfinance, labeled delayed and unofficial. — The owner's words in Loop 0 (DECISIONS D-013).
 - **Style and language:** Calm terminal style, not neon; all user-facing text in English; the owner's words reworded in English in repository files. — Owner's directive.
 
@@ -39,7 +39,7 @@ The product's promise makes these mandatory. They are in scope even if the loop 
 - **The quarterly table:** Split into two narrow tables (revenue and growth; cost and margin) at every screen size. — Eight columns cannot fit a phone; one layout for all sizes is simpler and the charts carry the overview.
 
 ### Assumed — revisit if the environment says otherwise
-- **One loop for three things:** Charts, layout and the market panel are one Loop 002, built in that order and released twice (0.2.0, then 0.3.0). — The owner is away. His 'Go!' followed a message that announced the market panel for Loop 002; his two wishes were added. Splitting would need a second go before 2026-11-19.
+- **One loop for three things:** Charts, layout and the market panel are one Loop 002, built in that order and released twice (0.2.0, then 0.3.0). — The owner is away. Their 'Go!' followed a message that announced the market panel for Loop 002; their two wishes were added. Splitting would need a second go before 2026-11-19.
 - **Deploying:** Each release is deployed on the existing, already exposed machine once all checks pass, with the tested script and its rollback. — The owner approved deploying on this machine in Loop 001 and wants to be online before the listing. No new exposure or infrastructure is involved.
 
 ### Deferred — do not build now
@@ -114,7 +114,7 @@ For this loop:
 - [ ] The service stays under 200 MB of resident memory on the machine with the market refresh running, measured and reported.
 - [ ] uv run ruff format --check, ruff check, mypy, pytest, pytest -m e2e and pre-commit all pass locally; CI and CodeQL are green on the released commits.
 - [ ] Each release is deployed, /health shows its version, and the real-browser tests pass against the live URL.
-- [ ] Real-people test: the owner opens the live page on his phone and says whether the layout and the charts are good; and the 60-second test carried over from Loop 001.
+- [ ] Real-people test: the owner opens the live page on their phone and says whether the layout and the charts are good; and the 60-second test carried over from Loop 001.
 - [ ] Real use: every form and main flow done in a real browser, as a user would (not only through tests that call the code directly), with screenshots or transcripts in the devlog; if that cannot run here, the check is `not_run`, carried over and named in the summary.
 - [ ] This mission is saved as `loops/002-mission.md` and the report as `loops/002-report.json`.
 - [ ] The project documents listed in `LOOP.md` and their diagrams are updated wherever this loop changed what they describe.

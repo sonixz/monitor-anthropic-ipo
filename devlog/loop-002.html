@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 002 — Charts, a phone-first layout and a market panel ready for the first trade · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 002 — Charts, a phone-first layout and a market panel ready for the first trade</h1>
+<p class="lead">2026-11-16 · Three releases in a day: charts and a layout made for phones (0.2.0), a market panel that waits for the first trade (0.3.0), and a change of market source after the first one refused the machine (0.3.1). Live at <a href="https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev">agmgd-on-ipo-monitor-ba4eccd0.fly.dev</a>.</p>
+
+<h2>Why</h2>
+<blockquote>
+<p>I love it. It's clean. We could improve the layout and how it adapts to phones. Otherwise it is really good. Go!</p>
+<p>Also, maybe some graphs, curves, charts and so on?</p>
+</blockquote>
+<p><small>The owner spoke in French; these are their words reworded in English at their request, with the meaning unchanged. The market panel had been announced for this loop: the first trade is reported for 2026-11-19.</small></p>
+
+<h2>What changed</h2>
+<ul>
+  <li><strong>Nine charts, drawn by the server.</strong> The value across the price range for three share counts, with the two press figures; the enterprise value bridge as a waterfall; diluted value against enterprise value; payments due by year; revenue by quarter; growth over the prior quarter; revenue against compute cost; operating margin; operating loss against net loss by period. No chart library: a small module writes SVG.</li>
+  <li><strong>A chart is a way to the source too.</strong> Every mark opens the same source card as its number, by mouse, touch or keyboard. Every value a chart draws is also in a table. Axis ticks are the only digits on the page without a source, and a test accepts them nowhere else.</li>
+  <li><strong>Nothing scrolls sideways on a phone.</strong> The eight-column quarterly table became two narrow tables. Bars sit under their labels. The panel bar is made for thumbs and shows where the reader is. Source cards rise from the bottom with a close button. The tables behind the charts stay folded until asked for.</li>
+  <li><strong>Layout by the width of a panel.</strong> Two panels side by side on a laptop are each as narrow as a phone, so the breakpoints follow the panel, not the screen.</li>
+  <li><strong>A market panel that waits.</strong> The service asks a market source on a timer. Before the listing the page says "awaiting listing" and shows no price. With the first quote a MARKET panel takes the top of the page: last price, change against the IPO price, value and enterprise value at that price, the day's range, volume and a line of the price.</li>
+  <li><strong>A fourth label, MARKET.</strong> A value that comes from a quote names its source and the time of the quote, with the words "delayed, unofficial". A price is refused unless the source names the company, in dollars.</li>
+  <li><strong>Three new sets of filed figures on the page.</strong> Payments already running by year, operating loss and net loss for four periods, and what nine months of revenue went to.</li>
+</ul>
+
+<div class="pair">
+<figure>
+  <img src="img/loop-002-before-phone.png" alt="The phone page before this loop: a long status block, then stacked tiles, no chart.">
+  <figcaption>Before: the first screen on a phone in version 0.1.0.</figcaption>
+</figure>
+<figure>
+  <img src="img/loop-002-phone.png" alt="The phone page after this loop: a compact status block, a panel bar with five names, the three value tiles and the start of a chart.">
+  <figcaption>After: the same screen in version 0.3.1, from the live site.</figcaption>
+</figure>
+</div>
+
+<div class="pair">
+<figure>
+  <img src="img/loop-002-phone-chart.png" alt="The CONTRACTS panel on a phone: bars under their labels and a column chart of payments by year.">
+  <figcaption>CONTRACTS on a phone: bars under their labels, a chart, and the table folded under "the same, in figures".</figcaption>
+</figure>
+<figure>
+  <img src="img/loop-002-phone-source.png" alt="A source card rising from the bottom of a phone screen, quoting the filing, with a close button.">
+  <figcaption>One tap on a number: the card rises from the bottom, within reach of a thumb.</figcaption>
+</figure>
+</div>
+
+<figure>
+  <img src="img/loop-002-growth.png" alt="The GROWTH panel on a desktop screen: three tiles, then four charts side by side, then two tables.">
+  <figcaption>GROWTH on a desktop screen: four charts side by side, drawn at phone width so their text stays readable everywhere.</figcaption>
+</figure>
+
+<figure>
+  <img src="img/loop-002-chart-source.png" alt="The source card of the third-quarter revenue opened from a column of the revenue chart.">
+  <figcaption>Selecting a column of the revenue chart opens the card of the filed figure, page 164.</figcaption>
+</figure>
+
+<figure>
+  <img src="img/loop-002-desktop-full.png" alt="The whole page on a desktop screen.">
+  <figcaption>The whole page, from the live site.</figcaption>
+</figure>
+
+<h2>The market source that said no</h2>
+<p>The owner had asked for a free source "like yfinance". The first version asked Yahoo Finance's chart data directly, the feed that yfinance reads. It answered from this workstation and from the production machine, and it already lists ANT as "Anthropic, PBC" on Nasdaq, without a price.</p>
+<p>Then it stopped. After about ten questions in a quarter of an hour it answered "too many requests" to the workstation. Minutes after version 0.3.0 went live, it answered the same to the machine. The page did what it was built to do: it said "source unavailable" and showed no price. But it would have had nothing to show on the listing day.</p>
+<p>Version 0.3.1 asks the quote service behind nasdaq.com first, the exchange where the stock lists, and Yahoo Finance only if that fails. From the machine it answers for a listed company and, for ANT, "Symbol not exists". The live page now reads: awaiting listing, no share price exists yet, Nasdaq.com does not list ANT yet.</p>
+
+<figure>
+  <img src="img/loop-002-test-trading-phone.png" alt="A phone screen showing the MARKET panel with the label TEST DATA, not a real quote.">
+  <figcaption>What a trading day will look like, replayed in a test. <strong>The prices on this picture are invented test data</strong>; the page says so itself ("TEST DATA, not a real quote"). No real price of ANT exists yet.</figcaption>
+</figure>
+
+<h2>Checks</h2>
+<table>
+  <tr><th>Command or check</th><th>Result</th><th>Notes</th></tr>
+  <tr><td><code>uv run ruff format --check .</code> · <code>uv run ruff check .</code> · <code>uv run mypy</code></td><td>passed</td><td>No warning; strict types on 26 source files. Locally and in GitHub Actions.</td></tr>
+  <tr><td><code>uv run pytest</code></td><td>passed</td><td>92 tests: charts, the page audit, the market sources on recorded answers, the calculations at a market price and at a final IPO price.</td></tr>
+  <tr><td><code>uv run pytest -m e2e</code> (local server)</td><td>passed</td><td>12 real-browser tests: desktop, charts by mouse and keyboard, phones at 360, 390 and 430 px, without JavaScript, a replayed trading day, page weight.</td></tr>
+  <tr><td>The same tests against the live site, after the 0.2.0 and the 0.3.1 deployments</td><td>passed</td><td>Not run against 0.3.0, which was replaced within minutes. The screenshots on this page come from the last run.</td></tr>
+  <tr><td>Screenshots at 360, 390, 768, 1024, 1280 and 1680 px, looked at one by one</td><td>passed</td><td>Six defects found and fixed this way (listed below).</td></tr>
+  <tr><td>Chart colors against the panel surface (color-blind validator)</td><td>passed</td><td>Two series colors; lightness, chroma, separation and contrast all pass.</td></tr>
+  <tr><td>Accessibility (axe, in the browser tests)</td><td>passed</td><td>No serious or critical issue on desktop and phone, in both market states.</td></tr>
+  <tr><td>GitHub Actions: CI and CodeQL on the three released commits</td><td>passed</td><td>Commits a652f24, 163ba46 and a958d25.</td></tr>
+  <tr><td>Market sources reached from the production machine</td><td>passed</td><td>Nasdaq.com answers for a listed symbol and for ANT. Yahoo Finance answered four times, then refused.</td></tr>
+  <tr><td>Live page before the listing</td><td>passed</td><td>"awaiting listing", no price; <code>/health</code> reports the source and the time of the check.</td></tr>
+  <tr><td>Page weight and load</td><td>passed</td><td>23 KB compressed (limit 60 KB); under 1 s in the browser test.</td></tr>
+  <tr><td>Memory on the machine</td><td>passed</td><td>The service uses 56 MB of 256 MB a few seconds after start, with the market timer running. To be measured again after a day.</td></tr>
+  <tr><td>The Nasdaq source during regular trading hours</td><td>not_run</td><td>The recorded answers were taken before the market opened. The reading of an open market is tested on an adapted answer, not on a real one yet.</td></tr>
+  <tr><td>A real quote of ANT</td><td>not_run</td><td>Impossible before the first trade.</td></tr>
+  <tr><td>The owner looks at the page on a phone; the 60-second test of Loop 001</td><td>not_run</td><td>Only the owner can run them.</td></tr>
+</table>
+
+<h2>What the screenshots caught</h2>
+<ul>
+  <li>A local test server that never restarted kept showing old pages for several rounds: every later screenshot was checked against a fresh start.</li>
+  <li>In the value chart, long row names ran into the figures, and gridlines crossed the press labels. Shorter names; tick marks instead of gridlines.</li>
+  <li>Bars under labels left a broken rule between label and value. The rule moved to the row.</li>
+  <li>A label sat on the last point of the growth line. It moved under the point.</li>
+  <li>Two panels side by side had unequal heights with an empty half. A chart of diluted value against enterprise value now fills the shorter one.</li>
+  <li>A style rule was lost during an edit and a table caption dropped out of line with its chart. Restored.</li>
+</ul>
+
+<h2>Departures from the mission</h2>
+<ul>
+  <li>The mission named Yahoo Finance as the source. It is now the second source; Nasdaq.com is the first.</li>
+  <li>Once the stock trades, the MARKET panel comes first on a phone, so the values at the IPO price are no longer on the first screen. The mission asked for both there.</li>
+  <li>The line of the price through the day is the source's own series; only its last point is a sourced mark with a card.</li>
+  <li>A phone page is longer than before, about nine screens instead of six, because it now carries nine charts.</li>
+  <li>Decisions taken while the owner was away are marked "assumed" or "proposed" in <code>DECISIONS.md</code> (D-016 to D-022): one loop for three things, deploying each release, the choice of sources.</li>
+  <li>The site was unreachable for a few seconds at each of the three deployments.</li>
+</ul>
+
+<h2>What is left</h2>
+<ul>
+  <li>The owner's look at the page on a phone, and the 60-second test.</li>
+  <li>Check the Nasdaq source while the market is open, and the memory of the service after a day.</li>
+  <li>Record the final IPO price when it is public (reported for 2026-11-18), from an article opened and quoted, or from the final prospectus.</li>
+  <li>Watch the first trade (reported for 2026-11-19).</li>
+  <li>Still blocked on two secrets: AI explanations and the EDGAR watcher. The full list is in <code>BACKLOG.md</code>.</li>
+</ul>
+
+<p class="nav">Mission: <code>loops/002-mission.md</code> · Report: <code>loops/002-report.json</code></p>
+</main>
+</body>
+</html>

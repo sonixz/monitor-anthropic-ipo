@@ -1,0 +1,199 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-002",
+  "summary": "Three releases went live at https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev on 2026-11-16. Version 0.2.0: nine charts drawn by the server and a layout where nothing scrolls sideways on a phone. Version 0.3.0: a market panel that waits for the first trade and never shows a price a source did not give. Version 0.3.1: the market source was changed within minutes, because Yahoo Finance refused the production machine ('too many requests'); the quote service behind nasdaq.com is now asked first. Lint, strict types, 92 unit tests and 12 real-browser tests pass locally, in GitHub Actions and against the live site. Not run: a real quote of ANT (the stock does not trade yet), the Nasdaq source during regular trading hours, the owner's look at the page on a phone and the 60-second test of Loop 001. The owner was away during the build: seven decisions are recorded as assumed or proposed, for the owner to confirm or reject (D-016 to D-022). The mission tool raised two warnings about market history being out of scope against the promise; the promise holds, since every value shown is sourced, but no history is kept.",
+  "delivered": [
+    "Nine charts drawn on the server as SVG without a library (charts.py, figures.py): value across the price range for three share counts with the two press figures; the enterprise value bridge as a waterfall in its table; diluted value against enterprise value; payments due by year; revenue by quarter; growth over the prior quarter; revenue against compute cost; operating margin; operating loss against net loss by period. A tenth, the price through the day, appears with the first quote.",
+    "Every chart mark opens the same source card as its number (mouse, touch, keyboard: one tab stop per chart, arrows between marks, a readout on hover and focus). Every value a chart draws is also a number in a table. Axis ticks are the only digits without a source, flagged data-tick and accepted by a test only on a chart axis.",
+    "Phone layout from 360 to 430 px with no sideways scrolling, tables included: the quarterly table split in two, bars under their labels, a panel bar for thumbs that shows the current panel, source cards as a bottom sheet with a close button, the tables behind charts folded until asked for (open without JavaScript).",
+    "Layout breakpoints as container queries on the panel; page width up to 1360 px; reviewed at 360, 390, 768, 1024, 1280 and 1680 px.",
+    "New filed figures on the page: payments already running by year (2026 to 2030 and later), operating loss and net loss for 2023, 2024, 2025 and nine months of 2026, and the cost lines of those nine months against revenue.",
+    "Market module (market.py): two sources behind one interface, Nasdaq.com's quote service first and Yahoo Finance chart data second; four states (awaiting listing, trading, market closed, source unavailable); a timer (5 minutes before the listing, 2 minutes while open, 30 minutes when closed, growing waits while the source fails); the page is rendered again only when the answer changed, and a failed rendering leaves the previous page.",
+    "A fourth label, MARKET: the quote becomes facts that carry the source, the time of the quote and the words 'delayed, unofficial'. A price is refused unless the answer is for the symbol, names a company containing 'Anthropic', is in dollars and positive.",
+    "MARKET panel shown with the first quote: last price, change against the IPO price, value of the shares outstanding and diluted value at that price, enterprise value and its multiple, the day's range, volume and a line of the price. Calculations at the market price show the quote among their inputs.",
+    "The final IPO price as a fourth price point: once the fact pricing.ipo_price exists, the tiles, the bridge, the multiples and the comparison with the market use it.",
+    "A notice when newer figures exist ('New figures are in, reload') instead of an automatic reload; /health reports the state of the market source; IPO_MARKET chooses the source (auto, nasdaq, yahoo, off, file:<path>).",
+    "Three deployments on the existing machine with the tested script: v0.2.0 (a652f24), v0.3.0 (163ba46), v0.3.1 (a958d25). Live now: version 0.3.1, market state 'awaiting', source Nasdaq.com.",
+    "Documents updated: CHANGELOG (0.2.0, 0.3.0, 0.3.1), DECISIONS (D-016 to D-022), ARCHITECTURE (three diagrams, checked with lint_diagrams), INFRASTRUCTURE, PRODUCT, CLAUDE.md, STATUS, BACKLOG, .env.example; devlog/loop-002.html with before and after screenshots from the live site."
+  ],
+  "changedFiles": [
+    ".env.example",
+    "ARCHITECTURE.md",
+    "BACKLOG.md",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "DECISIONS.md",
+    "INFRASTRUCTURE.md",
+    "PRODUCT.md",
+    "STATUS.md",
+    "devlog/img/loop-002-before-phone.png",
+    "devlog/img/loop-002-chart-hover.png",
+    "devlog/img/loop-002-chart-source.png",
+    "devlog/img/loop-002-desktop-full.png",
+    "devlog/img/loop-002-desktop.png",
+    "devlog/img/loop-002-growth.png",
+    "devlog/img/loop-002-phone-chart.png",
+    "devlog/img/loop-002-phone-source.png",
+    "devlog/img/loop-002-phone.png",
+    "devlog/img/loop-002-test-trading-desktop.png",
+    "devlog/img/loop-002-test-trading-phone.png",
+    "devlog/index.html",
+    "devlog/loop-002.html",
+    "loops/002-mission.md",
+    "loops/002-report.json",
+    "pyproject.toml",
+    "src/ipo_monitor/__init__.py",
+    "src/ipo_monitor/calc.py",
+    "src/ipo_monitor/charts.py",
+    "src/ipo_monitor/config.py",
+    "src/ipo_monitor/facts.py",
+    "src/ipo_monitor/figures.py",
+    "src/ipo_monitor/market.py",
+    "src/ipo_monitor/render.py",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/static/app.js",
+    "src/ipo_monitor/templates/index.html.j2",
+    "src/ipo_monitor/web.py",
+    "tests/conftest.py",
+    "tests/e2e/test_dashboard.py",
+    "tests/fixtures/market/aapl-listed.json",
+    "tests/fixtures/market/ant-awaiting.json",
+    "tests/fixtures/market/ant-trading-TEST.json",
+    "tests/fixtures/market/nasdaq-aapl-premarket.json",
+    "tests/fixtures/market/nasdaq-ant-unknown.json",
+    "tests/test_charts.py",
+    "tests/test_market.py",
+    "tests/test_web.py",
+    "uv.lock"
+  ],
+  "decisions": [
+    "Confirmed by the owner on 2026-11-16: go on a better layout, better behaviour on phones, and charts. Confirmed earlier: a free market source 'like yfinance', the calm terminal style, English text.",
+    "Assumed while the owner was away (D-016): charts, layout and the market panel are one Loop 002; each release is deployed on the existing machine once every check passes. To confirm or reject.",
+    "Proposed, applied (D-017, D-018): charts are SVG drawn on the server at phone width without a library; axis ticks are the only digits without a source.",
+    "Proposed, applied (D-019): layout follows the width of a panel; detail tables fold away on a phone. Trade-off: the phone page is about nine screens long instead of six.",
+    "Proposed, applied, departure from the mission (D-020): the first market source is Nasdaq.com's quote service, not Yahoo Finance, which refused the production machine after a handful of questions. Yahoo Finance stays as the second source.",
+    "Proposed, applied (D-021): a price is shown only when the source names the company; once a quote was shown, an answer without a price counts as a failure and the last quote stays with a warning.",
+    "Proposed, applied, departure from the mission (D-022): once the stock trades the MARKET panel comes first, so the values at the IPO price leave the first screen of a phone. Until the final IPO price is recorded, the market price is compared with the middle of the filed range, and the page says so.",
+    "Not built although in the mission's wording: the yfinance package itself (plain HTTP was used to stay light), and a per-point source card for the price line (only its last point is a sourced mark)."
+  ],
+  "tests": [
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run mypy",
+      "result": "passed",
+      "notes": "All checks passed; strict mypy: no issues in 26 source files. Also green in GitHub Actions."
+    },
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "92 passed. Charts (ticks, scales, label placement, sources of marks), the page audit extended to chart text, market sources on recorded answers (ANT before the listing at both sources, a listed symbol at both sources, failures, another company's price refused), calculations at a market price and at a final IPO price, the service following the market and surviving a failed rendering."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "12 passed in Chromium against local servers: desktop reading and keys; charts by mouse, printed value and keyboard; phones at 360, 390 and 430 px with no sideways scroll, no scrolling table, no cut chart text, before and after opening the folded tables; phone first screen, thumb bar, bottom-sheet card, chart tap; without JavaScript on desktop and phone; a replayed trading day on phone and desktop; load under 1 s; page under 60 KB compressed; axe with no serious or critical issue."
+    },
+    {
+      "command": "E2E_BASE_URL=https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "Run against the live site after the 0.2.0 deployment (10 tests at the time) and after the 0.3.1 deployment (12 tests). Not run against 0.3.0, which was replaced within minutes."
+    },
+    {
+      "command": "Screenshots at 360, 390, 768, 1024, 1280 and 1680 px looked at one by one",
+      "result": "passed",
+      "notes": "Local builds during the work, then the live 0.3.1 site at 360 and 768 px. Six defects were found and fixed this way; they are listed in the devlog."
+    },
+    {
+      "command": "node validate_palette.js \"#5a8fd6,#cf7a3a\" --mode dark --surface \"#131820\"",
+      "result": "passed",
+      "notes": "Lightness band, chroma floor, color-blind separation (worst pair 21.9), normal-vision floor and contrast against the panel surface all pass."
+    },
+    {
+      "command": "GitHub Actions: CI and CodeQL on commits a652f24, 163ba46 and a958d25",
+      "result": "passed",
+      "notes": "All six runs succeeded."
+    },
+    {
+      "command": "uv run pre-commit run --all-files",
+      "result": "passed",
+      "notes": "Format, lint, types and gitleaks on all files, before each commit."
+    },
+    {
+      "command": "lint_diagrams on the three diagrams of ARCHITECTURE.md",
+      "result": "passed",
+      "notes": "No issue after adding the market sources."
+    },
+    {
+      "command": "On the machine: sh /data/deploy.sh v0.2.0, v0.3.0, v0.3.1",
+      "result": "passed",
+      "notes": "Each release became healthy within seconds; /health showed versions 0.2.0, 0.3.0 and 0.3.1 in turn."
+    },
+    {
+      "command": "On the machine: curl of both market sources for AAPL and ANT",
+      "result": "passed",
+      "notes": "Nasdaq.com: 200 for both (a quote for AAPL, 'Symbol not exists' for ANT). Yahoo Finance: 200 four times, then 429 for every later request, including the service's own."
+    },
+    {
+      "command": "curl https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev/health and / (version 0.3.1)",
+      "result": "passed",
+      "notes": "market state 'awaiting', source 'Nasdaq.com'; the page reads 'awaiting listing, no share price exists yet, Nasdaq.com does not list ANT yet'; 23 KB compressed; about 0.15 s."
+    },
+    {
+      "command": "The Nasdaq adapter against a live listed symbol, from the workstation",
+      "result": "passed",
+      "notes": "Before the market opened: price, time (8:23 EST), volume and 264 points of the day read correctly for AAPL; no day range yet."
+    },
+    {
+      "command": "Memory and disk on the machine (version 0.3.1)",
+      "result": "passed",
+      "notes": "Service 56 MB resident six seconds after start, market timer running; 94 MB available of 209; 110 MB used of the 1 GB volume. Under the 200 MB limit, but measured once, not after a day."
+    },
+    {
+      "command": "The Nasdaq source during regular trading hours",
+      "result": "not_run",
+      "notes": "The answers were recorded before the open. The open-market reading is tested on an adapted answer only."
+    },
+    {
+      "command": "A real quote of ANT on the live page",
+      "result": "not_run",
+      "notes": "Impossible before the first trade, reported for 2026-11-19."
+    },
+    {
+      "command": "Real-people test: the owner looks at the layout and the charts on a phone; the 60-second test of Loop 001",
+      "result": "not_run",
+      "notes": "Only the owner can run them. Carried over."
+    }
+  ],
+  "blockers": [
+    "Agent Manager cannot assign a secret to an existing Online machine: the capped AI key and a contact address for sec.gov cannot reach the machine. This blocks AI explanations and the EDGAR watcher.",
+    "CI cannot reach the machine: deployment stays manual, from the coding agent's session.",
+    "Yahoo Finance limits how often an address may ask and refuses the production machine: it cannot be the only market source."
+  ],
+  "remainingWork": [
+    "The owner's look at the page on a phone (acceptance criterion, not run) and the 60-second test carried from Loop 001.",
+    "The owner's answer on the decisions taken in their absence: D-016 to D-022.",
+    "Check the Nasdaq source while the market is open, record a real answer in the tests, and measure the memory of the service after a day.",
+    "Record the final IPO price when it is public (reported for 2026-11-18); until then the market price would be compared with the middle of the filed range.",
+    "Watch the first trade (reported for 2026-11-19) and look at the MARKET panel with real figures.",
+    "Acceptance criterion partly met: once the stock trades, the first screen of a phone shows the market price and the values at that price, not the values at the IPO price (D-022).",
+    "The price line has one sourced mark (its last point), not one per point.",
+    "No history of market data is kept beyond the current day.",
+    "LOOP.md still says 'never deploy'; explanatory lines still run over two lines in places; branch protection is not set; the Reuters figure is quoted from a secondary article; no treasury-stock view; no uptime monitoring (all carried from Loop 001).",
+    "Still to build: EDGAR watcher and 'what changed', AI explanations, the 'what you pay' slider, the 'How We Build' page, automated deployment, storage and history."
+  ],
+  "recommendedNextSteps": [
+    "Owner: open the live page on a phone and say what is good and what is not; confirm or reject D-016 to D-022.",
+    "Today after 9:30 New York time: check the Nasdaq source on a listed symbol with the market open and add the recorded answer to the tests.",
+    "2026-11-18: record the final IPO price from an opened article; ask the owner to save the final prospectus (424B4) when it is filed.",
+    "2026-11-19: watch the first trade on the live page, on a phone.",
+    "Owner: put the two secrets on the machine so that the EDGAR watcher and AI explanations can be built."
+  ],
+  "reportedAt": "2026-11-16T13:45:00Z",
+  "submittedBy": "Claude Code (Claude Fable 5.2)",
+  "cost": {
+    "durationSeconds": null,
+    "inputTokens": null,
+    "outputTokens": null,
+    "usd": null
+  }
+}
