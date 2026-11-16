@@ -1,0 +1,581 @@
+"""Calculations: every CALC number on the page, with its formula and inputs.
+
+A calculation only combines facts (and other calculations). It records what
+it combined, so the page can show the arithmetic behind each result.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+
+from ipo_monitor.facts import Facts
+
+PRICE_POINTS = ("low", "mid", "high")
+QUARTERS = ("2025q1", "2025q2", "2025q3", "2025q4", "2026q1", "2026q2", "2026q3")
+QUARTER_NAMES = {
+    "2025q1": "Q1 2025",
+    "2025q2": "Q2 2025",
+    "2025q3": "Q3 2025",
+    "2025q4": "Q4 2025",
+    "2026q1": "Q1 2026",
+    "2026q2": "Q2 2026",
+    "2026q3": "Q3 2026",
+}
+
+
+@dataclass(frozen=True)
+class Term:
+    """One input of a calculation."""
+
+    name: str
+    value: float
+    unit: str
+    ref: str | None  # id of the fact or calculation it comes from; None for a constant
+
+
+@dataclass(frozen=True)
+class Calc:
+    """One calculated value."""
+
+    id: str
+    title: str
+    value: float
+    unit: str
+    formula: str
+    terms: tuple[Term, ...]
+    note: str | None = None
+
+
+class Calculator:
+    """Builds all calculations from the facts."""
+
+    def __init__(self, facts: Facts) -> None:
+        self.facts = facts
+        self.calcs: dict[str, Calc] = {}
+
+    # -- building blocks ----------------------------------------------------
+
+    def term(self, name: str, ref: str) -> Term:
+        if ref in self.calcs:
+            calc = self.calcs[ref]
+            return Term(name, calc.value, calc.unit, ref)
+        fact = self.facts.get(ref)
+        return Term(name, self.facts.num(ref), fact.unit, ref)
+
+    def value(self, ref: str) -> float:
+        return self.calcs[ref].value if ref in self.calcs else self.facts.num(ref)
+
+    def put(
+        self,
+        calc_id: str,
+        title: str,
+        value: float,
+        unit: str,
+        formula: str,
+        terms: list[Term],
+        note: str | None = None,
+    ) -> float:
+        if calc_id in self.calcs or calc_id in self.facts:
+            raise ValueError(f"duplicate id: {calc_id}")
+        self.calcs[calc_id] = Calc(calc_id, title, value, unit, formula, tuple(terms), note)
+        return value
+
+    def total(
+        self, calc_id: str, title: str, parts: list[tuple[str, str]], note: str | None = None
+    ) -> float:
+        terms = [self.term(name, ref) for name, ref in parts]
+        formula = " + ".join(t.name for t in terms)
+        return self.put(
+            calc_id, title, sum(t.value for t in terms), terms[0].unit, formula, terms, note
+        )
+
+    def divide(
+        self,
+        calc_id: str,
+        title: str,
+        top: tuple[str, str],
+        bottom: tuple[str, str],
+        unit: str = "ratio",
+        note: str | None = None,
+    ) -> float:
+        a, b = self.term(*top), self.term(*bottom)
+        return self.put(
+            calc_id, title, a.value / b.value, unit, f"{a.name} ÷ {b.name}", [a, b], note
+        )
+
+    def growth(self, calc_id: str, title: str, new: tuple[str, str], old: tuple[str, str]) -> float:
+        a, b = self.term(*new), self.term(*old)
+        value = (a.value / b.value - 1) * 100
+        return self.put(calc_id, title, value, "percent", f"{a.name} ÷ {b.name} − 1", [a, b])
+
+    # -- the calculations ---------------------------------------------------
+
+    def run(self) -> dict[str, Calc]:
+        self._offering()
+        self._value()
+        self._growth()
+        self._enterprise_value()
+        self._contracts()
+        self._losses()
+        return self.calcs
+
+    def _offering(self) -> None:
+        self.total(
+            "offering.shares_total",
+            "Shares offered in the IPO",
+            [
+                ("shares sold by the company", "offering.shares_company"),
+                ("shares sold by existing stockholders", "offering.shares_selling"),
+            ],
+        )
+        for point in ("low", "high"):
+            shares = self.term("shares offered", "offering.shares_total")
+            price = self.term("IPO price", f"offering.price_{point}")
+            self.put(
+                f"offering.size.{point}",
+                f"Size of the IPO at the {point} end of the range",
+                shares.value * price.value,
+                "USD",
+                "shares offered × IPO price",
+                [shares, price],
+                "Includes the shares sold by existing stockholders, whose proceeds do not go to "
+                "the company. Excludes the underwriters' option and the private placement.",
+            )
+
+    def _value(self) -> None:
+        owed = [
+            ("shares still owed to Amazon on its convertible notes", "notes.shares_remaining"),
+            ("shares issuable on exercise of stock options", "shares.options"),
+            ("shares issuable when outstanding RSUs vest", "shares.rsus_unvested"),
+            ("shares for RSUs granted after Sep 30", "shares.rsus_granted_after"),
+            ("Class A shares issued for acquisitions after Sep 30", "shares.acquisitions_class_a"),
+            ("Class N shares issued for acquisitions after Sep 30", "shares.acquisitions_class_n"),
+            ("shares issued after Sep 30 to match donations", "shares.matching_issuance"),
+        ]
+        self.total(
+            "value.owed_shares",
+            "Shares already owed or granted, not yet counted as outstanding",
+            owed,
+            "The filing lists each of these as excluded from the shares outstanding. "
+            "Options and RSUs are counted in full, vested or not.",
+        )
+        self.total(
+            "value.rsu_shares",
+            "Shares issuable for RSUs",
+            [
+                ("RSUs outstanding as of Sep 30", "shares.rsus_unvested"),
+                ("RSUs granted after Sep 30", "shares.rsus_granted_after"),
+            ],
+        )
+        self.total(
+            "value.issued_since_shares",
+            "Shares issued after Sep 30, 2026",
+            [
+                ("Class A shares for acquisitions", "shares.acquisitions_class_a"),
+                ("Class N shares for acquisitions", "shares.acquisitions_class_n"),
+                ("shares to match employee donations", "shares.matching_issuance"),
+            ],
+        )
+        self.total(
+            "value.reserve_shares",
+            "Shares reserved for grants that do not exist yet",
+            [
+                ("2026 Equity Incentive Plan reserve", "shares.plan_2026_reserve"),
+                ("employee stock purchase plan reserve", "shares.espp_reserve"),
+            ],
+            "Reserved, not granted: nobody holds these shares or a right to them today.",
+        )
+        self.total(
+            "value.headline_shares",
+            "Share count that reproduces the 'fully diluted' press figures",
+            [
+                ("shares outstanding after the offering", "shares.total_after"),
+                ("stock options", "shares.options"),
+                ("RSUs outstanding as of Sep 30", "shares.rsus_unvested"),
+                ("RSUs granted after Sep 30", "shares.rsus_granted_after"),
+                ("Class A shares for acquisitions", "shares.acquisitions_class_a"),
+                ("Class N shares for acquisitions", "shares.acquisitions_class_n"),
+                ("shares to match employee donations", "shares.matching_issuance"),
+                ("2026 Equity Incentive Plan reserve", "shares.plan_2026_reserve"),
+                ("employee stock purchase plan reserve", "shares.espp_reserve"),
+            ],
+            "Our reconstruction: news outlets do not publish their share count. This sum, "
+            "multiplied by the top of the range, gives the reported $1.405 trillion. It includes "
+            "shares reserved for future grants and leaves out the shares owed to Amazon.",
+        )
+
+        for point in PRICE_POINTS:
+            price_ref = f"offering.price_{point}"
+            price = self.term("IPO price", price_ref)
+            label = f"at ${price.value:.2f}"
+
+            if point == "mid":
+                out = self.term("shares outstanding after the offering", "shares.total_after")
+                self.put(
+                    "value.shares_out.mid",
+                    f"Shares outstanding after the offering, {label}",
+                    out.value,
+                    "shares",
+                    "as stated in the filing at the assumed $74.00 price",
+                    [out],
+                )
+            else:
+                amount = self.term("private placement amount", "offering.private_placement")
+                placement = self.put(
+                    f"value.placement_shares.{point}",
+                    f"Shares sold in the private placement, {label}",
+                    amount.value / price.value,
+                    "shares",
+                    "private placement amount ÷ IPO price",
+                    [amount, price],
+                    "The placement is a fixed dollar amount, so its share count moves with "
+                    "the price.",
+                )
+                terms = [
+                    self.term("shares outstanding at $74.00", "shares.total_after"),
+                    self.term(
+                        "private placement shares at $74.00",
+                        "offering.private_placement_shares_mid",
+                    ),
+                    self.term(
+                        f"private placement shares {label}", f"value.placement_shares.{point}"
+                    ),
+                ]
+                self.put(
+                    f"value.shares_out.{point}",
+                    f"Shares outstanding after the offering, {label}",
+                    terms[0].value - terms[1].value + placement,
+                    "shares",
+                    "shares outstanding at $74.00 − private placement shares at $74.00 "
+                    f"+ private placement shares {label}",
+                    terms,
+                )
+
+            out = self.term("shares outstanding after the offering", f"value.shares_out.{point}")
+            self.put(
+                f"value.mcap_out.{point}",
+                f"Value of the shares outstanding, {label}",
+                out.value * price.value,
+                "USD",
+                "shares outstanding after the offering × IPO price",
+                [out, price],
+                "Counts only shares that exist right after the offering.",
+            )
+            owed_term = self.term("shares already owed or granted", "value.owed_shares")
+            diluted = self.put(
+                f"value.shares_diluted.{point}",
+                f"Diluted share count, {label}",
+                out.value + owed_term.value,
+                "shares",
+                "shares outstanding after the offering + shares already owed or granted",
+                [out, owed_term],
+            )
+            diluted_term = self.term("diluted share count", f"value.shares_diluted.{point}")
+            self.put(
+                f"value.equity_diluted.{point}",
+                f"Diluted value, {label}",
+                diluted * price.value,
+                "USD",
+                "diluted share count × IPO price",
+                [diluted_term, price],
+                "Adds every share already owed or granted: the Amazon notes, stock options "
+                "and RSUs. Leaves out shares only reserved for future grants.",
+            )
+            reserve = self.term("shares reserved for future grants", "value.reserve_shares")
+            self.put(
+                f"value.equity_with_reserves.{point}",
+                f"Value if the shares reserved for future grants also counted, {label}",
+                (diluted + reserve.value) * price.value,
+                "USD",
+                "(diluted share count + shares reserved for future grants) × IPO price",
+                [diluted_term, reserve, price],
+            )
+            headline = self.term("press-basis share count", "value.headline_shares")
+            self.put(
+                f"value.headline.{point}",
+                f"'Fully diluted' value on the press basis, {label}",
+                headline.value * price.value,
+                "USD",
+                "press-basis share count × IPO price",
+                [headline, price],
+                "Our reconstruction of the basis behind the reported figures.",
+            )
+
+    def _growth(self) -> None:
+        for index, quarter in enumerate(QUARTERS):
+            name = QUARTER_NAMES[quarter]
+            revenue = (f"revenue {name}", f"q.revenue.{quarter}")
+            if index >= 1:
+                before = QUARTERS[index - 1]
+                self.growth(
+                    f"growth.qoq.{quarter}",
+                    f"Revenue growth over the previous quarter, {name}",
+                    revenue,
+                    (f"revenue {QUARTER_NAMES[before]}", f"q.revenue.{before}"),
+                )
+            if index >= 4:
+                year_ago = QUARTERS[index - 4]
+                self.growth(
+                    f"growth.yoy.{quarter}",
+                    f"Revenue growth over the same quarter a year earlier, {name}",
+                    revenue,
+                    (f"revenue {QUARTER_NAMES[year_ago]}", f"q.revenue.{year_ago}"),
+                )
+            self.divide(
+                f"growth.revenue_per_compute.{quarter}",
+                f"Revenue per $1 of compute and infrastructure expense, {name}",
+                revenue,
+                (f"compute and infrastructure {name}", f"q.compute.{quarter}"),
+            )
+            operating = self.term(f"operating result {name}", f"q.operating_income.{quarter}")
+            sales = self.term(*revenue)
+            self.put(
+                f"growth.operating_margin.{quarter}",
+                f"Operating margin, {name}",
+                operating.value / sales.value * 100,
+                "percent",
+                f"{operating.name} ÷ {sales.name}",
+                [operating, sales],
+            )
+
+        self.growth(
+            "growth.annual.fy2024",
+            "Revenue growth, 2024 over 2023",
+            ("revenue 2024", "is.revenue.fy2024"),
+            ("revenue 2023", "is.revenue.fy2023"),
+        )
+        self.growth(
+            "growth.annual.fy2025",
+            "Revenue growth, 2025 over 2024",
+            ("revenue 2025", "is.revenue.fy2025"),
+            ("revenue 2024", "is.revenue.fy2024"),
+        )
+        self.growth(
+            "growth.annual.9m2026",
+            "Revenue growth, first nine months of 2026 over 2025",
+            ("revenue, nine months 2026", "is.revenue.9m2026"),
+            ("revenue, nine months 2025", "is.revenue.9m2025"),
+        )
+
+        last_four = QUARTERS[-4:]
+        self.total(
+            "growth.ttm_revenue",
+            "Revenue of the last twelve months (to Sep 30, 2026)",
+            [(f"revenue {QUARTER_NAMES[q]}", f"q.revenue.{q}") for q in last_four],
+        )
+        q3 = self.term("revenue Q3 2026", "q.revenue.2026q3")
+        self.put(
+            "growth.q3_annualized",
+            "Q3 2026 revenue, annualized",
+            q3.value * 4,
+            "USD",
+            "revenue Q3 2026 × 4",
+            [q3, Term("quarters in a year", 4, "count", None)],
+            "A simple multiplication, not a figure from the filing.",
+        )
+        october = self.term("Run-Rate Revenue as of Oct 31", "metrics.run_rate_oct31")
+        increase = self.term("increase during October", "metrics.run_rate_increase_oct")
+        self.put(
+            "growth.run_rate_sep30",
+            "Run-Rate Revenue as of Sep 30, 2026",
+            october.value - increase.value,
+            "USD",
+            "Run-Rate Revenue as of Oct 31 − increase during October",
+            [october, increase],
+            "The filing gives the October figure and the increase; this is the difference.",
+        )
+
+    def _enterprise_value(self) -> None:
+        options = self.term("stock options", "shares.options")
+        strike = self.term("average exercise price", "shares.options_exercise_price")
+        self.put(
+            "ev.option_proceeds",
+            "Cash the company receives if all stock options are exercised",
+            options.value * strike.value,
+            "USD",
+            "stock options × average exercise price",
+            [options, strike],
+            "The diluted value counts every option as a share, so the cash paid to exercise "
+            "them is counted too.",
+        )
+        withheld = self.term("RSU shares withheld for taxes", "shares.rsu_tax_withheld")
+        assumed = self.term("assumed IPO price", "offering.price_mid")
+        self.put(
+            "ev.rsu_tax_paid",
+            "Cash paid by the company for taxes on employee RSUs at the offering",
+            withheld.value * assumed.value,
+            "USD",
+            "RSU shares withheld for taxes × assumed IPO price",
+            [withheld, assumed],
+            "The company keeps these shares and pays the employees' taxes in cash. Cash today "
+            "+ net proceeds − this amount matches the filing's post-offering cash to within "
+            "rounding.",
+        )
+        mid = self.facts.num("offering.price_mid")
+        for point in PRICE_POINTS:
+            price = self.term("IPO price", f"offering.price_{point}")
+            label = f"at ${price.value:.2f}"
+            base = self.term("cash after the offering at $74.00", "balance.cash.as_adjusted")
+            if point == "mid":
+                self.put(
+                    "ev.cash_after.mid",
+                    f"Cash after the offering, {label}",
+                    base.value,
+                    "USD",
+                    "as stated in the filing (pro forma as adjusted) at the assumed $74.00 price",
+                    [base],
+                )
+            else:
+                per_dollar = self.term(
+                    "change per $1.00 of IPO price", "balance.cash_sensitivity_per_dollar"
+                )
+                self.put(
+                    f"ev.cash_after.{point}",
+                    f"Cash after the offering, {label}",
+                    base.value + (price.value - mid) * per_dollar.value,
+                    "USD",
+                    "cash after the offering at $74.00 + (IPO price − $74.00) × change per $1.00",
+                    [base, price, per_dollar],
+                )
+            equity = self.term("diluted value", f"value.equity_diluted.{point}")
+            cash = self.term("cash after the offering", f"ev.cash_after.{point}")
+            proceeds = self.term("cash from option exercises", "ev.option_proceeds")
+            debt = self.term("borrowings drawn", "debt.credit_facility_drawn")
+            self.put(
+                f"ev.enterprise_value.{point}",
+                f"Enterprise value, {label}",
+                equity.value - cash.value - proceeds.value + debt.value,
+                "USD",
+                "diluted value − cash after the offering − cash from option exercises "
+                "+ borrowings drawn",
+                [equity, cash, proceeds, debt],
+                "What the price pays for the business itself, once the cash that comes with it "
+                "is set aside. The Amazon convertible notes are counted as shares in the diluted "
+                "value, so they are not added again as debt. Lease and compute commitments are "
+                "not debt here: see CONTRACTS.",
+            )
+
+        ev = ("enterprise value at $74.00", "ev.enterprise_value.mid")
+        self.divide(
+            "ev.multiple.run_rate",
+            "Enterprise value as a multiple of Run-Rate Revenue",
+            ev,
+            ("Run-Rate Revenue as of Oct 31", "metrics.run_rate_oct31"),
+        )
+        self.divide(
+            "ev.multiple.q3_annualized",
+            "Enterprise value as a multiple of annualized Q3 revenue",
+            ev,
+            ("Q3 2026 revenue × 4", "growth.q3_annualized"),
+        )
+        self.divide(
+            "ev.multiple.ttm",
+            "Enterprise value as a multiple of the last twelve months of revenue",
+            ev,
+            ("revenue of the last twelve months", "growth.ttm_revenue"),
+        )
+
+    def _contracts(self) -> None:
+        total = self.term("total committed spend", "commit.total")
+        before = self.term("expected before Dec 31, 2030", "commit.before_2031")
+        soon = self.term("due in the next 12 months", "commit.next_12m")
+        self.put(
+            "contracts.after_2030",
+            "Committed spend expected from 2031 to 2045",
+            total.value - before.value,
+            "USD",
+            "total committed spend − expected before Dec 31, 2030",
+            [total, before],
+            "The filing says substantially all of the remainder falls between 2031 and 2045.",
+        )
+        self.put(
+            "contracts.rest_before_2031",
+            "Committed spend after the next 12 months and before 2031",
+            before.value - soon.value,
+            "USD",
+            "expected before Dec 31, 2030 − due in the next 12 months",
+            [before, soon],
+        )
+        self.total(
+            "contracts.signed_after_sep30",
+            "Commitments signed after Sep 30, 2026",
+            [
+                ("long-term commitments signed after Sep 30", "commit.after_sep30"),
+                ("short-term commitments signed after Sep 30", "commit.after_sep30_short_term"),
+            ],
+        )
+        conditional = self.term("cancellable or conditional", "commit.conditional")
+        self.put(
+            "contracts.firm",
+            "Committed spend with no termination right or pending condition",
+            total.value - conditional.value,
+            "USD",
+            "total committed spend − cancellable or conditional",
+            [total, conditional],
+        )
+        signed = self.term("signed customer contracts", "rpo.total")
+        share = self.term("share recognised within 12 months", "rpo.share_next_12m")
+        self.put(
+            "contracts.rpo_next_12m",
+            "Signed customer contracts recognised as revenue within 12 months",
+            signed.value * share.value / 100,
+            "USD",
+            "signed customer contracts × share recognised within 12 months",
+            [signed, share],
+        )
+        self.divide(
+            "contracts.owed_vs_signed",
+            "Committed spend for each $1 of signed customer contracts",
+            ("total committed spend", "commit.total"),
+            ("signed customer contracts", "rpo.total"),
+        )
+        self.divide(
+            "contracts.years_of_run_rate",
+            "Committed spend, in years of today's Run-Rate Revenue",
+            ("total committed spend", "commit.total"),
+            ("Run-Rate Revenue as of Oct 31", "metrics.run_rate_oct31"),
+            unit="years",
+            note="How many years of revenue at the October pace the commitments represent. "
+            "Not a forecast: revenue and commitments both change.",
+        )
+        self.divide(
+            "contracts.cash_cover_12m",
+            "Cash after the offering for each $1 due in the next 12 months",
+            ("cash after the offering at $74.00", "ev.cash_after.mid"),
+            ("due in the next 12 months", "commit.next_12m"),
+        )
+
+    def _losses(self) -> None:
+        period = "nine months to Sep 30, 2026"
+        interest = self.term("interest income", "is.interest_income.9m2026")
+        other = self.term("other income (expense), net", "is.other_income.9m2026")
+        taxes = self.term("provision for income taxes", "is.taxes.9m2026")
+        self.put(
+            "losses.other_net",
+            f"Interest, other items and taxes, net, {period}",
+            interest.value + other.value - taxes.value,
+            "USD",
+            "interest income + other income (expense), net − provision for income taxes",
+            [interest, other, taxes],
+        )
+        net = ("net loss", "is.net_loss.9m2026")
+        parts = (
+            ("fair_value", "fair-value changes", "is.fv_change.9m2026"),
+            ("operating", "operating loss", "is.operating_income.9m2026"),
+            ("other", "interest, other items and taxes, net", "losses.other_net"),
+        )
+        for key, name, ref in parts:
+            a, b = self.term(name, ref), self.term(*net)
+            self.put(
+                f"losses.share.{key}",
+                f"Share of the net loss: {name}, {period}",
+                a.value / b.value * 100,
+                "percent",
+                f"{a.name} ÷ {b.name}",
+                [a, b],
+            )
+
+
+def compute(facts: Facts) -> dict[str, Calc]:
+    """All calculations."""
+    return Calculator(facts).run()
