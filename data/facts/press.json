@@ -1,0 +1,58 @@
+{
+ "facts": [
+  {
+   "id": "press.cnbc.fully_diluted_high",
+   "title": "Reported valuation, fully diluted",
+   "label": "PRESS",
+   "value": 1405000000000,
+   "unit": "USD",
+   "as_filed": "up to $1.405 trillion",
+   "period": "At the top of the price range",
+   "quote": "could end up being worth up to $1.405 trillion on a fully diluted basis",
+   "outlet": "CNBC",
+   "url": "https://www.cnbc.com/2026/11/10/anthropic-sets-price-range-of-70-to-78-in-upcoming-ipo.html",
+   "published": "2026-11-10",
+   "accessed": "2026-11-15"
+  },
+  {
+   "id": "press.reuters.outstanding_high",
+   "title": "Reported valuation, shares outstanding",
+   "label": "PRESS",
+   "value": 1020000000000,
+   "unit": "USD",
+   "as_filed": "approximately $1.02 trillion",
+   "period": "At the top of the price range",
+   "quote": "Reuters calculates approximately $1.02 trillion at the top of the range using expected outstanding shares.",
+   "outlet": "Reuters, as relayed by INDmoney",
+   "url": "https://www.indmoney.com/blog/us-stocks/anthropic-ipo-price-band-valuation-listing-date",
+   "published": "2026-11-13",
+   "accessed": "2026-11-15"
+  },
+  {
+   "id": "press.cnbc.pricing_date",
+   "title": "Reported pricing date",
+   "label": "PRESS",
+   "value": "2026-11-18",
+   "unit": "date",
+   "as_filed": "Nov. 18",
+   "quote": "planning to price on Nov. 18 and trade on Nov. 19, according to people familiar with the details",
+   "outlet": "CNBC",
+   "url": "https://www.cnbc.com/2026/11/10/anthropic-sets-price-range-of-70-to-78-in-upcoming-ipo.html",
+   "published": "2026-11-10",
+   "accessed": "2026-11-15"
+  },
+  {
+   "id": "press.cnbc.trading_date",
+   "title": "Reported first day of trading",
+   "label": "PRESS",
+   "value": "2026-11-19",
+   "unit": "date",
+   "as_filed": "Nov. 19",
+   "quote": "planning to price on Nov. 18 and trade on Nov. 19, according to people familiar with the details",
+   "outlet": "CNBC",
+   "url": "https://www.cnbc.com/2026/11/10/anthropic-sets-price-range-of-70-to-78-in-upcoming-ipo.html",
+   "published": "2026-11-10",
+   "accessed": "2026-11-15"
+  }
+ ]
+}
