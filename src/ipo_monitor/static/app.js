@@ -163,6 +163,28 @@
     });
   }
 
+  // -- header: the time of the SEC's last check, from the service, every minute --------
+  // The page is rendered again only when what it shows changes; the service checks more often.
+  const checkedAt = document.querySelector(".uptodate-at");
+  if (checkedAt && "fetch" in window && window.Intl) {
+    const eastern = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York", hour: "numeric", minute: "2-digit", hourCycle: "h23",
+    });
+    const refresh = () => {
+      if (document.visibilityState !== "visible") return;
+      fetch("/health", { cache: "no-store" })
+        .then((response) => response.json())
+        .then((health) => {
+          const when = health && health.filings && health.filings.state === "ok"
+            ? Date.parse(health.filings.checked) : NaN;
+          if (!Number.isNaN(when)) checkedAt.textContent = `${eastern.format(when)} ET`;
+        })
+        .catch(() => {});
+    };
+    refresh();
+    window.setInterval(refresh, 60000);
+  }
+
   // -- market: say when the page has newer figures, never reload by surprise --------
   const fresh = document.getElementById("fresh");
   if (fresh && document.body.dataset.market !== "off" && "fetch" in window) {

@@ -47,6 +47,20 @@
   </div>
   <p class="tagline">Anthropic's IPO in numbers you can trace<span class="wide">: every figure opens the SEC filing it came from</span>.</p>
   <p class="disclaimer">Unofficial · not affiliated with Anthropic · not investment advice</p>
+  {% set short_title = document.title.split(", ")[-1] %}
+  <p class="uptodate">
+    {%- if not filings -%}
+      figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
+    {%- elif not filings.filings -%}
+      <span class="wait">SEC list unavailable</span> · figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
+    {%- elif newer -%}
+      <span class="live">new filing</span> {{ L(newer.name) }}, {{ L(day(newer.filed, "short")) }} · not read yet
+    {%- elif filings.state == "unavailable" -%}
+      <span class="wait">last SEC check failed</span> {{ L(clock(filings.checked)) }} · figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
+    {%- else -%}
+      <span class="ok">● up to date</span> · SEC checked <span data-label class="uptodate-at">{{ clock(filings.checked) }}</span> · figures: {{ L(short_title) }}, {{ n("doc.filed_date", "short") }}
+    {%- endif -%}
+  </p>
 </header>
 
 <section class="glance" aria-label="The IPO at a glance">

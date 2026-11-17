@@ -1882,3 +1882,22 @@ span.fg-blank {
 .changes td {
   white-space: nowrap;
 }
+
+/* ---- Loop 008a: up to date, at a glance ------------------------------------ */
+
+.hero .uptodate {
+  margin: 2px 0 0;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.uptodate .ok {
+  color: var(--pos);
+}
+
+@media (max-width: 640px) {
+  .hero .uptodate {
+    font-size: 11px;
+    line-height: 1.25;
+  }
+}
