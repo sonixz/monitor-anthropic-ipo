@@ -64,7 +64,9 @@ table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px
   <tr><td>Unit tests, local</td><td>passed</td><td>120, six of them new (facts, arithmetic by hand, step labels, timeline, panels).</td></tr>
   <tr><td>Real-browser tests, local</td><td>passed</td><td>13 in Chromium, at 360, 390 and 430 px and on a desktop. Two were adjusted: the panel bar may scroll inside itself, and on a phone the final price is tapped in the strip.</td></tr>
   <tr><td>Looked at in a browser</td><td>passed</td><td>Each new panel at 390 and 1280 px; the first two layouts of UNLOCK and SHARES were too narrow and were stacked.</td></tr>
-  <tr><td>CI, live deployment, real-browser tests against the live site</td><td>see below</td><td>Added after the release.</td></tr>
+  <tr><td>CI and CodeQL on GitHub</td><td>passed</td><td>Commit ef43087, tag v0.5.0.</td></tr>
+  <tr><td>Deployment</td><td>passed</td><td>2026-11-17 00:00 UTC on the existing machine; health check: version 0.5.0, 340 facts, 159 checks, filings watch ok.</td></tr>
+  <tr><td>Real-browser tests against the live site</td><td>passed</td><td>13 in Chromium against the public URL; the contact address appears nowhere on the page.</td></tr>
   <tr><td>The owner looks at the new page</td><td>not_run</td><td>Only the owner can.</td></tr>
 </table>
 

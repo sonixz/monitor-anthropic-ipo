@@ -1,0 +1,110 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-004",
+  "summary": "Version 0.5.0 is live: a strip of key figures and the stage of the IPO at the top, a panel bar with ten panels that scrolls by itself on a phone, and four panels from the filing (SHARES, UNLOCK, CONTROL, TIMELINE). 56 new FILED facts, 3 calculations, 30 new consistency checks (159 in all). The value at the IPO price stays on a phone's first screen. Not run: the owner's look at the new page.",
+  "delivered": [
+    "Header: the project's own mark, a strip of six key figures (price range, shares offered, amount raised, value, reported pricing and trading dates) and a stage bar (filed, priced, trading, unlock) driven by events the service sees.",
+    "Panel bar with ten panels (keys s, u, k, t added); on a phone it scrolls inside itself and the page never scrolls sideways.",
+    "SHARES: new shares, sellers, underwriters' option and private placement as columns and a table; holders after the IPO (91.0% / 6.3% / 2.7%); the 22 underwriters, allocation shown as blank in this filing; insiders' indicated interest up to $303 million.",
+    "UNLOCK: the filing's 23-step lock-up schedule as a chart and as the filing's table with its wording; not dated, not summed.",
+    "CONTROL: votes by class (Class F 50.1%, Class A 49.9%, of which the IPO shares about 5.5%); Class T elects a majority of the board; Class N no vote; Class E limited matters.",
+    "TIMELINE: filings from EDGAR's live list, same form in a row on one line, then the reported pricing and first trade, then the first unlock.",
+    "extract.py _structure: 56 FILED facts with page and passage; calc.py: deal.shares_all, holders.placement_after_pct, control.ipo_votes_pct; reconcile.py: 30 new checks.",
+    "Released with it: the after-hours wording and the regular close of the market panel (commit 76b95cf)."
+  ],
+  "changedFiles": [
+    "BACKLOG.md",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "DECISIONS.md",
+    "INFRASTRUCTURE.md",
+    "PRODUCT.md",
+    "README.md",
+    "STATUS.md",
+    "data/facts/s1a2.json",
+    "devlog/img/loop-004-control-phone.png",
+    "devlog/img/loop-004-desktop.png",
+    "devlog/img/loop-004-phone.png",
+    "devlog/img/loop-004-shares-desktop.png",
+    "devlog/img/loop-004-timeline-desktop.png",
+    "devlog/img/loop-004-unlock-phone.png",
+    "devlog/index.html",
+    "devlog/loop-003.html",
+    "devlog/loop-004.html",
+    "loops/004-mission.md",
+    "loops/004-report.json",
+    "pyproject.toml",
+    "src/ipo_monitor/__init__.py",
+    "src/ipo_monitor/calc.py",
+    "src/ipo_monitor/extract.py",
+    "src/ipo_monitor/figures.py",
+    "src/ipo_monitor/market.py",
+    "src/ipo_monitor/reconcile.py",
+    "src/ipo_monitor/render.py",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/static/app.js",
+    "src/ipo_monitor/static/favicon.svg",
+    "src/ipo_monitor/templates/index.html.j2",
+    "tests/e2e/test_dashboard.py",
+    "tests/fixtures/market/nasdaq-aapl-afterhours.json",
+    "tests/test_edgar.py",
+    "tests/test_market.py",
+    "tests/test_structure.py",
+    "uv.lock"
+  ],
+  "decisions": [
+    "Confirmed by the owner on 2026-11-16 (D-027): the six proposals, from information in the filing only.",
+    "Proposed: D-028 stage of the IPO instead of a countdown; D-029 lock-up steps not dated or summed (their sum, 15.5 billion, exceeds the shares outstanding); D-030 on a phone the strip replaces the offer and listing lines; D-031 the project's own mark."
+  ],
+  "tests": [
+    {
+      "command": "uv run ruff format --check . && uv run ruff check . && uv run mypy",
+      "result": "passed",
+      "notes": "No issues in 29 source files; also green in GitHub Actions on ef43087."
+    },
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "120 unit tests, locally and in CI; tests/test_structure.py is new (facts, arithmetic checked by hand, step labels, timeline, panels)."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "13 real-browser tests locally (360, 390, 430 px and desktop). Two adjusted: links inside the scrolling panel bar may sit past the edge; on a phone the final price is tapped in the strip."
+    },
+    {
+      "command": "E2E_BASE_URL=https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "13 against the live site after deployment, 2026-11-17 00:05 UTC."
+    },
+    {
+      "command": "curl /health on the live site",
+      "result": "passed",
+      "notes": "version 0.5.0, release ef430877684c, 340 facts, 159 checks, filings watch ok (latest FWP 2026-11-12); the contact address appears nowhere on the page."
+    },
+    {
+      "command": "owner looks at the new front on a phone",
+      "result": "not_run",
+      "notes": "Only the owner can."
+    }
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "The owner's look at the new front; answers on D-017 to D-025 and D-028 to D-031.",
+    "Allocation among banks and the final price, from the final prospectus (watched by the service).",
+    "Record the Nasdaq source at night (scheduled 01:14 UTC); watch the first trade (reported 2026-11-19)."
+  ],
+  "recommendedNextSteps": [
+    "Owner: open the page on a phone and say what to keep or change in the new front.",
+    "On pricing night (reported 2026-11-18): check that the stage bar and strip switch to the final price when the prospectus or a quoted article gives it."
+  ],
+  "reportedAt": "2026-11-17T00:10:00Z",
+  "submittedBy": "Claude Code (Claude Opus 5.5)",
+  "cost": {
+    "durationSeconds": null,
+    "inputTokens": null,
+    "outputTokens": null,
+    "usd": null
+  }
+}
