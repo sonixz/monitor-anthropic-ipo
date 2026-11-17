@@ -1,6 +1,6 @@
 # INFRASTRUCTURE · monitor-anthropic-ipo
 
-> How the project is built, run, deployed and rolled back. Last reviewed: 2026-11-15 · Loop: loop-001
+> How the project is built, run, deployed and rolled back. Last reviewed: 2026-11-17 · Loop: loop-005
 
 ## Environments
 
@@ -16,7 +16,7 @@ There is no staging environment. A release is checked locally and in CI, then on
 
 | | |
 | --- | --- |
-| Public URL | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev (HTTPS terminated by Fly.io) |
+| Public URL | https://antipo.watch, through Cloudflare (see [Domain](#domain-antipowatch)); still https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev (HTTPS terminated by Fly.io) |
 | Machine | `shared-cpu-1x`, 256 MB, region `yyz`, restarted by Fly.io if it stops |
 | Disk | Persistent volume at `/data` (1 GB). The rest of the disk is reset on image updates |
 | Service | Listens on `127.0.0.1:8000`, the one port bound to the public URL |
@@ -82,8 +82,9 @@ This switches `/data/current` back to the release in `/data/previous` and restar
 ## Check the live service
 
 ```sh
+curl -s https://antipo.watch/health
 curl -s https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev/health
-E2E_BASE_URL=https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev uv run pytest -m e2e
+E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e
 ```
 
 `/health` returns the release, the uptime, the filing date of the data and the number of consistency checks passed.
@@ -117,6 +118,49 @@ Agent Manager cannot assign a secret to a machine that already exists, so the ow
 `start.sh` reads that file at every start of the service, takes only the names it knows and never prints a value. The service never logs the address and never shows it; a test proves it. An address that is not one e-mail address switches the filings watch off and logs why, without the value: the page does not go down for an optional source.
 
 When `start.sh` itself changes, the loop that is already running still executes the old script. It must be restarted once on the machine (stop the loop and the service, start `/data/start.sh` again the way `deploy.sh` does); a few seconds without the site.
+
+## Domain: antipo.watch
+
+Since Loop 005 (2026-11-17) the page is also served at **https://antipo.watch**. The domain is the owner's; its DNS is a zone on Cloudflare (Free plan). Nothing changed on the machine or at Fly.io: the fly.dev address works as before.
+
+```mermaid
+---
+title: A request to antipo.watch
+---
+flowchart LR
+  reader["Reader's browser"]
+  edge["Cloudflare edge: certificate for antipo.watch and *.antipo.watch"]
+  worker["Worker antipo-watch: www and http redirect to the apex; the rest is relayed"]
+  fly["Fly.io: agmgd-on-ipo-monitor-ba4eccd0.fly.dev"]
+  service["Service on the machine"]
+  reader -->|"HTTPS, antipo.watch"| edge --> worker -->|"HTTPS, fly.dev name"| fly --> service
+```
+
+Why a Worker: Fly.io terminates TLS only for names it holds a certificate for, and adding `antipo.watch` there needs access to Fly.io that Agent Manager does not give. The Worker calls the app by its fly.dev name, so Fly.io sees a name it knows. The browser sees Cloudflare's certificate for antipo.watch (issued by Let's Encrypt, renewed by Cloudflare).
+
+| Piece | Setting |
+| --- | --- |
+| DNS | `antipo.watch` and `www.antipo.watch`: `AAAA 100::`, proxied. The address is a placeholder: no server sits behind it, the Worker answers |
+| Worker | `antipo-watch`, source in [`deploy/cloudflare/worker.js`](deploy/cloudflare/worker.js); routes `antipo.watch/*` and `www.antipo.watch/*` |
+| What the Worker does | Redirects any other name or `http://` to `https://antipo.watch` (301), relays method, path, query and body to the app, rewrites a redirect that names fly.dev, adds `no-transform`, lets the edge keep `/static/` files (versioned, immutable) |
+| TLS | SSL Full (strict), Always Use HTTPS, TLS 1.2 minimum |
+| Turned off | Browser Integrity Check (it refused scripts and link previews), e-mail obfuscation (it rewrites the page) |
+| Kept out by `no-transform` | Cloudflare's Web Analytics beacon, which it injects into pages by default: the page promises no tracker, and the CSP blocks it anyway |
+
+**Deploy the Worker.** Only when `worker.js` changes, with a Cloudflare token that can write Workers scripts:
+
+```sh
+curl -X PUT -H "Authorization: Bearer $TOKEN" \
+  "https://api.cloudflare.com/client/v4/accounts/$ACCOUNT_ID/workers/scripts/antipo-watch" \
+  -F 'metadata={"main_module":"worker.js","compatibility_date":"2026-11-01"};type=application/json' \
+  -F 'worker.js=@deploy/cloudflare/worker.js;type=application/javascript+module'
+```
+
+**Token.** An Account API token held by Agent Manager, never in the repository: the zone `antipo.watch` only (Zone Read; DNS, Zone Settings, SSL and Certificates, Workers Routes Write). Publishing a Worker also needs *Workers Scripts Edit* on the whole account; the new role *Workers Editor* alone was refused on 2026-11-17. That permission is granted for a deployment and removed afterwards.
+
+**Roll back.** Delete the two Worker routes (or the two DNS records): antipo.watch stops answering, the fly.dev address is untouched. A bad Worker is replaced by uploading the previous `worker.js` from git.
+
+**Cost of the hop.** The Worker opens a connection to Fly.io: the page arrives about half a second later than at the fly.dev address (measured from a workstation in eastern North America: first byte 0.6 s against 0.14 s).
 
 ## Visits
 

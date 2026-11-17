@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **The page at https://antipo.watch** (Loop 005), the owner's domain. Cloudflare holds the
+  certificate and a Worker ([`deploy/cloudflare/worker.js`](deploy/cloudflare/worker.js)) relays
+  to the Fly.io app; `www` and `http://` redirect to `https://antipo.watch`. The fly.dev address
+  keeps working. Cloudflare's analytics beacon, e-mail rewriting and browser check are kept out
+  of the page. No change to the service.
+
 ## [0.6.1] - 2026-11-16
 
 ### Added
