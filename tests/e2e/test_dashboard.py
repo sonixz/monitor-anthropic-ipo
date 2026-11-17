@@ -135,11 +135,16 @@ def browser() -> Iterator[Browser]:
         chromium.close()
 
 
+# A test is not a reader: its session is marked as already counted, so that a run against the
+# live site adds no visit. Every page a test opens must carry it.
+NOT_A_READER = "try { sessionStorage.setItem('ipo-seen', '1') } catch (e) {}"
+
+
 def _open(context: BrowserContext, url: str, *, counted: bool = True) -> tuple[Page, list[str]]:
     if counted:
         # A test is not a reader: the session is marked as already counted, so a run against
         # the live site does not add to its visits.
-        context.add_init_script("try { sessionStorage.setItem('ipo-seen', '1') } catch (e) {}")
+        context.add_init_script(NOT_A_READER)
     page = context.new_page()
     errors: list[str] = []
     page.on(
@@ -408,6 +413,7 @@ def test_phone_without_javascript(browser: Browser, base_url: str) -> None:
 
 def test_loads_fast(browser: Browser, base_url: str) -> None:
     context = browser.new_context(viewport=DESKTOP)
+    context.add_init_script(NOT_A_READER)
     page = context.new_page()
     begin = time.perf_counter()
     page.goto(base_url + "/", wait_until="load")
