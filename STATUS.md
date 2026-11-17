@@ -7,12 +7,13 @@
 | | |
 | --- | --- |
 | Site | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev |
-| Version | 0.5.1 (tag `v0.5.1`) |
+| Version | 0.6.0 (tag `v0.6.0`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |
 | IPO price | Not final: the page shows the filed range, $70 to $78. Pricing reported for 2026-11-18 |
-| AI | None yet |
+| Visits | Counted since 2026-11-16 (version 0.6.0), shown in the footer; a number per day, nothing about readers |
+| AI | None in the live service |
 
 ## What works (checked on 2026-11-16)
 
@@ -23,7 +24,7 @@
 - The filings watch on test data: the list of filings, the notice of a newer prospectus, the final price read from a cover and refused in eight cases (another form, a preliminary cover, a blank price, a wrong total, and so on). The contact address appears in no log and on no page (tested).
 - 159 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
-- CI on GitHub: format, lint, strict types, 120 unit tests, 13 real-browser tests, secret scan, CodeQL: green on the released commit.
+- CI on GitHub: format, lint, strict types, 125 unit tests, 14 real-browser tests, secret scan, CodeQL: green on the released commit.
 - Deploy and rollback on the machine: eight deployments on 2026-11-16 and 17, each healthy within seconds.
 - **Seen by the owner on a phone** (2026-11-16, version 0.4.2): asked to find what the company is worth, what it owes and how fast it grows, to check that nothing scrolls sideways and to open a source card, they reported that everything looked fine and made no remark. No time was recorded.
 

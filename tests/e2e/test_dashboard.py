@@ -135,7 +135,11 @@ def browser() -> Iterator[Browser]:
         chromium.close()
 
 
-def _open(context: BrowserContext, url: str) -> tuple[Page, list[str]]:
+def _open(context: BrowserContext, url: str, *, counted: bool = True) -> tuple[Page, list[str]]:
+    if counted:
+        # A test is not a reader: the session is marked as already counted, so a run against
+        # the live site does not add to its visits.
+        context.add_init_script("try { sessionStorage.setItem('ipo-seen', '1') } catch (e) {}")
     page = context.new_page()
     errors: list[str] = []
     page.on(
@@ -520,3 +524,19 @@ def test_page_weight(base_url: str) -> None:
         assert response.headers["Content-Encoding"] == "gzip"
         compressed = len(response.read())
     assert compressed < 60_000, f"the page weighs {compressed} bytes compressed"
+
+
+def test_visits_in_the_footer(browser: Browser) -> None:
+    """A new session is counted once; the footer shows the counts. Local server only."""
+    with _serve("ant-awaiting.json", "filings-TEST.json") as url:
+        context = browser.new_context(viewport=DESKTOP)
+        page, errors = _open(context, url, counted=False)
+        box = page.locator("#visits")
+        expect(box).to_be_visible()
+        expect(box.locator(".v-today")).to_have_text("1")
+        page.reload()
+        expect(box.locator(".v-total")).to_have_text("1")  # the same session: not counted again
+        assert "no cookie" in box.inner_text()
+        assert context.cookies() == []
+        assert errors == []
+        context.close()

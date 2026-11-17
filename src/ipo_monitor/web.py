@@ -30,6 +30,7 @@ from ipo_monitor.edgar import Index, Watch
 from ipo_monitor.facts import Facts
 from ipo_monitor.market import Snapshot, Source, Watcher, source_from
 from ipo_monitor.render import Page, render_page
+from ipo_monitor.visits import Visits
 
 COMPANY = "Anthropic"  # the market source must name the company so, or its price is not shown
 
@@ -105,6 +106,7 @@ def create_app(
     if settings.sec_contact_refused:
         log.event("filings_off", level="warning", reason="SEC_CONTACT is not one e-mail address")
     seen = Seen()
+    visits = Visits(settings.visits)
 
     def render() -> Board:
         release = settings.release
@@ -190,6 +192,7 @@ def create_app(
     )
     app.state.watcher = watcher
     app.state.filings = filings_watcher
+    app.state.visits = visits
     app.add_middleware(GZipMiddleware, minimum_size=1024)
 
     @app.middleware("http")
@@ -240,9 +243,23 @@ def create_app(
                     else None,
                 },
                 "filings": _filings_health(filings_watcher),
+                "visits": {
+                    key: value
+                    for key, value in visits.summary().items()
+                    if key in ("today", "total", "since")
+                },
             },
             headers={"Cache-Control": "no-store"},
         )
+
+    @app.post("/seen", include_in_schema=False)
+    async def seen_once() -> Response:
+        visits.add()  # the page's script calls this once per browser session
+        return Response(status_code=204, headers={"Cache-Control": "no-store"})
+
+    @app.get("/stats", include_in_schema=False)
+    async def stats() -> JSONResponse:
+        return JSONResponse(visits.summary(), headers={"Cache-Control": "no-store"})
 
     app.mount("/static", VersionedStatic(packages=[("ipo_monitor", "static")]), name="static")
     return app

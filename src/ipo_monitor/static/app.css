@@ -1666,3 +1666,11 @@ span.fg-pos {
     margin-bottom: 1px;
   }
 }
+
+.visits {
+  color: var(--dim);
+}
+
+.v-how {
+  color: var(--faint);
+}

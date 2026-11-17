@@ -17,7 +17,8 @@ load_secrets() {
 while true; do
   load_secrets
   if cd /data/current 2>/dev/null; then
-    IPO_HOST=127.0.0.1 IPO_PORT=8000 IPO_RELEASE="$(cat RELEASE 2>/dev/null || echo unknown)" \
+    IPO_HOST=127.0.0.1 IPO_PORT=8000 IPO_VISITS=/data/visits.json \
+      IPO_RELEASE="$(cat RELEASE 2>/dev/null || echo unknown)" \
       .venv/bin/python -m ipo_monitor &
     echo $! > /data/service.pid
     wait $!

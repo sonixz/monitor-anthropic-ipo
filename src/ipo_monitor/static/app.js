@@ -47,6 +47,29 @@
     el.hidden = false;
   });
 
+  // -- visits: count this session once, then show the counts in the footer ---------
+  // Nothing about the reader is sent or kept: the service adds one to the count of the day.
+  (async () => {
+    const box = document.getElementById("visits");
+    if (!box || !window.fetch) return;
+    try {
+      let counted = false;
+      try { counted = sessionStorage.getItem("ipo-seen") === "1"; } catch (e) { /* private mode */ }
+      if (!counted) {
+        await fetch("/seen", { method: "POST", keepalive: true });
+        try { sessionStorage.setItem("ipo-seen", "1"); } catch (e) { /* private mode */ }
+      }
+      const stats = await (await fetch("/stats", { cache: "no-store" })).json();
+      const since = new Date(stats.since + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+      box.querySelector(".v-today").textContent = Number(stats.today).toLocaleString("en-US");
+      box.querySelector(".v-total").textContent = Number(stats.total).toLocaleString("en-US");
+      box.querySelector(".v-since").textContent = since;
+      box.hidden = false;
+    } catch (e) {
+      /* the counts are a nicety: the page works without them */
+    }
+  })();
+
   // -- phone: the tables behind the charts start folded ------------------------
   if (window.matchMedia("(max-width: 640px)").matches) {
     document.querySelectorAll("details.fold").forEach((fold) => fold.removeAttribute("open"));

@@ -118,11 +118,15 @@ Agent Manager cannot assign a secret to a machine that already exists, so the ow
 
 When `start.sh` itself changes, the loop that is already running still executes the old script. It must be restarted once on the machine (stop the loop and the service, start `/data/start.sh` again the way `deploy.sh` does); a few seconds without the site.
 
+## Visits
+
+The service keeps one number per day, the visits counted by the page's script, in `/data/visits.json` (`IPO_VISITS`, set by `start.sh`). Without the setting, as on a workstation, the counts live in memory. The file holds no address and no other detail about readers. If it is damaged, counting starts again and the log says `visits_reset`.
+
 ## Observability and backups
 
 - **Logs:** one JSON object per line, no client address or other personal data, in `/data/start.log` on the machine. Deployments are listed in `/data/deploy.log`.
 - **Health:** `GET /health`. Fly.io restarts the machine if it stops; `start.sh` restarts the service if it exits.
-- **Backups:** nothing to back up. The service keeps no state: code and data are in git.
+- **Backups:** nothing to back up but the visit counts in `/data/visits.json`, which are not precious. Code and data are in git.
 
 ## Not yet in place
 

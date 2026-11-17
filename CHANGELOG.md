@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.6.0] - 2026-11-16
+
+### Added
+
+- **Visits, shown in the footer**, asked by the owner to measure the audience: "visits: N today
+  · M since Nov 16". The page's script tells the service once per browser session; the service
+  adds one to the count of the day (New York time) and keeps only that number per day, in
+  `/data/visits.json` on the machine. No cookie, no address, nothing about the reader. A burst
+  above 120 in a minute is ignored. `GET /stats` gives the counts of the last 14 days;
+  `/health` gives today and the total.
+- The browser tests mark their sessions as already counted, so a run against the live site does
+  not add visits.
+
+### Changed
+
+- `deploy/start.sh` passes `IPO_VISITS=/data/visits.json`.
+
 ## [0.5.1] - 2026-11-16
 
 ### Added

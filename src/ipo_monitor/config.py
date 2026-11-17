@@ -28,6 +28,7 @@ class Settings:
     # The address the SEC asks automated clients for. Personal: never printed, never logged.
     sec_contact: str = field(default="", repr=False)
     sec_contact_refused: bool = False  # a value was given and is not one e-mail address
+    visits: Path | None = None  # the file of the visit counts; None keeps them in memory
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> Settings:
@@ -75,6 +76,13 @@ class Settings:
         sec_contact = source.get("SEC_CONTACT", "").strip()
         refused = bool(sec_contact) and not valid_contact(sec_contact)
 
+        visits_text = source.get("IPO_VISITS", "").strip()
+        visits = Path(visits_text) if visits_text else None
+        if visits is not None and not visits.parent.is_dir():
+            raise ConfigError(
+                f"IPO_VISITS must be a file in an existing directory, got {visits_text!r}"
+            )
+
         host = source.get("IPO_HOST", "127.0.0.1")
         if not host:
             raise ConfigError("IPO_HOST must not be empty")
@@ -89,4 +97,5 @@ class Settings:
             filings=filings,
             sec_contact="" if refused else sec_contact,
             sec_contact_refused=refused,
+            visits=visits,
         )
