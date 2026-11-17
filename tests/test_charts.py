@@ -202,7 +202,8 @@ def test_the_page_has_its_charts(page: Page) -> None:
         "growth.margin",
         "losses.by_year",
     }
-    assert page.html.count('class="chart-svg"') == len(page.charts) - 1  # the bridge is in a table
+    drawn = page.html.count('class="chart-svg"') + page.html.count('class="chart-svg ring"')
+    assert drawn == len(page.charts) - 1  # the bridge is in a table
 
 
 def test_every_value_a_chart_draws_is_also_a_number_in_a_table(page: Page) -> None:
@@ -218,3 +219,25 @@ def test_every_value_a_chart_draws_is_also_a_number_in_a_table(page: Page) -> No
         for drawn in marks:
             assert drawn.ref in buttons, f"{name}: {drawn.ref} is on a chart but in no table"
             assert drawn.src in cards, f"{name}: {drawn.ref} has no source card"
+
+
+def test_a_ring_draws_parts_of_one_whole() -> None:
+    from ipo_monitor import charts
+    from ipo_monitor.charts import Mark
+
+    def mark(ref: str, value: float) -> Mark:
+        return Mark(ref, "src-" + ref, ref, value, f"{value}%", "filed")
+
+    parts = [mark("a", 50.1), mark("b", 44.4), mark("c", 5.5)]
+    chart = charts.ring(parts, ["t1", "t2", "t3"], centre=parts[0], caption="one share", aria="x")
+    svg = str(chart.svg)
+    assert svg.count('class="col slice') == 3
+    for ref in ("a", "b", "c"):
+        assert f'data-ref="{ref}"' in svg
+    # The first slice starts at the top and, past half the circle, takes the long arc.
+    first = svg.split(' d="', 1)[1].split('"', 1)[0]
+    assert first.startswith("M75,4A71,71 0 1 1")
+    assert chart.labels == ("a",)
+    assert "one share" in svg
+    with __import__("pytest").raises(ValueError):
+        charts.ring(parts, ["t1"], centre=parts[0], caption="", aria="x")

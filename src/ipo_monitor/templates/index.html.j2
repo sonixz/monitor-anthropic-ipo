@@ -40,12 +40,12 @@
 <body data-market="{{ market.state if market else 'off' }}">
 <a class="skip" href="#main">Skip to the numbers</a>
 
-<header class="top">
+<header class="top hero">
   <div class="brand">
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
-    <h1><span class="w1">ANT</span> <span class="w2">IPO</span> <span class="w3">MONITOR</span></h1>
+    <h1><span class="w1">ANTHROPIC</span> <span class="w2">IPO</span> <span class="w3">WATCH</span></h1>
   </div>
-  <p class="tagline">Anthropic's IPO in numbers you can trace.</p>
+  <p class="tagline">Anthropic's IPO in numbers you can trace<span class="wide">: every figure opens the SEC filing it came from</span>.</p>
   <p class="disclaimer">Unofficial · not affiliated with Anthropic · not investment advice</p>
 </header>
 
@@ -74,11 +74,17 @@
   <a href="#visits"><kbd aria-hidden="true">w</kbd>visits</a>
   <button type="button" class="help-key" popovertarget="help" aria-label="Help"><kbd aria-hidden="true">?</kbd><span class="wide">help</span></button>
 </nav>
+<div class="tools">
+  <p class="keys-hint">Press a letter to jump to a panel · <kbd>?</kbd> all keys · select any number to see its source</p>
+  <p class="fold-all" hidden>tables: <button type="button" data-folds="open">open all</button> · <button type="button" data-folds="close">fold all</button></p>
+</div>
 
 <main id="main">
 
 <section class="status overview" aria-labelledby="overview-h">
   <h2 id="overview-h" class="ov-head"><span class="ov-tag">OVERVIEW</span> <span class="ov-phase">{{ phase }}</span> <span class="ov-days" data-until="{{ pricing_day }}" hidden></span></h2>
+  <div class="ov-grid">
+  <div class="ov-main">
   {% set stages = moments[-4:] %}
   <ol class="stages" aria-label="Stage of the IPO">
     {% for m in stages %}
@@ -124,6 +130,13 @@
       {%- endif -%}
     </dd></div>
   </dl>
+  </div>
+  <figure class="chart ov-ring">
+    <figcaption>Who holds the shares after the IPO</figcaption>
+    {{ chart("holders.after") }}
+    <p class="ov-ring-keys"><span class="sw fg-base" aria-hidden="true"></span>existing holders <span class="sw fg-pos" aria-hidden="true"></span>IPO buyers <span class="sw fg-far" aria-hidden="true"></span>private placement · <a href="#shares">shares</a></p>
+  </figure>
+  </div>
   <ul class="legend">
     <li>{{ tag("FILED") }} <span>copied from the SEC filing</span></li>
     <li>{{ tag("CALC") }} <span>our arithmetic, inputs shown</span></li>
@@ -343,40 +356,22 @@
   <p class="aside">The underwriters take {{ n("underwriting.total", "m") }} shares together. How many each bank takes is left blank in this filing; it is filled in the final prospectus. Directors and entities linked to them have said they may buy up to {{ n("offering.insider_interest", "m") }} of shares in the IPO; that is not a commitment.</p>
 </section>
 
-<section class="panel" id="unlock" tabindex="-1" aria-labelledby="unlock-h">
-  <h2 id="unlock-h"><kbd aria-hidden="true">u</kbd> UNLOCK <span class="q">When may existing holders sell?</span></h2>
-  <p class="lede">Most shares that exist before the IPO cannot be sold at once. The filing gives a schedule: at each step, up to this many shares become available for sale.</p>
-  <div class="stacked">
-    <figure class="chart">
-      <figcaption>Shares that may be sold, step by step</figcaption>
-      {{ chart("unlock.steps") }}
-    </figure>
-    <details class="fold" open>
-    <summary>The filing's table</summary>
-    <table class="lines unlock">
-      <caption class="vh">Shares eligible for sale after the IPO</caption>
-      <tbody>
-        {% for key, (short, event) in unlock %}
-        <tr><th scope="row"><span class="step" data-label>{{ event }} · {{ short }}</span> {{ n(key ~ ".when") }}</th><td>{{ n(key, "m") }}</td></tr>
-        {% endfor %}
-      </tbody>
-    </table>
-    </details>
-  </div>
-  <p class="aside">Days count from the date of the final prospectus, not known yet, or from a results release. <span data-label>R</span> is the release day as the filing defines it; <span data-label>R*</span> is the earlier of a release and a day counted from the prospectus. Each step is a maximum, and the filing does not say the steps add up, so no total is given here.</p>
-</section>
-
 <section class="panel" id="control" tabindex="-1" aria-labelledby="control-h">
   <h2 id="control-h"><kbd aria-hidden="true">k</kbd> CONTROL <span class="q">Who controls the company?</span></h2>
   <h3>Votes on matters put to stockholders</h3>
-  {{ stack([(n.raw("control.class_f_pct"), "fg-neg"), (n.raw("control.class_a_pct") - n.raw("control.ipo_votes_pct"), "fg-base"), (n.raw("control.ipo_votes_pct"), "fg-pos")]) }}
+  <div class="split split-tight split-ring">
+    <figure class="chart">
+      {{ chart("control.votes") }}
+    </figure>
   <table class="lines">
     <tbody>
       <tr><th scope="row"><span class="sw fg-neg" aria-hidden="true"></span>Class F, one share held by the co-founders' company</th><td>{{ n("control.class_f_pct", "one") }}</td></tr>
-      <tr><th scope="row"><span class="sw fg-base" aria-hidden="true"></span>Class A, all shares together, {{ n("control.class_a") }} vote each</th><td>{{ n("control.class_a_pct", "one") }}</td></tr>
+      <tr><th scope="row"><span class="sw fg-blank" aria-hidden="true"></span>Class A, all shares together, {{ n("control.class_a") }} vote each</th><td>{{ n("control.class_a_pct", "one") }}</td></tr>
+      <tr><th scope="row"><span class="sw fg-base" aria-hidden="true"></span>of which other holders</th><td>{{ n("control.class_a_other_pct", "one") }}</td></tr>
       <tr><th scope="row"><span class="sw fg-pos" aria-hidden="true"></span>of which the shares sold in the IPO</th><td>{{ n("control.ipo_votes_pct", "one") }}</td></tr>
     </tbody>
   </table>
+  </div>
   <h3>The other classes</h3>
   <table class="lines words">
     <tbody>
@@ -442,6 +437,29 @@
     </tbody>
   </table>
   <p class="aside">Cash after the offering covers the next twelve months {{ n("contracts.cash_cover_12m") }}. The whole commitment equals {{ n("contracts.years_of_run_rate") }} years of today's Run-Rate Revenue.</p>
+</section>
+
+<section class="panel span" id="unlock" tabindex="-1" aria-labelledby="unlock-h">
+  <h2 id="unlock-h"><kbd aria-hidden="true">u</kbd> UNLOCK <span class="q">When may existing holders sell?</span></h2>
+  <p class="lede">Most shares that exist before the IPO cannot be sold at once. The filing gives a schedule: at each step, up to this many shares become available for sale.</p>
+  <div class="split">
+    <figure class="chart">
+      <figcaption>Shares that may be sold, step by step</figcaption>
+      {{ chart("unlock.steps") }}
+    </figure>
+    <details class="fold" open>
+    <summary>The filing's table</summary>
+    <table class="lines unlock">
+      <caption class="vh">Shares eligible for sale after the IPO</caption>
+      <tbody>
+        {% for key, (short, event) in unlock %}
+        <tr><th scope="row"><span class="step" data-label>{{ event }} · {{ short }}</span> {{ n(key ~ ".when") }}</th><td>{{ n(key, "m") }}</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    </details>
+  </div>
+  <p class="aside">Days count from the date of the final prospectus, not known yet, or from a results release. <span data-label>R</span> is the release day as the filing defines it; <span data-label>R*</span> is the earlier of a release and a day counted from the prospectus. Each step is a maximum, and the filing does not say the steps add up, so no total is given here.</p>
 </section>
 </div>
 

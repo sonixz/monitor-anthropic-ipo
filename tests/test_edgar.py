@@ -302,7 +302,7 @@ def test_the_contact_address_goes_to_the_sec_and_nowhere_else(
         client.index(CIK)
     assert CONTACT not in str(failure.value)
     assert sent[0].full_url == "https://data.sec.gov/submissions/CIK0002130357.json"
-    assert sent[0].get_header("User-agent") == f"ANT IPO Monitor {CONTACT}"
+    assert sent[0].get_header("User-agent") == f"Anthropic IPO Watch {CONTACT}"
     for elsewhere in ("https://example.org/x", "http://www.sec.gov/x", "https://sec.gov.example/"):
         with pytest.raises(SourceError, match="not an address of the SEC"):
             client.cover(elsewhere)

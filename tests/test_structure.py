@@ -59,6 +59,8 @@ def test_the_deal_s_arithmetic(calcs: dict[str, Calc]) -> None:
     # 825,000,000 / 7,427,991,791 x 49.9 = 5.5422%.
     assert calcs["control.ipo_votes_pct"].value == pytest.approx(5.5422, abs=1e-4)
     assert calcs["control.ipo_votes_pct"].note
+    # 49.9 - 5.5422 = 44.3578%; with Class F, the three parts make 100%.
+    assert calcs["control.class_a_other_pct"].value == pytest.approx(44.3578, abs=1e-4)
 
 
 def test_short_labels_of_the_lock_up_steps() -> None:
@@ -115,9 +117,18 @@ def test_the_timeline_with_and_without_the_sec_s_list() -> None:
 def test_the_page_has_its_new_panels_and_header(page: Page) -> None:
     html = page.html
     for panel in ("shares", "unlock", "control", "timeline"):
-        assert f'<section class="panel" id="{panel}"' in html
+        assert re.search(rf'<section class="panel( span)?" id="{panel}"', html), panel
         assert f'<a href="#{panel}">' in html
-    assert {"deal.shares", "unlock.steps"} <= set(page.charts)
+    assert {"deal.shares", "unlock.steps", "control.votes", "holders.after"} <= set(page.charts)
+    # Loop 007: one name, a centered hero, the keys explained, UNLOCK across the width.
+    assert (
+        '<h1><span class="w1">ANTHROPIC</span> <span class="w2">IPO</span> '
+        '<span class="w3">WATCH</span></h1>' in html
+    )
+    assert '<header class="top hero">' in html
+    assert "Press a letter to jump to a panel" in html
+    assert '<section class="panel span" id="unlock"' in html
+    assert "ANT IPO" not in html
     glance = html[html.index('class="glance"') : html.index('<nav class="keys"')]
     for ref in (
         "offering.price_low",

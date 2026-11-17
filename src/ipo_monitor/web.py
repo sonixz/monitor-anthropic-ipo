@@ -183,7 +183,7 @@ def create_app(
                 await task
 
     app = FastAPI(
-        title="ANT IPO Monitor",
+        title="Anthropic IPO Watch",
         version=__version__,
         docs_url=None,
         redoc_url=None,

@@ -30,7 +30,7 @@ from ipo_monitor.facts import Document, Fact
 
 State = Literal["ok", "unavailable"]
 HOSTS = ("data.sec.gov", "www.sec.gov")
-CLIENT = "ANT IPO Monitor"  # the name the SEC sees, followed by the contact address
+CLIENT = "Anthropic IPO Watch"  # the name the SEC sees, followed by the contact address
 EVERY = 600  # seconds between two questions; the SEC allows far more
 LONGEST_WAIT = 3600
 SHOWN = 8  # lines of filings listed on the page

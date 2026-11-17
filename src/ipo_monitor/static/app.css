@@ -1,4 +1,4 @@
-/* ANT IPO Monitor: a calm terminal. One accent, no glow. */
+/* Anthropic IPO Watch: a calm terminal. One accent, no glow. */
 
 :root {
   --bg: #0e1116;
@@ -1669,4 +1669,193 @@ span.fg-pos {
 
 .v-chart {
   max-width: 760px;
+}
+
+/* ---- Loop 007: a light, centered hero ------------------------------------ */
+
+.hero {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 4px;
+  padding-top: 22px;
+  padding-bottom: 6px;
+}
+
+.hero .mark {
+  width: 30px;
+  height: 30px;
+}
+
+.hero h1 {
+  font-size: 19px;
+  letter-spacing: 0.18em;
+}
+
+.hero .tagline {
+  color: var(--text);
+}
+
+.hero .disclaimer {
+  margin: 0;
+}
+
+/* ---- the keys, explained, and the tables opened or folded together --------- */
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2px 1.5rem;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 6px 16px 0;
+  color: var(--faint);
+  font-size: 12px;
+}
+
+.tools p {
+  margin: 0;
+}
+
+.tools kbd {
+  color: var(--dim);
+}
+
+.fold-all button {
+  font: inherit;
+  color: var(--dim);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-decoration: underline dotted;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.fold-all button:hover,
+.fold-all button:focus-visible {
+  color: var(--accent);
+}
+
+/* ---- UNLOCK takes the full width of its grid -------------------------------- */
+
+.pair > .span {
+  grid-column: 1 / -1;
+}
+
+/* ---- rings -------------------------------------------------------------------- */
+
+.chart-svg .slice {
+  stroke: var(--panel);
+  stroke-width: 2;
+}
+
+.chart-svg.ring {
+  display: block;
+  width: 100%;
+  max-width: 190px;
+  margin: 0 auto;
+}
+
+.chart-svg .ring-value {
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.chart-svg .ring-caption {
+  fill: var(--dim);
+  font-size: 11px;
+}
+
+.split-ring {
+  align-items: center;
+}
+
+.split-ring .chart {
+  max-width: 260px;
+}
+
+span.fg-blank {
+  box-sizing: border-box;
+  border: 1px solid var(--line-strong);
+}
+
+/* The overview: its lines on the left, who holds the shares on the right. */
+.ov-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 230px;
+  gap: 0 28px;
+  align-items: start;
+}
+
+.ov-ring {
+  margin: 0;
+}
+
+.ov-ring .chart-svg.ring {
+  max-width: 140px;
+}
+
+.ov-ring figcaption {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.ov-ring-keys {
+  margin: 2px 0 0;
+  font-size: 11px;
+  text-align: center;
+}
+
+@media (max-width: 860px) {
+  .ov-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ov-ring {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding-top: 12px;
+    padding-bottom: 2px;
+    gap: 2px;
+  }
+
+  .hero .mark {
+    width: 24px;
+    height: 24px;
+  }
+
+  .hero h1 {
+    font-size: 15px;
+    letter-spacing: 0.12em;
+  }
+
+  .hero .tagline {
+    display: block;
+    font-size: 12px;
+  }
+
+  /* The first screen keeps the value at the IPO price: on a phone each table opens by itself. */
+  .tools {
+    display: none;
+  }
+}
+
+/* UNLOCK across the width: the chart stays in view, the filing's table in two columns. */
+#unlock .split > .chart {
+  position: sticky;
+  top: 56px;
+}
+
+@container (min-width: 1100px) {
+  #unlock .split {
+    grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+  }
 }

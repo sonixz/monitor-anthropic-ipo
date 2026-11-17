@@ -1,4 +1,4 @@
-// ANT IPO Monitor: small enhancements. The page works without this file:
+// Anthropic IPO Watch: small enhancements. The page works without this file:
 // numbers open their source card through the native popover attribute, and
 // every value a chart draws is also in a table.
 (() => {
@@ -115,6 +115,20 @@
   // -- phone: the tables behind the charts start folded ------------------------
   if (window.matchMedia("(max-width: 640px)").matches) {
     document.querySelectorAll("details.fold").forEach((fold) => fold.removeAttribute("open"));
+  }
+
+  // -- the tables behind the charts, opened or folded together --------------------
+  const foldAll = document.querySelector(".fold-all");
+  if (foldAll) {
+    foldAll.hidden = false;
+    foldAll.addEventListener("click", (event) => {
+      const button = event.target instanceof Element ? event.target.closest("[data-folds]") : null;
+      if (!button) return;
+      const open = button.getAttribute("data-folds") === "open";
+      document.querySelectorAll("details.fold").forEach((fold) => {
+        fold.open = open;
+      });
+    });
   }
 
   // -- panel bar: show where the reader is ------------------------------------

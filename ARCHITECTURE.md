@@ -6,7 +6,7 @@
 
 ```mermaid
 ---
-title: System context — ANT IPO Monitor
+title: System context — Anthropic IPO Watch
 ---
 flowchart LR
   reader(["Reader, any browser"])

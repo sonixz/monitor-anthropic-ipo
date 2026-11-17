@@ -1,6 +1,6 @@
 # PRODUCT · monitor-anthropic-ipo
 
-> What ANT IPO Monitor does, for whom, and how we know it works. It serves [VISION.md](VISION.md). Last reviewed: 2026-11-15 · Loop: loop-001
+> What Anthropic IPO Watch does, for whom, and how we know it works. It serves [VISION.md](VISION.md). Last reviewed: 2026-11-15 · Loop: loop-001
 
 ## The problem
 

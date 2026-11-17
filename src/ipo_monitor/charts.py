@@ -689,3 +689,75 @@ def trace(
         + tag("g", printed, class_="labels")
     )
     return Chart(svg(content, height, aria), (last,), refs)
+
+
+# -- ring ------------------------------------------------------------------------
+
+
+def _arc_point(cx: float, cy: float, r: float, turn: float) -> tuple[float, float]:
+    """The point at `turn` (0 at the top, 1 a full circle, clockwise) on a circle."""
+    angle = 2 * math.pi * turn - math.pi / 2
+    return cx + r * math.cos(angle), cy + r * math.sin(angle)
+
+
+def ring_slice(cx: float, cy: float, outer: float, inner: float, start: float, end: float) -> str:
+    """The path of one slice of a ring, from turn `start` to turn `end`."""
+    end = min(end, start + 0.9999)  # a full circle cannot be one arc
+    large = 1 if end - start > 0.5 else 0
+    x0, y0 = _arc_point(cx, cy, outer, start)
+    x1, y1 = _arc_point(cx, cy, outer, end)
+    x2, y2 = _arc_point(cx, cy, inner, end)
+    x3, y3 = _arc_point(cx, cy, inner, start)
+    return (
+        f"M{num(x0)},{num(y0)}A{num(outer)},{num(outer)} 0 {large} 1 {num(x1)},{num(y1)}"
+        f"L{num(x2)},{num(y2)}A{num(inner)},{num(inner)} 0 {large} 0 {num(x3)},{num(y3)}Z"
+    )
+
+
+def ring(
+    marks: Sequence[Mark],
+    tones: Sequence[str],
+    *,
+    centre: Mark,
+    caption: str,
+    aria: str,
+    height: float = 150.0,
+) -> Chart:
+    """Parts of one whole as a ring, clockwise from the top, the `centre` value in the middle.
+
+    The slices take the marks' values as shares of their sum. No value is printed on a slice:
+    the table beside the ring gives each one, and a thin slice has no room for text.
+    """
+    total = sum(m.value for m in marks)
+    if total <= 0 or len(marks) != len(tones):
+        raise ValueError("a ring needs positive parts and one tone per part")
+    cx = cy = height / 2  # a square: the ring fills the width it is given
+    outer = height / 2 - 4
+    inner = outer * 0.64
+    body = []
+    turn = 0.0
+    for mark, tone in zip(marks, tones, strict=True):
+        share = mark.value / total
+        path = ring_slice(cx, cy, outer, inner, turn, turn + share)
+        body.append(mark_group(mark, tag("path", class_=f"col slice {tone}", d=path)))
+        turn += share
+    middle = value_text(centre, cx, cy + 2, "middle").replace(
+        'class="cv', 'class="ring-value cv', 1
+    )
+    under = tag(
+        "text", esc(caption), class_="ring-caption", x=cx, y=cy + FONT + 6, text_anchor="middle"
+    )
+    content = tag("g", "".join(body), class_="marks") + tag("g", middle + under, class_="labels")
+    # Safe: every piece of text in `content` went through `esc` or `attrs`.
+    drawn = Markup(  # noqa: S704
+        tag(
+            "svg",
+            content,
+            class_="chart-svg ring",
+            viewBox=f"0 0 {num(height)} {num(height)}",
+            role="img",
+            aria_label=aria,
+            focusable="false",
+        )
+    )
+    return Chart(drawn, tuple(marks), (centre.ref,))

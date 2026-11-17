@@ -1,4 +1,4 @@
-# ANT IPO Monitor
+# Anthropic IPO Watch
 
 [![CI](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/codeql.yml)

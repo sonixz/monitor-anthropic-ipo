@@ -154,6 +154,8 @@ class Figures:
             "market.day": self._market_day,
             "deal.shares": self._deal_shares,
             "unlock.steps": self._unlock_steps,
+            "control.votes": self._votes,
+            "holders.after": self._holders,
         }
         chart = builders[name]()
         self.drawn[name] = chart
@@ -385,6 +387,44 @@ class Figures:
                 "Shares in the deal, by where they come from: new shares from the company, "
                 "shares from existing stockholders, the underwriters' option (muted: used only "
                 "if demand allows) and the private placement. The values are in the table."
+            ),
+        )
+
+    def _votes(self) -> Chart:
+        parts = [
+            ("control.class_f_pct", "Class F, one share"),
+            ("control.class_a_other_pct", "Class A, other holders"),
+            ("control.ipo_votes_pct", "Class A, shares sold in the IPO"),
+        ]
+        marks = [self.n.mark(ref, name, "one") for ref, name in parts]
+        return charts.ring(
+            marks,
+            ["fg-neg", "fg-base", "fg-pos"],
+            centre=marks[0],
+            caption="one share",
+            aria=(
+                "Votes on matters put to stockholders, as a ring: the single Class F share holds "
+                "about half; the other Class A shares and the shares sold in the IPO hold the "
+                "rest. The values are in the table."
+            ),
+        )
+
+    def _holders(self) -> Chart:
+        parts = [
+            ("holders.existing_after_pct", "Existing stockholders"),
+            ("holders.new_after_pct", "Buyers in the IPO"),
+            ("holders.placement_after_pct", "Private placement buyers"),
+        ]
+        marks = [self.n.mark(ref, name, "one") for ref, name in parts]
+        return charts.ring(
+            marks,
+            ["fg-base", "fg-pos", "fg-far"],
+            centre=marks[1],
+            caption="to IPO buyers",
+            aria=(
+                "Who holds the shares after the IPO, as a ring: existing stockholders keep most; "
+                "buyers in the IPO and in the private placement hold the rest. The values are in "
+                "the SHARES panel."
             ),
         )
 

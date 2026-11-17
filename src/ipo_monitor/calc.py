@@ -692,6 +692,17 @@ class Calculator:
             "Each Class A share has one vote, and all of them together hold the voting power "
             "the filing states. Assumes no IPO share is bought by an existing holder.",
         )
+        ipo = self.term("voting power of the shares sold in the IPO", "control.ipo_votes_pct")
+        self.put(
+            "control.class_a_other_pct",
+            "Voting power of the other Class A shares",
+            power.value - ipo.value,
+            "percent",
+            "voting power of all Class A shares − voting power of the shares sold in the IPO",
+            [power, ipo],
+            "The Class A shares held by everyone but the IPO's buyers: the third part of the "
+            "ring of votes in CONTROL.",
+        )
 
 
 def compute(facts: Facts) -> dict[str, Calc]:
