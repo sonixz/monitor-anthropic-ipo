@@ -4,7 +4,7 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.6.2] - 2026-11-17
 
 ### Added
 
@@ -12,7 +12,19 @@ All notable changes to this project are documented here. The format follows
   certificate and a Worker ([`deploy/cloudflare/worker.js`](deploy/cloudflare/worker.js)) relays
   to the Fly.io app; `www` and `http://` redirect to `https://antipo.watch`. The fly.dev address
   keeps working. Cloudflare's analytics beacon, e-mail rewriting and browser check are kept out
-  of the page. No change to the service.
+  of the page.
+- **A share card for X and other networks** (Loop 006): Open Graph and `twitter:card`
+  (`summary_large_image`) tags, and a 1200×630 image (`static/og.png`, drawn from
+  `deploy/share/og.svg` by `deploy/share/make_og.py`) with the project's mark, the name
+  Anthropic IPO Watch, the notices and the domain. No figure in the image: X keeps a card for
+  days, and a price would go stale. The tab title takes the new name.
+- The page names `https://antipo.watch/` as its canonical address, so search engines and link
+  previews prefer it to the Fly.io address, which stays as a fallback.
+
+### Changed
+
+- README and SECURITY give antipo.watch only; the Fly.io address is documented in
+  INFRASTRUCTURE.md, where operations need it.
 
 ## [0.6.1] - 2026-11-16
 

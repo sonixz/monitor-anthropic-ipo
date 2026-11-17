@@ -177,7 +177,7 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     context = browser.new_context(viewport=DESKTOP)
     page, errors = _open(context, base_url)
 
-    assert "ANT IPO Monitor" in page.title()
+    assert "Anthropic IPO Watch" in page.title()
     assert page.get_by_text("not investment advice").first.is_visible()
     footer_link = page.get_by_role("link", name="Built with the Loop0 Method")
     assert footer_link.get_attribute("href") == "https://agmgd-on-loop0-22c0a8ea.fly.dev/"

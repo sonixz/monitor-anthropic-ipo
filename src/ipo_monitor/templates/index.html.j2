@@ -13,10 +13,26 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ANT IPO Monitor: Anthropic's IPO in numbers you can trace</title>
-<meta name="description" content="An independent dashboard on Anthropic's IPO: what it is worth at the IPO price, what that price buys, the contracts on both sides and the growth. Every number is traced to the SEC filing.">
+<title>{{ site.title }}</title>
+<meta name="description" content="{{ site.description }}">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="index,follow">
+<link rel="canonical" href="{{ site.url }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.name }}">
+<meta property="og:title" content="{{ site.title }}">
+<meta property="og:description" content="{{ site.description }}">
+<meta property="og:url" content="{{ site.url }}">
+<meta property="og:image" content="{{ share.image }}">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="{{ share.width }}">
+<meta property="og:image:height" content="{{ share.height }}">
+<meta property="og:image:alt" content="{{ site.image_alt }}">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ site.title }}">
+<meta name="twitter:description" content="{{ site.description }}">
+<meta name="twitter:image" content="{{ share.image }}">
+<meta name="twitter:image:alt" content="{{ site.image_alt }}">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/static/app.css?v={{ asset_version }}">
 <script src="/static/app.js?v={{ asset_version }}" defer></script>

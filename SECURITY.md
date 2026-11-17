@@ -14,7 +14,7 @@ the number, the page of the filing and what you expected.
 
 ## Supported versions
 
-Only the version running at https://antipo.watch and https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev (the latest release).
+Only the version running at https://antipo.watch (the latest release).
 
 ## Practices in place
 

@@ -3,7 +3,7 @@
 [![CI](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/codeql.yml)
 
-**Live: https://antipo.watch** (also https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev)
+**Live: https://antipo.watch**
 
 An independent dashboard on Anthropic's IPO: what the company is worth at the IPO price, what
 that price buys, the contracts on both sides, the growth and the losses, and the share price

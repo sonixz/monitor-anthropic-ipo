@@ -217,3 +217,60 @@ def test_configuration_is_checked(tmp_path: Path) -> None:
     for override, name in bad:
         with pytest.raises(ConfigError, match=name):
             Settings.from_env({**good, **override})
+
+
+def test_share_card_for_x(client: TestClient) -> None:
+    """A link to the page shows a large card on X: every tag, absolute addresses, the image."""
+    import re
+    import struct
+
+    html = client.get("/").text
+    tags = dict(
+        re.findall(r'<meta (?:property|name)="((?:og|twitter):[a-z:_]+)" content="([^"]*)"', html)
+    )
+    for name in (
+        "og:type",
+        "og:site_name",
+        "og:title",
+        "og:description",
+        "og:url",
+        "og:image",
+        "og:image:width",
+        "og:image:height",
+        "og:image:alt",
+        "twitter:card",
+        "twitter:title",
+        "twitter:description",
+        "twitter:image",
+        "twitter:image:alt",
+    ):
+        assert tags.get(name), name
+    assert tags["twitter:card"] == "summary_large_image"
+    assert tags["og:url"] == "https://antipo.watch/"
+    assert '<link rel="canonical" href="https://antipo.watch/">' in html
+    assert tags["og:image"].startswith("https://antipo.watch/static/og.png?v=")
+    assert tags["twitter:image"] == tags["og:image"]
+    assert "Anthropic IPO Watch" in tags["og:title"]
+    assert len(tags["og:title"]) <= 70
+    assert "Not investment advice" in tags["og:description"]
+    assert (tags["og:image:width"], tags["og:image:height"]) == ("1200", "630")
+
+    image = client.get("/static/og.png")
+    assert image.status_code == 200
+    assert image.headers["content-type"] == "image/png"
+    body = image.content
+    assert body[:8] == b"\x89PNG\r\n\x1a\n"
+    assert len(body) < 5_000_000
+    assert struct.unpack(">II", body[16:24]) == (1200, 630)
+
+
+def test_share_image_holds_no_figure() -> None:
+    """The card's text has no digit: a price would be false once X has cached it."""
+    import re
+    from pathlib import Path
+
+    svg = (Path(__file__).parents[1] / "deploy" / "share" / "og.svg").read_text("utf-8")
+    words = " ".join(re.findall(r">([^<]+)<", svg))
+    assert not re.search(r"\d", words), words
+    assert "Unofficial" in words
+    assert "not investment advice" in words

@@ -28,6 +28,22 @@ from ipo_monitor.market import facts as market_facts
 from ipo_monitor.reconcile import assert_consistent
 
 LOOP0_URL = "https://agmgd-on-loop0-22c0a8ea.fly.dev/"
+# The name and the words that present the page: the tab, the share card on X, the search result.
+SITE = {
+    "name": "Anthropic IPO Watch",
+    "url": "https://antipo.watch/",
+    "title": "Anthropic IPO Watch: Anthropic's IPO in numbers you can trace",
+    "description": (
+        "An unofficial dashboard on Anthropic's IPO: the value at the IPO price, the deal, the "
+        "lock-ups, the filings. Every figure opens the SEC filing it came from. "
+        "Not investment advice."
+    ),
+    "image_alt": (
+        "Anthropic IPO Watch, antipo.watch: Anthropic's IPO in numbers you can trace. "
+        "Unofficial, not affiliated with Anthropic, not investment advice."
+    ),
+}
+SHARE_IMAGE = ("og.png", 1200, 630)  # deploy/share/og.svg, drawn by deploy/share/make_og.py
 REPOSITORY_URL = "https://github.com/sonixz/monitor-anthropic-ipo"
 
 # Markup.format escapes every argument.
@@ -365,7 +381,7 @@ def asset_version() -> str:
 
     digest = hashlib.sha256()
     static = resources.files("ipo_monitor") / "static"
-    for name in ("app.css", "app.js"):
+    for name in ("app.css", "app.js", SHARE_IMAGE[0]):
         digest.update((static / name).read_bytes())
     return digest.hexdigest()[:10]
 
@@ -424,6 +440,12 @@ def render_page(
         "release": release,
         "asset_version": asset_version(),
         "loop0_url": LOOP0_URL,
+        "site": SITE,
+        "share": {
+            "image": f"{SITE['url']}static/{SHARE_IMAGE[0]}?v={asset_version()}",
+            "width": SHARE_IMAGE[1],
+            "height": SHARE_IMAGE[2],
+        },
         "repository_url": REPOSITORY_URL,
     }
     html = _environment().get_template("index.html.j2").render(context)
