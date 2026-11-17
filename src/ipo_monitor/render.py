@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from importlib import resources
 from typing import Any
 
@@ -22,7 +23,7 @@ from ipo_monitor.charts import Mark
 from ipo_monitor.edgar import Watch, batches, price_fact
 from ipo_monitor.facts import Fact, Facts
 from ipo_monitor.figures import Figures, unlock_label, unlock_steps
-from ipo_monitor.market import Snapshot
+from ipo_monitor.market import Snapshot, eastern_at
 from ipo_monitor.market import facts as market_facts
 from ipo_monitor.reconcile import assert_consistent
 
@@ -332,6 +333,22 @@ def timeline(watch: Watch | None, priced: bool, trading: bool) -> list[Moment]:
     return moments
 
 
+def clock(moment: int) -> str:
+    """A time of a check, in New York: '19:15 ET'."""
+    offset, _ = eastern_at(moment)
+    local = datetime.fromtimestamp(moment, timezone(timedelta(seconds=offset)))
+    return f"{local.hour}:{local:%M} ET"
+
+
+def phase(priced: bool, market: Snapshot | None) -> str:
+    """Where the IPO stands, in a few words, from what the page has seen."""
+    if market is not None and market.quote is not None:
+        return "TRADING" if market.state == "trading" else "LISTED · MARKET CLOSED"
+    if priced:
+        return "PRICED · WAITING FOR THE FIRST TRADE"
+    return "WAITING FOR THE IPO"
+
+
 def _environment() -> Environment:
     return Environment(
         loader=PackageLoader("ipo_monitor", "templates"),
@@ -387,6 +404,9 @@ def render_page(
         "newer": filings.newer_than(document.accession) if filings else None,
         "listed": batches(filings.filings) if filings else (),
         "day": fmt.iso_date,
+        "clock": clock,
+        "phase": phase(priced, market),
+        "pricing_day": facts.text("press.cnbc.pricing_date"),
         "moments": timeline(filings, priced, quote is not None),
         "unlock": [
             (key, unlock_label(facts.text(key + ".when"))) for key in unlock_steps(facts.ids())

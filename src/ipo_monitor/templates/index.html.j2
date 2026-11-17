@@ -42,12 +42,6 @@
     <div><dt>prices</dt><dd>{{ n("press.cnbc.pricing_date", "short") }}</dd></div>
     <div><dt>trades</dt><dd>{{ n("press.cnbc.trading_date", "short") }}</dd></div>
   </dl>
-  {% set stages = moments[-4:] %}
-  <ol class="stages" aria-label="Stage of the IPO">
-    {% for m in stages %}
-    <li class="st-{{ m.state }}"><span class="dot" aria-hidden="true"></span><span class="st-what">{% if m.ref == "unlock.01" %}unlock{% elif m.state == "done" and loop.first %}filed{% elif m.what == "first trade" %}trading{% else %}{{ L(m.what) }}{% endif %}</span><span class="vh"> ({{ "done" if m.state == "done" else ("next" if m.state == "next" else "to come") }})</span></li>
-    {% endfor %}
-  </ol>
 </section>
 
 <nav class="keys" aria-label="Panels">
@@ -66,7 +60,14 @@
 
 <main id="main">
 
-<section class="status" aria-label="Where the data comes from">
+<section class="status overview" aria-labelledby="overview-h">
+  <h2 id="overview-h" class="ov-head"><span class="ov-tag">OVERVIEW</span> <span class="ov-phase">{{ phase }}</span> <span class="ov-days" data-until="{{ pricing_day }}" hidden></span></h2>
+  {% set stages = moments[-4:] %}
+  <ol class="stages" aria-label="Stage of the IPO">
+    {% for m in stages %}
+    <li class="st-{{ m.state }}"><span class="dot" aria-hidden="true"></span><span class="st-what">{% if m.ref == "unlock.01" %}unlock{% elif m.state == "done" and loop.first %}filed{% elif m.what == "first trade" %}trading{% else %}{{ L(m.what) }}{% endif %}</span>{% if m.ref.startswith("press.") and m.state != "done" %}<span class="st-when wide"> ~{{ n(m.ref, "short") }}</span>{% elif m.ref == "unlock.01" %}<span class="st-when wide"> day {{ L("1") }}</span>{% endif %}<span class="vh"> ({{ "done" if m.state == "done" else ("next" if m.state == "next" else "to come") }})</span></li>
+    {% endfor %}
+  </ol>
   <dl>
     <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
     <div class="dup"><dt>offer</dt><dd>{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
@@ -79,9 +80,10 @@
       {%- elif newer -%}
         <span class="live">new filing</span> · <a href="{{ newer.url }}" rel="noopener" data-label>{{ newer.name }}</a>{% if newer.meaning %}, {{ L(newer.meaning) }}{% endif %} · filed {{ L(day(newer.filed)) }} · {% if filings.price and filings.prospectus == newer %}its price is used on this page; the other figures still come from {{ L(document.title) }}{% else %}its figures are not read by this page yet{% endif %}
       {%- else -%}
-        watching the SEC · latest: <a href="{{ listed[0].first.url }}" rel="noopener" data-label>{{ listed[0].first.name }}</a> · filed {{ L(day(listed[0].first.filed)) }}<span class="wide"> · <a href="#filings">recent filings</a></span>
+        watching the SEC · latest: <a href="{{ listed[0].first.url }}" rel="noopener" data-label>{{ listed[0].first.name }}</a><span class="wide"> · filed {{ L(day(listed[0].first.filed)) }} · <a href="#filings">recent filings</a></span>
       {%- endif -%}
       {%- if filings and filings.filings and filings.state == "unavailable" %} · <span class="wait">the last check failed</span>{% endif -%}
+      {%- if filings %} · <span class="chk">checked {{ L(clock(filings.checked)) }}</span>{% endif -%}
     </dd></div>
     <div><dt>market</dt><dd>
       {%- if not market -%}
@@ -92,6 +94,16 @@
         <span class="wait">source unavailable</span> · no price is shown<span class="wide"> · {{ market.source }}: {{ L(market.detail) }}</span>
       {%- else -%}
         {% if market.state == "trading" %}<span class="live">trading</span>{% elif market.state == "closed" %}market closed{% if quote.outside %} · traded {{ quote.outside }}{% endif %}{% else %}<span class="wait">source unavailable</span>, last quote{% endif %} · {{ n("market.price") }} · {{ n("market.time") }} · {{ market.source }}, delayed, unofficial
+      {%- endif -%}
+      {%- if market %} · <span class="chk">checked {{ L(clock(market.checked)) }}</span>{% endif -%}
+    </dd></div>
+    <div><dt>next</dt><dd>
+      {%- if quote -%}
+        the share price is checked every few minutes; the lock-up steps are in <a href="#unlock">unlock</a>
+      {%- elif priced -%}
+        first trade reported for {{ n("press.cnbc.trading_date", "short") }}; the market panel appears by itself with the first quote
+      {%- else -%}
+        pricing reported for {{ n("press.cnbc.pricing_date", "short") }}<span class="wide">; the final prospectus is due within two business days, and</span><span class="narrow">;</span> this page takes the final price by itself
       {%- endif -%}
     </dd></div>
   </dl>

@@ -34,6 +34,19 @@
     history.replaceState(null, "", "#" + id);
   });
 
+  // -- overview: days until the reported pricing date ---------------------------
+  // Shown only by the reader's browser, from the date on the page: the page itself is
+  // cached on the server and could not count days.
+  document.querySelectorAll("[data-until]").forEach((el) => {
+    const until = el.getAttribute("data-until");
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(until)) return;
+    const now = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+    const days = Math.round((Date.parse(until) - Date.parse(now)) / 86400000);
+    if (days < 0) return;
+    el.textContent = days === 0 ? "· pricing today" : days === 1 ? "· pricing tomorrow" : `· pricing in ${days} days`;
+    el.hidden = false;
+  });
+
   // -- phone: the tables behind the charts start folded ------------------------
   if (window.matchMedia("(max-width: 640px)").matches) {
     document.querySelectorAll("details.fold").forEach((fold) => fold.removeAttribute("open"));

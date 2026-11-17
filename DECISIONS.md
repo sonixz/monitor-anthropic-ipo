@@ -121,5 +121,8 @@ The strip at the top gives the offer and the dates, so the "offer" and "listing"
 ## D-031 · The project's own mark (proposed)
 A frame and a line that climbs in steps, in the page's palette. Nothing from Anthropic's logo or colors: the page is unofficial and must look it.
 
+## D-032 · The overview counts days in the browser (owner, 2026-11-16)
+**Owner:** asked for an overview section: "waiting for IPO", an approximate timeline, the share price, the last fetch. **Decision.** The phase and the stage bar come from events the server sees (D-028 stands). The number of days to the reported pricing date is counted by the reader's browser, from the date on the page, because the page is cached on the server and cannot count days. Without script, the date alone is shown.
+
 ## D-026 · The repository explains the system, AI included
 **Owner (2026-11-16):** asked for the public repository to be well documented, with the link and the workflows, then asked where AI is involved and whether a hosted AI service is used, and to document how the system works directly in the repository. **Decision.** [HOW-IT-WORKS.md](HOW-IT-WORKS.md) tells it in plain language: the path of a figure, who does what, where AI is involved (at build time, as the coding agent) and where it is not (the live service runs no model), what runs by itself, the workflows. The README is the front page and links to it.

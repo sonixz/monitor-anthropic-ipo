@@ -1601,3 +1601,68 @@ span.fg-pos {
 .lines.words td {
   text-align: left;
 }
+
+/* ---- overview --------------------------------------------------------- */
+
+.overview {
+  border: 1px solid var(--line);
+  background: var(--panel);
+  padding: 8px 12px 10px;
+}
+
+.ov-head {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}
+
+.ov-tag {
+  color: var(--faint);
+}
+
+.ov-phase {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.ov-days {
+  color: var(--dim);
+  letter-spacing: 0;
+}
+
+.overview .stages {
+  margin: 0 0 8px;
+}
+
+.st-when {
+  color: var(--faint);
+}
+
+.chk {
+  color: var(--faint);
+}
+
+@media (max-width: 640px) {
+  .overview {
+    padding: 6px 8px 8px;
+  }
+
+  .ov-head {
+    font-size: 11px;
+  }
+}
+
+.narrow {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .narrow {
+    display: inline;
+  }
+
+  .overview dl > div {
+    margin-bottom: 1px;
+  }
+}

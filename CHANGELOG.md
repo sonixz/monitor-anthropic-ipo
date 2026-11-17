@@ -4,6 +4,16 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.5.1] - 2026-11-16
+
+### Added
+
+- **OVERVIEW** at the top of the page, asked by the owner: the phase of the IPO in words
+  ("WAITING FOR THE IPO", then "PRICED", then "TRADING"), the stage bar with the reported dates,
+  the time of the last check of the SEC's list and of the share price, and what comes next.
+  The reader's browser counts the days to the reported pricing date ("pricing in 2 days");
+  the page itself has no clock.
+
 ## [0.5.0] - 2026-11-16
 
 A richer front (Loop 004). The owner asked for more figures at the top, a better navigation,

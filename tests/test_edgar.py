@@ -377,7 +377,9 @@ def test_the_page_lists_the_filings(facts: Facts) -> None:
     page = render_page(facts, release="test", filings=watch)
     assert page.filings == "ok"
     html = page.html
-    status = html[html.index('<section class="status"') : html.index('<ul class="legend">')]
+    status = html[
+        html.index('<section class="status overview"') : html.index('<ul class="legend">')
+    ]
     assert "watching the SEC · latest:" in status
     assert "new filing" not in html
     panel = html[html.index('id="filings"') : html.index("</main>")]

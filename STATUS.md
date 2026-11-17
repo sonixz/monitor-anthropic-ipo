@@ -7,7 +7,7 @@
 | | |
 | --- | --- |
 | Site | https://agmgd-on-ipo-monitor-ba4eccd0.fly.dev |
-| Version | 0.5.0 (tag `v0.5.0`) |
+| Version | 0.5.1 (tag `v0.5.1`) |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |
@@ -16,7 +16,7 @@
 
 ## What works (checked on 2026-11-16)
 
-- Nine panels on one page: VALUE, EV BRIDGE, SHARES, UNLOCK, CONTROL, CONTRACTS, GROWTH, LOSSES, TIMELINE; MARKET appears with the first quote and FILINGS with the SEC's list. A strip of key figures and the stage of the IPO at the top (Loop 004).
+- Nine panels on one page: VALUE, EV BRIDGE, SHARES, UNLOCK, CONTROL, CONTRACTS, GROWTH, LOSSES, TIMELINE; MARKET appears with the first quote and FILINGS with the SEC's list. A strip of key figures at the top and an OVERVIEW with the phase of the IPO, the stage bar, the time of the last checks and the next step (Loop 004).
 - 207 numbers on the page, each a button that opens its source. Eleven charts drawn by the server; every mark opens the same source card, and every value a chart draws is also in a table.
 - On a phone (360 to 430 px): nothing scrolls sideways, tables included; a panel bar made for thumbs; source cards rise from the bottom; the tables behind the charts are folded until asked for.
 - The market panel in its four states (awaiting listing, trading, market closed, source unavailable), tested on recorded answers of the two sources, one of them a real answer with the market open. Live, the page says "awaiting listing" and shows no price.

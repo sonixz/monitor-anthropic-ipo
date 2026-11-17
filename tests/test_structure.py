@@ -127,9 +127,28 @@ def test_the_page_has_its_new_panels_and_header(page: Page) -> None:
         "press.cnbc.trading_date",
     ):
         assert f'data-ref="{ref}"' in glance, ref
-    assert re.findall(r'<li class="st-(\w+)">', glance) == ["done", "next", "later", "later"]
+    overview = html[html.index('class="status overview"') : html.index('<ul class="legend">')]
+    assert re.findall(r'<li class="st-(\w+)">', overview) == ["done", "next", "later", "later"]
+    assert "WAITING FOR THE IPO" in overview
+    assert 'data-until="2026-11-18"' in overview
+    assert "checked <span data-label>" in overview
+    assert "the final prospectus is due within two business days" in overview
+    assert "this page takes the final price by itself" in overview
     assert '<svg class="mark"' in html
     # Every lock-up step is a row of the table, with the filing's wording as its source.
     for index in range(1, 24):
         assert f'data-ref="unlock.{index:02d}.when"' in html
     assert "Goldman Sachs &amp; Co. LLC" in html
+
+
+def test_the_phase_and_the_time_of_a_check() -> None:
+    from ipo_monitor.render import clock, phase
+
+    from .conftest import snapshot_of
+
+    assert phase(False, None) == "WAITING FOR THE IPO"
+    assert phase(True, snapshot_of("ant-awaiting.json")) == "PRICED · WAITING FOR THE FIRST TRADE"
+    trading = snapshot_of("ant-trading-TEST.json")
+    assert phase(True, trading) in {"TRADING", "LISTED · MARKET CLOSED"}
+    assert clock(1794863566) == "16:12 ET"  # 21:12 UTC in November
+    assert clock(1784995200) == "12:00 ET"  # 16:00 UTC in July, summer time
