@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.6.1] - 2026-11-16
+
+### Added
+
+- **A VISITS panel** at the bottom of the page, asked by the owner: today, the total, and a line
+  of the visits in time, per hour for the first days, then per day. Reachable from the panel bar
+  (key `w`). The line is drawn by the page's script from `/stats`, which now gives every day and
+  every hour of the last 48, those without a visit at zero.
+- A real answer of the Nasdaq source at 20:14 in New York, replayed by the tests. It settles the
+  question left open after the close: the time the source gives is the last trade's (19:59),
+  not the time of its answer.
+
+### Changed
+
+- The visit counts move from the footer to the VISITS panel.
+
 ## [0.6.0] - 2026-11-16
 
 ### Added

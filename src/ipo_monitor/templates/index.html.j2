@@ -55,6 +55,7 @@
   <a href="#growth"><kbd aria-hidden="true">g</kbd>growth</a>
   <a href="#losses"><kbd aria-hidden="true">l</kbd>losses</a>
   <a href="#timeline"><kbd aria-hidden="true">t</kbd>timeline</a>
+  <a href="#visits"><kbd aria-hidden="true">w</kbd>visits</a>
   <button type="button" class="help-key" popovertarget="help" aria-label="Help"><kbd aria-hidden="true">?</kbd><span class="wide">help</span></button>
 </nav>
 
@@ -613,11 +614,21 @@
 </section>
 {% endif %}
 
+<section class="panel" id="visits" tabindex="-1" aria-labelledby="visits-h">
+  <h2 id="visits-h">VISITS <span class="q">How many people read this page?</span></h2>
+  <p class="lede v-numbers" hidden><span data-label class="v-today"></span> today · <span data-label class="v-total"></span> since <span data-label class="v-since"></span></p>
+  <figure class="chart v-chart" hidden>
+    <figcaption class="v-caption"></figcaption>
+    <div class="v-plot"></div>
+  </figure>
+  <p class="aside">Counted once per browser session by this page's script, with no cookie and no address kept: only a number per day and per hour. Robots that do not run scripts are not counted, so the counts are approximate. The same numbers, as data: <a href="/stats">/stats</a>.</p>
+  <noscript><p class="aside">The counts are drawn by the page's script, which is off in this browser.</p></noscript>
+</section>
+
 </main>
 
 <footer class="bottom">
   <p>Unofficial. Not affiliated with Anthropic. Not investment advice. Figures come from the company's SEC filing and from our own arithmetic. Check the source before relying on any of them.</p>
-  <p class="visits" id="visits" hidden>visits: <span data-label class="v-today"></span> today · <span data-label class="v-total"></span> since <span data-label class="v-since"></span> <span class="v-how">· counted once per browser session by this page's script, with no cookie and no address kept</span></p>
   <p><a href="{{ loop0_url }}" rel="noopener" data-label>Built with the Loop0 Method</a> · <a href="{{ repository_url }}" rel="noopener">Source code</a> · <span data-label>v{{ version }} · {{ release }} · {{ checks }} consistency checks passed</span></p>
 </footer>
 
@@ -634,6 +645,7 @@
     <div><dt><kbd>g</kbd></dt><dd>growth</dd></div>
     <div><dt><kbd>l</kbd></dt><dd>losses</dd></div>
     <div><dt><kbd>t</kbd></dt><dd>timeline</dd></div>
+    <div><dt><kbd>w</kbd></dt><dd>visits</dd></div>
     {% if listed %}<div><dt><kbd>f</kbd></dt><dd>filings</dd></div>{% endif %}
     <div><dt><kbd>Esc</kbd></dt><dd>close a source card</dd></div>
   </dl>

@@ -647,3 +647,17 @@ def test_the_second_source_answers_when_the_first_fails() -> None:
     assert (snapshot.state, snapshot.quote) == ("unavailable", None)
     assert snapshot.source == "Fake source and Fake source"
     assert snapshot.detail == "HTTP 403, HTTP 429"
+
+
+def test_nasdaq_at_night() -> None:
+    source = RecordedAnswer(MARKET / "nasdaq-aapl-night.json")  # a real answer, 20:14 in New York
+    now = 1794877858  # the moment it was recorded, about
+    snapshot = market.check(source, "AAPL", "Apple", None, now)
+    quote = snapshot.quote
+    assert quote is not None
+    # Still "After-Hours" after 20:00; its time is the last trade's, not the time of the answer.
+    assert (snapshot.state, quote.outside) == ("closed", "after the close")
+    assert quote.when() == "Nov 16, 2026, 19:59 EST"
+    assert now - quote.time > 600
+    assert (quote.close, quote.closed) == (352.78, "Nov 16, 2026, 16:00 EST")
+    assert quote.line[-1] == (quote.time, quote.price)

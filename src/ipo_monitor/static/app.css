@@ -1667,10 +1667,6 @@ span.fg-pos {
   }
 }
 
-.visits {
-  color: var(--dim);
-}
-
-.v-how {
-  color: var(--faint);
+.v-chart {
+  max-width: 760px;
 }

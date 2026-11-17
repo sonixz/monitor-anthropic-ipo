@@ -6,7 +6,7 @@
 
   const PANELS = {
     m: "market", v: "value", e: "ev", s: "shares", u: "unlock", k: "control",
-    c: "contracts", g: "growth", l: "losses", t: "timeline", f: "filings",
+    c: "contracts", g: "growth", l: "losses", t: "timeline", f: "filings", w: "visits",
   };
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const supportsPopover = "showPopover" in HTMLElement.prototype;
@@ -47,8 +47,39 @@
     el.hidden = false;
   });
 
-  // -- visits: count this session once, then show the counts in the footer ---------
-  // Nothing about the reader is sent or kept: the service adds one to the count of the day.
+  // -- visits: count this session once, then show the counts and their line ------
+  // Nothing about the reader is sent or kept: the service adds one to the count of the
+  // day and of the hour. The line is drawn here because the page is cached on the server.
+  const SVG = "http://www.w3.org/2000/svg";
+  function el(name, attrs, text) {
+    const node = document.createElementNS(SVG, name);
+    Object.entries(attrs).forEach(([key, value]) => node.setAttribute(key, String(value)));
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+  function drawVisits(points, label) {
+    const W = 320, H = 132, left = 30, right = 10, top = 12, bottom = 24;
+    const top_value = Math.max(1, ...points.map((p) => p.value));
+    const step = top_value <= 4 ? 1 : Math.ceil(top_value / 4);
+    const high = Math.ceil(top_value / step) * step;
+    const x = (i) => left + (points.length === 1 ? (W - left - right) / 2 : (i * (W - left - right)) / (points.length - 1));
+    const y = (v) => H - bottom - (v / high) * (H - top - bottom);
+    const svg = el("svg", { class: "chart-svg", viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": label });
+    const axis = el("g", { class: "axis", "aria-hidden": "true" });
+    for (let v = 0; v <= high; v += step) {
+      axis.append(el("line", { class: v === 0 ? "zero" : "grid", x1: left, x2: W - right, y1: y(v), y2: y(v) }));
+      axis.append(el("text", { class: "tick", x: left - 6, y: y(v) + 3.5, "text-anchor": "end" }, String(v)));
+    }
+    const first = points[0].name, last = points[points.length - 1].name;
+    axis.append(el("text", { class: "xl", x: left, y: H - 6, "text-anchor": "start" }, first));
+    if (points.length > 1) axis.append(el("text", { class: "xl", x: W - right, y: H - 6, "text-anchor": "end" }, last));
+    svg.append(axis);
+    const path = points.map((p, i) => `${i ? "L" : "M"}${x(i).toFixed(1)} ${y(p.value).toFixed(1)}`).join(" ");
+    svg.append(el("path", { class: "ln s1", d: path }));
+    const end = points[points.length - 1];
+    svg.append(el("circle", { class: "dot s1", cx: x(points.length - 1), cy: y(end.value), r: 3 }));
+    return svg;
+  }
   (async () => {
     const box = document.getElementById("visits");
     if (!box || !window.fetch) return;
@@ -60,11 +91,22 @@
         try { sessionStorage.setItem("ipo-seen", "1"); } catch (e) { /* private mode */ }
       }
       const stats = await (await fetch("/stats", { cache: "no-store" })).json();
-      const since = new Date(stats.since + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+      const month = (iso) => new Date(iso.slice(0, 10) + "T12:00:00Z").toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
       box.querySelector(".v-today").textContent = Number(stats.today).toLocaleString("en-US");
       box.querySelector(".v-total").textContent = Number(stats.total).toLocaleString("en-US");
-      box.querySelector(".v-since").textContent = since;
-      box.hidden = false;
+      box.querySelector(".v-since").textContent = month(stats.since);
+      box.querySelector(".v-numbers").hidden = false;
+      // A line per day once there are a few days; before that, per hour.
+      const byDay = stats.days.length >= 3;
+      const points = byDay
+        ? stats.days.map((d) => ({ name: month(d.day), value: d.visits }))
+        : stats.hours.map((h) => ({ name: `${month(h.hour)} ${Number(h.hour.slice(11))}h`, value: h.visits }));
+      if (points.length) {
+        const caption = byDay ? "Visits per day, New York time" : "Visits per hour, New York time";
+        box.querySelector(".v-caption").textContent = caption;
+        box.querySelector(".v-plot").replaceChildren(drawVisits(points, caption));
+        box.querySelector(".v-chart").hidden = false;
+      }
     } catch (e) {
       /* the counts are a nicety: the page works without them */
     }

@@ -44,7 +44,17 @@ def test_visits_are_counted_by_new_york_day_and_kept_in_a_file(tmp_path: Path) -
     ]
     # The file holds the counts and nothing else; a restart picks them up.
     saved = json.loads(path.read_text("utf-8"))
-    assert saved == {"since": "2026-11-16", "days": {"2026-11-16": 3, "2026-11-17": 1}}
+    assert saved == {
+        "since": "2026-11-16",
+        "days": {"2026-11-16": 3, "2026-11-17": 1},
+        "hours": {"2026-11-16T12": 2, "2026-11-16T23": 1, "2026-11-17T00": 1},
+    }
+    # The hours make a line: every hour since the first visit, those without one at zero.
+    hours = summary["hours"]
+    assert isinstance(hours, list)
+    assert hours[0] == {"hour": "2026-11-16T00", "visits": 0}
+    assert hours[-1] == {"hour": "2026-11-17T00", "visits": 1}
+    assert len(hours) == 25
     again = Visits(path, clock)
     assert again.summary()["total"] == 4
 
@@ -75,10 +85,11 @@ def test_the_service_counts_and_shows_visits(tmp_path: Path) -> None:
         assert response.headers["cache-control"] == "no-store"
         stats = client.get("/stats").json()
         assert stats["total"] == 1
-        assert stats["kept"] == "a number per day; no cookie, no address"
+        assert stats["kept"] == "a number per day and per hour; no cookie, no address"
         assert client.get("/health").json()["visits"]["total"] == 1
         page = client.get("/").text
-    assert '<p class="visits" id="visits" hidden>' in page
+    assert '<section class="panel" id="visits"' in page
+    assert '<a href="#visits">' in page
     assert "no cookie and no address kept" in page
     # Nothing about the visitor reaches the file.
     assert "203.0.113.9" not in (tmp_path / "visits.json").read_text("utf-8")
@@ -96,3 +107,22 @@ def test_the_file_setting_must_be_in_an_existing_directory(tmp_path: Path) -> No
     assert Settings.from_env({**base, "IPO_VISITS": str(path)}).visits == path
     with pytest.raises(ConfigError, match="IPO_VISITS"):
         Settings.from_env({**base, "IPO_VISITS": str(tmp_path / "missing" / "v.json")})
+
+
+def test_days_without_visits_are_zeros_and_old_hours_are_dropped(tmp_path: Path) -> None:
+    clock = Clock(NOV_16_NOON)
+    counter = Visits(tmp_path / "v.json", clock)
+    counter.add()
+    clock.now += 3 * 86400  # three days later, nobody came in between
+    counter.add()
+    days = counter.summary()["days"]
+    assert days == [
+        {"day": "2026-11-16", "visits": 1},
+        {"day": "2026-11-17", "visits": 0},
+        {"day": "2026-11-18", "visits": 0},
+        {"day": "2026-11-19", "visits": 1},
+    ]
+    for _ in range(60):
+        clock.now += 3600
+        counter.add()
+    assert len(counter.hours) == visits.SHOWN_HOURS

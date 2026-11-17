@@ -543,6 +543,10 @@ def test_visits_in_the_footer(browser: Browser) -> None:
         page.reload()
         expect(box.locator(".v-total")).to_have_text("1")  # the same session: not counted again
         assert "no cookie" in box.inner_text()
+        # The line of the visits is drawn, inside its chart.
+        expect(box.locator(".v-chart svg path.ln")).to_have_count(1)
+        assert "per hour" in box.locator(".v-caption").inner_text().lower()
+        assert page.evaluate(OVERFLOW)["cut"] == []
         assert context.cookies() == []
         assert errors == []
         context.close()

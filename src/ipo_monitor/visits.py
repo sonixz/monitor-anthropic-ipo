@@ -20,13 +20,23 @@ from ipo_monitor import log
 from ipo_monitor.market import eastern_at
 
 PER_MINUTE = 120  # more than this in one minute is not a crowd of readers: the rest is ignored
-SHOWN_DAYS = 14
+SHOWN_DAYS = 60
+SHOWN_HOURS = 48  # the line of the first days, when there are too few days for a line
+
+
+def _local(moment: float) -> datetime:
+    offset, _ = eastern_at(int(moment))
+    return datetime.fromtimestamp(moment, timezone(timedelta(seconds=offset)))
 
 
 def today(moment: float) -> str:
     """The day in New York, as 2026-11-19."""
-    offset, _ = eastern_at(int(moment))
-    return datetime.fromtimestamp(moment, timezone(timedelta(seconds=offset))).date().isoformat()
+    return _local(moment).date().isoformat()
+
+
+def hour(moment: float) -> str:
+    """The hour in New York, as 2026-11-19T14."""
+    return _local(moment).strftime("%Y-%m-%dT%H")
 
 
 class Visits:
@@ -36,6 +46,7 @@ class Visits:
         self.path = path
         self.clock = clock
         self.days: dict[str, int] = {}
+        self.hours: dict[str, int] = {}  # the last SHOWN_HOURS hours only
         self.since = today(clock())
         self._minute = (0, 0)  # (minute, visits counted in it)
         self._lock = threading.Lock()
@@ -51,6 +62,11 @@ class Visits:
             ):
                 raise ValueError("days")
             self.days = dict(days)
+            hours = saved.get("hours", {})
+            if isinstance(hours, dict) and all(
+                isinstance(k, str) and isinstance(v, int) and v >= 0 for k, v in hours.items()
+            ):
+                self.hours = dict(hours)
             self.since = str(saved.get("since") or min(days, default=self.since))
         except (OSError, ValueError, KeyError, TypeError) as error:
             # A damaged file must not stop the page: counting starts again, and the log says so.
@@ -67,6 +83,10 @@ class Visits:
             self._minute = (minute, counted + 1)
             day = today(now)
             self.days[day] = self.days.get(day, 0) + 1
+            when = hour(now)
+            self.hours[when] = self.hours.get(when, 0) + 1
+            for old in sorted(self.hours)[:-SHOWN_HOURS]:
+                del self.hours[old]
             self._save()
         return True
 
@@ -76,7 +96,10 @@ class Visits:
         temporary = self.path.with_suffix(".tmp")
         try:
             temporary.write_text(
-                json.dumps({"since": self.since, "days": self.days}, sort_keys=True), "utf-8"
+                json.dumps(
+                    {"since": self.since, "days": self.days, "hours": self.hours}, sort_keys=True
+                ),
+                "utf-8",
             )
             os.replace(temporary, self.path)
         except OSError as error:
@@ -85,12 +108,29 @@ class Visits:
     def summary(self) -> dict[str, object]:
         """What the page shows: today, the total, since when, and the last days."""
         with self._lock:
-            day = today(self.clock())
-            recent = sorted(self.days.items())[-SHOWN_DAYS:]
+            now = self.clock()
+            day = today(now)
+            # Every day and every hour on the way, those without a visit at zero: a line in time.
+            first = max(
+                self.since, (_local(now) - timedelta(days=SHOWN_DAYS - 1)).date().isoformat()
+            )
+            days = []
+            cursor = datetime.fromisoformat(first).date()
+            while cursor.isoformat() <= day:
+                days.append(
+                    {"day": cursor.isoformat(), "visits": self.days.get(cursor.isoformat(), 0)}
+                )
+                cursor += timedelta(days=1)
+            hours = [
+                {"hour": key, "visits": self.hours.get(key, 0)}
+                for key in (hour(now - 3600 * back) for back in range(SHOWN_HOURS - 1, -1, -1))
+                if key[:10] >= self.since
+            ]
             return {
                 "today": self.days.get(day, 0),
                 "total": sum(self.days.values()),
                 "since": self.since,
-                "days": [{"day": d, "visits": n} for d, n in recent],
-                "kept": "a number per day; no cookie, no address",
+                "days": days,
+                "hours": hours,
+                "kept": "a number per day and per hour; no cookie, no address",
             }
