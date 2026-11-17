@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-007",
+  "summary": "Version 0.7.1 is live at https://antipo.watch under one name, Anthropic IPO Watch: a light centered hero, a line that teaches the keys with open all / fold all on a desktop, UNLOCK across the full width, and two rings (votes by class in CONTROL, holders after the IPO in the overview on wide screens), each slice opening its source. The owner saw four screenshots and approved the release. After deploying 0.7.0, the real-browser tests against the live site found the enterprise value 6 px below a phone's first screen, because a new Form S-1/A filed on 2026-11-17 added a notice to the overview; 0.7.1 tightens the hero on phones and all 14 tests pass live. Not run: the owner's own look at the live page.",
+  "delivered": [
+    "The name Anthropic IPO Watch in the header, app title, SEC client name, README and docs; VISION.md left to the owner.",
+    "A centered hero: mark, name, one line, notices; tighter on phones (0.7.1).",
+    "Keys line and open all / fold all on desktops, hidden on phones.",
+    "charts.ring: a ring of slices, each a mark with its source, a sourced value in the centre; control.class_a_other_pct in calc.py with a hand-checked test.",
+    "CONTROL: a ring of votes replaces the stacked bar; overview: a ring of holders after the IPO on wide screens.",
+    "UNLOCK spans both columns with its chart in view beside its table; CONTROL beside CONTRACTS.",
+    "CHANGELOG 0.7.0 and 0.7.1, STATUS, D-035, devlog loop-007 (and a duplicated heading removed from loop-006)."
+  ],
+  "changedFiles": [
+    "ARCHITECTURE.md", "PRODUCT.md", "README.md", "CHANGELOG.md", "STATUS.md", "DECISIONS.md",
+    "pyproject.toml", "src/ipo_monitor/__init__.py", "src/ipo_monitor/calc.py", "src/ipo_monitor/charts.py",
+    "src/ipo_monitor/edgar.py", "src/ipo_monitor/figures.py", "src/ipo_monitor/web.py",
+    "src/ipo_monitor/static/app.css", "src/ipo_monitor/static/app.js", "src/ipo_monitor/templates/index.html.j2",
+    "tests/test_charts.py", "tests/test_edgar.py", "tests/test_structure.py",
+    "loops/007-mission.md", "loops/007-report.json", "devlog/loop-007.html", "devlog/loop-006.html", "devlog/index.html",
+    "devlog/img/loop-007-desktop.png", "devlog/img/loop-007-phone.png",
+    "devlog/img/loop-007-desktop-panels.png", "devlog/img/loop-007-control-phone.png"
+  ],
+  "decisions": [
+    "Confirmed by the owner on 2026-11-17: the name everywhere; a light centered hero; rings for votes (CONTROL) and holders (overview); screenshots before release; then 'yes' to release.",
+    "Proposed (D-035): the overview ring hidden under 860 px; UNLOCK full width; open/fold all only when the script runs.",
+    "Taken under D-016: 0.7.1 tightens the phone hero after the live tests failed; no change of content or colors."
+  ],
+  "tests": [
+    {"command": "uv run pre-commit run --all-files && uv run pytest", "result": "passed", "notes": "130 unit tests, including the ring and the new calculation."},
+    {"command": "uv run pytest -m e2e (local)", "result": "passed", "notes": "14 on 0.7.0 and on 0.7.1."},
+    {"command": "GitHub Actions CI and CodeQL on 2ebf4d7 (v0.7.0) and c05596b (v0.7.1)", "result": "passed", "notes": "CI green on both; CodeQL green on 2ebf4d7."},
+    {"command": "sh /data/deploy.sh v0.7.0, then v0.7.1; curl https://antipo.watch/health", "result": "passed", "notes": "Releases 2ebf4d74e311 then c05596b3e39f, healthy within seconds."},
+    {"command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e on 0.7.0", "result": "failed", "notes": "13 passed; test_phone_first_screen: enterprise value bottom at 850 px of 844, pushed by the new-filing notice. Fixed in 0.7.1."},
+    {"command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e on 0.7.1", "result": "passed", "notes": "14 passed."},
+    {"command": "Real use: the live page opened in Chromium at 390x844, phone settings", "result": "passed", "notes": "Screenshots compared before and after the fix; the hero stays clean, the notices visible."},
+    {"command": "owner saw the screenshots before release", "result": "passed", "notes": "Four screenshots sent; the owner answered 'oui'."},
+    {"command": "owner looks at the live page", "result": "not_run", "notes": "Only the owner can."}
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "A small empty space under CONTROL beside the taller CONTRACTS panel on a desktop.",
+    "A new Form S-1/A filed on 2026-11-17 is listed but not read: the owner saves it into data/raw/sec/ so its figures can be extracted and checked.",
+    "VISION.md still says ANT IPO Monitor: the owner's to change.",
+    "The local tests have no new-filing state for the first-screen check; a fixture with a new filing would have caught this before deployment."
+  ],
+  "recommendedNextSteps": [
+    "Read the Form S-1/A of 2026-11-17 (new price range or share counts?) before pricing on 2026-11-18.",
+    "Add a first-screen e2e case with a new-filing notice and a priced state."
+  ],
+  "reportedAt": "2026-11-17T12:25:00Z",
+  "submittedBy": "Claude Code (Claude Opus 5.5)",
+  "cost": {"durationSeconds": null, "inputTokens": null, "outputTokens": null, "usd": null}
+}
