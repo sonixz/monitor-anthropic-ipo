@@ -1,0 +1,96 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-005",
+  "summary": "The dashboard is live at https://antipo.watch with a valid certificate, through Cloudflare and a Worker that relays to the Fly.io app; www and http redirect to the apex; the fly.dev address is unchanged. Three Cloudflare defaults that altered the page (analytics beacon, browser check, e-mail rewriting) are off. 14 real-browser tests pass against the domain. The procedure and its pitfalls are in the Second Brain for a Loop0 expert. Not run: the owner's look on a phone.",
+  "delivered": [
+    "Cloudflare zone antipo.watch: proxied AAAA 100:: records for the apex and www, Worker routes on both, SSL Full (strict), Always Use HTTPS, TLS 1.2 minimum, Browser Integrity Check and e-mail obfuscation off.",
+    "Worker antipo-watch (deploy/cloudflare/worker.js): 301 to https://antipo.watch for any other name or http; relays method, path, query and body to the fly.dev address; rewrites fly.dev redirects; adds no-transform; edge-caches versioned /static/ files.",
+    "INFRASTRUCTURE.md: a Domain section with a diagram, settings, Worker deployment, token permissions, rollback and the cost of the hop; D-034; README, STATUS, SECURITY, CHANGELOG.",
+    "Second Brain: the owner's directive, the Fly.io TLS pitfall, and the full procedure with its pitfalls, written for a future DNS expert."
+  ],
+  "changedFiles": [
+    "CHANGELOG.md",
+    "DECISIONS.md",
+    "INFRASTRUCTURE.md",
+    "README.md",
+    "SECURITY.md",
+    "STATUS.md",
+    "deploy/cloudflare/worker.js",
+    "devlog/img/loop-005-phone.png",
+    "devlog/index.html",
+    "devlog/loop-005.html",
+    "loops/005-mission.md",
+    "loops/005-report.json"
+  ],
+  "decisions": [
+    "Confirmed by the owner on 2026-11-16: use antipo.watch; record the expertise in the Second Brain; an Account API token held by Agent Manager.",
+    "Proposed (D-034): proxied DNS and a relaying Worker instead of a Fly.io certificate, which needs Fly.io access; antipo.watch is the main address and fly.dev stays; Full (strict), HTTPS only, TLS 1.2.",
+    "Found: Cloudflare's role Workers Editor alone was refused for publishing a Worker by API; Workers Scripts Edit (legacy) worked. It covers the whole account, so it is removed after deployment."
+  ],
+  "tests": [
+    {
+      "command": "DNS-over-HTTPS NS lookups at cloudflare-dns.com and dns.google",
+      "result": "passed",
+      "notes": "Both answer kami and rory.ns.cloudflare.com."
+    },
+    {
+      "command": "openssl s_client -connect antipo.watch:443 -servername antipo.watch",
+      "result": "passed",
+      "notes": "CN antipo.watch, SAN antipo.watch and *.antipo.watch, Let's Encrypt, valid to 2027-02-15."
+    },
+    {
+      "command": "curl redirects for http://antipo.watch/, https://www.antipo.watch/x?y=1, http://www.antipo.watch/",
+      "result": "passed",
+      "notes": "301 to https://antipo.watch with path and query kept (www tested with --resolve: the local resolver had cached the name as missing)."
+    },
+    {
+      "command": "curl https://antipo.watch/health and /stats",
+      "result": "passed",
+      "notes": "version 0.6.1, 340 facts, 159 checks, filings ok."
+    },
+    {
+      "command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "14 passed after the Cloudflare defaults were turned off; the first run failed on the injected analytics script (CSP) and a 403 from the browser check."
+    },
+    {
+      "command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e -k loads_fast (repeated)",
+      "result": "passed",
+      "notes": "Borderline: passed 2 of 3 runs alone and in the full run; failures at 1.01 to 1.5 s against the 1 s limit. The relay adds about 0.45 s before the first byte."
+    },
+    {
+      "command": "uv run pytest && uv run ruff check .",
+      "result": "passed",
+      "notes": "No change to the service."
+    },
+    {
+      "command": "Real use: http://antipo.watch opened in Chromium at phone size",
+      "result": "passed",
+      "notes": "Lands on https://antipo.watch, same page; screenshot devlog/img/loop-005-phone.png."
+    },
+    {
+      "command": "owner opens antipo.watch on a phone",
+      "result": "not_run",
+      "notes": "Only the owner can."
+    }
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "Owner: remove Workers Scripts Edit and Workers Editor from the token.",
+    "Owner: open https://antipo.watch on a phone.",
+    "The load-time test is borderline through the relay: a Fly.io certificate for antipo.watch would remove the hop if Fly.io access becomes available."
+  ],
+  "recommendedNextSteps": [
+    "Use https://antipo.watch in X posts.",
+    "On pricing night (reported 2026-11-18): check that the page through antipo.watch switches with the fly.dev address (the page is never cached at Cloudflare)."
+  ],
+  "reportedAt": "2026-11-17T03:40:00Z",
+  "submittedBy": "Claude Code (Claude Opus 5.5)",
+  "cost": {
+    "durationSeconds": null,
+    "inputTokens": null,
+    "outputTokens": null,
+    "usd": null
+  }
+}
