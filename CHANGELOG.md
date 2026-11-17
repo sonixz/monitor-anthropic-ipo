@@ -4,6 +4,29 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.7.0] - 2026-11-17
+
+### Added
+
+- **A light, centered hero** (Loop 007): the project's mark, the name ANTHROPIC IPO WATCH, one
+  line on what the page does, and the notices.
+- **A line that teaches the keys** under the panel bar on a desktop: press a letter to jump to a
+  panel, `?` for all keys, select any number to see its source. Next to it, **open all · fold
+  all** for the tables behind the charts (shown only when the script runs).
+- **Two rings (pie charts)**, drawn by the server like the other charts, each slice opening its
+  source: votes by class in CONTROL (one Class F share holds about half the votes), and who holds
+  the shares after the IPO in the overview, on wide screens. A new calculation,
+  `control.class_a_other_pct`, gives the votes of Class A shares other than those sold in the IPO.
+
+### Changed
+
+- **One name everywhere:** Anthropic IPO Watch in the header, the app title, the client name
+  sent to the SEC, the README and the docs (ANT IPO Monitor is gone).
+- **UNLOCK spans the full width**, its chart staying in view beside its long table; CONTROL now
+  sits beside CONTRACTS.
+- On a phone the keys line and open/fold all are hidden, so the value at the IPO price stays on
+  the first screen.
+
 ## [0.6.2] - 2026-11-17
 
 ### Added

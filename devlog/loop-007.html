@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 007 — One name, a centered hero, rings · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 007 — One name, a centered hero, rings</h1>
+<p class="lead">2026-11-17 · The page becomes one product under one name, Anthropic IPO Watch: a light centered hero, a line that teaches the keys, open or fold every table, UNLOCK across the width, and two rings where figures are parts of one whole. Colors, fonts and mechanics unchanged. Version 0.7.0.</p>
+
+<h2>Why</h2>
+<blockquote><p>I'd like to work on the layout a little: a light hero at the top, really clean, centered, with Anthropic IPO Watch. A small line underneath to explain that you can press a letter to jump to the right place, and a small menu to fold or open everything. UNLOCK is very long beside CONTROL; it could be wider. The page still says ANT IPO Monitor: one pass to consolidate all that into a finished, uniform product. In the overview, not a bar chart, a pie chart! CONTROL would be a good candidate. Don't change things too fast: show me first.</p></blockquote>
+<p><small>The owner's words, gathered from several messages and reworded in English.</small></p>
+
+<h2>What changed</h2>
+<div class="pair">
+  <figure><img src="img/loop-007-desktop.png" alt="The top of the page on a desktop: a centered hero with the mark and ANTHROPIC IPO WATCH, the panel bar, the keys line with open all and fold all, the key figures and the overview with a ring of holders after the IPO."><figcaption>Desktop, top of the page: the hero, the keys line and the overview ring.</figcaption></figure>
+  <figure><img src="img/loop-007-phone.png" alt="The first screen on a phone: the centered name, the notices and the value at the IPO price."><figcaption>Phone, first screen: the value at the IPO price is still there.</figcaption></figure>
+</div>
+<div class="pair">
+  <figure><img src="img/loop-007-desktop-panels.png" alt="CONTROL with its ring of votes beside CONTRACTS, and UNLOCK across the full width below."><figcaption>CONTROL beside CONTRACTS, UNLOCK across the width.</figcaption></figure>
+  <figure><img src="img/loop-007-control-phone.png" alt="CONTROL on a phone: a ring with 50.1% one share in the centre, and the table of votes by class."><figcaption>CONTROL on a phone: one share holds half the votes.</figcaption></figure>
+</div>
+<ul>
+  <li><strong>The name:</strong> header, tab, app title, the client name sent to the SEC, README and docs. VISION.md is the owner's and still says the old name.</li>
+  <li><strong>Rings:</strong> a new drawing in <code>charts.py</code>; each slice is a mark that opens its source, with a 2-unit gap between slices and a sourced value in the centre. A new calculation gives the votes of Class A shares outside the IPO (49.9 − 5.5 = 44.4%), checked by hand.</li>
+  <li><strong>Phones:</strong> the keys line, open/fold all and the overview ring are hidden, so the first screen still shows the value at the IPO price.</li>
+</ul>
+
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit tests, lint, types, secret scan</td><td>passed</td><td>130 unit tests, including the ring drawing and the new calculation.</td></tr>
+  <tr><td>Real-browser tests, local</td><td>passed</td><td>14, including the first-screen test at phone width and no sideways scroll at 360, 390 and 430 px.</td></tr>
+  <tr><td>The owner saw the screenshots before the release</td><td>passed</td><td>Four screenshots sent; the owner answered "yes".</td></tr>
+  <tr><td>CI, deployment and real-browser tests against antipo.watch</td><td>see report</td><td><code>loops/007-report.json</code>.</td></tr>
+</table>
+
+<h2>Left</h2>
+<ul><li>A small empty space under CONTROL beside the taller CONTRACTS panel on a desktop.</li></ul>
+
+<p class="nav">Mission: <code>loops/007-mission.md</code> · Report: <code>loops/007-report.json</code></p>
+</main>
+</body>
+</html>

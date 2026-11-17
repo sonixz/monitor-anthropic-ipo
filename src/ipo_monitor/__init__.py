@@ -1,3 +1,3 @@
 """Anthropic IPO Watch: an independent dashboard following Anthropic's IPO, every number sourced."""
 
-__version__ = "0.6.2"
+__version__ = "0.7.0"
