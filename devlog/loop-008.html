@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 008 — Amendment No. 3, and versions you can see · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 008 — Amendment No. 3, and versions you can see</h1>
+<p class="lead">2026-11-17 · The day before pricing, Anthropic filed Amendment No. 3. The page now reads it, and keeps the filing it replaced: the top says which filing and since when, and a HISTORY panel lists every figure that changed, each side opening its own source. Version 0.8.0.</p>
+
+<h2>Why</h2>
+<blockquote><p>Are we up to date, or is there a new filing? [...] I saved the HTML file, tell me what's in it. [...] Yes, OK. And I'd like a small section at the top for versioning: a date at the top, instead of wiping and rewriting. I don't know if it's simple to do. [...] Yes, fold the steps, then deploy.</p></blockquote>
+<p><small>The owner's words, gathered from several messages and reworded in English.</small></p>
+
+<h2>What Amendment No. 3 changes</h2>
+<ul>
+  <li>Same price range ($70 to $78), same 825 million shares offered, same symbol.</li>
+  <li>Nasdaq <strong>approved</strong> the listing ("We have been approved to list"), with a Form 8-A12B the same day.</li>
+  <li>The lock-up table gives each step for Class A shares, Class N shares and their total; 20 of 23 steps moved by a few million shares. UNLOCK draws the total.</li>
+  <li>Also in the filing, not on the page yet: stock-based compensation now estimated (about $3.5B and $3.0B at $74), and Amazon's and Google's holdings after the IPO.</li>
+</ul>
+
+<h2>What changed on the page</h2>
+<div class="trio">
+  <figure><img src="img/loop-008-phone-top.png" alt="The top of the page on a phone: the overview says source: SEC Form S-1/A, Amendment No. 3, filed Nov 17, 2026, what changed."><figcaption>Phone: the filing, its date and the link, on the first screen.</figcaption></figure>
+  <figure><img src="img/loop-008-phone-history.png" alt="The HISTORY panel on a phone: the listing went from applied for to approved; the lock-up steps that changed are folded."><figcaption>HISTORY on a phone, the lock-up steps folded.</figcaption></figure>
+  <figure><img src="img/loop-008-phone-card.png" alt="An earlier value opened: up to 299 million, Form S-1/A, Amendment No. 2, filed Nov 10, 2026, page 318."><figcaption>An earlier value opens the earlier filing.</figcaption></figure>
+</div>
+<figure><img src="img/loop-008-desktop-history.png" alt="The HISTORY panel on a desktop with every changed figure, before and after."><figcaption>HISTORY on a desktop (screenshot taken before the steps were folded).</figcaption></figure>
+<ul>
+  <li><strong>Nothing wiped:</strong> earlier filings stay in <code>data/facts/history/</code>, extracted by the same code. At the next filing, the current file moves there and HISTORY fills itself.</li>
+  <li><strong>Both wordings read:</strong> the extractor knows the old and the new wording of three passages; tests extract both filings again and compare them with the committed files.</li>
+  <li><strong>A bug fixed:</strong> a list of filings older than the filing the page reads no longer shows earlier filings as new.</li>
+</ul>
+
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit tests, lint, types, secret scan</td><td>passed</td><td>135 unit tests, four of them new (what changed, both sources, the panel, no panel without history).</td></tr>
+  <tr><td>159 consistency checks on Amendment No. 3</td><td>passed</td><td>No check changed.</td></tr>
+  <tr><td>Real-browser tests, local and against antipo.watch</td><td>passed</td><td>14 and 14; the first-screen test passes.</td></tr>
+  <tr><td>Real use in Chromium at phone size</td><td>passed</td><td>Tapped "what changed", opened the folded steps, opened an earlier value: its card names Amendment No. 2, page 318.</td></tr>
+  <tr><td>The owner saw the screenshots before release</td><td>passed</td><td>"Yes, fold the steps, then deploy."</td></tr>
+</table>
+
+<p class="nav">Mission: <code>loops/008-mission.md</code> · Report: <code>loops/008-report.json</code></p>
+</main>
+</body>
+</html>

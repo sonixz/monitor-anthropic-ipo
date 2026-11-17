@@ -1,0 +1,55 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-008",
+  "summary": "Version 0.8.0 is live at https://antipo.watch and reads Form S-1/A, Amendment No. 3, filed 2026-11-17: same price range, shares offered and symbol; Nasdaq approved the listing; the lock-up table now gives Class A, Class N and a total, and UNLOCK shows the total. Amendment No. 2 is kept in data/facts/history/; the overview names the filing and its date with a link 'what changed', and a HISTORY panel lists the 21 figures that changed (the listing, 20 lock-up steps, folded), each side opening its own filing's passage. The owner saw the screenshots and asked to fold the steps, then deploy. 14 real-browser tests pass against the live site.",
+  "delivered": [
+    "extract.py reads both amendments' wordings (listing, 2026 Plan reserve, one-column or three-column lock-up table), takes the amendment number from the cover, and records the listing status as a fact.",
+    "data/facts/s1a3.json current; data/facts/history/s1a2.json re-extracted by the same code.",
+    "Facts.filing and Facts.history replace the document name in code; versions.py compares filings in a row.",
+    "Overview link 'what changed'; HISTORY panel (key h) with the lock-up steps folded; UNLOCK note on Class A and Class N.",
+    "edgar.newer_than ignores filings older than the one the page reads (bug found while switching).",
+    "CHANGELOG 0.8.0, STATUS, D-036, ARCHITECTURE (diagram), CLAUDE.md (how to add a filing), devlog loop-008."
+  ],
+  "changedFiles": [
+    "src/ipo_monitor/extract.py", "src/ipo_monitor/facts.py", "src/ipo_monitor/versions.py", "src/ipo_monitor/render.py",
+    "src/ipo_monitor/web.py", "src/ipo_monitor/edgar.py", "src/ipo_monitor/templates/index.html.j2",
+    "src/ipo_monitor/static/app.css", "src/ipo_monitor/static/app.js", "src/ipo_monitor/__init__.py", "pyproject.toml",
+    "data/facts/s1a3.json", "data/facts/history/s1a2.json", "data/facts/s1a2.json (moved)",
+    "tests/conftest.py", "tests/test_extract.py", "tests/test_facts.py", "tests/test_edgar.py", "tests/test_structure.py",
+    "tests/test_web.py", "tests/test_versions.py", "tests/e2e/test_dashboard.py",
+    "CHANGELOG.md", "STATUS.md", "DECISIONS.md", "ARCHITECTURE.md", "CLAUDE.md",
+    "loops/008-mission.md", "loops/008-report.json", "devlog/loop-008.html", "devlog/index.html",
+    "devlog/img/loop-008-phone-top.png", "devlog/img/loop-008-phone-history.png", "devlog/img/loop-008-phone-card.png",
+    "devlog/img/loop-008-desktop-top.png", "devlog/img/loop-008-desktop-history.png"
+  ],
+  "decisions": [
+    "Confirmed by the owner on 2026-11-17: move to Amendment No. 3; versioning with a date at the top instead of wiping; fold the lock-up steps; deploy.",
+    "Proposed (D-036): earlier filings in data/facts/history/, compared fact by fact at rendering, each side under its own id and source; document facts left out.",
+    "Revisited from the mission: the Class A and Class N columns are not separate facts; each step's source card quotes the whole row, and the step is the filing's total.",
+    "Deferred: stock-based compensation estimates and Amazon/Google holdings from Amendment No. 3."
+  ],
+  "tests": [
+    {"command": "uv run pre-commit run --all-files && uv run pytest", "result": "passed", "notes": "135 unit tests; both filings re-extracted byte for byte; 159 consistency checks."},
+    {"command": "uv run pytest -m e2e (local)", "result": "passed", "notes": "14; two page references moved (p. 164 to p. 165); the no-JavaScript check excludes the folded HISTORY steps, which are not behind a chart."},
+    {"command": "GitHub Actions CI on 5a4e320 (v0.8.0)", "result": "passed", "notes": "CI green; CodeQL was still running when the deployment started."},
+    {"command": "sh /data/deploy.sh v0.8.0; curl https://antipo.watch/health", "result": "passed", "notes": "release 5a4e32009c4e, source_filed 2026-11-17, 159 checks; no new-filing notice."},
+    {"command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e", "result": "passed", "notes": "14 passed."},
+    {"command": "Real use: Chromium at 390x844, tap 'what changed', open the folded steps, open an earlier value", "result": "passed", "notes": "The card names Amendment No. 2, filed Nov 10, 2026, p. 318; no sideways scroll."},
+    {"command": "owner looks at the live page", "result": "not_run", "notes": "Only the owner can."}
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "The health count of facts (362) now includes the 21 earlier values shown in HISTORY.",
+    "Stock-based compensation estimates and Amazon/Google holdings from Amendment No. 3 are not on the page.",
+    "A small empty space under CONTROL beside CONTRACTS on a desktop.",
+    "VISION.md still says ANT IPO Monitor (owner only).",
+    "A first-screen e2e case with a new-filing notice and a priced state."
+  ],
+  "recommendedNextSteps": [
+    "Pricing night (reported 2026-11-18): when the final prospectus (424B4) appears, the service reads its price; save the full document so it can become the current filing and HISTORY lists what changed."
+  ],
+  "reportedAt": "2026-11-17T16:05:00Z",
+  "submittedBy": "Claude Code (Claude Opus 5.5)",
+  "cost": {"durationSeconds": null, "inputTokens": null, "outputTokens": null, "usd": null}
+}
