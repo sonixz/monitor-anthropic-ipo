@@ -1,14 +1,14 @@
 # STATUS · monitor-anthropic-ipo
 
-> Where the project stands, verified. Last reviewed: 2026-11-17 · loop-007 (branding)
+> Where the project stands, verified. Last reviewed: 2026-11-17 · loop-008 (Amendment No. 3, versions)
 
 ## Live
 
 | | |
 | --- | --- |
 | Site | https://antipo.watch (Cloudflare, Worker relaying to Fly.io, since 2026-11-17; the Fly.io address stays as a fallback, see INFRASTRUCTURE.md) |
-| Version | 0.7.1 (tag `v0.7.1`), under the name Anthropic IPO Watch |
-| Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
+| Version | 0.8.0 (tag `v0.8.0`), under the name Anthropic IPO Watch |
+| Data | Anthropic, PBC, Form S-1/A, Amendment No. 3, filed 2026-11-17 (Amendment No. 2 kept in history; the HISTORY panel lists what changed) |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |
 | IPO price | Not final: the page shows the filed range, $70 to $78. Pricing reported for 2026-11-18 |
@@ -25,7 +25,7 @@
 - The filings watch on test data: the list of filings, the notice of a newer prospectus, the final price read from a cover and refused in eight cases (another form, a preliminary cover, a blank price, a wrong total, and so on). The contact address appears in no log and on no page (tested).
 - 159 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
-- CI on GitHub: format, lint, strict types, 130 unit tests, 14 real-browser tests, secret scan, CodeQL: green on the released commit.
+- CI on GitHub: format, lint, strict types, 135 unit tests, 14 real-browser tests, secret scan, CodeQL: green on the released commit.
 - Deploy and rollback on the machine: eight deployments on 2026-11-16 and 17, each healthy within seconds.
 - **Seen by the owner on a phone** (2026-11-16, version 0.4.2): asked to find what the company is worth, what it owes and how fast it grows, to check that nothing scrolls sideways and to open a source card, they reported that everything looked fine and made no remark. No time was recorded.
 
@@ -43,7 +43,7 @@
 
 - **The service's own client first talked to EDGAR on 2026-11-16 at 23:29 UTC** and read the same list as below. Before that: A real answer for the registrant was read on 2026-11-16 through a web fetch tool and is replayed by the tests: it has the shape the reader expects (14 filings, the latest five are documents for investors filed on 2026-11-12). The client itself, with the contact address, runs for the first time when the owner has put the address on the machine.
 - The cover of Anthropic's final prospectus does not exist yet. The reader is built on the cover of Amendment No. 2, where the price is blank. If the final cover is laid out differently, the price is not taken and must be recorded by hand: the intended failure.
-- After a final prospectus, the page uses the final price with share counts and cash still taken from Amendment No. 2, until a full extraction reviewed by hand.
+- After a final prospectus, the page uses the final price with share counts and cash still taken from Amendment No. 3, until the final prospectus is saved and extracted (it then moves Amendment No. 3 to history, and HISTORY lists what changed).
 - The About box of the GitHub repository (description, live link) is empty: the agent's GitHub access cannot change repository settings.
 - **No real quote of ANT has been seen yet**: the stock does not trade. The MARKET panel is proven on recorded answers, including invented prices that name themselves as test data.
 - The Nasdaq source was checked before the open and with the market open (2026-11-16), on a long-listed symbol and on a stock listed the Friday before. After the close (16:12 on 2026-11-16) its first figure is a trade of the extended hours and the close comes apart: the page will name both from the next release. At night (20:14) it still says After-Hours and gives the time of the last trade, 19:59. Not seen yet: its answer for a stock that is listed but has not traded yet.

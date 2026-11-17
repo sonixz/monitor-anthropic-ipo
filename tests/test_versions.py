@@ -72,6 +72,11 @@ def test_the_page_says_which_filing_and_what_changed(facts: Facts) -> None:
     assert 'href="#history"><kbd aria-hidden="true">h</kbd>history</a>' in html
     panel = html[html.index('id="history"') : html.index("</section>", html.index('id="history"'))]
     assert panel.count("<tr>") == 22  # a header row and 21 changes
+    # The listing shows at once; the 20 lock-up steps are folded until asked for (owner).
+    main, folded = panel.split('<details class="fold changes-more">')
+    assert "Listing on the exchange" in main
+    assert "unlock" not in main
+    assert folded.count("<tr>") == 20
     assert 'popovertarget="src-s1a2-unlock-02"' in panel
     assert 'popovertarget="src-unlock-02"' in panel
     card = html[html.index('<div popover id="src-s1a2-unlock-02"') :][:3000]

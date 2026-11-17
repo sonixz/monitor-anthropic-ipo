@@ -15,7 +15,7 @@ uv run ruff check .                  # lint
 uv run mypy                          # types, strict
 uv run pytest                        # unit tests
 uv run pytest -m e2e                 # real-browser tests (Playwright, Chromium)
-uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data/facts/s1a2.json
+uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html" --id s1a3   # rebuild data/facts/s1a3.json
 ```
 
 ## Conventions
@@ -23,7 +23,11 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html"   # rebuild data
 - Python 3.12, `src/` layout, package `ipo_monitor`. Line length 100. Strict typing.
 - **Templates never contain a number.** Use `n("id")`. Digits typed in a template must be inside
   an element with `data-label` (period names, form names). `tests/test_web.py` enforces it.
-- **FILED facts come from `extract.py`**, never from hand edits of `data/facts/s1a2.json`.
+- **FILED facts come from `extract.py`**, never from hand edits of `data/facts/*.json`.
+- **A new filing** (Loop 008): move the current fact file to `data/facts/history/`, extract the new
+  one with a new `--id`, and the HISTORY panel lists what changed. Never delete an earlier filing.
+  When its wording changes, teach the extractor the new wording next to the old one; both filings
+  must still extract (tests reproduce both files).
   PRESS facts are recorded by hand in `data/facts/press.json`, with the article opened and quoted.
 - Every calculation lives in `calc.py` with its formula and inputs, and has a test in
   `tests/test_calc.py` checked against arithmetic done by hand.

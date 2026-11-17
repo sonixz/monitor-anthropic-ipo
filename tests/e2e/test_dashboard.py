@@ -395,7 +395,8 @@ def test_works_without_javascript(browser: Browser, base_url: str) -> None:
     # The charts are drawn by the server, and every table behind them is open.
     assert page.locator("svg.chart-svg").count() >= 8
     assert page.locator("svg.chart-svg .col").first.is_visible()
-    assert page.locator("details.fold:not([open])").count() == 0
+    # (The lock-up steps in HISTORY are not behind a chart: they start folded, as the owner asked.)
+    assert page.locator("details.fold:not([open]):not(.changes-more)").count() == 0
     assert page.locator('button[data-ref="obligations.total.2029"]').first.is_visible()
     context.close()
 

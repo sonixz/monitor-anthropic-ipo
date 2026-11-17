@@ -42,7 +42,9 @@ title: Components — from the filing to the page
 flowchart TB
   raw["data/raw/sec: saved filing, not in git"]
   extract["extract.py: pages, lines, table rows, anchored patterns"]
-  facts[("data/facts/s1a2.json and press.json")]
+  facts[("data/facts: the latest filing (s1a3.json) and press.json")]
+  history[("data/facts/history: earlier filings, same extractor")]
+  versions["versions.py: what changed from one filing to the next"]
   load["facts.py: load and validate"]
   reconcile["reconcile.py: figures must agree"]
   calc["calc.py: formulas with their inputs"]
@@ -51,6 +53,8 @@ flowchart TB
   render["render.py, figures.py, charts.py and templates: numbers and chart marks, each with its source"]
   web["web.py: page, static files, health"]
   raw --> extract --> facts --> load --> reconcile --> calc --> render --> web
+  extract --> history --> versions
+  load --> versions -->|"earlier values, each with its own source"| render
   market -->|"added to the facts when a quote exists"| calc
   web -->|"asks on a timer"| market
   edgar -->|"a filed price, only when every check passes"| calc
@@ -107,7 +111,8 @@ The page is rendered once, at startup, and served from memory. This is what make
 | Path | Responsibility |
 | --- | --- |
 | `src/ipo_monitor/extract.py` | Read the saved filing, write FILED facts with page and quote |
-| `src/ipo_monitor/facts.py` | Fact model, loading, lookup |
+| `src/ipo_monitor/facts.py` | Fact model, loading, lookup; the current filing and the earlier ones |
+| `src/ipo_monitor/versions.py` | What changed between filings in a row (HISTORY panel) |
 | `src/ipo_monitor/reconcile.py` | Consistency checks that block bad data |
 | `src/ipo_monitor/calc.py` | Every CALC value with formula and inputs |
 | `src/ipo_monitor/fmt.py` | Formatting only |
@@ -116,6 +121,6 @@ The page is rendered once, at startup, and served from memory. This is what make
 | `src/ipo_monitor/market.py` | The market source, the states of the market panel, the quote as MARKET facts, the timer |
 | `src/ipo_monitor/edgar.py` | The SEC's list of filings, what counts as a newer filing, the price on a final cover, the timer |
 | `src/ipo_monitor/web.py`, `config.py`, `log.py` | HTTP service, environment configuration, JSON logs |
-| `data/facts/` | The dataset: `s1a2.json` (extracted), `press.json` (recorded by hand, with links) |
+| `data/facts/` | The dataset: the latest filing, `s1a3.json` (extracted), and `press.json` (recorded by hand, with links); `history/` keeps earlier filings, extracted by the same code |
 | `deploy/` | `deploy.sh` and `start.sh`, run on the machine |
 | `tests/`, `tests/e2e/` | Unit tests; real-browser tests |

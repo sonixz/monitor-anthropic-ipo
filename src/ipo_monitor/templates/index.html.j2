@@ -637,16 +637,30 @@
 <section class="panel" id="history" tabindex="-1" aria-labelledby="history-h">
   <h2 id="history-h"><kbd aria-hidden="true">h</kbd> HISTORY <span class="q">What changed from one filing to the next?</span></h2>
   <p class="lede">The page reads the latest filing. Earlier ones are kept: every figure that changed is listed here, each side as its filing words it and opening its own source.</p>
+  {% macro change_row(c) %}<tr><th scope="row">{{ L(c.title) }}{% if c.when %}<span class="when">{{ n(c.when) }}</span>{% endif %}</th><td>{% if c.before %}{{ n(c.before, c.style) }}{% else %}<span class="what">new</span>{% endif %}</td><td>{% if c.after %}{{ n(c.after, c.style) }}{% else %}<span class="what">no longer given</span>{% endif %}</td></tr>{% endmacro %}
   {% for step in steps %}
   <table class="lines changes">
     <caption>{{ L(step.older.title) }} <span class="what">filed {{ L(day(step.older.filed)) }}</span> <span class="to">→</span> {{ L(step.newer.title) }} <span class="what">filed {{ L(day(step.newer.filed)) }}</span></caption>
     <thead><tr><th scope="col">figure</th><th scope="col">before</th><th scope="col">after</th></tr></thead>
     <tbody>
-      {% for c in step.changes %}
-      <tr><th scope="row">{{ L(c.title) }}{% if c.when %}<span class="when">{{ n(c.when) }}</span>{% endif %}</th><td>{% if c.before %}{{ n(c.before, c.style) }}{% else %}<span class="what">new</span>{% endif %}</td><td>{% if c.after %}{{ n(c.after, c.style) }}{% else %}<span class="what">no longer given</span>{% endif %}</td></tr>
+      {% for c in step.main %}
+      {{ change_row(c) }}
       {% endfor %}
     </tbody>
   </table>
+  {% if step.lockup %}
+  <details class="fold changes-more">
+    <summary>Lock-up steps that changed</summary>
+    <table class="lines changes">
+      <caption class="vh">Lock-up steps, before and after</caption>
+      <tbody>
+        {% for c in step.lockup %}
+        {{ change_row(c) }}
+        {% endfor %}
+      </tbody>
+    </table>
+  </details>
+  {% endif %}
   {% endfor %}
   <p class="aside">Every other figure is the same in both filings. When a filing counts a figure another way, as the lock-up table now does with Class A and Class N shares, only the words of each filing tell: open a value to read them.</p>
 </section>

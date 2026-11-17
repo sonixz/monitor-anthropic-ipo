@@ -4,6 +4,30 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.8.0] - 2026-11-17
+
+### Added
+
+- **Versions you can see** (Loop 008): the overview names the filing the figures come from and
+  its date, with a link "what changed"; a **HISTORY** panel (key `h`) lists every figure that
+  differs between two filings in a row, before and after, each opening its own filing's passage.
+  The lock-up steps that changed are folded until asked for. Earlier filings are kept in
+  `data/facts/history/`, extracted by the same code; nothing is overwritten in silence.
+- A fact for the listing: "applied for" in Amendment No. 2, "approved" in Amendment No. 3.
+
+### Changed
+
+- **The page reads Form S-1/A, Amendment No. 3, filed 2026-11-17.** Same price range, shares
+  offered and symbol; Nasdaq approved the listing; the lock-up table now gives Class A, Class N
+  and their total for each step, and UNLOCK shows the total (20 of 23 steps moved by a few
+  million shares).
+- The extractor reads the wordings of both amendments (listing, 2026 Plan reserve, lock-up table)
+  and takes the amendment number from the cover.
+
+### Fixed
+
+- A list of filings older than the filing the page reads no longer shows earlier filings as new.
+
 ## [0.7.1] - 2026-11-17
 
 ### Fixed

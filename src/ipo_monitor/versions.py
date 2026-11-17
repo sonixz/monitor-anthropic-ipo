@@ -40,6 +40,16 @@ class Step:
     newer: Document
     changes: tuple[Change, ...]
 
+    @property
+    def main(self) -> tuple[Change, ...]:
+        """The changes shown at once."""
+        return tuple(c for c in self.changes if not c.id.startswith("unlock."))
+
+    @property
+    def lockup(self) -> tuple[Change, ...]:
+        """The lock-up steps that changed: many rows, folded on the page."""
+        return tuple(c for c in self.changes if c.id.startswith("unlock."))
+
 
 def history_ref(document_id: str, fact_id: str) -> str:
     """The id an earlier filing's fact takes on the page: `s1a2:unlock.02`."""
