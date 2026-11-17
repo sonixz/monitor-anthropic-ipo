@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 008a — Up to date, at a glance · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 008a — Up to date, at a glance</h1>
+<p class="lead">2026-11-17 · The header now says whether the page is up to date: the time of the SEC's last check and the filing the figures come from. Version 0.8.1.</p>
+<h2>Why</h2>
+<blockquote><p>Could we put at the top a "last checked", so we can see it's up to date? Right now you don't see it. You see it under filings, in the overview, but maybe we could put it in the header.</p></blockquote>
+<p><small>The owner's words, reworded in English.</small></p>
+<h2>What changed</h2>
+<div class="pair">
+  <figure><img src="img/loop-008a-live-phone.png" alt="The live page on a phone: under the notices, up to date, SEC checked 11:06 ET, figures: Amendment No. 3, Nov 17."><figcaption>The live page on a phone, after deployment.</figcaption></figure>
+  <figure><img src="img/loop-008a-desktop.png" alt="The header on a desktop with the up-to-date line."><figcaption>The header on a desktop (local, with a recorded SEC list).</figcaption></figure>
+</div>
+<ul>
+  <li><strong>Four states, never more than the source said:</strong> up to date (the SEC's list was read and holds no newer prospectus); a new filing, not read yet; the last check failed; the list is unavailable. Without a watch, the filing and its date only.</li>
+  <li><strong>A fresh time:</strong> the page is rendered again only when what it shows changes, so the time printed in it can be old. The page's script asks <code>/health</code> every minute for the time of the last check.</li>
+</ul>
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit tests, lint, types, secret scan</td><td>passed</td><td>139, four new: one per state.</td></tr>
+  <tr><td>Real-browser tests, local and against antipo.watch</td><td>passed</td><td>14 and 14; on a phone the enterprise value ends at 823 px of 844.</td></tr>
+  <tr><td>The script updates the time</td><td>passed</td><td>Against antipo.watch, with <code>/health</code> answering a check at 21:47 UTC, the header showed 16:47 ET.</td></tr>
+  <tr><td>The owner saw the screenshots before release</td><td>passed</td><td>"Yes, go!"</td></tr>
+</table>
+<p class="nav">Mission: <code>loops/008a-mission.md</code> · Report: <code>loops/008a-report.json</code></p>
+</main>
+</body>
+</html>
