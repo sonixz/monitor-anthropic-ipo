@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.8.1] - 2026-11-17
+
+### Added
+
+- **Up to date, at a glance** (Loop 008a): a line in the header says "up to date", the time of
+  the SEC's last check and the filing the figures come from. It says "up to date" only when the
+  SEC's list was read and holds no newer prospectus; otherwise it names the new filing ("not read
+  yet"), a failed check, or an unavailable list. The page's script asks `/health` every minute
+  for the time of the last check, since the page is rendered again only when what it shows
+  changes.
+
 ## [0.8.0] - 2026-11-17
 
 ### Added

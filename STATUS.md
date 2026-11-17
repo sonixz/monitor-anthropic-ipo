@@ -1,13 +1,13 @@
 # STATUS · monitor-anthropic-ipo
 
-> Where the project stands, verified. Last reviewed: 2026-11-17 · loop-008 (Amendment No. 3, versions)
+> Where the project stands, verified. Last reviewed: 2026-11-17 · loop-008a (up to date in the header)
 
 ## Live
 
 | | |
 | --- | --- |
 | Site | https://antipo.watch (Cloudflare, Worker relaying to Fly.io, since 2026-11-17; the Fly.io address stays as a fallback, see INFRASTRUCTURE.md) |
-| Version | 0.8.0 (tag `v0.8.0`), under the name Anthropic IPO Watch |
+| Version | 0.8.1 (tag `v0.8.1`), under the name Anthropic IPO Watch |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 3, filed 2026-11-17 (Amendment No. 2 kept in history; the HISTORY panel lists what changed) |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |
@@ -25,7 +25,7 @@
 - The filings watch on test data: the list of filings, the notice of a newer prospectus, the final price read from a cover and refused in eight cases (another form, a preliminary cover, a blank price, a wrong total, and so on). The contact address appears in no log and on no page (tested).
 - 159 consistency checks pass at every rendering; the service refuses to start if one fails.
 - Keyboard navigation (one key per panel, arrows inside a chart), no JavaScript needed for the core, no serious accessibility issue (axe), on desktop and phone.
-- CI on GitHub: format, lint, strict types, 135 unit tests, 14 real-browser tests, secret scan, CodeQL: green on the released commit.
+- CI on GitHub: format, lint, strict types, 139 unit tests, 14 real-browser tests, secret scan, CodeQL: green on the released commit.
 - Deploy and rollback on the machine: eight deployments on 2026-11-16 and 17, each healthy within seconds.
 - **Seen by the owner on a phone** (2026-11-16, version 0.4.2): asked to find what the company is worth, what it owes and how fast it grows, to check that nothing scrolls sideways and to open a source card, they reported that everything looked fine and made no remark. No time was recorded.
 
