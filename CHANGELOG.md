@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.8.2] - 2026-11-17
+
+### Fixed
+
+- When the final prospectus is filed and its price is read from the cover, the header says
+  "final price read" instead of "new filing · not read yet" (found on review before pricing).
+
 ## [0.8.1] - 2026-11-17
 
 ### Added

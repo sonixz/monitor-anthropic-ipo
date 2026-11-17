@@ -412,6 +412,9 @@ def test_the_final_price_switches_the_page(facts: Facts) -> None:
     html = page.html
     assert "new filing" in html
     assert "its price is used on this page" in html
+    header = html[html.index('<p class="uptodate">') : html.index("</header>")]
+    assert "final price read" in header  # the header says what was read, not "not read yet"
+    assert "not read yet" not in header
     assert "priced at" in html
     assert "priced at" not in before.html
     assert page.checks == before.checks  # every consistency check still passes
@@ -433,6 +436,9 @@ def test_the_final_price_switches_the_page(facts: Facts) -> None:
     html = render_page(facts, release="test", filings=unread).html
     assert "new filing" in html
     assert "its figures are not read by this page yet" in html
+    header = html[html.index('<p class="uptodate">') : html.index("</header>")]
+    assert "not read yet" in header
+    assert "up to date" not in header
     assert "the price on the cover of the final prospectus was not taken" in html
     assert "priced at" not in html
 

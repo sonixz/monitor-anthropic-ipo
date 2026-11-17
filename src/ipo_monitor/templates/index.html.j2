@@ -53,6 +53,8 @@
       figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
     {%- elif not filings.filings -%}
       <span class="wait">SEC list unavailable</span> · figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
+    {%- elif newer and filings.price and filings.prospectus == newer -%}
+      <span class="ok">● final price read</span> from {{ L(newer.name) }}, {{ L(day(newer.filed, "short")) }} · other figures: {{ L(short_title) }}
     {%- elif newer -%}
       <span class="live">new filing</span> {{ L(newer.name) }}, {{ L(day(newer.filed, "short")) }} · not read yet
     {%- elif filings.state == "unavailable" -%}
