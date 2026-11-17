@@ -71,12 +71,18 @@ class MissingFactError(KeyError):
 class Facts:
     """All loaded facts, by id."""
 
-    def __init__(self, files: list[FactFile]) -> None:
+    def __init__(self, files: list[FactFile], history: tuple[FactFile, ...] = ()) -> None:
         self._by_id: dict[str, Fact] = {}
         self.documents: dict[str, Document] = {}
         self._doc_of: dict[str, str] = {}
+        # Earlier filings, oldest first: kept to show what changed, never read for a figure.
+        self.history = tuple(sorted(history, key=lambda f: f.document.filed if f.document else ""))
+        self._filing: str | None = None
         for file in files:
             if file.document is not None:
+                if self._filing is not None:
+                    raise ValueError("two filings in the current facts: move the older to history/")
+                self._filing = file.document.id
                 self.documents[file.document.id] = file.document
             for fact in file.facts:
                 if fact.id in self._by_id:
@@ -87,10 +93,22 @@ class Facts:
 
     @classmethod
     def load(cls, directory: Path) -> Facts:
+        """The facts in `directory`, and earlier filings in `directory/history/`."""
         paths = sorted(directory.glob("*.json"))
         if not paths:
             raise FileNotFoundError(f"no fact files in {directory}")
-        return cls([FactFile.model_validate(json.loads(p.read_text("utf-8"))) for p in paths])
+        history = tuple(_read(p) for p in sorted((directory / "history").glob("*.json")))
+        for old in history:
+            if old.document is None:
+                raise ValueError("a file in history/ must be a filing")
+        return cls([_read(p) for p in paths], history)
+
+    @property
+    def filing(self) -> Document:
+        """The filing the page's FILED figures come from."""
+        if self._filing is None:
+            raise MissingFactError("no filing among the facts")
+        return self.documents[self._filing]
 
     def plus(
         self, extra: list[Fact], document: Document | None = None, *, replacing: bool = False
@@ -100,7 +118,8 @@ class Facts:
         `document` is the filing the extra facts were read from. `replacing` lets them take the
         place of facts with the same id: a filed price replaces one recorded from the press.
         """
-        both = Facts([])
+        both = Facts([], self.history)
+        both._filing = self._filing
         both._by_id = dict(self._by_id)
         both.documents = dict(self.documents)
         both._doc_of = dict(self._doc_of)
@@ -144,3 +163,7 @@ class Facts:
 
     def ids(self) -> list[str]:
         return list(self._by_id)
+
+
+def _read(path: Path) -> FactFile:
+    return FactFile.model_validate(json.loads(path.read_text("utf-8")))

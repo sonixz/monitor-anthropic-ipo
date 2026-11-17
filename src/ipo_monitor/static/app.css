@@ -1870,3 +1870,15 @@ span.fg-blank {
     grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
   }
 }
+
+/* ---- Loop 008: what changed from one filing to the next ------------------- */
+
+.changes .when {
+  display: block;
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.changes td {
+  white-space: nowrap;
+}

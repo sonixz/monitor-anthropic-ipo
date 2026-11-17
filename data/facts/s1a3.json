@@ -1,25 +1,25 @@
 {
  "document": {
-  "id": "s1a2",
+  "id": "s1a3",
   "company": "Anthropic, PBC",
   "form": "S-1/A",
-  "title": "Form S-1/A, Amendment No. 2",
-  "accession": "0001628280-26-072484",
-  "filed": "2026-11-10",
-  "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026072484/anthropicpbc-sx1ax2.htm",
-  "source_sha256": "671037fdf9e494ff9cd50fa1c7c20e4ef9b69abcf8946d90b01deca8708e1dc0"
+  "title": "Form S-1/A, Amendment No. 3",
+  "accession": "0001628280-26-074338",
+  "filed": "2026-11-17",
+  "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026074338/anthropicpbc-sx1ax3.htm",
+  "source_sha256": "05a3044a60fce252104f354d00eb87b2c40768b5bec6f0e4e1f61fd6e71850c5"
  },
  "facts": [
   {
    "id": "doc.filed_date",
    "title": "Date this amendment was filed",
    "label": "FILED",
-   "value": "2026-11-10",
+   "value": "2026-11-17",
    "unit": "date",
-   "as_filed": "November 10, 2026",
+   "as_filed": "November 17, 2026",
    "section": "Registration statement cover",
    "page": "sheet 1",
-   "quote": "As filed with the Securities and Exchange Commission on November 10, 2026."
+   "quote": "As filed with the Securities and Exchange Commission on November 17, 2026."
   },
   {
    "id": "offering.price_low",
@@ -44,15 +44,26 @@
    "quote": "It is currently estimated that the initial public offering price per share will be between $70.00 and $78.00."
   },
   {
+   "id": "offering.listing",
+   "title": "Listing on the exchange",
+   "label": "FILED",
+   "value": "approved",
+   "unit": "text",
+   "as_filed": "have been approved to list",
+   "section": "Prospectus cover",
+   "page": "sheet 2",
+   "quote": "We have been approved to list our Class A common stock on the Nasdaq Global Select Market under the symbol “ANT.” We have a novel capital and corporate governance structure."
+  },
+  {
    "id": "offering.exchange",
-   "title": "Exchange applied to",
+   "title": "Exchange",
    "label": "FILED",
    "value": "Nasdaq Global Select Market",
    "unit": "text",
    "as_filed": "Nasdaq Global Select Market",
    "section": "Prospectus cover",
    "page": "sheet 2",
-   "quote": "We have applied to list our Class A common stock on the Nasdaq Global Select Market under the symbol “ANT.” We have a novel capital and corporate governance structure."
+   "quote": "We have been approved to list our Class A common stock on the Nasdaq Global Select Market under the symbol “ANT.” We have a novel capital and corporate governance structure."
   },
   {
    "id": "offering.symbol",
@@ -63,7 +74,7 @@
    "as_filed": "ANT",
    "section": "Prospectus cover",
    "page": "sheet 2",
-   "quote": "We have applied to list our Class A common stock on the Nasdaq Global Select Market under the symbol “ANT.” We have a novel capital and corporate governance structure."
+   "quote": "We have been approved to list our Class A common stock on the Nasdaq Global Select Market under the symbol “ANT.” We have a novel capital and corporate governance structure."
   },
   {
    "id": "offering.shares_company",
@@ -189,7 +200,7 @@
    "as_filed": "1,774,342,693 shares",
    "period": "As of Sep 30, 2026",
    "section": "Prospectus Summary — The Offering (shares not counted as outstanding)",
-   "page": "22",
+   "page": "23",
    "quote": "1,774,342,693 shares of our Class A common stock issuable upon the exercise of options to purchase shares of our Class A common stock outstanding as of September 30, 2026, with a weighted-average exercise price of $2.91 per share;"
   },
   {
@@ -201,7 +212,7 @@
    "as_filed": "$2.91",
    "period": "As of Sep 30, 2026",
    "section": "Prospectus Summary — The Offering (shares not counted as outstanding)",
-   "page": "22",
+   "page": "23",
    "quote": "1,774,342,693 shares of our Class A common stock issuable upon the exercise of options to purchase shares of our Class A common stock outstanding as of September 30, 2026, with a weighted-average exercise price of $2.91 per share;"
   },
   {
@@ -213,7 +224,7 @@
    "as_filed": "1,026,660,010 shares",
    "period": "As of Sep 30, 2026",
    "section": "Prospectus Summary — The Offering (shares not counted as outstanding)",
-   "page": "22",
+   "page": "23",
    "quote": "1,026,660,010 shares of our Class A common stock issuable upon the vesting and settlement of RSUs outstanding as of September 30, 2026, but for which (i) the service-based vesting condition will not be satisfied as of November 19, 2026 and (ii) the performance-based vesting condition, if applicable, will be satisfied upon the effectiveness of the registration statement of which this prospectus forms a part;"
   },
   {
@@ -224,7 +235,7 @@
    "unit": "shares",
    "as_filed": "47,041,287 shares",
    "section": "Prospectus Summary — The Offering (shares not counted as outstanding)",
-   "page": "22",
+   "page": "23",
    "quote": "47,041,287 shares of our Class A common stock issuable upon the vesting and settlement of RSUs granted after September 30, 2026;"
   },
   {
@@ -258,7 +269,7 @@
    "as_filed": "1,920,580,692 shares",
    "section": "Prospectus Summary — The Offering (shares not counted as outstanding)",
    "page": "23",
-   "quote": "•shares of our Class A common stock to be reserved for future issuance under our 2026 Equity Incentive Plan (our “2026 Plan”), which will become effective prior to the completion of this offering, and include: (i) 1,920,580,692 shares of our Class A common stock; (ii) the number of shares of our Class A common stock equal to the total shares of Class A common stock available for issuance pursuant to our Amended and Restated 2021 Stock Plan (our “2021 Plan”) immediately …"
+   "quote": "•1,920,580,692 shares of our Class A common stock to be reserved for future issuance under our 2026 Equity Incentive Plan (our “2026 Plan”), which will become effective prior to the completion of this offering, plus up to 3,401,163,438 additional shares of our Class A common stock, with the actual number of additional shares …"
   },
   {
    "id": "shares.espp_reserve",
@@ -303,8 +314,8 @@
    "as_filed": "51,578,975 shares",
    "period": "At the assumed $74.00 price",
    "section": "Prospectus Summary — The Offering (shares not counted as outstanding)",
-   "page": "22",
-   "quote": "… as of November 19, 2026 and the performance-based vesting condition will be satisfied upon the effectiveness of the registration statement of which this prospectus forms a part, after giving effect to the withholding of 51,578,975 shares of Class A common stock subject to such RSUs to satisfy the associated estimated tax withholding and remittance obligations (based upon the assumed initial public offering price of $74.00 per share, which is the midpoint of the estimated offering price range set forth on the cover page of this …"
+   "page": "23",
+   "quote": "registration statement of which this prospectus forms a part, after giving effect to the withholding of 51,578,975 shares of Class A common stock subject to such RSUs to satisfy the associated estimated tax withholding and remittance obligations (based upon the assumed initial public offering price of $74.00 per share, which is the midpoint of the estimated offering price range set forth on the cover page of this …"
   },
   {
    "id": "notes.shares_converted_at_ipo",
@@ -325,7 +336,7 @@
    "unit": "shares",
    "as_filed": "1,563,617,444 shares",
    "section": "Convertible notes held by Amazon",
-   "page": "120",
+   "page": "121",
    "quote": "An aggregate of an additional 1,563,617,444 shares of Class N common stock will be issuable after this offering upon conversion of remaining outstanding convertible promissory notes, all of which are held by Amazon, that cannot convert immediately prior to the completion of this offering without exceeding the applicable ownership cap."
   },
   {
@@ -338,7 +349,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026",
    "section": "Convertible notes held by Amazon",
-   "page": "172",
+   "page": "173",
    "quote": "Total | $6,203 | 1,840,444,962",
    "context": "Counterparty | Agreement | Principal Amount Outstanding (in millions) | Conversion Price Per Share(1) | Class N Shares Issuable on Conversion(2)"
   },
@@ -351,7 +362,7 @@
    "as_filed": "1,840,444,962 shares",
    "period": "As of Sep 30, 2026",
    "section": "Convertible notes held by Amazon",
-   "page": "172",
+   "page": "173",
    "quote": "Total | $6,203 | 1,840,444,962",
    "context": "Counterparty | Agreement | Principal Amount Outstanding (in millions) | Conversion Price Per Share(1) | Class N Shares Issuable on Conversion(2)"
   },
@@ -364,7 +375,7 @@
    "as_filed": "351,351,348 shares",
    "period": "At the assumed $74.00 price",
    "section": "Summary consolidated financial data — notes",
-   "page": "28",
+   "page": "29",
    "quote": "… the estimated offering price range set forth on the cover page of this prospectus, and after deducting estimated underwriting discounts and commissions and estimated offering expenses payable by us, (iii) the sale and issuance by us of 351,351,348 shares of our Class N common stock in the concurrent private placement at an assumed price of $74.00 per share, which is the midpoint of the estimated offering price range set forth on the cover page of this prospectus, and (iv) the use of net proceeds from this offering and the …"
   },
   {
@@ -377,7 +388,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, actual",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Cash, cash equivalents, and short-term investments | $131,845 | $131,845 | $212,684",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -391,7 +402,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Cash, cash equivalents, and short-term investments | $131,845 | $131,845 | $212,684",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -405,7 +416,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma as adjusted for the offering at $74.00",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Cash, cash equivalents, and short-term investments | $131,845 | $131,845 | $212,684",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -419,7 +430,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, actual",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Total liabilities | $146,683 | $130,871 | $127,044",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -433,7 +444,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Total liabilities | $146,683 | $130,871 | $127,044",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -447,7 +458,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma as adjusted for the offering at $74.00",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Total liabilities | $146,683 | $130,871 | $127,044",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -461,7 +472,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, actual",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Accumulated deficit | $(156,193) | $(171,281) | $(171,281)",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -475,7 +486,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Accumulated deficit | $(156,193) | $(171,281) | $(171,281)",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -489,7 +500,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma as adjusted for the offering at $74.00",
    "section": "Summary consolidated financial data — balance sheet",
-   "page": "27",
+   "page": "28",
    "quote": "Accumulated deficit | $(156,193) | $(171,281) | $(171,281)",
    "context": "(in millions) | Actual | Pro Forma(1) | Pro Forma As Adjusted(2)(3)"
   },
@@ -503,7 +514,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, actual",
    "section": "Capitalization",
-   "page": "130",
+   "page": "131",
    "quote": "Convertible notes payable | $130,502 | $110,873 | $110,873",
    "context": "Actual | ProForma(1) | ProForma AsAdjusted(2)"
   },
@@ -517,7 +528,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma",
    "section": "Capitalization",
-   "page": "130",
+   "page": "131",
    "quote": "Convertible notes payable | $130,502 | $110,873 | $110,873",
    "context": "Actual | ProForma(1) | ProForma AsAdjusted(2)"
   },
@@ -531,7 +542,7 @@
    "scale": "in millions",
    "period": "As of Sep 30, 2026, pro forma as adjusted for the offering at $74.00",
    "section": "Capitalization",
-   "page": "130",
+   "page": "131",
    "quote": "Convertible notes payable | $130,502 | $110,873 | $110,873",
    "context": "Actual | ProForma(1) | ProForma AsAdjusted(2)"
   },
@@ -543,7 +554,7 @@
    "unit": "USD",
    "as_filed": "$793 million",
    "section": "Summary consolidated financial data — notes",
-   "page": "28",
+   "page": "29",
    "quote": "(3)Each $1.00 increase or decrease in the assumed initial public offering price would increase or decrease each of cash, cash equivalents, and short-term investments; working capital; total assets; additional paid-in capital; and total stockholders’ equity (deficit) by $793 million, assuming the number of shares offered by us as stated on the cover page of this prospectus remains unchanged, that the aggregate purchase price in the concurrent private placement remains unchanged (such …"
   },
   {
@@ -591,7 +602,7 @@
    "as_filed": "no borrowings drawn",
    "period": "As of Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Credit facility",
-   "page": "170",
+   "page": "171",
    "quote": "As of September 30, 2026, we had no borrowings drawn under the A&R Credit Facility and $205 million of standby letters of credit outstanding."
   },
   {
@@ -603,7 +614,7 @@
    "as_filed": "$156.2 billion",
    "period": "As of Sep 30, 2026",
    "section": "Liquidity and Capital Resources",
-   "page": "168",
+   "page": "169",
    "quote": "We have generated losses from our operations, as reflected in our accumulated deficit of $156.2 billion, which includes $135.1 billion related to changes in the fair value of our convertible notes driven by increases in our enterprise valuation and derivative liabilities since 2023, including $94.3 billion during the nine months ended September 30, 2026."
   },
   {
@@ -615,7 +626,7 @@
    "as_filed": "$135.1 billion",
    "period": "Since 2023",
    "section": "Liquidity and Capital Resources",
-   "page": "168",
+   "page": "169",
    "quote": "We have generated losses from our operations, as reflected in our accumulated deficit of $156.2 billion, which includes $135.1 billion related to changes in the fair value of our convertible notes driven by increases in our enterprise valuation and derivative liabilities since 2023, including $94.3 billion during the nine months ended September 30, 2026."
   },
   {
@@ -627,7 +638,7 @@
    "as_filed": "$94.3 billion",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Liquidity and Capital Resources",
-   "page": "168",
+   "page": "169",
    "quote": "We have generated losses from our operations, as reflected in our accumulated deficit of $156.2 billion, which includes $135.1 billion related to changes in the fair value of our convertible notes driven by increases in our enterprise valuation and derivative liabilities since 2023, including $94.3 billion during the nine months ended September 30, 2026."
   },
   {
@@ -640,7 +651,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Revenue | $41 | $386 | $4,585 | $2,545 | $33,242",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -654,7 +665,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Revenue | $41 | $386 | $4,585 | $2,545 | $33,242",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -668,7 +679,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Revenue | $41 | $386 | $4,585 | $2,545 | $33,242",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -682,7 +693,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Revenue | $41 | $386 | $4,585 | $2,545 | $33,242",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -696,7 +707,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Revenue | $41 | $386 | $4,585 | $2,545 | $33,242",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -710,7 +721,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Compute and infrastructure | 433 | 2,522 | 7,326 | 4,381 | 18,808",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -724,7 +735,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Compute and infrastructure | 433 | 2,522 | 7,326 | 4,381 | 18,808",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -738,7 +749,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Compute and infrastructure | 433 | 2,522 | 7,326 | 4,381 | 18,808",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -752,7 +763,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Compute and infrastructure | 433 | 2,522 | 7,326 | 4,381 | 18,808",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -766,7 +777,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Compute and infrastructure | 433 | 2,522 | 7,326 | 4,381 | 18,808",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -780,7 +791,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Personnel(1) | 95 | 454 | 1,839 | 1,027 | 4,863",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -794,7 +805,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Personnel(1) | 95 | 454 | 1,839 | 1,027 | 4,863",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -808,7 +819,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Personnel(1) | 95 | 454 | 1,839 | 1,027 | 4,863",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -822,7 +833,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Personnel(1) | 95 | 454 | 1,839 | 1,027 | 4,863",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -836,7 +847,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Personnel(1) | 95 | 454 | 1,839 | 1,027 | 4,863",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -850,7 +861,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Bartz settlement | — | — | 1,500 | 1,500 | —",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -864,7 +875,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Bartz settlement | — | — | 1,500 | 1,500 | —",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -878,7 +889,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Bartz settlement | — | — | 1,500 | 1,500 | —",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -892,7 +903,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Bartz settlement | — | — | 1,500 | 1,500 | —",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -906,7 +917,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Bartz settlement | — | — | 1,500 | 1,500 | —",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -920,7 +931,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Sales, marketing, and partnerships | 2 | 43 | 568 | 322 | 5,529",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -934,7 +945,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Sales, marketing, and partnerships | 2 | 43 | 568 | 322 | 5,529",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -948,7 +959,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Sales, marketing, and partnerships | 2 | 43 | 568 | 322 | 5,529",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -962,7 +973,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Sales, marketing, and partnerships | 2 | 43 | 568 | 322 | 5,529",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -976,7 +987,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Sales, marketing, and partnerships | 2 | 43 | 568 | 322 | 5,529",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -990,7 +1001,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other operating and administrative | 62 | 347 | 1,412 | 539 | 5,302",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1004,7 +1015,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other operating and administrative | 62 | 347 | 1,412 | 539 | 5,302",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1018,7 +1029,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other operating and administrative | 62 | 347 | 1,412 | 539 | 5,302",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1032,7 +1043,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other operating and administrative | 62 | 347 | 1,412 | 539 | 5,302",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1046,7 +1057,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other operating and administrative | 62 | 347 | 1,412 | 539 | 5,302",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1060,7 +1071,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total operating expenses | 592 | 3,366 | 12,645 | 7,769 | 34,502",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1074,7 +1085,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total operating expenses | 592 | 3,366 | 12,645 | 7,769 | 34,502",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1088,7 +1099,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total operating expenses | 592 | 3,366 | 12,645 | 7,769 | 34,502",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1102,7 +1113,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total operating expenses | 592 | 3,366 | 12,645 | 7,769 | 34,502",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1116,7 +1127,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total operating expenses | 592 | 3,366 | 12,645 | 7,769 | 34,502",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1130,7 +1141,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Operating loss | (551) | (2,980) | (8,060) | (5,224) | (1,260)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1144,7 +1155,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Operating loss | (551) | (2,980) | (8,060) | (5,224) | (1,260)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1158,7 +1169,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Operating loss | (551) | (2,980) | (8,060) | (5,224) | (1,260)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1172,7 +1183,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Operating loss | (551) | (2,980) | (8,060) | (5,224) | (1,260)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1186,7 +1197,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Operating loss | (551) | (2,980) | (8,060) | (5,224) | (1,260)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1200,7 +1211,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Interest income | 69 | 106 | 431 | 239 | 2,359",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1214,7 +1225,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Interest income | 69 | 106 | 431 | 239 | 2,359",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1228,7 +1239,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Interest income | 69 | 106 | 431 | 239 | 2,359",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1242,7 +1253,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Interest income | 69 | 106 | 431 | 239 | 2,359",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1256,7 +1267,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Interest income | 69 | 106 | 431 | 239 | 2,359",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1270,7 +1281,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (1,045) | (5,434) | (34,308) | (20,107) | (94,324)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1284,7 +1295,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (1,045) | (5,434) | (34,308) | (20,107) | (94,324)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1298,7 +1309,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (1,045) | (5,434) | (34,308) | (20,107) | (94,324)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1312,7 +1323,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (1,045) | (5,434) | (34,308) | (20,107) | (94,324)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1326,7 +1337,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (1,045) | (5,434) | (34,308) | (20,107) | (94,324)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1340,7 +1351,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other income (expense), net | (2) | — | (8) | (3) | (10,397)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1354,7 +1365,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other income (expense), net | (2) | — | (8) | (3) | (10,397)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1368,7 +1379,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other income (expense), net | (2) | — | (8) | (3) | (10,397)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1382,7 +1393,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other income (expense), net | (2) | — | (8) | (3) | (10,397)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1396,7 +1407,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Other income (expense), net | (2) | — | (8) | (3) | (10,397)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1410,7 +1421,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total other income (expense), net | (978) | (5,328) | (33,885) | (19,871) | (102,362)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1424,7 +1435,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total other income (expense), net | (978) | (5,328) | (33,885) | (19,871) | (102,362)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1438,7 +1449,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total other income (expense), net | (978) | (5,328) | (33,885) | (19,871) | (102,362)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1452,7 +1463,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total other income (expense), net | (978) | (5,328) | (33,885) | (19,871) | (102,362)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1466,7 +1477,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Total other income (expense), net | (978) | (5,328) | (33,885) | (19,871) | (102,362)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1480,7 +1491,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Loss before provision for income taxes | (1,529) | (8,308) | (41,945) | (25,095) | (103,622)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1494,7 +1505,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Loss before provision for income taxes | (1,529) | (8,308) | (41,945) | (25,095) | (103,622)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1508,7 +1519,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Loss before provision for income taxes | (1,529) | (8,308) | (41,945) | (25,095) | (103,622)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1522,7 +1533,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Loss before provision for income taxes | (1,529) | (8,308) | (41,945) | (25,095) | (103,622)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1536,7 +1547,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Loss before provision for income taxes | (1,529) | (8,308) | (41,945) | (25,095) | (103,622)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1550,7 +1561,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Provision for income taxes | 2 | 1 | 20 | 12 | 417",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1564,7 +1575,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Provision for income taxes | 2 | 1 | 20 | 12 | 417",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1578,7 +1589,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Provision for income taxes | 2 | 1 | 20 | 12 | 417",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1592,7 +1603,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Provision for income taxes | 2 | 1 | 20 | 12 | 417",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1606,7 +1617,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Provision for income taxes | 2 | 1 | 20 | 12 | 417",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1620,7 +1631,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2023",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Net loss(2) | $(1,531) | $(8,309) | $(41,965) | $(25,107) | $(104,039)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1634,7 +1645,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2024",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Net loss(2) | $(1,531) | $(8,309) | $(41,965) | $(25,107) | $(104,039)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1648,7 +1659,7 @@
    "scale": "in millions",
    "period": "Year ended Dec 31, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Net loss(2) | $(1,531) | $(8,309) | $(41,965) | $(25,107) | $(104,039)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1662,7 +1673,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2025",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Net loss(2) | $(1,531) | $(8,309) | $(41,965) | $(25,107) | $(104,039)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1676,7 +1687,7 @@
    "scale": "in millions",
    "period": "Nine months ended Sep 30, 2026",
    "section": "Summary consolidated financial data — statements of operations",
-   "page": "26",
+   "page": "27",
    "quote": "Net loss(2) | $(1,531) | $(8,309) | $(41,965) | $(25,107) | $(104,039)",
    "context": "(in millions, except share and per share amounts) | 2023 | 2024 | 2025 | 2025 | 2026"
   },
@@ -1690,7 +1701,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Revenue | $376 | $787 | $1,382 | $2,040 | $4,731 | $11,555 | $16,956",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1704,7 +1715,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Revenue | $376 | $787 | $1,382 | $2,040 | $4,731 | $11,555 | $16,956",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1718,7 +1729,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Revenue | $376 | $787 | $1,382 | $2,040 | $4,731 | $11,555 | $16,956",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1732,7 +1743,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Revenue | $376 | $787 | $1,382 | $2,040 | $4,731 | $11,555 | $16,956",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1746,7 +1757,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Revenue | $376 | $787 | $1,382 | $2,040 | $4,731 | $11,555 | $16,956",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1760,7 +1771,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Revenue | $376 | $787 | $1,382 | $2,040 | $4,731 | $11,555 | $16,956",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1774,7 +1785,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Revenue | $376 | $787 | $1,382 | $2,040 | $4,731 | $11,555 | $16,956",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1788,7 +1799,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Compute and infrastructure | 944 | 1,390 | 2,047 | 2,945 | 3,387 | 5,558 | 9,863",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1802,7 +1813,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Compute and infrastructure | 944 | 1,390 | 2,047 | 2,945 | 3,387 | 5,558 | 9,863",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1816,7 +1827,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Compute and infrastructure | 944 | 1,390 | 2,047 | 2,945 | 3,387 | 5,558 | 9,863",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1830,7 +1841,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Compute and infrastructure | 944 | 1,390 | 2,047 | 2,945 | 3,387 | 5,558 | 9,863",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1844,7 +1855,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Compute and infrastructure | 944 | 1,390 | 2,047 | 2,945 | 3,387 | 5,558 | 9,863",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1858,7 +1869,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Compute and infrastructure | 944 | 1,390 | 2,047 | 2,945 | 3,387 | 5,558 | 9,863",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1872,7 +1883,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Compute and infrastructure | 944 | 1,390 | 2,047 | 2,945 | 3,387 | 5,558 | 9,863",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1886,7 +1897,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Personnel(1) | 218 | 320 | 489 | 812 | 1,295 | 1,857 | 1,711",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1900,7 +1911,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Personnel(1) | 218 | 320 | 489 | 812 | 1,295 | 1,857 | 1,711",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1914,7 +1925,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Personnel(1) | 218 | 320 | 489 | 812 | 1,295 | 1,857 | 1,711",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1928,7 +1939,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Personnel(1) | 218 | 320 | 489 | 812 | 1,295 | 1,857 | 1,711",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1942,7 +1953,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Personnel(1) | 218 | 320 | 489 | 812 | 1,295 | 1,857 | 1,711",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1956,7 +1967,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Personnel(1) | 218 | 320 | 489 | 812 | 1,295 | 1,857 | 1,711",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1970,7 +1981,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Personnel(1) | 218 | 320 | 489 | 812 | 1,295 | 1,857 | 1,711",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1984,7 +1995,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Bartz settlement | — | — | 1,500 | — | — | — | —",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -1998,7 +2009,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Bartz settlement | — | — | 1,500 | — | — | — | —",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2012,7 +2023,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Bartz settlement | — | — | 1,500 | — | — | — | —",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2026,7 +2037,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Bartz settlement | — | — | 1,500 | — | — | — | —",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2040,7 +2051,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Bartz settlement | — | — | 1,500 | — | — | — | —",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2054,7 +2065,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Bartz settlement | — | — | 1,500 | — | — | — | —",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2068,7 +2079,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Bartz settlement | — | — | 1,500 | — | — | — | —",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2082,7 +2093,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Sales, marketing, and partnerships | 24 | 96 | 202 | 246 | 1,033 | 2,135 | 2,361",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2096,7 +2107,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Sales, marketing, and partnerships | 24 | 96 | 202 | 246 | 1,033 | 2,135 | 2,361",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2110,7 +2121,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Sales, marketing, and partnerships | 24 | 96 | 202 | 246 | 1,033 | 2,135 | 2,361",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2124,7 +2135,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Sales, marketing, and partnerships | 24 | 96 | 202 | 246 | 1,033 | 2,135 | 2,361",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2138,7 +2149,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Sales, marketing, and partnerships | 24 | 96 | 202 | 246 | 1,033 | 2,135 | 2,361",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2152,7 +2163,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Sales, marketing, and partnerships | 24 | 96 | 202 | 246 | 1,033 | 2,135 | 2,361",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2166,7 +2177,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Sales, marketing, and partnerships | 24 | 96 | 202 | 246 | 1,033 | 2,135 | 2,361",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2180,7 +2191,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other operating and administrative | 125 | 181 | 233 | 873 | 683 | 1,031 | 3,588",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2194,7 +2205,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other operating and administrative | 125 | 181 | 233 | 873 | 683 | 1,031 | 3,588",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2208,7 +2219,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other operating and administrative | 125 | 181 | 233 | 873 | 683 | 1,031 | 3,588",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2222,7 +2233,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other operating and administrative | 125 | 181 | 233 | 873 | 683 | 1,031 | 3,588",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2236,7 +2247,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other operating and administrative | 125 | 181 | 233 | 873 | 683 | 1,031 | 3,588",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2250,7 +2261,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other operating and administrative | 125 | 181 | 233 | 873 | 683 | 1,031 | 3,588",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2264,7 +2275,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other operating and administrative | 125 | 181 | 233 | 873 | 683 | 1,031 | 3,588",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2278,7 +2289,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total operating expenses | 1,311 | 1,987 | 4,471 | 4,876 | 6,398 | 10,581 | 17,523",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2292,7 +2303,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total operating expenses | 1,311 | 1,987 | 4,471 | 4,876 | 6,398 | 10,581 | 17,523",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2306,7 +2317,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total operating expenses | 1,311 | 1,987 | 4,471 | 4,876 | 6,398 | 10,581 | 17,523",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2320,7 +2331,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total operating expenses | 1,311 | 1,987 | 4,471 | 4,876 | 6,398 | 10,581 | 17,523",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2334,7 +2345,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total operating expenses | 1,311 | 1,987 | 4,471 | 4,876 | 6,398 | 10,581 | 17,523",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2348,7 +2359,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total operating expenses | 1,311 | 1,987 | 4,471 | 4,876 | 6,398 | 10,581 | 17,523",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2362,7 +2373,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total operating expenses | 1,311 | 1,987 | 4,471 | 4,876 | 6,398 | 10,581 | 17,523",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2376,7 +2387,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Operating income (loss) | (935) | (1,200) | (3,089) | (2,836) | (1,667) | 974 | (567)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2390,7 +2401,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Operating income (loss) | (935) | (1,200) | (3,089) | (2,836) | (1,667) | 974 | (567)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2404,7 +2415,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Operating income (loss) | (935) | (1,200) | (3,089) | (2,836) | (1,667) | 974 | (567)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2418,7 +2429,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Operating income (loss) | (935) | (1,200) | (3,089) | (2,836) | (1,667) | 974 | (567)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2432,7 +2443,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Operating income (loss) | (935) | (1,200) | (3,089) | (2,836) | (1,667) | 974 | (567)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2446,7 +2457,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Operating income (loss) | (935) | (1,200) | (3,089) | (2,836) | (1,667) | 974 | (567)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2460,7 +2471,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Operating income (loss) | (935) | (1,200) | (3,089) | (2,836) | (1,667) | 974 | (567)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2474,7 +2485,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Interest income | 51 | 64 | 124 | 192 | 349 | 762 | 1,248",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2488,7 +2499,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Interest income | 51 | 64 | 124 | 192 | 349 | 762 | 1,248",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2502,7 +2513,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Interest income | 51 | 64 | 124 | 192 | 349 | 762 | 1,248",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2516,7 +2527,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Interest income | 51 | 64 | 124 | 192 | 349 | 762 | 1,248",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2530,7 +2541,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Interest income | 51 | 64 | 124 | 192 | 349 | 762 | 1,248",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2544,7 +2555,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Interest income | 51 | 64 | 124 | 192 | 349 | 762 | 1,248",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2558,7 +2569,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Interest income | 51 | 64 | 124 | 192 | 349 | 762 | 1,248",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2572,7 +2583,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (5,701) | (5,241) | (9,165) | (14,201) | (12,791) | (59,597) | (21,936)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2586,7 +2597,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (5,701) | (5,241) | (9,165) | (14,201) | (12,791) | (59,597) | (21,936)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2600,7 +2611,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (5,701) | (5,241) | (9,165) | (14,201) | (12,791) | (59,597) | (21,936)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2614,7 +2625,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (5,701) | (5,241) | (9,165) | (14,201) | (12,791) | (59,597) | (21,936)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2628,7 +2639,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (5,701) | (5,241) | (9,165) | (14,201) | (12,791) | (59,597) | (21,936)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2642,7 +2653,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (5,701) | (5,241) | (9,165) | (14,201) | (12,791) | (59,597) | (21,936)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2656,7 +2667,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Change in fair value of convertible notes, derivative liabilities, and SAFEs | (5,701) | (5,241) | (9,165) | (14,201) | (12,791) | (59,597) | (21,936)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2670,7 +2681,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other income (expense), net | — | — | (3) | (5) | (309) | (8,448) | (1,640)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2684,7 +2695,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other income (expense), net | — | — | (3) | (5) | (309) | (8,448) | (1,640)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2698,7 +2709,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other income (expense), net | — | — | (3) | (5) | (309) | (8,448) | (1,640)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2712,7 +2723,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other income (expense), net | — | — | (3) | (5) | (309) | (8,448) | (1,640)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2726,7 +2737,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other income (expense), net | — | — | (3) | (5) | (309) | (8,448) | (1,640)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2740,7 +2751,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other income (expense), net | — | — | (3) | (5) | (309) | (8,448) | (1,640)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2754,7 +2765,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Other income (expense), net | — | — | (3) | (5) | (309) | (8,448) | (1,640)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2768,7 +2779,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total other income (expense), net | (5,650) | (5,177) | (9,044) | (14,014) | (12,751) | (67,283) | (22,328)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2782,7 +2793,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total other income (expense), net | (5,650) | (5,177) | (9,044) | (14,014) | (12,751) | (67,283) | (22,328)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2796,7 +2807,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total other income (expense), net | (5,650) | (5,177) | (9,044) | (14,014) | (12,751) | (67,283) | (22,328)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2810,7 +2821,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total other income (expense), net | (5,650) | (5,177) | (9,044) | (14,014) | (12,751) | (67,283) | (22,328)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2824,7 +2835,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total other income (expense), net | (5,650) | (5,177) | (9,044) | (14,014) | (12,751) | (67,283) | (22,328)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2838,7 +2849,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total other income (expense), net | (5,650) | (5,177) | (9,044) | (14,014) | (12,751) | (67,283) | (22,328)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2852,7 +2863,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Total other income (expense), net | (5,650) | (5,177) | (9,044) | (14,014) | (12,751) | (67,283) | (22,328)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2866,7 +2877,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Loss before provision for income taxes | (6,585) | (6,377) | (12,133) | (16,850) | (14,418) | (66,309) | (22,895)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2880,7 +2891,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Loss before provision for income taxes | (6,585) | (6,377) | (12,133) | (16,850) | (14,418) | (66,309) | (22,895)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2894,7 +2905,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Loss before provision for income taxes | (6,585) | (6,377) | (12,133) | (16,850) | (14,418) | (66,309) | (22,895)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2908,7 +2919,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Loss before provision for income taxes | (6,585) | (6,377) | (12,133) | (16,850) | (14,418) | (66,309) | (22,895)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2922,7 +2933,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Loss before provision for income taxes | (6,585) | (6,377) | (12,133) | (16,850) | (14,418) | (66,309) | (22,895)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2936,7 +2947,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Loss before provision for income taxes | (6,585) | (6,377) | (12,133) | (16,850) | (14,418) | (66,309) | (22,895)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2950,7 +2961,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Loss before provision for income taxes | (6,585) | (6,377) | (12,133) | (16,850) | (14,418) | (66,309) | (22,895)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2964,7 +2975,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Provision for income taxes | 7 | — | 5 | 8 | 21 | — | 396",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2978,7 +2989,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Provision for income taxes | 7 | — | 5 | 8 | 21 | — | 396",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -2992,7 +3003,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Provision for income taxes | 7 | — | 5 | 8 | 21 | — | 396",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3006,7 +3017,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Provision for income taxes | 7 | — | 5 | 8 | 21 | — | 396",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3020,7 +3031,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Provision for income taxes | 7 | — | 5 | 8 | 21 | — | 396",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3034,7 +3045,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Provision for income taxes | 7 | — | 5 | 8 | 21 | — | 396",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3048,7 +3059,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Provision for income taxes | 7 | — | 5 | 8 | 21 | — | 396",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3062,7 +3073,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Net loss | $(6,592) | $(6,377) | $(12,138) | $(16,858) | $(14,439) | $(66,309) | $(23,291)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3076,7 +3087,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Net loss | $(6,592) | $(6,377) | $(12,138) | $(16,858) | $(14,439) | $(66,309) | $(23,291)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3090,7 +3101,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Net loss | $(6,592) | $(6,377) | $(12,138) | $(16,858) | $(14,439) | $(66,309) | $(23,291)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3104,7 +3115,7 @@
    "scale": "in millions",
    "period": "Three months ended Dec 31, 2025",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Net loss | $(6,592) | $(6,377) | $(12,138) | $(16,858) | $(14,439) | $(66,309) | $(23,291)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3118,7 +3129,7 @@
    "scale": "in millions",
    "period": "Three months ended Mar 31, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Net loss | $(6,592) | $(6,377) | $(12,138) | $(16,858) | $(14,439) | $(66,309) | $(23,291)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3132,7 +3143,7 @@
    "scale": "in millions",
    "period": "Three months ended Jun 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Net loss | $(6,592) | $(6,377) | $(12,138) | $(16,858) | $(14,439) | $(66,309) | $(23,291)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3146,7 +3157,7 @@
    "scale": "in millions",
    "period": "Three months ended Sep 30, 2026",
    "section": "Quarterly Results of Operations",
-   "page": "164",
+   "page": "165",
    "quote": "Net loss | $(6,592) | $(6,377) | $(12,138) | $(16,858) | $(14,439) | $(66,309) | $(23,291)",
    "context": "(in millions) | March 31,2025 | June 30,2025 | September 30,2025 | December 31,2025 | March 31,2026 | June 30,2026 | September 30,2026"
   },
@@ -3195,7 +3206,7 @@
    "as_filed": "more than 950",
    "period": "As of Sep 30, 2025",
    "section": "Business",
-   "page": "202",
+   "page": "203",
    "quote": "From September 30, 2025 to September 30, 2026, we grew customers with $100,000 or more of revenue on a TTM basis from more than 950 to more than 11,900."
   },
   {
@@ -3207,7 +3218,7 @@
    "as_filed": "more than 11,900",
    "period": "As of Sep 30, 2026",
    "section": "Business",
-   "page": "202",
+   "page": "203",
    "quote": "From September 30, 2025 to September 30, 2026, we grew customers with $100,000 or more of revenue on a TTM basis from more than 950 to more than 11,900."
   },
   {
@@ -3219,7 +3230,7 @@
    "as_filed": "$81 billion",
    "period": "As of Oct 31, 2026",
    "section": "Business",
-   "page": "202",
+   "page": "203",
    "quote": "Additionally, our Run-Rate Revenue was approximately $81 billion as of October 31, 2026, up $10 billion from September 30, 2026.16 …"
   },
   {
@@ -3231,7 +3242,7 @@
    "as_filed": "$10 billion",
    "period": "Sep 30 to Oct 31, 2026",
    "section": "Business",
-   "page": "202",
+   "page": "203",
    "quote": "Additionally, our Run-Rate Revenue was approximately $81 billion as of October 31, 2026, up $10 billion from September 30, 2026.16 …"
   },
   {
@@ -3303,7 +3314,7 @@
    "as_filed": "$186.2 billion",
    "period": "As of and subsequent to Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "177",
+   "page": "178",
    "quote": "Approximately $186.2 billion of the aggregate total of our contractual obligations relates to arrangements that are subject to either exercisable termination rights or contingent conditions prior to commencement, such as the counterparty’s ability to secure financing, facilities, or regulatory approvals, as applicable."
   },
   {
@@ -3315,7 +3326,7 @@
    "as_filed": "$17.4 billion",
    "period": "As of Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Minimum payments under such contracts were approximately $17.4 billion as of September 30, 2026."
   },
   {
@@ -3327,7 +3338,7 @@
    "as_filed": "$451.2 billion",
    "period": "As of Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Further, the table above does not include leases executed and not yet commenced as of September 30, 2026, with total estimated future undiscounted lease obligations of approximately $451.2 billion."
   },
   {
@@ -3339,7 +3350,7 @@
    "as_filed": "$105.7 billion",
    "period": "After Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "In addition, the table above does not reflect commitments entered into after September 30, 2026, with aggregate future minimum payment obligations of approximately $105.7 billion, primarily consisting of data center leases and CSP hosting and other third-party infrastructure service agreements."
   },
   {
@@ -3351,7 +3362,7 @@
    "as_filed": "$6.6 billion",
    "period": "After Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "We also entered into certain agreements after September 30, 2026 that are short-term in nature. Minimum payments under such contracts are approximately $6.6 billion."
   },
   {
@@ -3364,7 +3375,7 @@
    "scale": "in millions",
    "period": "Total, as of Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Operating leases(1) | $4,224 | $57 | $303 | $462 | $445 | $466 | $2,491",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3378,7 +3389,7 @@
    "scale": "in millions",
    "period": "Due in 2026 (from Oct 1)",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Operating leases(1) | $4,224 | $57 | $303 | $462 | $445 | $466 | $2,491",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3392,7 +3403,7 @@
    "scale": "in millions",
    "period": "Due in 2027",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Operating leases(1) | $4,224 | $57 | $303 | $462 | $445 | $466 | $2,491",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3406,7 +3417,7 @@
    "scale": "in millions",
    "period": "Due in 2028",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Operating leases(1) | $4,224 | $57 | $303 | $462 | $445 | $466 | $2,491",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3420,7 +3431,7 @@
    "scale": "in millions",
    "period": "Due in 2029",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Operating leases(1) | $4,224 | $57 | $303 | $462 | $445 | $466 | $2,491",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3434,7 +3445,7 @@
    "scale": "in millions",
    "period": "Due in 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Operating leases(1) | $4,224 | $57 | $303 | $462 | $445 | $466 | $2,491",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3448,7 +3459,7 @@
    "scale": "in millions",
    "period": "Due after 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Operating leases(1) | $4,224 | $57 | $303 | $462 | $445 | $466 | $2,491",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3462,7 +3473,7 @@
    "scale": "in millions",
    "period": "Total, as of Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Finance leases(2) | 1,950 | 121 | 438 | 422 | 406 | 390 | 173",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3476,7 +3487,7 @@
    "scale": "in millions",
    "period": "Due in 2026 (from Oct 1)",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Finance leases(2) | 1,950 | 121 | 438 | 422 | 406 | 390 | 173",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3490,7 +3501,7 @@
    "scale": "in millions",
    "period": "Due in 2027",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Finance leases(2) | 1,950 | 121 | 438 | 422 | 406 | 390 | 173",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3504,7 +3515,7 @@
    "scale": "in millions",
    "period": "Due in 2028",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Finance leases(2) | 1,950 | 121 | 438 | 422 | 406 | 390 | 173",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3518,7 +3529,7 @@
    "scale": "in millions",
    "period": "Due in 2029",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Finance leases(2) | 1,950 | 121 | 438 | 422 | 406 | 390 | 173",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3532,7 +3543,7 @@
    "scale": "in millions",
    "period": "Due in 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Finance leases(2) | 1,950 | 121 | 438 | 422 | 406 | 390 | 173",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3546,7 +3557,7 @@
    "scale": "in millions",
    "period": "Due after 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Finance leases(2) | 1,950 | 121 | 438 | 422 | 406 | 390 | 173",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3560,7 +3571,7 @@
    "scale": "in millions",
    "period": "Total, as of Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Purchase commitments(3) | 313,819 | 5,053 | 28,424 | 43,473 | 46,901 | 44,214 | 145,754",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3574,7 +3585,7 @@
    "scale": "in millions",
    "period": "Due in 2026 (from Oct 1)",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Purchase commitments(3) | 313,819 | 5,053 | 28,424 | 43,473 | 46,901 | 44,214 | 145,754",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3588,7 +3599,7 @@
    "scale": "in millions",
    "period": "Due in 2027",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Purchase commitments(3) | 313,819 | 5,053 | 28,424 | 43,473 | 46,901 | 44,214 | 145,754",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3602,7 +3613,7 @@
    "scale": "in millions",
    "period": "Due in 2028",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Purchase commitments(3) | 313,819 | 5,053 | 28,424 | 43,473 | 46,901 | 44,214 | 145,754",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3616,7 +3627,7 @@
    "scale": "in millions",
    "period": "Due in 2029",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Purchase commitments(3) | 313,819 | 5,053 | 28,424 | 43,473 | 46,901 | 44,214 | 145,754",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3630,7 +3641,7 @@
    "scale": "in millions",
    "period": "Due in 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Purchase commitments(3) | 313,819 | 5,053 | 28,424 | 43,473 | 46,901 | 44,214 | 145,754",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3644,7 +3655,7 @@
    "scale": "in millions",
    "period": "Due after 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Purchase commitments(3) | 313,819 | 5,053 | 28,424 | 43,473 | 46,901 | 44,214 | 145,754",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3658,7 +3669,7 @@
    "scale": "in millions",
    "period": "Total, as of Sep 30, 2026",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Total(4)(5) | $319,993 | $5,231 | $29,165 | $44,357 | $47,752 | $45,070 | $148,418",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3672,7 +3683,7 @@
    "scale": "in millions",
    "period": "Due in 2026 (from Oct 1)",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Total(4)(5) | $319,993 | $5,231 | $29,165 | $44,357 | $47,752 | $45,070 | $148,418",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3686,7 +3697,7 @@
    "scale": "in millions",
    "period": "Due in 2027",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Total(4)(5) | $319,993 | $5,231 | $29,165 | $44,357 | $47,752 | $45,070 | $148,418",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3700,7 +3711,7 @@
    "scale": "in millions",
    "period": "Due in 2028",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Total(4)(5) | $319,993 | $5,231 | $29,165 | $44,357 | $47,752 | $45,070 | $148,418",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3714,7 +3725,7 @@
    "scale": "in millions",
    "period": "Due in 2029",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Total(4)(5) | $319,993 | $5,231 | $29,165 | $44,357 | $47,752 | $45,070 | $148,418",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3728,7 +3739,7 @@
    "scale": "in millions",
    "period": "Due in 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Total(4)(5) | $319,993 | $5,231 | $29,165 | $44,357 | $47,752 | $45,070 | $148,418",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3742,7 +3753,7 @@
    "scale": "in millions",
    "period": "Due after 2030",
    "section": "Liquidity and Capital Resources — Contractual Obligations",
-   "page": "178",
+   "page": "179",
    "quote": "Total(4)(5) | $319,993 | $5,231 | $29,165 | $44,357 | $47,752 | $45,070 | $148,418",
    "context": "(in millions) | Total | 2026 | 2027 | 2028 | 2029 | 2030 | Thereafter"
   },
@@ -3754,7 +3765,7 @@
    "unit": "shares",
    "as_filed": "825,000,000 shares",
    "section": "Underwriting",
-   "page": "328",
+   "page": "330",
    "quote": "Total | 825,000,000"
   },
   {
@@ -3765,7 +3776,7 @@
    "unit": "text",
    "as_filed": "Goldman Sachs & Co. LLC; Morgan Stanley & Co. LLC; J.P. Morgan Securities LLC; Citigroup Global Markets Inc.; Barclays Capital Inc. and Barclays Bank PLC; Wells Fargo Securities, LLC; BofA Securities, Inc.; Deutsche Bank Securities Inc.; RBC Capital Markets, LLC; UBS Securities LLC; BMO Capital Markets Corp.; BNP Paribas Securities Corp.; Credit Agricole Securities (USA) Inc.; Jefferies LLC; Mizuho Securities USA LLC; MUFG Securities Americas Inc.; TD Securities (USA) LLC; BTIG, LLC; Cantor Fitzgerald & Co.; Capital One Securities, Inc.; Macquarie Capital (USA) Inc.; SG Americas Securities, LLC",
    "section": "Underwriting",
-   "page": "328",
+   "page": "330",
    "quote": "Underwriters: Goldman Sachs & Co. LLC; Morgan Stanley & Co. LLC; J.P. Morgan Securities LLC; Citigroup Global Markets Inc.; Barclays Capital Inc. and Barclays Bank PLC; Wells Fargo Securities, LLC; BofA Securities, Inc.; Deutsche Bank Securities Inc.; RBC Capital Markets, LLC; UBS Securities LLC; BMO Capital Markets Corp.; BNP Paribas Securities Corp.; Credit Agricole Securities (USA) Inc.; Jefferies LLC; Mizuho Securities USA LLC; MUFG Securities Americas Inc.; TD Securities (USA) LLC; BTIG, LLC; Cantor Fitzgerald & Co.; Capital One Securities, Inc.; Macquarie Capital (USA) Inc.; SG Americas Securities, LLC. Their number of shares is left blank."
   },
   {
@@ -3776,7 +3787,7 @@
    "unit": "shares",
    "as_filed": "11,910,321,243 shares",
    "section": "Dilution",
-   "page": "134",
+   "page": "135",
    "quote": "Sales by the selling stockholders in this offering will cause the number of shares held by existing stockholders to be reduced to 11,910,321,243 shares, or approximately 91.0% of the total number of shares of our Class A common stock and Class N common stock outstanding after this offering, and will increase the number of shares held by new investors to 825,000,000 shares, or approximately 6.3% …"
   },
   {
@@ -3787,7 +3798,7 @@
    "unit": "percent",
    "as_filed": "91.0%",
    "section": "Dilution",
-   "page": "134",
+   "page": "135",
    "quote": "Sales by the selling stockholders in this offering will cause the number of shares held by existing stockholders to be reduced to 11,910,321,243 shares, or approximately 91.0% of the total number of shares of our Class A common stock and Class N common stock outstanding after this offering, and will increase the number of shares held by new investors to 825,000,000 shares, or approximately 6.3% …"
   },
   {
@@ -3798,7 +3809,7 @@
    "unit": "shares",
    "as_filed": "825,000,000 shares",
    "section": "Dilution",
-   "page": "134",
+   "page": "135",
    "quote": "… stockholders to be reduced to 11,910,321,243 shares, or approximately 91.0% of the total number of shares of our Class A common stock and Class N common stock outstanding after this offering, and will increase the number of shares held by new investors to 825,000,000 shares, or approximately 6.3% of the total number of shares of our Class A common stock and Class N common stock outstanding after this offering."
   },
   {
@@ -3809,7 +3820,7 @@
    "unit": "percent",
    "as_filed": "6.3%",
    "section": "Dilution",
-   "page": "134",
+   "page": "135",
    "quote": "… stockholders to be reduced to 11,910,321,243 shares, or approximately 91.0% of the total number of shares of our Class A common stock and Class N common stock outstanding after this offering, and will increase the number of shares held by new investors to 825,000,000 shares, or approximately 6.3% of the total number of shares of our Class A common stock and Class N common stock outstanding after this offering."
   },
   {
@@ -3820,7 +3831,7 @@
    "unit": "text",
    "as_filed": "Google LLC, NVIDIA, AMD, Broadcom, Micron, Microsoft, and TSMC",
    "section": "Underwriting — Concurrent Private Placement",
-   "page": "347",
+   "page": "349",
    "quote": "Concurrent Private Placement Each of Google LLC, NVIDIA, AMD, Broadcom, Micron, Microsoft, and TSMC has entered into an agreement with us pursuant to which they have agreed, severally and not jointly, to purchase an aggregate of $26.0 billion of our Class N common stock in a private placement at a price per share equal to the initial public offering price."
   },
   {
@@ -3875,7 +3886,7 @@
    "unit": "percent",
    "as_filed": "49.9%",
    "section": "Description of Capital Stock",
-   "page": "298",
+   "page": "299",
    "quote": "As a result, the voting power of the holders of Class A common stock is limited to an aggregate of 49.9% of the total outstanding voting power as of the applicable record date."
   },
   {
@@ -3904,12 +3915,12 @@
    "id": "unlock.01",
    "title": "Shares that may be sold at step 1",
    "label": "FILED",
-   "value": 316000000.0,
+   "value": 315000000.0,
    "unit": "shares",
-   "as_filed": "up to 316 million",
+   "as_filed": "up to 315 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "The first trading day following the date of this prospectus | Up to 316 million shares of Class A common stock held by our non-founder directors, officers and current and former employees and consultants.(1)",
+   "page": "319",
+   "quote": "The first trading day following the date of this prospectus | Up to 315 million shares of Class A common stock held by our non-founder directors, officers and current and former employees and consultants.(3) | — | Up to 315 million shares of Class A and Class N common stock held by our non-founder directors, officers and current and former employees and consultants.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -3920,19 +3931,19 @@
    "unit": "text",
    "as_filed": "The first trading day following the date of this prospectus",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "The first trading day following the date of this prospectus | Up to 316 million shares of Class A common stock held by our non-founder directors, officers and current and former employees and consultants.(1)"
+   "page": "319",
+   "quote": "The first trading day following the date of this prospectus | Up to 315 million shares of Class A common stock held by our non-founder directors, officers and current and former employees and consultants.(3) | — | Up to 315 million shares of Class A and Class N common stock held by our non-founder directors, officers and current and former employees and consultants."
   },
   {
    "id": "unlock.02",
    "title": "Shares that may be sold at step 2",
    "label": "FILED",
-   "value": 299000000.0,
+   "value": 303000000.0,
    "unit": "shares",
-   "as_filed": "up to 299 million",
+   "as_filed": "up to 303 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "27th day after the date of this prospectus | Up to 299 million shares of Class A common stock.",
+   "page": "319",
+   "quote": "27th day after the date of this prospectus | Up to 174 million shares of Class A common stock. | Up to 129 million shares of Class N common stock. | Up to 303 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -3943,19 +3954,19 @@
    "unit": "text",
    "as_filed": "27th day after the date of this prospectus",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "27th day after the date of this prospectus | Up to 299 million shares of Class A common stock."
+   "page": "319",
+   "quote": "27th day after the date of this prospectus | Up to 174 million shares of Class A common stock. | Up to 129 million shares of Class N common stock. | Up to 303 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.03",
    "title": "Shares that may be sold at step 3",
    "label": "FILED",
-   "value": 299000000.0,
+   "value": 303000000.0,
    "unit": "shares",
-   "as_filed": "up to 299 million",
+   "as_filed": "up to 303 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "48th day after the date of this prospectus | Up to 299 million shares of Class A common stock.",
+   "page": "319",
+   "quote": "48th day after the date of this prospectus | Up to 174 million shares of Class A common stock. | Up to 129 million shares of Class N common stock. | Up to 303 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -3966,19 +3977,19 @@
    "unit": "text",
    "as_filed": "48th day after the date of this prospectus",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "48th day after the date of this prospectus | Up to 299 million shares of Class A common stock."
+   "page": "319",
+   "quote": "48th day after the date of this prospectus | Up to 174 million shares of Class A common stock. | Up to 129 million shares of Class N common stock. | Up to 303 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.04",
    "title": "Shares that may be sold at step 4",
    "label": "FILED",
-   "value": 349000000.0,
+   "value": 353000000.0,
    "unit": "shares",
-   "as_filed": "up to 349 million",
+   "as_filed": "up to 353 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "62nd day after the date of this prospectus | Up to 349 million shares of Class A common stock.",
+   "page": "319",
+   "quote": "62nd day after the date of this prospectus | Up to 203 million shares of Class A common stock. | Up to 151 million shares of Class N common stock. | Up to 353 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -3989,19 +4000,19 @@
    "unit": "text",
    "as_filed": "62nd day after the date of this prospectus",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "62nd day after the date of this prospectus | Up to 349 million shares of Class A common stock."
+   "page": "319",
+   "quote": "62nd day after the date of this prospectus | Up to 203 million shares of Class A common stock. | Up to 151 million shares of Class N common stock. | Up to 353 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.05",
    "title": "Shares that may be sold at step 5",
    "label": "FILED",
-   "value": 349000000.0,
+   "value": 353000000.0,
    "unit": "shares",
-   "as_filed": "up to 349 million",
+   "as_filed": "up to 353 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "76th day after the date of this prospectus | Up to 349 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "76th day after the date of this prospectus | Up to 203 million shares of Class A common stock. | Up to 151 million shares of Class N common stock. | Up to 353 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4012,8 +4023,8 @@
    "unit": "text",
    "as_filed": "76th day after the date of this prospectus",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "76th day after the date of this prospectus | Up to 349 million shares of Class A common stock."
+   "page": "320",
+   "quote": "76th day after the date of this prospectus | Up to 203 million shares of Class A common stock. | Up to 151 million shares of Class N common stock. | Up to 353 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.06",
@@ -4023,8 +4034,8 @@
    "unit": "shares",
    "as_filed": "up to 1.7 billion",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "The second full trading day on Nasdaq immediately following the public release of our annual financial results for the fiscal year ending December 31, 2026 (the date of such public release, the “FY26 Earnings Release Date”) | Up to 1.7 billion shares of Class A common stock.",
+   "page": "320",
+   "quote": "The second full trading day on Nasdaq immediately following the public release of our annual financial results for the fiscal year ending December 31, 2026 (the date of such public release, the “FY26 Earnings Release Date”) | Up to 1.5 billion shares of Class A common stock. | Up to 269 million shares of Class N common stock. | Up to 1.7 billion shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4035,19 +4046,19 @@
    "unit": "text",
    "as_filed": "The second full trading day on Nasdaq immediately following the public release of our annual financial results for the fiscal year ending December 31, 2026 (the date of such public release, the “FY26 Earnings Release Date”)",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "The second full trading day on Nasdaq immediately following the public release of our annual financial results for the fiscal year ending December 31, 2026 (the date of such public release, the “FY26 Earnings Release Date”) | Up to 1.7 billion shares of Class A common stock."
+   "page": "320",
+   "quote": "The second full trading day on Nasdaq immediately following the public release of our annual financial results for the fiscal year ending December 31, 2026 (the date of such public release, the “FY26 Earnings Release Date”) | Up to 1.5 billion shares of Class A common stock. | Up to 269 million shares of Class N common stock. | Up to 1.7 billion shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.07",
    "title": "Shares that may be sold at step 7",
    "label": "FILED",
-   "value": 474000000.0,
+   "value": 480000000.0,
    "unit": "shares",
-   "as_filed": "up to 474 million",
+   "as_filed": "up to 480 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "13th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "13th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4058,19 +4069,19 @@
    "unit": "text",
    "as_filed": "13th day after the FY26 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "13th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock."
+   "page": "320",
+   "quote": "13th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.08",
    "title": "Shares that may be sold at step 8",
    "label": "FILED",
-   "value": 474000000.0,
+   "value": 480000000.0,
    "unit": "shares",
-   "as_filed": "up to 474 million",
+   "as_filed": "up to 480 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "27th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "27th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4081,19 +4092,19 @@
    "unit": "text",
    "as_filed": "27th day after the FY26 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "27th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock."
+   "page": "320",
+   "quote": "27th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.09",
    "title": "Shares that may be sold at step 9",
    "label": "FILED",
-   "value": 474000000.0,
+   "value": 480000000.0,
    "unit": "shares",
-   "as_filed": "up to 474 million",
+   "as_filed": "up to 480 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "41st day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "41st day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4104,19 +4115,19 @@
    "unit": "text",
    "as_filed": "41st day after the FY26 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "318",
-   "quote": "41st day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock."
+   "page": "320",
+   "quote": "41st day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.10",
    "title": "Shares that may be sold at step 10",
    "label": "FILED",
-   "value": 474000000.0,
+   "value": 480000000.0,
    "unit": "shares",
-   "as_filed": "up to 474 million",
+   "as_filed": "up to 480 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "55th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "55th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4127,19 +4138,19 @@
    "unit": "text",
    "as_filed": "55th day after the FY26 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "55th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock."
+   "page": "320",
+   "quote": "55th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.11",
    "title": "Shares that may be sold at step 11",
    "label": "FILED",
-   "value": 474000000.0,
+   "value": 480000000.0,
    "unit": "shares",
-   "as_filed": "up to 474 million",
+   "as_filed": "up to 480 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "69th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "69th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4150,8 +4161,8 @@
    "unit": "text",
    "as_filed": "69th day after the FY26 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "69th day after the FY26 Earnings Release Date | Up to 474 million shares of Class A common stock."
+   "page": "320",
+   "quote": "69th day after the FY26 Earnings Release Date | Up to 275 million shares of Class A common stock. | Up to 204 million shares of Class N common stock. | Up to 480 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.12",
@@ -4161,8 +4172,8 @@
    "unit": "shares",
    "as_filed": "up to 3.0 billion",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending March 31, 2027 (the date of such public release, the “Q1 Earnings Release Date”) and (y) immediately after the close of trading on the 180th day after the date of this prospectus | Up to 3.0 billion shares of Class A common stock.",
+   "page": "320",
+   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending March 31, 2027 (the date of such public release, the “Q1 Earnings Release Date”) and (y) immediately after the close of trading on the 180th day after the date of this prospectus | Up to 2.7 billion shares of Class A common stock. | Up to 336 million shares of Class N common stock. | Up to 3.0 billion shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4173,19 +4184,19 @@
    "unit": "text",
    "as_filed": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending March 31, 2027 (the date of such public release, the “Q1 Earnings Release Date”) and (y) immediately after the close of trading on the 180th day after the date of this prospectus",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending March 31, 2027 (the date of such public release, the “Q1 Earnings Release Date”) and (y) immediately after the close of trading on the 180th day after the date of this prospectus | Up to 3.0 billion shares of Class A common stock."
+   "page": "320",
+   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending March 31, 2027 (the date of such public release, the “Q1 Earnings Release Date”) and (y) immediately after the close of trading on the 180th day after the date of this prospectus | Up to 2.7 billion shares of Class A common stock. | Up to 336 million shares of Class N common stock. | Up to 3.0 billion shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.13",
    "title": "Shares that may be sold at step 13",
    "label": "FILED",
-   "value": 449000000.0,
+   "value": 447000000.0,
    "unit": "shares",
-   "as_filed": "up to 449 million",
+   "as_filed": "up to 447 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "34th day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "34th day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4196,19 +4207,19 @@
    "unit": "text",
    "as_filed": "34th day after the Q1 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "34th day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock."
+   "page": "320",
+   "quote": "34th day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.14",
    "title": "Shares that may be sold at step 14",
    "label": "FILED",
-   "value": 449000000.0,
+   "value": 447000000.0,
    "unit": "shares",
-   "as_filed": "up to 449 million",
+   "as_filed": "up to 447 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "48th day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "48th day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4219,19 +4230,19 @@
    "unit": "text",
    "as_filed": "48th day after the Q1 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "48th day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock."
+   "page": "320",
+   "quote": "48th day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.15",
    "title": "Shares that may be sold at step 15",
    "label": "FILED",
-   "value": 449000000.0,
+   "value": 447000000.0,
    "unit": "shares",
-   "as_filed": "up to 449 million",
+   "as_filed": "up to 447 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "62nd day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "62nd day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4242,19 +4253,19 @@
    "unit": "text",
    "as_filed": "62nd day after the Q1 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "62nd day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock."
+   "page": "320",
+   "quote": "62nd day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.16",
    "title": "Shares that may be sold at step 16",
    "label": "FILED",
-   "value": 449000000.0,
+   "value": 447000000.0,
    "unit": "shares",
-   "as_filed": "up to 449 million",
+   "as_filed": "up to 447 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "76th day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "76th day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4265,19 +4276,19 @@
    "unit": "text",
    "as_filed": "76th day after the Q1 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "76th day after the Q1 Earnings Release Date | Up to 449 million shares of Class A common stock."
+   "page": "320",
+   "quote": "76th day after the Q1 Earnings Release Date | Up to 137 million shares of Class A common stock. | Up to 309 million shares of Class N common stock. | Up to 447 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.17",
    "title": "Shares that may be sold at step 17",
    "label": "FILED",
-   "value": 562000000.0,
+   "value": 558000000.0,
    "unit": "shares",
-   "as_filed": "up to 562 million",
+   "as_filed": "up to 558 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "The second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending June 30, 2027 (the date of such public release, the “Q2 Earnings Release Date”) | Up to 562 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "The second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending June 30, 2027 (the date of such public release, the “Q2 Earnings Release Date”) | Up to 171 million shares of Class A common stock. | Up to 387 million shares of Class N common stock. | Up to 558 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4288,19 +4299,19 @@
    "unit": "text",
    "as_filed": "The second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending June 30, 2027 (the date of such public release, the “Q2 Earnings Release Date”)",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "The second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending June 30, 2027 (the date of such public release, the “Q2 Earnings Release Date”) | Up to 562 million shares of Class A common stock."
+   "page": "320",
+   "quote": "The second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending June 30, 2027 (the date of such public release, the “Q2 Earnings Release Date”) | Up to 171 million shares of Class A common stock. | Up to 387 million shares of Class N common stock. | Up to 558 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.18",
    "title": "Shares that may be sold at step 18",
    "label": "FILED",
-   "value": 505000000.0,
+   "value": 502000000.0,
    "unit": "shares",
-   "as_filed": "up to 505 million",
+   "as_filed": "up to 502 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "27th day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "27th day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4311,19 +4322,19 @@
    "unit": "text",
    "as_filed": "27th day after the Q2 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "27th day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock."
+   "page": "320",
+   "quote": "27th day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.19",
    "title": "Shares that may be sold at step 19",
    "label": "FILED",
-   "value": 505000000.0,
+   "value": 502000000.0,
    "unit": "shares",
-   "as_filed": "up to 505 million",
+   "as_filed": "up to 502 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "41st day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "41st day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4334,19 +4345,19 @@
    "unit": "text",
    "as_filed": "41st day after the Q2 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "41st day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock."
+   "page": "320",
+   "quote": "41st day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.20",
    "title": "Shares that may be sold at step 20",
    "label": "FILED",
-   "value": 505000000.0,
+   "value": 502000000.0,
    "unit": "shares",
-   "as_filed": "up to 505 million",
+   "as_filed": "up to 502 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "55th day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "55th day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4357,19 +4368,19 @@
    "unit": "text",
    "as_filed": "55th day after the Q2 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "55th day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock."
+   "page": "320",
+   "quote": "55th day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.21",
    "title": "Shares that may be sold at step 21",
    "label": "FILED",
-   "value": 505000000.0,
+   "value": 502000000.0,
    "unit": "shares",
-   "as_filed": "up to 505 million",
+   "as_filed": "up to 502 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "69th day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "69th day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4380,19 +4391,19 @@
    "unit": "text",
    "as_filed": "69th day after the Q2 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "69th day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock."
+   "page": "320",
+   "quote": "69th day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.22",
    "title": "Shares that may be sold at step 22",
    "label": "FILED",
-   "value": 505000000.0,
+   "value": 502000000.0,
    "unit": "shares",
-   "as_filed": "up to 505 million",
+   "as_filed": "up to 502 million",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "83rd day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock.",
+   "page": "320",
+   "quote": "83rd day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4403,8 +4414,8 @@
    "unit": "text",
    "as_filed": "83rd day after the Q2 Earnings Release Date",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "83rd day after the Q2 Earnings Release Date | Up to 505 million shares of Class A common stock."
+   "page": "320",
+   "quote": "83rd day after the Q2 Earnings Release Date | Up to 154 million shares of Class A common stock. | Up to 348 million shares of Class N common stock. | Up to 502 million shares of Class A and Class N common stock."
   },
   {
    "id": "unlock.23",
@@ -4414,8 +4425,8 @@
    "unit": "shares",
    "as_filed": "up to 1.9 billion",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending September 30, 2027 (the date of such public release, the “Q3 Earnings Release Date”) and (y) immediately after the close of trading on the 365th day after the date of this prospectus | Up to 1.9 billion shares of Class A common stock.",
+   "page": "320",
+   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending September 30, 2027 (the date of such public release, the “Q3 Earnings Release Date”) and (y) immediately after the close of trading on the 365th day after the date of this prospectus | Up to 1.4 billion shares of Class A common stock. | Up to 503 million shares of Class N common stock. | Up to 1.9 billion shares of Class A and Class N common stock.",
    "context": "As the filing words it: shares that become available for sale at each step, subject to the lock-up and market standoff agreements, Rules 144 and 701 and the insider trading policy. The filing gives each step as a maximum (\"up to\")."
   },
   {
@@ -4426,8 +4437,8 @@
    "unit": "text",
    "as_filed": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending September 30, 2027 (the date of such public release, the “Q3 Earnings Release Date”) and (y) immediately after the close of trading on the 365th day after the date of this prospectus",
    "section": "Shares Eligible for Future Sale",
-   "page": "319",
-   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending September 30, 2027 (the date of such public release, the “Q3 Earnings Release Date”) and (y) immediately after the close of trading on the 365th day after the date of this prospectus | Up to 1.9 billion shares of Class A common stock."
+   "page": "320",
+   "quote": "The earlier of (x) the second full trading day on Nasdaq immediately following the public release of our quarterly financial results for the fiscal quarter ending September 30, 2027 (the date of such public release, the “Q3 Earnings Release Date”) and (y) immediately after the close of trading on the 365th day after the date of this prospectus | Up to 1.4 billion shares of Class A common stock. | Up to 503 million shares of Class N common stock. | Up to 1.9 billion shares of Class A and Class N common stock."
   }
  ]
 }

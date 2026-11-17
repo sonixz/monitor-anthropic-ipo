@@ -26,6 +26,7 @@ from ipo_monitor.figures import Figures, unlock_label, unlock_steps
 from ipo_monitor.market import Snapshot, eastern_at
 from ipo_monitor.market import facts as market_facts
 from ipo_monitor.reconcile import assert_consistent
+from ipo_monitor.versions import versions
 
 LOOP0_URL = "https://agmgd-on-loop0-22c0a8ea.fly.dev/"
 # The name and the words that present the page: the tab, the share card on X, the search result.
@@ -313,7 +314,7 @@ class Moment:
     last_day: str = ""  # the date of the last of them
 
 
-def timeline(watch: Watch | None, priced: bool, trading: bool) -> list[Moment]:
+def timeline(watch: Watch | None, priced: bool, trading: bool, document_title: str) -> list[Moment]:
     """The IPO from the first filing to the first lock-up step, in order.
 
     Filings come from EDGAR's list when the watch has one, filings of one form in a row on one
@@ -336,7 +337,7 @@ def timeline(watch: Watch | None, priced: bool, trading: bool) -> list[Moment]:
         else:
             moments.append(Moment(filing.name, "done", filing.filed, url=filing.url))
     if not filed:
-        moments.append(Moment("Form S-1/A, Amendment No. 2", "done", ref="doc.filed_date"))
+        moments.append(Moment(document_title, "done", ref="doc.filed_date"))
     moments.append(Moment("priced", "done" if priced else "next", ref="press.cnbc.pricing_date"))
     moments.append(
         Moment(
@@ -399,9 +400,10 @@ def render_page(
     filing index; None when that source is not connected.
     """
     checks = assert_consistent(facts)
+    facts, steps = versions(facts)  # earlier values, each with its own filing's source
     if filings is not None and filings.price is not None:
         # The price on the cover of the final prospectus replaces one recorded from the press.
-        fact, final = price_fact(filings.price, facts.documents["s1a2"].company)
+        fact, final = price_fact(filings.price, facts.filing.company)
         facts = facts.plus([fact], final, replacing=True)
     if market is not None:
         facts = facts.plus(market_facts(market))
@@ -412,18 +414,18 @@ def render_page(
     price_ref = PRICED if priced else "offering.price_mid"
     quote = market.quote if market else None
     figures = Figures(numbers, at, price_ref, quote)
-    document = facts.documents["s1a2"]
+    document = facts.filing
     context: dict[str, Any] = {
         "n": numbers,
         "chart": figures,
         "filings": filings,
-        "newer": filings.newer_than(document.accession) if filings else None,
+        "newer": filings.newer_than(document.accession, document.filed) if filings else None,
         "listed": batches(filings.filings) if filings else (),
         "day": fmt.iso_date,
         "clock": clock,
         "phase": phase(priced, market),
         "pricing_day": facts.text("press.cnbc.pricing_date"),
-        "moments": timeline(filings, priced, quote is not None),
+        "moments": timeline(filings, priced, quote is not None, document.title),
         "unlock": [
             (key, unlock_label(facts.text(key + ".when"))) for key in unlock_steps(facts.ids())
         ],
@@ -434,6 +436,7 @@ def render_page(
         "at": at,
         "price_ref": price_ref,
         "document": document,
+        "steps": steps,
         "quarters": [(q, QUARTER_NAMES[q]) for q in QUARTERS],
         "checks": len(checks),
         "version": __version__,

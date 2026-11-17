@@ -157,14 +157,18 @@ class Watch:
             self.price_problem,
         )
 
-    def newer_than(self, accession: str) -> Filing | None:
-        """The latest prospectus filed after the one the page reads, if any."""
+    def newer_than(self, accession: str, filed: str = "") -> Filing | None:
+        """The latest prospectus filed after the one the page reads, if any.
+
+        When the list does not hold that filing (an answer older than it), only filings of a
+        later day count: older ones are not news.
+        """
         for index, filing in enumerate(self.filings):
             if filing.accession == accession:
                 later = self.filings[:index]
                 break
         else:
-            later = self.filings
+            later = tuple(f for f in self.filings if f.filed > filed)
         return next((f for f in later if f.form in PROSPECTUS_FORMS), None)
 
 

@@ -24,7 +24,7 @@ from fastapi.testclient import TestClient
 from ipo_monitor import edgar
 from ipo_monitor.config import ConfigError, Settings
 from ipo_monitor.edgar import Edgar, Filing, RecordedIndex, SourceError, Watch
-from ipo_monitor.facts import Facts
+from ipo_monitor.facts import Document, Facts
 from ipo_monitor.render import render_page
 from ipo_monitor.web import create_app
 
@@ -78,6 +78,14 @@ class Fake:
         return self.page
 
 
+def amendment_2(facts: Facts) -> Document:
+    """Amendment No. 2, kept in history/: the test indexes were recorded when it was the latest."""
+    document = facts.history[0].document
+    assert document is not None
+    assert document.title == "Form S-1/A, Amendment No. 2"
+    return document
+
+
 def ask(source: edgar.Index, previous: Watch | None = None, now: int = 1000) -> Watch:
     return edgar.check(source, previous, now, **ABOUT)
 
@@ -92,9 +100,9 @@ def test_the_index_lists_filings_newest_first(facts: Facts) -> None:
         ("S-1/A", "2026-11-03"),
         ("S-1", "2026-10-20"),
     ]
-    # The link is built the way the real one is: it equals the link of the filing the page reads.
-    assert filings[0].url == facts.documents["s1a2"].url
-    assert filings[0].accession == facts.documents["s1a2"].accession == AMENDMENT_2
+    # The link is built the way the real one is: it equals the link of the filing we extracted.
+    assert filings[0].url == amendment_2(facts).url
+    assert filings[0].accession == amendment_2(facts).accession == AMENDMENT_2
     assert filings[0].meaning == "amended registration statement"
     assert Filing("x", "NT 10-K", "2027-01-01", "u").meaning == ""  # shown by its name alone
 
@@ -105,11 +113,13 @@ def test_the_real_index_of_the_registrant(facts: Facts) -> None:
     assert watch.state == "ok"
     assert len(watch.filings) == 14
     assert [f.form for f in watch.filings[:8]] == ["FWP"] * 5 + ["S-1/A", "S-1/A", "S-1"]
-    assert watch.filings[5].url == facts.documents["s1a2"].url  # the filing the page reads
+    assert watch.filings[5].url == amendment_2(facts).url  # the filing the page read that day
     assert watch.filings[-1].form == "DRS"
     assert watch.filings[0].meaning == "free writing prospectus, extra material for investors"
     # Material for investors filed after Amendment No. 2 does not change the figures.
     assert watch.newer_than(AMENDMENT_2) is None
+    # This answer is older than Amendment No. 3, which the page reads now: nothing in it is news.
+    assert watch.newer_than(facts.filing.accession, facts.filing.filed) is None
     assert watch.prospectus is None
     html = render_page(facts, release="test", filings=watch).html
     assert "watching the SEC · latest:" in html
@@ -384,7 +394,7 @@ def test_the_page_lists_the_filings(facts: Facts) -> None:
     assert "new filing" not in html
     panel = html[html.index('id="filings"') : html.index("</main>")]
     assert panel.count("<tr>") == 3
-    assert f'href="{facts.documents["s1a2"].url}"' in panel
+    assert f'href="{amendment_2(facts).url}"' in panel
     assert "amended registration statement" in panel
     assert "TEST DATA, not real filings" in panel  # the source names itself
     checked = audit(html)

@@ -11,10 +11,16 @@ from ipo_monitor.facts import Facts, MissingFactError
 
 def test_dataset_is_loaded(facts: Facts) -> None:
     assert len(facts) > 250
-    document = facts.documents["s1a2"]
-    assert document.accession == "0001628280-26-072484"
-    assert document.filed == "2026-11-10"
+    document = facts.filing
+    assert document.title == "Form S-1/A, Amendment No. 3"
+    assert document.accession == "0001628280-26-074338"
+    assert document.filed == "2026-11-17"
     assert document.url.startswith("https://www.sec.gov/Archives/edgar/data/2130357/")
+    # The filing it replaced is kept, extracted the same way, to show what changed.
+    (earlier,) = facts.history
+    assert earlier.document is not None
+    assert earlier.document.accession == "0001628280-26-072484"
+    assert earlier.document.filed == "2026-11-10"
 
 
 def test_every_filed_fact_says_where_it_comes_from(facts: Facts) -> None:

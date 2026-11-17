@@ -120,7 +120,9 @@ def test_source_cards_show_the_passage_or_the_arithmetic(page: Page) -> None:
         if kind == "filed":
             assert "<blockquote>" in body, card_id
             assert "https://www.sec.gov/Archives/edgar/data/2130357/" in body, card_id
-            assert "Amendment No. 2" in body, card_id
+            # A value of an earlier filing (in HISTORY) opens that filing; the others the latest.
+            earlier = card_id.startswith("src-s1a2-")
+            assert ("Amendment No. 2" if earlier else "Amendment No. 3") in body, card_id
             assert "p. " in body or "unnumbered" in body, card_id
         elif kind == "calc":
             assert 'class="src-formula"' in body, card_id
@@ -171,7 +173,7 @@ def test_health(client: TestClient) -> None:
     body = response.json()
     assert body["status"] == "ok"
     assert body["release"] == "test"
-    assert body["data"]["source_filed"] == "2026-11-10"
+    assert body["data"]["source_filed"] == "2026-11-17"
     assert body["data"]["checks_passed"] >= 120
     assert body["market"]["state"] == "awaiting"
     assert body["market"]["quote_time"] is None
@@ -189,7 +191,7 @@ def test_static_files(client: TestClient) -> None:
 def test_the_service_refuses_to_start_on_inconsistent_data(tmp_path: Path) -> None:
     broken = tmp_path / "facts"
     shutil.copytree(FACTS_DIR, broken)
-    path = broken / "s1a2.json"
+    path = broken / "s1a3.json"
     data = json.loads(path.read_text("utf-8"))
     for fact in data["facts"]:
         if fact["id"] == "q.revenue.2026q3":

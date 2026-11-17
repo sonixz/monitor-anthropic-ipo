@@ -42,12 +42,17 @@ def test_the_lock_up_schedule_is_the_filing_s_table(facts: Facts) -> None:
     steps = unlock_steps(facts.ids())
     assert len(steps) == 23
     first, biggest, last = facts.get("unlock.01"), facts.get("unlock.12"), facts.get("unlock.23")
-    assert (first.value, first.as_filed) == (316_000_000, "up to 316 million")
+    # Amendment No. 3 gives Class A, Class N and their total: the step is the total.
+    assert (first.value, first.as_filed) == (315_000_000, "up to 315 million")
+    second = facts.get("unlock.02")
+    assert (second.value, second.as_filed) == (303_000_000, "up to 303 million")
+    assert "Up to 174 million shares of Class A" in second.quote
+    assert "Up to 129 million shares of Class N" in second.quote
     assert (biggest.value, biggest.as_filed) == (3_000_000_000, "up to 3.0 billion")
     assert last.value == 1_900_000_000
     assert facts.text("unlock.02.when") == "27th day after the date of this prospectus"
     assert "180th day after the date of this prospectus" in facts.text("unlock.12.when")
-    assert (first.page, last.page) == ("318", "319")
+    assert (first.page, last.page) == ("319", "320")
     assert "up to" in (first.context or "")
 
 
@@ -85,10 +90,15 @@ def test_short_labels_of_the_lock_up_steps() -> None:
     assert unlock_groups(labels) == [("a", 0, 1), ("b", 2, 2), ("c", 3, 3)]
 
 
+TITLE = "Form S-1/A, Amendment No. 3"
+
+
 def test_the_timeline_with_and_without_the_sec_s_list() -> None:
-    alone = timeline(None, priced=False, trading=False)
+    alone = timeline(
+        None, priced=False, trading=False, document_title="Form S-1/A, Amendment No. 3"
+    )
     assert [(m.what, m.state) for m in alone] == [
-        ("Form S-1/A, Amendment No. 2", "done"),
+        ("Form S-1/A, Amendment No. 3", "done"),
         ("priced", "next"),
         ("first trade", "later"),
         ("first existing shares may be sold", "later"),
@@ -101,14 +111,14 @@ def test_the_timeline_with_and_without_the_sec_s_list() -> None:
         Filing("a2", "S-1/A", "2026-11-02", url),
         Filing("a1", "S-1", "2026-10-26", url),
     )
-    watched = timeline(Watch("ok", 0, filings), priced=True, trading=False)
+    watched = timeline(Watch("ok", 0, filings), priced=True, trading=False, document_title="x")
     assert [(m.what, m.day, m.count, m.last_day) for m in watched[:3]] == [
         ("Form S-1", "2026-10-26", 1, ""),
         ("Form S-1/A", "2026-11-02", 2, "2026-11-10"),
         ("Form FWP", "2026-11-12", 2, "2026-11-12"),
     ]
     assert [m.state for m in watched[3:]] == ["done", "next", "later"]
-    assert [m.state for m in timeline(Watch("ok", 0, filings), True, True)[3:5]] == [
+    assert [m.state for m in timeline(Watch("ok", 0, filings), True, True, "x")[3:5]] == [
         "done",
         "done",
     ]

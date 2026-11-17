@@ -19,7 +19,8 @@ from ipo_monitor.web import create_app
 
 ROOT = Path(__file__).resolve().parent.parent
 FACTS_DIR = ROOT / "data" / "facts"
-RAW_FILING = ROOT / "data" / "raw" / "sec" / "Anthropic, PBC - S-1_A-2.html"
+RAW_FILING = ROOT / "data" / "raw" / "sec" / "Anthropic, PBC - S-1_A-3.html"
+RAW_EARLIER = ROOT / "data" / "raw" / "sec" / "Anthropic, PBC - S-1_A-2.html"
 MARKET = ROOT / "tests" / "fixtures" / "market"
 # A moment inside the regular trading hours that the recorded answers announce.
 TRADING_NOW = 1794840000

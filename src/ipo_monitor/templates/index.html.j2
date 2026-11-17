@@ -72,6 +72,7 @@
   <a href="#losses"><kbd aria-hidden="true">l</kbd>losses</a>
   <a href="#timeline"><kbd aria-hidden="true">t</kbd>timeline</a>
   <a href="#visits"><kbd aria-hidden="true">w</kbd>visits</a>
+  {% if steps %}<a href="#history"><kbd aria-hidden="true">h</kbd>history</a>{% endif %}
   <button type="button" class="help-key" popovertarget="help" aria-label="Help"><kbd aria-hidden="true">?</kbd><span class="wide">help</span></button>
 </nav>
 <div class="tools">
@@ -92,9 +93,9 @@
     {% endfor %}
   </ol>
   <dl>
-    <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
+    <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}{% if steps %} · <a href="#history">what changed</a>{% endif %}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
     <div class="dup"><dt>offer</dt><dd>{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
-    <div class="dup"><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} (applied) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
+    <div class="dup"><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} ({{ n("offering.listing") }}) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
     <div><dt>filings</dt><dd>
       {%- if not filings -%}
         not watched · this page does not check the SEC for new filings
@@ -459,7 +460,7 @@
     </table>
     </details>
   </div>
-  <p class="aside">Days count from the date of the final prospectus, not known yet, or from a results release. <span data-label>R</span> is the release day as the filing defines it; <span data-label>R*</span> is the earlier of a release and a day counted from the prospectus. Each step is a maximum, and the filing does not say the steps add up, so no total is given here.</p>
+  <p class="aside">Days count from the date of the final prospectus, not known yet, or from a results release. <span data-label>R</span> is the release day as the filing defines it; <span data-label>R*</span> is the earlier of a release and a day counted from the prospectus. Each step is a maximum, and the filing does not say the steps add up, so no total is given here. The filing gives each step for Class A and Class N shares and their total; the page shows the total (Class N shares become Class A when sold).</p>
 </section>
 </div>
 
@@ -632,6 +633,25 @@
   <p class="aside">{% if listed %}Filings come from the SEC's list, read by this page; filings of the same form in a row share a line.{% else %}The SEC's list of filings is not read by this page right now; the line shows the filing the figures come from.{% endif %} The dates of pricing and of the first trade are those reported by the press.</p>
 </section>
 
+{% if steps %}
+<section class="panel" id="history" tabindex="-1" aria-labelledby="history-h">
+  <h2 id="history-h"><kbd aria-hidden="true">h</kbd> HISTORY <span class="q">What changed from one filing to the next?</span></h2>
+  <p class="lede">The page reads the latest filing. Earlier ones are kept: every figure that changed is listed here, each side as its filing words it and opening its own source.</p>
+  {% for step in steps %}
+  <table class="lines changes">
+    <caption>{{ L(step.older.title) }} <span class="what">filed {{ L(day(step.older.filed)) }}</span> <span class="to">→</span> {{ L(step.newer.title) }} <span class="what">filed {{ L(day(step.newer.filed)) }}</span></caption>
+    <thead><tr><th scope="col">figure</th><th scope="col">before</th><th scope="col">after</th></tr></thead>
+    <tbody>
+      {% for c in step.changes %}
+      <tr><th scope="row">{{ L(c.title) }}{% if c.when %}<span class="when">{{ n(c.when) }}</span>{% endif %}</th><td>{% if c.before %}{{ n(c.before, c.style) }}{% else %}<span class="what">new</span>{% endif %}</td><td>{% if c.after %}{{ n(c.after, c.style) }}{% else %}<span class="what">no longer given</span>{% endif %}</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endfor %}
+  <p class="aside">Every other figure is the same in both filings. When a filing counts a figure another way, as the lock-up table now does with Class A and Class N shares, only the words of each filing tell: open a value to read them.</p>
+</section>
+{% endif %}
+
 {% if listed %}
 <section class="panel filed" id="filings" aria-labelledby="filings-h" tabindex="-1">
   <h2 id="filings-h"><kbd aria-hidden="true">f</kbd> FILINGS <span class="q">What has the company filed with the SEC?</span></h2>
@@ -680,6 +700,7 @@
     <div><dt><kbd>l</kbd></dt><dd>losses</dd></div>
     <div><dt><kbd>t</kbd></dt><dd>timeline</dd></div>
     <div><dt><kbd>w</kbd></dt><dd>visits</dd></div>
+    {% if steps %}<div><dt><kbd>h</kbd></dt><dd>history: what changed between filings</dd></div>{% endif %}
     {% if listed %}<div><dt><kbd>f</kbd></dt><dd>filings</dd></div>{% endif %}
     <div><dt><kbd>Esc</kbd></dt><dd>close a source card</dd></div>
   </dl>

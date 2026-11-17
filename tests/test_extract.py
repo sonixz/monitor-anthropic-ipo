@@ -16,7 +16,7 @@ from ipo_monitor.extract import (
     strip_footnotes,
 )
 
-from .conftest import FACTS_DIR, RAW_FILING
+from .conftest import FACTS_DIR, RAW_EARLIER, RAW_FILING
 
 PAGE = (
     '<div style="--justify:justify;content-visibility:auto;float:none;height:792pt;'
@@ -165,5 +165,12 @@ def test_missing_figures_stop_the_extraction() -> None:
 
 @pytest.mark.skipif(not RAW_FILING.exists(), reason="the saved filing is not in data/raw/sec/")
 def test_extraction_reproduces_the_committed_dataset() -> None:
-    regenerated = render(build(RAW_FILING, document_id="s1a2"))
-    assert regenerated == (FACTS_DIR / "s1a2.json").read_text("utf-8")
+    regenerated = render(build(RAW_FILING, document_id="s1a3"))
+    assert regenerated == (FACTS_DIR / "s1a3.json").read_text("utf-8")
+
+
+@pytest.mark.skipif(not RAW_EARLIER.exists(), reason="the saved filing is not in data/raw/sec/")
+def test_the_same_code_reproduces_the_earlier_filing() -> None:
+    # Amendment No. 2 words three passages differently; the extractor reads both wordings.
+    regenerated = render(build(RAW_EARLIER, document_id="s1a2"))
+    assert regenerated == (FACTS_DIR / "history" / "s1a2.json").read_text("utf-8")

@@ -7,6 +7,7 @@
   const PANELS = {
     m: "market", v: "value", e: "ev", s: "shares", u: "unlock", k: "control",
     c: "contracts", g: "growth", l: "losses", t: "timeline", f: "filings", w: "visits",
+    h: "history",
   };
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
   const supportsPopover = "showPopover" in HTMLElement.prototype;

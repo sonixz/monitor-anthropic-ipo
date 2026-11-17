@@ -440,16 +440,27 @@ def _offering(c: Collector) -> None:
             quote=hit.quote,
             section=prospectus,
         )
+    # Amendment No. 2: "We have applied to list"; No. 3: "We have been approved to list".
     hit = f.sentence(
-        r"applied to list our Class A common stock on the (Nasdaq Global Select Market) "
-        r"under the symbol “?(\w+)\.?”?"
+        r"We have (applied|been approved) to list our Class A common stock on the "
+        r"(Nasdaq Global Select Market) under the symbol “?(\w+)\.?”?"
+    )
+    c.add(
+        "offering.listing",
+        "Listing on the exchange",
+        "approved" if hit.match.group(1) == "been approved" else "applied for",
+        "text",
+        f"have {hit.match.group(1)} to list",
+        page=hit.page,
+        quote=hit.quote,
+        section=prospectus,
     )
     c.add(
         "offering.exchange",
-        "Exchange applied to",
-        hit.match.group(1),
+        "Exchange",
+        hit.match.group(2),
         "text",
-        hit.match.group(1),
+        hit.match.group(2),
         page=hit.page,
         quote=hit.quote,
         section=prospectus,
@@ -457,9 +468,9 @@ def _offering(c: Collector) -> None:
     c.add(
         "offering.symbol",
         "Proposed trading symbol",
-        hit.match.group(2),
+        hit.match.group(3),
         "text",
-        hit.match.group(2),
+        hit.match.group(3),
         page=hit.page,
         quote=hit.quote,
         section=prospectus,
@@ -657,7 +668,15 @@ def _shares(c: Collector) -> None:
         section=section,
         suffix=" shares",
     )
-    hit = f.sentence(rf"include: \(i\) ([\d,]+) {a}; \(ii\)")
+    # Amendment No. 2: "...2026 Plan ..., and include: (i) N shares of our Class A common stock;
+    # Amendment No. 3: "N shares of our Class A common stock to be reserved ... under our 2026
+    # Equity Incentive Plan ..., plus up to ...". Same fixed number, two wordings.
+    try:
+        hit = f.sentence(rf"include: \(i\) ([\d,]+) {a}; \(ii\)")
+    except ExtractionError:
+        hit = f.sentence(
+            rf"([\d,]+) {a} to be reserved for future issuance under our 2026 Equity Incentive Plan"
+        )
     c.count(
         "shares.plan_2026_reserve",
         "Shares reserved for future grants (2026 Equity Incentive Plan)",
@@ -1159,6 +1178,10 @@ def _commitments(c: Collector) -> None:
 
 
 UNLOCK_SHARES_RE = re.compile(r"^Up to ([\d.]+) (million|billion) shares of Class A common stock")
+# Amendment No. 3 splits each step into Class A, Class N and their total: the page draws the total.
+UNLOCK_TOTAL_RE = re.compile(
+    r"^Up to ([\d.]+) (million|billion) shares of Class A and Class N common stock"
+)
 
 
 def _structure(c: Collector) -> None:
@@ -1359,7 +1382,8 @@ def _structure(c: Collector) -> None:
     # When existing shares may be sold: the filing's table, step by step.
     section = "Shares Eligible for Future Sale"
     start = f.index_of(
-        r"^Earliest Date Available for Sale in the Public Market \| Approximate Number of Shares"
+        r"^Earliest Date Available for Sale in the Public Market \| "
+        r"(?:Approximate Number of Shares|Shares of Class A Common Stock \| Shares of Class N)"
     )
     context = (
         "As the filing words it: shares that become available for sale at each step, "
@@ -1372,11 +1396,14 @@ def _structure(c: Collector) -> None:
             break
         if item.kind != "row" or item.cells[0].startswith("Earliest Date Available"):
             continue
-        if len(item.cells) != 2:
+        if len(item.cells) == 2:  # Amendment No. 2: one column, Class A
+            found = UNLOCK_SHARES_RE.match(item.cells[1])
+        elif len(item.cells) == 4:  # Amendment No. 3: Class A, Class N, total
+            found = UNLOCK_TOTAL_RE.match(item.cells[3])
+        else:
             raise ExtractionError(f"unlock row not understood: {item.text}")
-        found = UNLOCK_SHARES_RE.match(item.cells[1])
         if found is None:
-            raise ExtractionError(f"unlock shares not understood: {item.cells[1]}")
+            raise ExtractionError(f"unlock shares not understood: {item.text}")
         step += 1
         number, scale = found.group(1), found.group(2)
         key = f"unlock.{step:02d}"
@@ -1430,13 +1457,18 @@ def build(path: Path, *, document_id: str) -> FactFile:
     url = saved_from.group(1)
     accession_digits = url.rstrip("/").split("/")[-2]
     accession = f"{accession_digits[:10]}-{accession_digits[10:12]}-{accession_digits[12:]}"
-    facts = extract(Filing(raw))
+    filing = Filing(raw)
+    facts = extract(filing)
     filed = next(str(f.value) for f in facts if f.id == "doc.filed_date")
+    # The cover says which amendment this is: "AMENDMENT NO. 3 TO FORM S-1".
+    amendment = re.search(r"AMENDMENT NO\. (\d+) TO FORM S-1", filing.page_text[0][1])
+    if amendment is None:
+        raise ExtractionError("the cover does not say which amendment this is")
     document = Document(
         id=document_id,
         company="Anthropic, PBC",
         form="S-1/A",
-        title="Form S-1/A, Amendment No. 2",
+        title=f"Form S-1/A, Amendment No. {amendment[1]}",
         accession=accession,
         filed=filed,
         url=url,

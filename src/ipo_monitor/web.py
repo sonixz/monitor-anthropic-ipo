@@ -159,7 +159,7 @@ def create_app(
 
     filings_watcher: edgar.Watcher | None = None
     if filings is not None:
-        document = facts.documents["s1a2"]
+        document = facts.filing
         registrant = re.search(r"/edgar/data/(\d+)/", document.url)
         if registrant is None:
             raise ValueError("the filing's link does not give the registrant's number")

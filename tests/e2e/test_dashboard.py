@@ -199,7 +199,7 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     assert card.is_visible()
     assert "FILED" in card.inner_text()
     assert "$16,956" in card.inner_text()
-    assert "p. 164" in card.inner_text()
+    assert "p. 165" in card.inner_text()
     href = card.get_by_role("link").get_attribute("href")
     assert href is not None
     assert href.startswith("https://www.sec.gov/Archives/edgar/data/2130357/")
@@ -248,7 +248,7 @@ def test_charts_open_the_same_sources(browser: Browser, base_url: str) -> None:
     column.click()
     card = page.locator("#src-q-revenue-2026q3")
     expect(card).to_be_visible()
-    assert "p. 164" in card.inner_text()
+    assert "p. 165" in card.inner_text()
     _shot(page, "loop-002-chart-source")
     # Selecting the same column again closes the card instead of reopening it.
     column.click()
