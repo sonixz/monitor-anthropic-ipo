@@ -1,0 +1,43 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-006",
+  "summary": "Version 0.6.2 is live: Open Graph and twitter:card (summary_large_image) tags with absolute antipo.watch addresses, a canonical address, and a 1200x630 share image without any figure. Verified as Twitterbot through Cloudflare. The tab takes the name Anthropic IPO Watch. Not run: the owner pasting the link in X's composer.",
+  "delivered": [
+    "SITE and SHARE_IMAGE in render.py: name, title, description, canonical address, image; the template reads them.",
+    "Tags: og:type, og:site_name, og:title, og:description, og:url, og:image (+type, width, height, alt), twitter:card, twitter:title, twitter:description, twitter:image (+alt); link rel=canonical.",
+    "Share image src/ipo_monitor/static/og.png from deploy/share/og.svg via deploy/share/make_og.py; no figure, notices included.",
+    "README and SECURITY give antipo.watch only; the repository's About box filled (description, website, topics) now that the GitHub token can."
+  ],
+  "changedFiles": [
+    "CHANGELOG.md", "README.md", "SECURITY.md", "STATUS.md", "pyproject.toml",
+    "src/ipo_monitor/__init__.py", "src/ipo_monitor/render.py", "src/ipo_monitor/static/og.png",
+    "src/ipo_monitor/templates/index.html.j2", "deploy/share/og.svg", "deploy/share/make_og.py",
+    "tests/test_web.py", "tests/e2e/test_dashboard.py", "loops/006-mission.md", "loops/006-report.json",
+    "devlog/loop-006.html", "devlog/index.html", "devlog/img/loop-006-og.png", "devlog/img/loop-006-x-card.png"
+  ],
+  "decisions": [
+    "Confirmed by the owner on 2026-11-17: the name Anthropic IPO Watch; the share card first, the branding pass next.",
+    "Proposed: a static image without figures; the tab title takes the new name now, the header in loop 007."
+  ],
+  "tests": [
+    {"command": "uv run pre-commit run --all-files && uv run pytest", "result": "passed", "notes": "ruff, mypy, gitleaks; unit tests including two new ones (tags and image; no digit in the image's text)."},
+    {"command": "uv run pytest -m e2e", "result": "passed", "notes": "14 locally; the title check now expects Anthropic IPO Watch."},
+    {"command": "GitHub Actions CI and CodeQL on 7113899", "result": "passed", "notes": "Both green; tag v0.6.2."},
+    {"command": "sh /data/deploy.sh v0.6.2 and curl https://antipo.watch/health", "result": "passed", "notes": "release 7113899ced12, version 0.6.2, filings ok."},
+    {"command": "curl -A Twitterbot/1.0 https://antipo.watch/ and the og:image URL", "result": "passed", "notes": "All tags with absolute addresses; image 200, image/png, 1200x630, 62 KB; Cloudflare's robots.txt holds no rule."},
+    {"command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e", "result": "passed", "notes": "14 against the live site after deployment."},
+    {"command": "owner pastes https://antipo.watch in X's composer without posting", "result": "not_run", "notes": "Only the owner can; X has no card validator any more."}
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "Owner: paste https://antipo.watch in X's composer, check the card, do not post until it looks right.",
+    "Loop 007: branding pass (name everywhere, a light centered hero, keys hint, expand/collapse all, UNLOCK full width, charts: a pie for CONTROL)."
+  ],
+  "recommendedNextSteps": [
+    "Write the Loop 007 mission with the owner's branding and chart ideas, show mock-ups before building."
+  ],
+  "reportedAt": "2026-11-17T04:00:00Z",
+  "submittedBy": "Claude Code (Claude Opus 5.5)",
+  "cost": {"durationSeconds": null, "inputTokens": null, "outputTokens": null, "usd": null}
+}

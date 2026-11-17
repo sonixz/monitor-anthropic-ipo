@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 006 — A share card for X · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 006 — A share card for X</h1>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 006 — A share card for X</h1>
+<p class="lead">2026-11-17 · Before the first post on X, a link to antipo.watch now shows a large card: the project's mark, the name Anthropic IPO Watch, one line on what the page does, and the notices. No figure in the image, so it never goes stale. Version 0.6.2.</p>
+
+<h2>Why</h2>
+<blockquote><p>The home page of antipo.watch has no Open Graph or twitter:card tags (checked as Twitterbot). Add og:title, og:description, og:url, og:image (a 1200×630 image without unsourced figures) and twitter:card=summary_large_image, then check the preview before I post.</p></blockquote>
+<p><small>The request came from the X research session and was passed on by the owner, who then said: go. The owner's words are reworded in English.</small></p>
+
+<h2>What changed</h2>
+<div class="pair">
+  <figure><img src="img/loop-006-og.png" alt="The share image: the project's mark, ANTHROPIC IPO WATCH, antipo.watch, the line Anthropic's IPO in numbers you can trace, and the notices."><figcaption>The image, 1200×630, drawn from an SVG in the page's colors.</figcaption></figure>
+  <figure><img src="img/loop-006-x-card.png" alt="A mock-up of the card as X shows it under a post: the image, with antipo.watch in its corner and From antipo.watch below."><figcaption>How X shows it under a post (a mock-up made from the live image: X no longer offers a preview tool).</figcaption></figure>
+</div>
+<ul>
+  <li><strong>Tags:</strong> Open Graph (type, site name, title, description, address, image with its size and description) and <code>twitter:card</code> set to <code>summary_large_image</code>; a canonical address, so search engines and previews prefer antipo.watch to the Fly.io address.</li>
+  <li><strong>One place for the words:</strong> the name, the title, the description and the address live in <code>render.py</code>; the page reads them. The tab now says Anthropic IPO Watch; the header follows in the branding loop.</li>
+  <li><strong>No figure in the image:</strong> X keeps a card for days, and a price range would be false after pricing. A test reads the image's text and fails on any digit.</li>
+</ul>
+
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit tests, lint, types, secret scan</td><td>passed</td><td>Two new tests: the tags and the image (PNG, 1200×630, under 5 MB); no digit in the image's text.</td></tr>
+  <tr><td>Real-browser tests, local and against antipo.watch</td><td>passed</td><td>14 and 14, after the title check took the new name.</td></tr>
+  <tr><td>CI and CodeQL</td><td>passed</td><td>Commit 7113899, tag v0.6.2.</td></tr>
+  <tr><td>As Twitterbot, through Cloudflare</td><td>passed</td><td>Every tag present, absolute https://antipo.watch addresses; the image answers 200, image/png, 1200×630, 62 KB. Cloudflare serves its own robots.txt, with no rule that blocks anyone.</td></tr>
+  <tr><td>The card in X's composer</td><td>not_run</td><td>Only the owner can paste the link, without posting.</td></tr>
+</table>
+
+<p class="nav">Mission: <code>loops/006-mission.md</code> · Report: <code>loops/006-report.json</code></p>
+</main>
+</body>
+</html>
