@@ -7,7 +7,7 @@
 | | |
 | --- | --- |
 | Site | https://antipo.watch (Cloudflare, Worker relaying to Fly.io, since 2026-11-17; the Fly.io address stays as a fallback, see INFRASTRUCTURE.md) |
-| Version | 0.7.0 (tag `v0.7.0`), under the name Anthropic IPO Watch |
+| Version | 0.7.1 (tag `v0.7.1`), under the name Anthropic IPO Watch |
 | Data | Anthropic, PBC, Form S-1/A, Amendment No. 2, filed 2026-11-10 |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |

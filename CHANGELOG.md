@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.7.1] - 2026-11-17
+
+### Fixed
+
+- On a phone, the hero is tighter: with a new-filing notice in the overview (a Form S-1/A was
+  filed on 2026-11-17), the enterprise value had slipped a few pixels below the first screen.
+  Found by the real-browser tests run against antipo.watch after the 0.7.0 deployment.
+
 ## [0.7.0] - 2026-11-17
 
 ### Added

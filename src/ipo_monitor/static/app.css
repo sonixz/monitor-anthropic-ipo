@@ -1821,10 +1821,21 @@ span.fg-blank {
 }
 
 @media (max-width: 640px) {
+  /* Tight on purpose: with a new-filing notice in the overview, the value at the IPO price must
+     still fit on the first screen. */
   .hero {
-    padding-top: 12px;
+    padding-top: 6px;
     padding-bottom: 2px;
-    gap: 2px;
+    gap: 0;
+  }
+
+  .hero .tagline,
+  .hero .disclaimer {
+    line-height: 1.25;
+  }
+
+  .hero .disclaimer {
+    letter-spacing: 0;
   }
 
   .hero .mark {
