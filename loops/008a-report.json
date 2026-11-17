@@ -2,7 +2,7 @@
   "schemaVersion": "loop0.report/1",
   "projectId": "monitor-anthropic-ipo",
   "loopId": "loop-008a",
-  "summary": "Version 0.8.1 is live: the header of https://antipo.watch says '● up to date · SEC checked 11:06 ET · figures: Amendment No. 3, Nov 17'. It says up to date only when the SEC's list was read and holds no newer prospectus; otherwise it names a new filing as not read yet, a failed check or an unavailable list. The page's script asks /health every minute for the time of the last check. The owner saw the screenshots first.",
+  "summary": "Version 0.8.1 is live: the header of https://antipo.watch says '● up to date · SEC checked 11:06 ET · figures: Amendment No. 3, Nov 17'. It says up to date only when the SEC's list was read and holds no newer prospectus; otherwise it names a new filing as not read yet, a failed check or an unavailable list. The page's script asks /health every minute for the time of the last check. The owner saw the screenshots first. A follow-up fix, 0.8.2, makes the header say 'final price read' when the final prospectus's price is used (found on review before pricing); deployed under D-016, 14 e2e pass live.",
   "delivered": [
     "The header line in four states (plus not watched), in index.html.j2, with its style.",
     "app.js: the time of the last SEC check from /health every minute, in New York time.",
@@ -10,24 +10,67 @@
     "CHANGELOG 0.8.1, STATUS, devlog loop-008a."
   ],
   "changedFiles": [
-    "src/ipo_monitor/templates/index.html.j2", "src/ipo_monitor/static/app.js", "src/ipo_monitor/static/app.css",
-    "src/ipo_monitor/__init__.py", "pyproject.toml", "tests/test_uptodate.py",
-    "CHANGELOG.md", "STATUS.md", "loops/008a-mission.md", "loops/008a-report.json",
-    "devlog/loop-008a.html", "devlog/index.html", "devlog/img/loop-008a-phone.png",
-    "devlog/img/loop-008a-desktop.png", "devlog/img/loop-008a-live-phone.png"
+    "src/ipo_monitor/templates/index.html.j2",
+    "src/ipo_monitor/static/app.js",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/__init__.py",
+    "pyproject.toml",
+    "tests/test_uptodate.py",
+    "CHANGELOG.md",
+    "STATUS.md",
+    "loops/008a-mission.md",
+    "loops/008a-report.json",
+    "devlog/loop-008a.html",
+    "devlog/index.html",
+    "devlog/img/loop-008a-phone.png",
+    "devlog/img/loop-008a-desktop.png",
+    "devlog/img/loop-008a-live-phone.png"
   ],
   "decisions": [
     "Confirmed by the owner on 2026-11-17: the line in the header; release after screenshots ('oui go!').",
     "Proposed: the wording of each state; the time refreshed by the page's script, since the page is rendered again only when what it shows changes."
   ],
   "tests": [
-    {"command": "uv run pre-commit run --all-files && uv run pytest", "result": "passed", "notes": "139 unit tests."},
-    {"command": "uv run pytest -m e2e (local)", "result": "passed", "notes": "14."},
-    {"command": "GitHub Actions CI on v0.8.1", "result": "passed", "notes": "CI green; CodeQL was running at deployment."},
-    {"command": "sh /data/deploy.sh v0.8.1; curl https://antipo.watch/health and the page", "result": "passed", "notes": "release a274b572134d; header line as above."},
-    {"command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e", "result": "passed", "notes": "14 passed."},
-    {"command": "Real use: Chromium at 390x844 against antipo.watch; /health answered with a later check", "result": "passed", "notes": "The enterprise value ends at 823 px of 844; the header changed to 16:47 ET for a check at 21:47 UTC."},
-    {"command": "owner looks at the live page", "result": "not_run", "notes": "Only the owner can."}
+    {
+      "command": "uv run pre-commit run --all-files && uv run pytest",
+      "result": "passed",
+      "notes": "139 unit tests."
+    },
+    {
+      "command": "uv run pytest -m e2e (local)",
+      "result": "passed",
+      "notes": "14."
+    },
+    {
+      "command": "GitHub Actions CI on v0.8.1",
+      "result": "passed",
+      "notes": "CI green; CodeQL was running at deployment."
+    },
+    {
+      "command": "sh /data/deploy.sh v0.8.1; curl https://antipo.watch/health and the page",
+      "result": "passed",
+      "notes": "release a274b572134d; header line as above."
+    },
+    {
+      "command": "E2E_BASE_URL=https://antipo.watch uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "14 passed."
+    },
+    {
+      "command": "v0.8.2: pytest (both pricing states in the header), CI and CodeQL, deploy, E2E_BASE_URL=https://antipo.watch",
+      "result": "passed",
+      "notes": "release b5dc39233aa2; 14 e2e pass live."
+    },
+    {
+      "command": "Real use: Chromium at 390x844 against antipo.watch; /health answered with a later check",
+      "result": "passed",
+      "notes": "The enterprise value ends at 823 px of 844; the header changed to 16:47 ET for a check at 21:47 UTC."
+    },
+    {
+      "command": "owner looks at the live page",
+      "result": "not_run",
+      "notes": "Only the owner can."
+    }
   ],
   "blockers": [],
   "remainingWork": [
@@ -39,5 +82,10 @@
   ],
   "reportedAt": "2026-11-17T16:12:00Z",
   "submittedBy": "Claude Code (Claude Opus 5.5)",
-  "cost": {"durationSeconds": null, "inputTokens": null, "outputTokens": null, "usd": null}
+  "cost": {
+    "durationSeconds": null,
+    "inputTokens": null,
+    "outputTokens": null,
+    "usd": null
+  }
 }
