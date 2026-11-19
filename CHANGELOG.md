@@ -4,6 +4,17 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.10.1] - 2026-11-19
+
+### Fixed
+
+- **No market price before the first trade.** On the morning of the listing, Yahoo Finance gave
+  the offering price, $83.00, as ANT's price, with a volume of zero and no first trading day. The
+  page showed it as a last quote at 10:08 in New York, then "source unavailable" once Nasdaq.com
+  answered that nothing had traded. A Yahoo Finance price now counts only once some shares have
+  changed hands; until then the panel stays "awaiting". Test on the recorded answer
+  (`tests/fixtures/market/yahoo-ant-no-trade.json`).
+
 ## [0.10.0] - 2026-11-19
 
 ### Changed

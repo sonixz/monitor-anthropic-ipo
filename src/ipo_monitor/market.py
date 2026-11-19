@@ -380,7 +380,19 @@ def read_yahoo(
     if price <= 0 or meta.get("currency") != "USD":
         raise SourceError("price not in dollars")
 
-    closes = (((result.get("indicators") or {}).get("quote") or [{}])[0] or {}).get("close") or []
+    bars = ((result.get("indicators") or {}).get("quote") or [{}])[0] or {}
+    # On the first morning (2026-11-19) the source gave the offering price as a price, with no
+    # volume at all and no first trading day: a placeholder, not a trade. A price counts only
+    # once some shares changed hands.
+    volumes = [_number(meta.get("regularMarketVolume"))] + [
+        _number(v) for v in bars.get("volume") or []
+    ]
+    if not any(v is not None and v > 0 for v in volumes):
+        return snapshot(
+            "awaiting",
+            detail=f"{name} lists {symbol} as {listed_as}, with no shares traded yet",
+        )
+    closes = bars.get("close") or []
     points = tuple(
         (int(moment), close)
         for moment, raw in zip(result.get("timestamp") or [], closes, strict=False)

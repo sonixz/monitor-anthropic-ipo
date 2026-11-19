@@ -661,3 +661,22 @@ def test_nasdaq_at_night() -> None:
     assert now - quote.time > 600
     assert (quote.close, quote.closed) == (352.78, "Nov 16, 2026, 16:00 EST")
     assert quote.line[-1] == (quote.time, quote.price)
+
+
+def test_a_price_with_no_shares_traded_is_not_a_trade() -> None:
+    # Recorded from Yahoo Finance at 9:37 in New York on 2026-11-19, before the first trade:
+    # the offering price, $83.00, with a volume of zero and no first trading day.
+    answer = recorded("yahoo-ant-no-trade.json")
+    assert answer["chart"]["result"][0]["meta"]["regularMarketPrice"] == 83.0
+    snapshot = market.read_yahoo(
+        answer,
+        symbol="ANT",
+        company="Anthropic",
+        name="Yahoo Finance",
+        page="p",
+        now=TRADING_NOW,
+    )
+    assert snapshot.state == "awaiting"
+    assert snapshot.quote is None
+    assert "no shares traded yet" in snapshot.detail
+    assert market.facts(snapshot) == []
