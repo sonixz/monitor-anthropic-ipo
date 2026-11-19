@@ -12,7 +12,8 @@ only, then Class A and Class N) never reads as a bare change of value.
 from __future__ import annotations
 
 import itertools
-from dataclasses import dataclass
+from collections import Counter
+from dataclasses import dataclass, replace
 
 from ipo_monitor.facts import Document, Fact, FactFile, Facts
 
@@ -108,6 +109,12 @@ def versions(facts: Facts) -> tuple[Facts, tuple[Step, ...]]:
                     when = _on_page(new_doc, new, fact_id + ".when", later)
             fact = new.get(fact_id) or old[fact_id]
             changes.append(Change(fact_id, fact.title, before, after, _style(fact), when))
+        # Two columns of one table share a title ("Total liabilities"): name each by its period.
+        titles = Counter(c.title for c in changes)
+        for index, change in enumerate(changes):
+            fact = new.get(change.id) or old[change.id]
+            if titles[change.title] > 1 and fact.period:
+                changes[index] = replace(change, title=f"{change.title}, {_column(fact.period)}")
         steps.append(Step(old_doc, new_doc, tuple(changes)))
 
     documents = {_document(f).id: _document(f) for f in facts.history}
@@ -116,6 +123,12 @@ def versions(facts: Facts) -> tuple[Facts, tuple[Step, ...]]:
         renamed = [f.model_copy(update={"id": history_ref(document_id, f.id)}) for f in unique]
         facts = facts.plus(renamed, documents[document_id])
     return facts, tuple(reversed(steps))
+
+
+def _column(period: str) -> str:
+    """'As of Sep 30, 2026, pro forma as adjusted for ...' → 'pro forma as adjusted'."""
+    words = period.removeprefix("As of Sep 30, 2026, ")
+    return words.split(" for the offering")[0]
 
 
 def _on_page(

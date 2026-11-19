@@ -173,7 +173,7 @@ def test_health(client: TestClient) -> None:
     body = response.json()
     assert body["status"] == "ok"
     assert body["release"] == "test"
-    assert body["data"]["source_filed"] == "2026-11-17"
+    assert body["data"]["source_filed"] == "2026-11-18"  # the final prospectus's date
     assert body["data"]["checks_passed"] >= 120
     assert body["market"]["state"] == "awaiting"
     assert body["market"]["quote_time"] is None
@@ -191,7 +191,7 @@ def test_static_files(client: TestClient) -> None:
 def test_the_service_refuses_to_start_on_inconsistent_data(tmp_path: Path) -> None:
     broken = tmp_path / "facts"
     shutil.copytree(FACTS_DIR, broken)
-    path = broken / "s1a3.json"
+    path = broken / "p424b4.json"
     data = json.loads(path.read_text("utf-8"))
     for fact in data["facts"]:
         if fact["id"] == "q.revenue.2026q3":

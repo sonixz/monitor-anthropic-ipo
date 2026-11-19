@@ -94,6 +94,19 @@ def _filings_health(watcher: edgar.Watcher | None) -> dict[str, object]:
     }
 
 
+def filed_range(facts: Facts) -> tuple[float, float]:
+    """The last price range filed: the current filing's, or the latest amendment's once the
+    final prospectus (which has no range) is the current filing."""
+    if "offering.price_low" in facts:
+        return facts.num("offering.price_low"), facts.num("offering.price_high")
+    for old in reversed(facts.history):
+        values = {f.id: f.value for f in old.facts}
+        low, high = values.get("offering.price_low"), values.get("offering.price_high")
+        if isinstance(low, float) and isinstance(high, float):
+            return low, high
+    raise ValueError("no price range in the filings")
+
+
 def create_app(
     settings: Settings | None = None, source: Source | None = None, filings: Index | None = None
 ) -> FastAPI:
@@ -168,8 +181,8 @@ def create_app(
             filings_changed,
             cik=registrant[1],
             company=document.company,
-            low=facts.num("offering.price_low"),
-            high=facts.num("offering.price_high"),
+            low=filed_range(facts)[0],
+            high=filed_range(facts)[1],
         )
         filings_changed(filings_watcher.watch)  # a failure here leaves the page above
 

@@ -21,7 +21,7 @@ from ipo_monitor import __version__, fmt
 from ipo_monitor.calc import PRICED, QUARTER_NAMES, QUARTERS, Calc, Term, compute
 from ipo_monitor.charts import Mark
 from ipo_monitor.edgar import FINAL_SHARES, FINAL_TOTAL, Watch, batches, cover_facts, price_fact
-from ipo_monitor.facts import Fact, Facts
+from ipo_monitor.facts import Document, Fact, Facts
 from ipo_monitor.figures import Figures, unlock_label, unlock_steps
 from ipo_monitor.market import Snapshot, eastern_at
 from ipo_monitor.market import facts as market_facts
@@ -241,7 +241,7 @@ class Numbers:
                 raise ValueError(f"filed fact without a document: {fact.id}")
             parts = [
                 f"{document.company}, {document.title}",
-                f"filed {fmt.iso_date(document.filed)}",
+                f"{filed_word(document)} {fmt.iso_date(document.filed)}",
                 fmt.page_ref(fact.page),
             ]
             if fact.section:
@@ -312,6 +312,13 @@ class Moment:
     url: str = ""
     count: int = 1  # filings of the same form in a row
     last_day: str = ""  # the date of the last of them
+
+
+def filed_word(document: Document) -> str:
+    """A final prospectus read from its saved copy carries its own date ("Prospectus dated");
+    the SEC's filing date can be a day later. The service's reading of the cover keeps the
+    SEC's filing date (document id "final")."""
+    return "dated" if document.form == "424B4" and document.id != "final" else "filed"
 
 
 def timeline(watch: Watch | None, priced: bool, trading: bool, document_title: str) -> list[Moment]:
@@ -401,7 +408,10 @@ def render_page(
     """
     checks = assert_consistent(facts)
     facts, steps = versions(facts)  # earlier values, each with its own filing's source
-    if filings is not None and filings.price is not None:
+    # The price read from a final prospectus's cover counts while the page's figures come from
+    # an amendment; once the final prospectus is the current filing, its own figures are used.
+    price_used = filings is not None and filings.price is not None and "offering.price_low" in facts
+    if filings is not None and filings.price is not None and price_used:
         # The price on the cover of the final prospectus replaces one recorded from the press.
         fact, final = price_fact(filings.price, facts.filing.company)
         facts = facts.plus([fact, *cover_facts(filings.price)], final, replacing=True)
@@ -435,6 +445,10 @@ def render_page(
         "market": market,
         "quote": quote,
         "priced": priced,
+        "price_used": price_used,
+        # An amendment gives a price range; the final prospectus does not.
+        "ranged": "offering.price_low" in facts,
+        "base_pt": "mid" if "offering.price_low" in facts else "final",
         # The price as the press reported it, before the final prospectus gives it.
         "reported": reported,
         # The size of the offer as priced: the final prospectus's cover, else the press.

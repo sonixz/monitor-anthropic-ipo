@@ -199,6 +199,11 @@ class Collector:
         self.filing = filing
         self.facts: list[Fact] = []
         self._ids: set[str] = set()
+        # The price the filing's "after the offering" figures use: the middle of the range in an
+        # amendment, the IPO price in the final prospectus. Set by `_offering`.
+        self.at_basis = ""
+        self.assumed = True  # False in the final prospectus, whose figures use the IPO price
+        self.price = ""  # that price as written, "$74.00"; "$83.00 (IPO price)" when final
 
     def add(
         self,
@@ -405,29 +410,62 @@ def extract(filing: Filing) -> list[Fact]:
 
 def _offering(c: Collector) -> None:
     f = c.filing
+    # An amendment states when it was filed; the final prospectus states its own date.
     hit = f.sentence(
-        r"As filed with the Securities and Exchange Commission on (\w+ \d{1,2}, \d{4})"
+        r"(As filed with the Securities and Exchange Commission on|Prospectus dated) "
+        r"(\w+ \d{1,2}, \d{4})"
     )
-    filed = datetime.strptime(hit.match.group(1), "%B %d, %Y").date().isoformat()
+    final = hit.match.group(1) == "Prospectus dated"
+    filed = datetime.strptime(hit.match.group(2), "%B %d, %Y").date().isoformat()
     c.add(
         "doc.filed_date",
-        "Date this amendment was filed",
+        "Date of this prospectus" if final else "Date this amendment was filed",
         filed,
         "date",
-        hit.match.group(1),
+        hit.match.group(2),
         page=hit.page,
         quote=hit.quote,
-        section="Registration statement cover",
+        section="Prospectus cover" if final else "Registration statement cover",
+    )
+
+    basis = f.sentence(
+        r"(assumed initial public offering price|based upon the initial public offering price) "
+        r"of \$(\d+\.\d{2}) per share"
+    )
+    price = basis.match.group(2)
+    c.assumed = basis.match.group(1).startswith("assumed")
+    c.price = f"${price}" if basis.match.group(1).startswith("assumed") else f"${price} (IPO price)"
+    c.at_basis = (
+        f"At the assumed ${price} price"
+        if basis.match.group(1).startswith("assumed")
+        else f"At the ${price} IPO price"
     )
 
     prospectus = "Prospectus cover"
-    hit = f.sentence(
-        r"initial public offering price per share will be between \$(\d+\.\d{2}) and \$(\d+\.\d{2})"
-    )
-    prices = (
-        ("offering.price_low", "IPO price range, low end", 1),
-        ("offering.price_high", "IPO price range, high end", 2),
-    )
+    if final:
+        # The final prospectus gives one price, no range.
+        hit = f.sentence(r"The initial public offering price per share is \$(\d+\.\d{2})\.")
+        raw = hit.match.group(1)
+        c.add(
+            "pricing.ipo_price",
+            "Initial public offering price",
+            float(raw),
+            "USD/share",
+            f"${raw}",
+            page=hit.page,
+            quote=hit.quote,
+            section=prospectus,
+        )
+        prices: tuple[tuple[str, str, int], ...] = ()
+    else:
+        hit = f.sentence(
+            r"initial public offering price per share will be between "
+            r"\$(\d+\.\d{2}) and \$(\d+\.\d{2})"
+        )
+        prices = (
+            ("offering.price_low", "IPO price range, low end", 1),
+            ("offering.price_high", "IPO price range, high end", 2),
+        )
     for fact_id, title, group in prices:
         raw = hit.match.group(group)
         c.add(
@@ -512,7 +550,7 @@ def _offering(c: Collector) -> None:
     after = (
         " common stock to be outstanding after this offering and the concurrent private placement"
     )
-    at_mid = "After the offering, at the assumed $74.00 price"
+    at_mid = "After the offering, " + c.at_basis[0].lower() + c.at_basis[1:]
     outstanding = [
         ("shares.class_a_after", "Class A shares outstanding after the offering", "Class A"),
         ("shares.class_n_after", "Class N shares outstanding after the offering", "Class N"),
@@ -578,12 +616,18 @@ def _offering(c: Collector) -> None:
         page=row.page,
         quote=quote,
         section=section,
-        period="At the assumed $74.00 price",
+        period=c.at_basis,
     )
-    m = _search(r"assumed initial public offering price of \$(\d+\.\d{2}) per share", cell)
+    m = _search(
+        r"(?:assumed initial public offering price|based upon the initial public offering price)"
+        r" of \$(\d+\.\d{2}) per share",
+        cell,
+    )
     c.add(
         "offering.price_mid",
-        "Assumed IPO price (midpoint of the range)",
+        "Assumed IPO price (midpoint of the range)"
+        if c.assumed
+        else "IPO price the filing's figures use",
         float(m.group(1)),
         "USD/share",
         f"${m.group(1)}",
@@ -670,12 +714,13 @@ def _shares(c: Collector) -> None:
     )
     # Amendment No. 2: "...2026 Plan ..., and include: (i) N shares of our Class A common stock;
     # Amendment No. 3: "N shares of our Class A common stock to be reserved ... under our 2026
-    # Equity Incentive Plan ..., plus up to ...". Same fixed number, two wordings.
+    # Equity Incentive Plan ..., plus up to ...". The final prospectus drops "to be".
     try:
         hit = f.sentence(rf"include: \(i\) ([\d,]+) {a}; \(ii\)")
     except ExtractionError:
         hit = f.sentence(
-            rf"([\d,]+) {a} to be reserved for future issuance under our 2026 Equity Incentive Plan"
+            rf"([\d,]+) {a} (?:to be )?reserved for future issuance under our 2026 Equity "
+            r"Incentive Plan"
         )
     c.count(
         "shares.plan_2026_reserve",
@@ -686,7 +731,7 @@ def _shares(c: Collector) -> None:
         suffix=" shares",
     )
     hit = f.sentence(
-        rf"([\d,]+) {a} to be reserved for future issuance under our 2026 Employee Stock "
+        rf"([\d,]+) {a} (?:to be )?reserved for future issuance under our 2026 Employee Stock "
         r"Purchase Plan"
     )
     c.count(
@@ -728,7 +773,7 @@ def _shares(c: Collector) -> None:
         hit,
         1,
         section=section,
-        period="At the assumed $74.00 price",
+        period=c.at_basis,
         suffix=" shares",
     )
 
@@ -799,7 +844,7 @@ def _shares(c: Collector) -> None:
         hit,
         1,
         section="Summary consolidated financial data — notes",
-        period="At the assumed $74.00 price",
+        period=c.at_basis,
         suffix=" shares",
     )
 
@@ -809,7 +854,7 @@ def _balance(c: Collector) -> None:
     columns = [
         ("actual", "As of Sep 30, 2026, actual"),
         ("pro_forma", "As of Sep 30, 2026, pro forma"),
-        ("as_adjusted", "As of Sep 30, 2026, pro forma as adjusted for the offering at $74.00"),
+        ("as_adjusted", f"As of Sep 30, 2026, pro forma as adjusted for the offering at {c.price}"),
     ]
     c.table(
         "balance",
@@ -834,18 +879,19 @@ def _balance(c: Collector) -> None:
         section="Capitalization",
     )
 
-    hit = f.sentence(
-        r"Each \$1\.00 increase or decrease in the assumed initial public offering price would "
-        r"increase or decrease each of cash, cash equivalents, and short-term investments; "
-        r"[^.]*? by \$(\d+) million"
-    )
-    c.millions(
-        "balance.cash_sensitivity_per_dollar",
-        "Change in post-offering cash for each $1.00 of IPO price",
-        hit,
-        1,
-        section="Summary consolidated financial data — notes",
-    )
+    if c.assumed:  # the final prospectus has one price: no "each $1.00 increase" sentence
+        hit = f.sentence(
+            r"Each \$1\.00 increase or decrease in the assumed initial public offering price "
+            r"would increase or decrease each of cash, cash equivalents, and short-term "
+            r"investments; [^.]*? by \$(\d+) million"
+        )
+        c.millions(
+            "balance.cash_sensitivity_per_dollar",
+            "Change in post-offering cash for each $1.00 of IPO price",
+            hit,
+            1,
+            section="Summary consolidated financial data — notes",
+        )
     hit = f.sentence(
         r"raised an aggregate of \$([\d.]+) billion of capital and had cash and cash equivalents "
         r"of \$([\d.]+) billion and short-term investments of \$([\d.]+) billion"
@@ -1141,7 +1187,7 @@ def _commitments(c: Collector) -> None:
         period="After Sep 30, 2026",
     )
     hit = f.sentence(
-        r"short-term in nature\. Minimum payments under such contracts are approximately "
+        r"short[- ]term in nature\. Minimum payments under such contracts are approximately "
         r"\$([\d.]+) billion"
     )
     c.billions(
@@ -1192,6 +1238,7 @@ def _structure(c: Collector) -> None:
     section = "Underwriting"
     start = f.index_of(r"^Underwriters \| Number of Shares of Class A Common Stock$")
     names: list[str] = []
+    allocated: list[str] = []  # the final prospectus fills in each bank's number of shares
     for item in f.items[start + 1 : start + 60]:
         if item.kind != "row":
             break
@@ -1208,13 +1255,23 @@ def _structure(c: Collector) -> None:
                 section=section,
             )
             break
-        if len(item.cells) != 1:
+        if item.cells[0] in ("Bookrunners", "Co-managers") and not c.assumed:
+            continue  # the final prospectus groups the banks under these two headings
+        if len(item.cells) == 2 and not c.assumed:
+            allocated.append(_first(r"^([\d,]+)$", item.cells[1]))
+        elif len(item.cells) != 1:
             raise ExtractionError(f"underwriter row with an allocation: {item.text}")
         names.append(item.cells[0])
     else:
         raise ExtractionError("underwriting table: no total row")
     if len(names) < 10:
         raise ExtractionError(f"underwriting table: only {len(names)} names")
+    if allocated:
+        if len(allocated) != len(names):
+            raise ExtractionError("underwriting table: some banks have no number of shares")
+        shares = sum(float(a.replace(",", "")) for a in allocated)
+        if shares != c.facts[-1].value:
+            raise ExtractionError(f"underwriting table: {shares:,.0f} shares, not the total")
     c.add(
         "underwriting.banks",
         "Underwriters named in the filing",
@@ -1222,7 +1279,13 @@ def _structure(c: Collector) -> None:
         "text",
         "; ".join(names),
         page=f.items[start].page,
-        quote=f"Underwriters: {'; '.join(names)}. Their number of shares is left blank.",
+        quote=(
+            "Underwriters: "
+            + "; ".join(f"{n} ({a} shares)" for n, a in zip(names, allocated, strict=True))
+            + "."
+            if allocated
+            else f"Underwriters: {'; '.join(names)}. Their number of shares is left blank."
+        ),
         section=section,
     )
 
@@ -1460,15 +1523,21 @@ def build(path: Path, *, document_id: str) -> FactFile:
     filing = Filing(raw)
     facts = extract(filing)
     filed = next(str(f.value) for f in facts if f.id == "doc.filed_date")
-    # The cover says which amendment this is: "AMENDMENT NO. 3 TO FORM S-1".
-    amendment = re.search(r"AMENDMENT NO\. (\d+) TO FORM S-1", filing.page_text[0][1])
-    if amendment is None:
+    # The cover says which amendment this is: "AMENDMENT NO. 3 TO FORM S-1", or that it is the
+    # final prospectus: "Filed Pursuant to Rule 424(b)(4)".
+    cover = filing.page_text[0][1]
+    amendment = re.search(r"AMENDMENT NO\. (\d+) TO FORM S-1", cover)
+    if amendment is not None:
+        form, title = "S-1/A", f"Form S-1/A, Amendment No. {amendment[1]}"
+    elif re.match(r"Filed Pursuant to Rule 424\(b\)\(4\)", cover):
+        form, title = "424B4", "Form 424B4, final prospectus"
+    else:
         raise ExtractionError("the cover does not say which amendment this is")
     document = Document(
         id=document_id,
         company="Anthropic, PBC",
-        form="S-1/A",
-        title=f"Form S-1/A, Amendment No. {amendment[1]}",
+        form=form,
+        title=title,
         accession=accession,
         filed=filed,
         url=url,

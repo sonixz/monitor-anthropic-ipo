@@ -55,8 +55,8 @@
    "accessed": "2026-11-15"
   },
   {
-   "id": "pricing.ipo_price",
-   "title": "Initial public offering price",
+   "id": "press.ap.ipo_price",
+   "title": "Reported IPO price",
    "value": 83.0,
    "unit": "USD/share",
    "as_filed": "$83 per share",

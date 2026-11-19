@@ -4,6 +4,28 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.10.0] - 2026-11-19
+
+### Changed
+
+- **The final prospectus is the page's filing** (Loop 009): Form 424B4, dated Nov 18, 2026,
+  read in full by the same extractor (`data/facts/p424b4.json`, 335 facts). The page computes
+  at the $83.00 IPO price with the prospectus's own figures: 956,351,354 shares sold by the
+  company, 13,219,642,276 shares outstanding after the offering, $104.8 billion of net
+  proceeds, $232.4 billion of cash after the offering. All 159 consistency checks pass on it.
+- Amendment No. 3 moves to `data/facts/history/`. HISTORY lists what changed from it, the
+  price range included ("no longer given"), each side opening its own filing.
+- The views across the price range (range charts, implied value by price) leave the main page
+  (D-037). The filing's "dated" Nov 18 is written as such; it was filed with the SEC on Nov 19.
+- The lock-up steps keep the prospectus's words, which now give the date of the first steps.
+
+### Added
+
+- The extractor reads the final prospectus's wording beside the amendments': the prospectus
+  date, the single price, figures "based upon the initial public offering price", the banks'
+  allocations (checked to add up to the total), and two reworded sentences. Tests reproduce
+  all three filings.
+
 ## [0.9.1] - 2026-11-19
 
 ### Fixed

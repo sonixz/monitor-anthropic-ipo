@@ -235,9 +235,17 @@ def run_checks(f: Facts) -> list[Check]:
             f.num("offering.private_placement"),
             10_000,
         ),
+        # An amendment assumes the middle of its range; the final prospectus uses the IPO price.
         _close(
             "assumed price is the midpoint of the range",
             (f.num("offering.price_low") + f.num("offering.price_high")) / 2,
+            f.num("offering.price_mid"),
+            0,
+        )
+        if "offering.price_low" in f
+        else _close(
+            "the figures use the IPO price on the cover",
+            f.num("pricing.ipo_price"),
             f.num("offering.price_mid"),
             0,
         ),

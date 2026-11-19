@@ -16,7 +16,7 @@ from ipo_monitor.extract import (
     strip_footnotes,
 )
 
-from .conftest import FACTS_DIR, RAW_EARLIER, RAW_FILING
+from .conftest import FACTS_DIR, RAW_EARLIER, RAW_FILING, RAW_FINAL
 
 PAGE = (
     '<div style="--justify:justify;content-visibility:auto;float:none;height:792pt;'
@@ -166,7 +166,34 @@ def test_missing_figures_stop_the_extraction() -> None:
 @pytest.mark.skipif(not RAW_FILING.exists(), reason="the saved filing is not in data/raw/sec/")
 def test_extraction_reproduces_the_committed_dataset() -> None:
     regenerated = render(build(RAW_FILING, document_id="s1a3"))
-    assert regenerated == (FACTS_DIR / "s1a3.json").read_text("utf-8")
+    assert regenerated == (FACTS_DIR / "history" / "s1a3.json").read_text("utf-8")
+
+
+@pytest.mark.skipif(not RAW_FINAL.exists(), reason="the saved filing is not in data/raw/sec/")
+def test_the_same_code_reads_the_final_prospectus() -> None:
+    # The final prospectus has one price, no range, and its figures use that price.
+    file = build(RAW_FINAL, document_id="p424b4")
+    assert render(file) == (FACTS_DIR / "p424b4.json").read_text("utf-8")
+    assert file.document is not None
+    assert (file.document.form, file.document.title) == ("424B4", "Form 424B4, final prospectus")
+    assert file.document.accession == "0001628280-26-074944"
+    values = {f.id: f for f in file.facts}
+    assert values["pricing.ipo_price"].value == 83.0
+    assert (
+        values["pricing.ipo_price"].quote
+        == "The initial public offering price per share is $83.00."
+    )
+    assert values["offering.price_mid"].value == 83.0
+    assert "offering.price_low" not in values
+    assert "balance.cash_sensitivity_per_dollar" not in values
+    # By hand from the cover and The Offering: 956,351,354 + 23,648,646 = 980,000,000.
+    assert values["offering.shares_company"].value == 956_351_354
+    assert values["underwriting.total"].value == 980_000_000
+    assert values["shares.total_after"].value == 13_219_642_276
+    assert values["offering.net_proceeds_mid"].value == 104_800_000_000
+    assert values["balance.cash.as_adjusted"].value == 232_351_000_000
+    assert values["offering.net_proceeds_mid"].period == "At the $83.00 IPO price"
+    assert "Goldman Sachs & Co. LLC (200,900,000 shares)" in values["underwriting.banks"].quote
 
 
 @pytest.mark.skipif(not RAW_EARLIER.exists(), reason="the saved filing is not in data/raw/sec/")

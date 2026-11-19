@@ -7,8 +7,8 @@
 | | |
 | --- | --- |
 | Site | https://antipo.watch (Cloudflare, Worker relaying to Fly.io, since 2026-11-17; the Fly.io address stays as a fallback, see INFRASTRUCTURE.md) |
-| Version | 0.9.1 (tag `v0.9.1`), under the name Anthropic IPO Watch |
-| Data | Anthropic, PBC, Form S-1/A, Amendment No. 3, filed 2026-11-17 (Amendment No. 2 kept in history; the HISTORY panel lists what changed) |
+| Version | 0.10.0 (tag `v0.10.0`), under the name Anthropic IPO Watch |
+| Data | Anthropic, PBC, Form 424B4, final prospectus, dated 2026-11-18, IPO price $83.00 (Amendments No. 2 and 3 kept in history; the HISTORY panel lists what changed) |
 | Market data | Awaiting listing. The service asks Nasdaq.com every five minutes (Yahoo Finance if it fails); neither has a price for ANT yet. First trade reported for 2026-11-19 |
 | SEC filings | **Watched** since 2026-11-16 23:29 UTC: the service asks EDGAR every ten minutes (latest seen: Form FWP, filed Nov 12, 2026). The owner's contact address is on the machine only |
 | IPO price | Not final: the page shows the filed range, $70 to $78. Pricing reported for 2026-11-18 |
@@ -43,7 +43,7 @@
 
 - **The service's own client first talked to EDGAR on 2026-11-16 at 23:29 UTC** and read the same list as below. Before that: A real answer for the registrant was read on 2026-11-16 through a web fetch tool and is replayed by the tests: it has the shape the reader expects (14 filings, the latest five are documents for investors filed on 2026-11-12). The client itself, with the contact address, runs for the first time when the owner has put the address on the machine.
 - The cover of Anthropic's final prospectus does not exist yet. The reader is built on the cover of Amendment No. 2, where the price is blank. If the final cover is laid out differently, the price is not taken and must be recorded by hand: the intended failure.
-- After a final prospectus, the page uses the final price with share counts and cash still taken from Amendment No. 3, until the final prospectus is saved and extracted (it then moves Amendment No. 3 to history, and HISTORY lists what changed).
+- The final prospectus is extracted (Loop 009). Later filings (8-K, 10-Q) are listed by the watch but not read.
 - The About box of the GitHub repository (description, live link) is empty: the agent's GitHub access cannot change repository settings.
 - **No real quote of ANT has been seen yet**: the stock does not trade. The MARKET panel is proven on recorded answers, including invented prices that name themselves as test data.
 - The Nasdaq source was checked before the open and with the market open (2026-11-16), on a long-listed symbol and on a stock listed the Friday before. After the close (16:12 on 2026-11-16) its first figure is a trade of the extended hours and the close comes apart: the page will name both from the next release. At night (20:14) it still says After-Hours and gives the time of the last trade, 19:59. Not seen yet: its answer for a stock that is listed but has not traded yet.

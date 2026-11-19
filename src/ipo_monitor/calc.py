@@ -55,8 +55,17 @@ class Calculator:
         self.facts = facts
         self.calcs: dict[str, Calc] = {}
         priced = PRICED in facts
-        self.points = (*PRICE_POINTS, "final") if priced else PRICE_POINTS
+        # An amendment gives a price range; the final prospectus gives only the IPO price.
+        self.ranged = "offering.price_low" in facts
+        if self.ranged:
+            self.points: tuple[str, ...] = (*PRICE_POINTS, "final") if priced else PRICE_POINTS
+        else:
+            self.points = ("final",)
         self.at = "final" if priced else "mid"  # the price the headline figures use
+        # The price the filing's "after the offering" figures use: the middle of the range in
+        # an amendment, the IPO price in the final prospectus.
+        self.basis = facts.num("offering.price_mid")
+        self.basis_text = f"${self.basis:.2f}"
 
     def price_ref(self, point: str) -> str:
         return PRICED if point == "final" else f"offering.price_{point}"
@@ -138,7 +147,8 @@ class Calculator:
                 ("shares sold by existing stockholders", "offering.shares_selling"),
             ],
         )
-        for point in ("low", "high", *(("final",) if "final" in self.points else ())):
+        ends = ("low", "high") if self.ranged else ()
+        for point in (*ends, *(("final",) if "final" in self.points else ())):
             shares = self.term("shares offered", "offering.shares_total")
             price = self.term("IPO price", self.price_ref(point))
             self.put(
@@ -220,14 +230,14 @@ class Calculator:
             price = self.term("IPO price", self.price_ref(point))
             label = f"at ${price.value:.2f}"
 
-            if point == "mid":
+            if price.value == self.basis:
                 out = self.term("shares outstanding after the offering", "shares.total_after")
                 self.put(
-                    "value.shares_out.mid",
+                    f"value.shares_out.{point}",
                     f"Shares outstanding after the offering, {label}",
                     out.value,
                     "shares",
-                    "as stated in the filing at the assumed $74.00 price",
+                    f"as stated in the filing at the {self.basis_text} price",
                     [out],
                 )
             else:
@@ -243,9 +253,9 @@ class Calculator:
                     "the price.",
                 )
                 terms = [
-                    self.term("shares outstanding at $74.00", "shares.total_after"),
+                    self.term(f"shares outstanding at {self.basis_text}", "shares.total_after"),
                     self.term(
-                        "private placement shares at $74.00",
+                        f"private placement shares at {self.basis_text}",
                         "offering.private_placement_shares_mid",
                     ),
                     self.term(
@@ -257,8 +267,8 @@ class Calculator:
                     f"Shares outstanding after the offering, {label}",
                     terms[0].value - terms[1].value + placement,
                     "shares",
-                    "shares outstanding at $74.00 − private placement shares at $74.00 "
-                    f"+ private placement shares {label}",
+                    f"shares outstanding at {self.basis_text} − private placement shares at "
+                    f"{self.basis_text} + private placement shares {label}",
                     terms,
                 )
 
@@ -410,30 +420,31 @@ class Calculator:
             "them is counted too.",
         )
         withheld = self.term("RSU shares withheld for taxes", "shares.rsu_tax_withheld")
-        assumed = self.term("assumed IPO price", "offering.price_mid")
+        assumed = self.term("IPO price the filing assumes", "offering.price_mid")
         self.put(
             "ev.rsu_tax_paid",
             "Cash paid by the company for taxes on employee RSUs at the offering",
             withheld.value * assumed.value,
             "USD",
-            "RSU shares withheld for taxes × assumed IPO price",
+            "RSU shares withheld for taxes × IPO price the filing assumes",
             [withheld, assumed],
             "The company keeps these shares and pays the employees' taxes in cash. Cash today "
             "+ net proceeds − this amount matches the filing's post-offering cash to within "
             "rounding.",
         )
-        mid = self.facts.num("offering.price_mid")
+        mid = self.basis
+        at_basis = self.basis_text
         for point in self.points:
             price = self.term("IPO price", self.price_ref(point))
             label = f"at ${price.value:.2f}"
-            base = self.term("cash after the offering at $74.00", "balance.cash.as_adjusted")
-            if point == "mid":
+            base = self.term(f"cash after the offering at {at_basis}", "balance.cash.as_adjusted")
+            if price.value == mid:
                 self.put(
-                    "ev.cash_after.mid",
+                    f"ev.cash_after.{point}",
                     f"Cash after the offering, {label}",
                     base.value,
                     "USD",
-                    "as stated in the filing (pro forma as adjusted) at the assumed $74.00 price",
+                    f"as stated in the filing (pro forma as adjusted) at the {at_basis} price",
                     [base],
                 )
             else:
@@ -445,7 +456,8 @@ class Calculator:
                     f"Cash after the offering, {label}",
                     base.value + (price.value - mid) * per_dollar.value,
                     "USD",
-                    "cash after the offering at $74.00 + (IPO price − $74.00) × change per $1.00",
+                    f"cash after the offering at {at_basis} + (IPO price − {at_basis}) "
+                    "× change per $1.00",
                     [base, price, per_dollar],
                 )
             equity = self.term("diluted value", f"value.equity_diluted.{point}")

@@ -40,6 +40,8 @@
 <body data-market="{{ market.state if market else 'off' }}">
 <a class="skip" href="#main">Skip to the numbers</a>
 
+{#- A final prospectus states its own date; the SEC's filing date can be a day later. -#}
+{% macro filed_word(doc) %}{% if doc.form == "424B4" and doc.id != "final" %}dated{% else %}filed{% endif %}{% endmacro %}
 <header class="top hero">
   <div class="brand">
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
@@ -50,15 +52,15 @@
   {% set short_title = document.title.split(", ")[-1] %}
   <p class="uptodate">
     {%- if not filings -%}
-      figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
+      figures: {{ L(short_title) }}, {{ filed_word(document) }} {{ n("doc.filed_date", "short") }}
     {%- elif not filings.filings -%}
-      <span class="wait">SEC list unavailable</span> · figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
-    {%- elif newer and filings.price and filings.prospectus == newer -%}
+      <span class="wait">SEC list unavailable</span> · figures: {{ L(short_title) }}, {{ filed_word(document) }} {{ n("doc.filed_date", "short") }}
+    {%- elif newer and price_used and filings.prospectus == newer -%}
       <span class="ok">● final price read</span> from {{ L(newer.name) }}, {{ L(day(newer.filed, "short")) }} · other figures: {{ L(short_title) }}
     {%- elif newer -%}
       <span class="live">new filing</span> {{ L(newer.name) }}, {{ L(day(newer.filed, "short")) }} · not read yet
     {%- elif filings.state == "unavailable" -%}
-      <span class="wait">last SEC check failed</span> {{ L(clock(filings.checked)) }} · figures: {{ L(short_title) }}, filed {{ n("doc.filed_date", "short") }}
+      <span class="wait">last SEC check failed</span> {{ L(clock(filings.checked)) }} · figures: {{ L(short_title) }}, {{ filed_word(document) }} {{ n("doc.filed_date", "short") }}
     {%- else -%}
       <span class="ok">● up to date</span> · SEC checked <span data-label class="uptodate-at">{{ clock(filings.checked) }}</span> · figures: {{ L(short_title) }}, {{ n("doc.filed_date", "short") }}
     {%- endif -%}
@@ -110,8 +112,8 @@
     {% endfor %}
   </ol>
   <dl>
-    <div><dt>source</dt><dd>SEC {{ L(document.title) }} · filed {{ n("doc.filed_date") }}{% if steps %} · <a href="#history">what changed</a>{% endif %}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
-    <div class="dup"><dt>offer</dt><dd>{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
+    <div><dt>source</dt><dd>SEC {{ L(document.title) }} · {{ filed_word(document) }} {{ n("doc.filed_date") }}{% if steps %} · <a href="#history">what changed</a>{% endif %}<span class="wide"> · figures as of {{ L("Sep 30, 2026") }} unless noted</span></dd></div>
+    <div class="dup"><dt>offer</dt><dd>{% if ranged %}{% if priced %}priced at {{ n(price_ref) }} · {% endif %}{{ n("offering.shares_total", "m") }} shares{% if priced %}, marketed{% endif %} at {{ n("offering.price_low") }} to {{ n("offering.price_high") }} · raises {{ n("offering.size.low") }} to {{ n("offering.size.high") }}{% else %}{{ n("offering.shares_total", "m") }} shares at {{ n(price_ref) }} · raises {{ n("offering.size.final") }}{% endif %}<span class="wide"> · plus a {{ n("offering.private_placement") }} private placement</span></dd></div>
     <div class="dup"><dt>listing</dt><dd>{{ n("offering.exchange") }}, symbol {{ n("offering.symbol") }} ({{ n("offering.listing") }}) · prices {{ n("press.cnbc.pricing_date", "short") }} · trades {{ n("press.cnbc.trading_date", "short") }} (reported)</dd></div>
     <div><dt>filings</dt><dd>
       {%- if not filings -%}
@@ -119,7 +121,7 @@
       {%- elif not filings.filings -%}
         <span class="wait">source unavailable</span> · the SEC's list of filings could not be read<span class="wide"> · {{ L(filings.detail) }}</span>
       {%- elif newer -%}
-        <span class="live">new filing</span> · <a href="{{ newer.url }}" rel="noopener" data-label>{{ newer.name }}</a>{% if newer.meaning %}, {{ L(newer.meaning) }}{% endif %} · filed {{ L(day(newer.filed)) }} · {% if filings.price and filings.prospectus == newer %}its price is used on this page<span class="wide">; the other figures still come from {{ L(document.title) }}</span>{% else %}its figures are not read by this page yet{% endif %}
+        <span class="live">new filing</span> · <a href="{{ newer.url }}" rel="noopener" data-label>{{ newer.name }}</a>{% if newer.meaning %}, {{ L(newer.meaning) }}{% endif %} · filed {{ L(day(newer.filed)) }} · {% if price_used and filings.prospectus == newer %}its price is used on this page<span class="wide">; the other figures still come from {{ L(document.title) }}</span>{% else %}its figures are not read by this page yet{% endif %}
       {%- else -%}
         watching the SEC · latest: <a href="{{ listed[0].first.url }}" rel="noopener" data-label>{{ listed[0].first.name }}</a><span class="wide"> · filed {{ L(day(listed[0].first.filed)) }} · <a href="#filings">recent filings</a></span>
       {%- endif -%}
@@ -233,7 +235,7 @@
       <p class="sub">{{ n("value.shares_diluted.final") }} shares × the IPO price</p>
       {% else %}
       <p class="big">{{ n("value.equity_diluted.low") }} <span class="to">to</span> {{ n("value.equity_diluted.high") }}</p>
-      <p class="sub">{{ n("value.shares_diluted.mid") }} shares × the price range</p>
+      <p class="sub">{{ n("value.shares_diluted." ~ base_pt) }} shares × the price range</p>
       {% endif %}
     </div>
     <div class="tile tile-key">
@@ -243,6 +245,7 @@
     </div>
   </div>
 
+  {% if ranged %}
   <div class="split">
     <figure class="chart">
       <figcaption>Three share counts, across the price range</figcaption>
@@ -256,34 +259,35 @@
         </thead>
         <tbody>
           <tr><th scope="row">Outstanding</th><td>{{ n("value.mcap_out.low") }}</td><td>{{ n("value.mcap_out.mid") }}</td><td>{{ n("value.mcap_out.high") }}</td><td>{{ n("value.shares_out.mid") }}</td></tr>
-          <tr><th scope="row">Diluted</th><td>{{ n("value.equity_diluted.low") }}</td><td>{{ n("value.equity_diluted.mid") }}</td><td>{{ n("value.equity_diluted.high") }}</td><td>{{ n("value.shares_diluted.mid") }}</td></tr>
+          <tr><th scope="row">Diluted</th><td>{{ n("value.equity_diluted.low") }}</td><td>{{ n("value.equity_diluted.mid") }}</td><td>{{ n("value.equity_diluted.high") }}</td><td>{{ n("value.shares_diluted." ~ base_pt) }}</td></tr>
           <tr class="muted"><th scope="row">Press basis</th><td>{{ n("value.headline.low") }}</td><td>{{ n("value.headline.mid") }}</td><td>{{ n("value.headline.high") }}</td><td>{{ n("value.headline_shares") }}</td></tr>
         </tbody>
       </table>
       <p class="aside">Outstanding counts the shares that exist after the IPO. Diluted adds the shares already owed or granted. The press basis is the count that reproduces the largest headline.</p>
     </div>
   </div>
+  {% endif %}
 
   <div class="cols">
     <div>
       <h3>How the share count builds up</h3>
       <table class="lines bars">
         <tbody>
-          <tr><th scope="row">Outstanding after the IPO</th><td>{{ n("shares.total_after", "m") }}</td><td class="barcell">{{ bar(n.share("shares.total_after", "value.shares_diluted.mid"), "fg-base") }}</td></tr>
-          <tr><th scope="row"><span class="op">+</span> owed to Amazon on its notes</th><td>{{ n("notes.shares_remaining", "m") }}</td><td class="barcell">{{ bar(n.share("notes.shares_remaining", "value.shares_diluted.mid")) }}</td></tr>
-          <tr><th scope="row"><span class="op">+</span> employee stock options</th><td>{{ n("shares.options", "m") }}</td><td class="barcell">{{ bar(n.share("shares.options", "value.shares_diluted.mid")) }}</td></tr>
-          <tr><th scope="row"><span class="op">+</span> employee RSUs not yet vested</th><td>{{ n("value.rsu_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.rsu_shares", "value.shares_diluted.mid")) }}</td></tr>
-          <tr><th scope="row"><span class="op">+</span> issued since {{ L("Sep 30") }}</th><td>{{ n("value.issued_since_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.issued_since_shares", "value.shares_diluted.mid")) }}</td></tr>
-          <tr class="sum"><th scope="row"><span class="op">=</span> diluted share count</th><td>{{ n("value.shares_diluted.mid", "m") }}</td><td class="barcell">{{ bar(100, "fg-sum") }}</td></tr>
-          <tr class="muted"><th scope="row">Not counted: reserved for grants</th><td>{{ n("value.reserve_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.reserve_shares", "value.shares_diluted.mid"), "fg-muted") }}</td></tr>
+          <tr><th scope="row">Outstanding after the IPO</th><td>{{ n("shares.total_after", "m") }}</td><td class="barcell">{{ bar(n.share("shares.total_after", "value.shares_diluted." ~ base_pt), "fg-base") }}</td></tr>
+          <tr><th scope="row"><span class="op">+</span> owed to Amazon on its notes</th><td>{{ n("notes.shares_remaining", "m") }}</td><td class="barcell">{{ bar(n.share("notes.shares_remaining", "value.shares_diluted." ~ base_pt)) }}</td></tr>
+          <tr><th scope="row"><span class="op">+</span> employee stock options</th><td>{{ n("shares.options", "m") }}</td><td class="barcell">{{ bar(n.share("shares.options", "value.shares_diluted." ~ base_pt)) }}</td></tr>
+          <tr><th scope="row"><span class="op">+</span> employee RSUs not yet vested</th><td>{{ n("value.rsu_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.rsu_shares", "value.shares_diluted." ~ base_pt)) }}</td></tr>
+          <tr><th scope="row"><span class="op">+</span> issued since {{ L("Sep 30") }}</th><td>{{ n("value.issued_since_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.issued_since_shares", "value.shares_diluted." ~ base_pt)) }}</td></tr>
+          <tr class="sum"><th scope="row"><span class="op">=</span> diluted share count</th><td>{{ n("value.shares_diluted." ~ base_pt, "m") }}</td><td class="barcell">{{ bar(100, "fg-sum") }}</td></tr>
+          <tr class="muted"><th scope="row">Not counted: reserved for grants</th><td>{{ n("value.reserve_shares", "m") }}</td><td class="barcell">{{ bar(n.share("value.reserve_shares", "value.shares_diluted." ~ base_pt), "fg-muted") }}</td></tr>
         </tbody>
       </table>
     </div>
     <div>
       <h3>Why headlines disagree</h3>
       <ul class="notes">
-        <li>Reuters put the value near {{ n("press.reuters.outstanding_high") }} at the top of the range. That counts only the shares outstanding: our {{ n("value.mcap_out.high") }}.</li>
-        <li>CNBC reported up to {{ n("press.cnbc.fully_diluted_high", "b1") }} “fully diluted”. We reproduce it <span class="nw">({{ n("value.headline.high", "b1") }})</span> only by adding the {{ n("value.reserve_shares") }} shares reserved for grants that do not exist yet, and by leaving out the {{ n("notes.shares_remaining") }} shares still owed to Amazon.</li>
+        {% if ranged %}<li>Reuters put the value near {{ n("press.reuters.outstanding_high") }} at the top of the range. That counts only the shares outstanding: our {{ n("value.mcap_out.high") }}.</li>
+        <li>CNBC reported up to {{ n("press.cnbc.fully_diluted_high", "b1") }} “fully diluted”. We reproduce it <span class="nw">({{ n("value.headline.high", "b1") }})</span> only by adding the {{ n("value.reserve_shares") }} shares reserved for grants that do not exist yet, and by leaving out the {{ n("notes.shares_remaining") }} shares still owed to Amazon.</li>{% else %}<li>On the basis the press used before pricing (shares reserved for future grants counted, the shares owed to Amazon left out), the value at the IPO price is {{ n("value.headline.final", "b1") }}.</li>{% endif %}
         <li>Same filing, three share counts. Our diluted figure counts what is already owed or granted, and nothing else.</li>
       </ul>
     </div>
@@ -304,19 +308,21 @@
       <tr class="sum"><th scope="row"><span class="op">=</span> enterprise value</th><td>{{ n("ev.enterprise_value." ~ at, "b1") }}</td><td class="barcell">{{ chart.step("ev.enterprise_value." ~ at) }}</td></tr>
     </tbody>
   </table>
+  {% if ranged %}
   <figure class="chart chart-gap">
     <figcaption>Before and after the cash, across the price range</figcaption>
     {{ chart("ev.ranges") }}
   </figure>
-  <p class="aside">Across the range: {{ n("ev.enterprise_value.low") }} at {{ n("offering.price_low") }}, {% if priced %}{{ n("ev.enterprise_value.mid") }} at {{ n("offering.price_mid") }}, {% endif %}{{ n("ev.enterprise_value.high") }} at {{ n("offering.price_high") }}. The notes still owed to Amazon (carried at {{ n("capitalization.convertible_notes.as_adjusted", "b1") }}) are counted as shares above, so they are not added again as debt.</p>
+  {% endif %}
+  <p class="aside">{% if ranged %}Across the range: {{ n("ev.enterprise_value.low") }} at {{ n("offering.price_low") }}, {% if priced %}{{ n("ev.enterprise_value.mid") }} at {{ n("offering.price_mid") }}, {% endif %}{{ n("ev.enterprise_value.high") }} at {{ n("offering.price_high") }}. {% endif %}The notes still owed to Amazon (carried at {{ n("capitalization.convertible_notes.as_adjusted", "b1") }}) are counted as shares above, so they are not added again as debt.</p>
 
-  <h3>The cash that comes with the company{% if priced %}, as filed at {{ n("offering.price_mid") }}{% endif %}</h3>
+  <h3>The cash that comes with the company{% if priced and ranged %}, as filed at {{ n("offering.price_mid") }}{% endif %}</h3>
   <table class="lines">
     <tbody>
       <tr><th scope="row">Cash and short-term investments today</th><td>{{ n("balance.cash.actual", "b1") }}</td></tr>
       <tr><th scope="row"><span class="op">+</span> net proceeds of the IPO and private placement</th><td>{{ n("offering.net_proceeds_mid", "b1") }}</td></tr>
       <tr><th scope="row"><span class="op">−</span> taxes paid on employee RSUs at the offering</th><td>{{ n("ev.rsu_tax_paid", "b1") }}</td></tr>
-      <tr class="sum"><th scope="row"><span class="op">=</span> cash after the offering</th><td>{{ n("ev.cash_after.mid", "b1") }}</td></tr>
+      <tr class="sum"><th scope="row"><span class="op">=</span> cash after the offering</th><td>{{ n("ev.cash_after." ~ base_pt, "b1") }}</td></tr>
     </tbody>
   </table>
 
@@ -477,7 +483,7 @@
     </table>
     </details>
   </div>
-  <p class="aside">Days count from the date of the final prospectus, not known yet, or from a results release. <span data-label>R</span> is the release day as the filing defines it; <span data-label>R*</span> is the earlier of a release and a day counted from the prospectus. Each step is a maximum, and the filing does not say the steps add up, so no total is given here. The filing gives each step for Class A and Class N shares and their total; the page shows the total (Class N shares become Class A when sold).</p>
+  <p class="aside">{% if ranged %}Days count from the date of the final prospectus, not known yet, or from a results release.{% else %}Days count from the date of the final prospectus ({{ n("doc.filed_date") }}), or from a results release; the prospectus dates the first steps itself.{% endif %} <span data-label>R</span> is the release day as the filing defines it; <span data-label>R*</span> is the earlier of a release and a day counted from the prospectus. Each step is a maximum, and the filing does not say the steps add up, so no total is given here. The filing gives each step for Class A and Class N shares and their total; the page shows the total (Class N shares become Class A when sold).</p>
 </section>
 </div>
 
@@ -657,7 +663,7 @@
   {% macro change_row(c) %}<tr><th scope="row">{{ L(c.title) }}{% if c.when %}<span class="when">{{ n(c.when) }}</span>{% endif %}</th><td>{% if c.before %}{{ n(c.before, c.style) }}{% else %}<span class="what">new</span>{% endif %}</td><td>{% if c.after %}{{ n(c.after, c.style) }}{% else %}<span class="what">no longer given</span>{% endif %}</td></tr>{% endmacro %}
   {% for step in steps %}
   <table class="lines changes">
-    <caption>{{ L(step.older.title) }} <span class="what">filed {{ L(day(step.older.filed)) }}</span> <span class="to">→</span> {{ L(step.newer.title) }} <span class="what">filed {{ L(day(step.newer.filed)) }}</span></caption>
+    <caption>{{ L(step.older.title) }} <span class="what">{{ filed_word(step.older) }} {{ L(day(step.older.filed)) }}</span> <span class="to">→</span> {{ L(step.newer.title) }} <span class="what">{{ filed_word(step.newer) }} {{ L(day(step.newer.filed)) }}</span></caption>
     <thead><tr><th scope="col">figure</th><th scope="col">before</th><th scope="col">after</th></tr></thead>
     <tbody>
       {% for c in step.main %}
@@ -695,7 +701,7 @@
       {% endfor %}
     </tbody>
   </table>
-  <p class="aside">{{ L(filings.source) }}: the list the SEC publishes for {{ document.company }}, asked every ten minutes. {% if filings.price %}The offering price comes from the cover of the final prospectus; the other figures of this page come from {{ L(document.title) }}{% else %}The figures of this page come from {{ L(document.title) }}{% endif %}. A newer filing is listed here before its figures are read{% if filings.prospectus and not filings.price %}; the price on the cover of the final prospectus was not taken ({{ L(filings.price_problem) }}){% endif %}.</p>
+  <p class="aside">{{ L(filings.source) }}: the list the SEC publishes for {{ document.company }}, asked every ten minutes. {% if price_used %}The offering price comes from the cover of the final prospectus; the other figures of this page come from {{ L(document.title) }}{% else %}The figures of this page come from {{ L(document.title) }}{% endif %}. A newer filing is listed here before its figures are read{% if filings.prospectus and not filings.price %}; the price on the cover of the final prospectus was not taken ({{ L(filings.price_problem) }}){% endif %}.</p>
 </section>
 {% endif %}
 

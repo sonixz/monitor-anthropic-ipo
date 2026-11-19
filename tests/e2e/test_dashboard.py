@@ -206,7 +206,7 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     assert card.is_visible()
     assert "FILED" in card.inner_text()
     assert "$16,956" in card.inner_text()
-    assert "p. 165" in card.inner_text()
+    assert "p. 164" in card.inner_text()
     href = card.get_by_role("link").get_attribute("href")
     assert href is not None
     assert href.startswith("https://www.sec.gov/Archives/edgar/data/2130357/")
@@ -256,17 +256,21 @@ def test_charts_open_the_same_sources(browser: Browser, base_url: str) -> None:
     column.click()
     card = page.locator("#src-q-revenue-2026q3")
     expect(card).to_be_visible()
-    assert "p. 165" in card.inner_text()
+    assert "p. 164" in card.inner_text()
     _shot(page, "loop-002-chart-source")
     # Selecting the same column again closes the card instead of reopening it.
     column.click()
     expect(card).to_be_hidden()
 
     # A value printed on a chart is a way in too.
-    page.locator('#value .chart-svg text[data-ref="press.cnbc.fully_diluted_high"]').click()
-    card = page.locator("#src-press-cnbc-fully-diluted-high")
+    label = page.locator("#unlock .chart-svg text[data-ref]").first
+    label.scroll_into_view_if_needed()
+    ref = label.get_attribute("data-ref")
+    assert ref is not None
+    label.click()
+    card = page.locator("#src-" + ref.replace(".", "-"))
     expect(card).to_be_visible()
-    assert "PRESS" in card.inner_text()
+    assert "FILED" in card.inner_text()
     card.get_by_role("button", name="close").click()
     expect(card).to_be_hidden()
 
@@ -493,32 +497,29 @@ def test_trading_day_on_a_phone(browser: Browser, trading_url: str) -> None:
 
 
 def test_a_final_prospectus_on_a_phone(browser: Browser, final_url: str) -> None:
+    """The page's filing is the final prospectus; the SEC's list (test data) names a later one."""
     context = browser.new_context(
         viewport=PHONE, device_scale_factor=2, is_mobile=True, has_touch=True
     )
     page, errors = _open(context, final_url)
 
-    # On the first screen: the notice of the new filing, one tap away from the document.
+    # On the first screen: the notice of the later filing, one tap away from the document.
     expect(page.locator(".status").get_by_text("new filing")).to_be_in_viewport()
     link = page.locator('.status a[href^="https://www.sec.gov/Archives/edgar/data/"]').first
     expect(link).to_be_in_viewport()
-    assert "424B4" in link.inner_text()
     # The value at the final price stays on the first screen, notice and all.
     for ref in ("value.mcap_out.final", "value.equity_diluted.final", "ev.enterprise_value.final"):
         box = page.locator(f'#value .tiles button[data-ref="{ref}"]').bounding_box()
         assert box is not None, ref
         assert box["y"] + box["height"] <= PHONE["height"], f"{ref} is below the first screen"
-    # The offer as priced, from the same cover.
-    assert page.locator('.glance button[data-ref="final.shares_offered"]').count() == 1
 
-    # The price on the cover is the price of the page, and its card quotes the cover.
-    # On a phone the price is in the strip at the top (the offer line is hidden there).
+    # The price is the page's own filing's, not one read from the test data's cover ($74.00).
     page.locator('.glance button[data-ref="pricing.ipo_price"]').tap()
     card = page.locator("#src-pricing-ipo-price")
     expect(card).to_be_visible()
     text = card.inner_text()
     assert "FILED" in text
-    assert "Initial public offering price $74.00" in text
+    assert "The initial public offering price per share is $83.00." in text
     card.get_by_role("button", name="close").tap()
 
     # The list of filings names its source, here test data.

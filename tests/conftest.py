@@ -19,6 +19,7 @@ from ipo_monitor.web import create_app
 
 ROOT = Path(__file__).resolve().parent.parent
 FACTS_DIR = ROOT / "data" / "facts"
+RAW_FINAL = ROOT / "data" / "raw" / "sec" / "Anthropic, PBC - 424(b)(4).html"
 RAW_FILING = ROOT / "data" / "raw" / "sec" / "Anthropic, PBC - S-1_A-3.html"
 RAW_EARLIER = ROOT / "data" / "raw" / "sec" / "Anthropic, PBC - S-1_A-2.html"
 MARKET = ROOT / "tests" / "fixtures" / "market"
@@ -34,20 +35,22 @@ def snapshot_of(name: str, now: int = TRADING_NOW, previous: Snapshot | None = N
 Tamper = Callable[[dict[str, float | str]], Facts]
 
 
-# Recorded on the night of Nov 18 from the press, before the final prospectus.
-REPORTED = ("pricing.ipo_price",)
+HISTORY = FACTS_DIR / "history"
+
+
+def load_raw() -> list[dict[str, Any]]:
+    """The fact files as they stood before pricing: Amendment No. 3 and the press facts."""
+    paths = (HISTORY / "s1a3.json", FACTS_DIR / "press.json")
+    return [json.loads(p.read_text("utf-8")) for p in paths]
+
+
+def _history() -> tuple[FactFile, ...]:
+    return (FactFile.model_validate(json.loads((HISTORY / "s1a2.json").read_text("utf-8"))),)
 
 
 def before_pricing() -> Facts:
-    """The facts as they stood before the price was known: most tests read this page."""
-    files = load_raw()
-    for file in files:
-        file["facts"] = [f for f in file["facts"] if f["id"] not in REPORTED]
-    history = tuple(
-        FactFile.model_validate(json.loads(p.read_text("utf-8")))
-        for p in sorted((FACTS_DIR / "history").glob("*.json"))
-    )
-    return Facts([FactFile.model_validate(f) for f in files], history)
+    """The page on Nov 17, from Amendment No. 3: most tests read this state, with its range."""
+    return Facts([FactFile.model_validate(f) for f in load_raw()], _history())
 
 
 @pytest.fixture(scope="session")
@@ -57,7 +60,17 @@ def facts() -> Facts:
 
 @pytest.fixture(scope="session")
 def reported() -> Facts:
-    """Every fact on file, the press price of Nov 18 included: the page as it is now."""
+    """The night of Nov 18: Amendment No. 3, and the price as the Associated Press reported it."""
+    files = load_raw()
+    press = files[1]["facts"]
+    reported_price = next(f for f in press if f["id"] == "press.ap.ipo_price")
+    press.append({**reported_price, "id": "pricing.ipo_price"})
+    return Facts([FactFile.model_validate(f) for f in files], _history())
+
+
+@pytest.fixture(scope="session")
+def final() -> Facts:
+    """Every fact on file: the final prospectus, with both amendments in its history."""
     return Facts.load(FACTS_DIR)
 
 
@@ -86,18 +99,12 @@ def client() -> TestClient:
     return TestClient(create_app(settings, RecordedAnswer(MARKET / "ant-awaiting.json")))
 
 
-def load_raw() -> list[dict[str, Any]]:
-    return [json.loads(p.read_text("utf-8")) for p in sorted(FACTS_DIR.glob("*.json"))]
-
-
 @pytest.fixture
 def tampered() -> Tamper:
     """Build a fact set where some values were changed."""
 
     def build(changes: dict[str, float | str]) -> Facts:
         files = load_raw()
-        for file in files:
-            file["facts"] = [f for f in file["facts"] if f["id"] not in REPORTED]
         seen = set()
         for file in files:
             for fact in file["facts"]:

@@ -15,7 +15,7 @@ uv run ruff check .                  # lint
 uv run mypy                          # types, strict
 uv run pytest                        # unit tests
 uv run pytest -m e2e                 # real-browser tests (Playwright, Chromium)
-uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html" --id s1a3   # rebuild data/facts/s1a3.json
+uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html" --id p424b4   # rebuild data/facts/p424b4.json
 ```
 
 ## Conventions
@@ -27,7 +27,8 @@ uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html" --id s1a3   # re
 - **A new filing** (Loop 008): move the current fact file to `data/facts/history/`, extract the new
   one with a new `--id`, and the HISTORY panel lists what changed. Never delete an earlier filing.
   When its wording changes, teach the extractor the new wording next to the old one; both filings
-  must still extract (tests reproduce both files).
+  must still extract (tests reproduce every file). The final prospectus (Loop 009, `p424b4`) has
+  one price and no range: the page then computes at that price only (D-037).
   PRESS facts are recorded by hand in `data/facts/press.json`, with the article opened and quoted.
 - Every calculation lives in `calc.py` with its formula and inputs, and has a test in
   `tests/test_calc.py` checked against arithmetic done by hand.
