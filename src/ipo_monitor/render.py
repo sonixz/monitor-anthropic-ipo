@@ -20,7 +20,7 @@ from markupsafe import Markup
 from ipo_monitor import __version__, fmt
 from ipo_monitor.calc import PRICED, QUARTER_NAMES, QUARTERS, Calc, Term, compute
 from ipo_monitor.charts import Mark
-from ipo_monitor.edgar import Watch, batches, price_fact
+from ipo_monitor.edgar import FINAL_SHARES, FINAL_TOTAL, Watch, batches, cover_facts, price_fact
 from ipo_monitor.facts import Fact, Facts
 from ipo_monitor.figures import Figures, unlock_label, unlock_steps
 from ipo_monitor.market import Snapshot, eastern_at
@@ -404,7 +404,7 @@ def render_page(
     if filings is not None and filings.price is not None:
         # The price on the cover of the final prospectus replaces one recorded from the press.
         fact, final = price_fact(filings.price, facts.filing.company)
-        facts = facts.plus([fact], final, replacing=True)
+        facts = facts.plus([fact, *cover_facts(filings.price)], final, replacing=True)
     if market is not None:
         facts = facts.plus(market_facts(market))
     calcs = compute(facts)
@@ -412,6 +412,8 @@ def render_page(
     priced = PRICED in facts
     at = "final" if priced else "mid"
     price_ref = PRICED if priced else "offering.price_mid"
+    reported = priced and facts.get(PRICED).label == "PRESS"
+    final_cover = FINAL_SHARES in facts
     quote = market.quote if market else None
     figures = Figures(numbers, at, price_ref, quote)
     document = facts.filing
@@ -434,7 +436,11 @@ def render_page(
         "quote": quote,
         "priced": priced,
         # The price as the press reported it, before the final prospectus gives it.
-        "reported": priced and facts.get(PRICED).label == "PRESS",
+        "reported": reported,
+        # The size of the offer as priced: the final prospectus's cover, else the press.
+        "offered_ref": FINAL_SHARES if final_cover else "press.ap.shares_total",
+        "raised_ref": FINAL_TOTAL if final_cover else "press.ap.proceeds",
+        "sized": final_cover or reported,
         "at": at,
         "price_ref": price_ref,
         "document": document,

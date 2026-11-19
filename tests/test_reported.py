@@ -82,3 +82,8 @@ def test_the_final_prospectus_replaces_the_press_price(reported: Facts) -> None:
     assert "Form 424B4, final prospectus" in card.group()
     assert "Associated Press" not in card.group()
     assert "Press figures; values below use the" not in html
+    # The glance gives the offer as priced, from the same cover, not the filed range's size.
+    top = glance(html)
+    assert 'data-ref="final.shares_offered"' in top
+    assert 'data-ref="final.total"' in top
+    assert "press.ap." not in top

@@ -38,6 +38,8 @@ COVER_BYTES = 1_000_000  # the cover is at the top of the document; the rest is 
 FINAL_PROSPECTUS = ("424B4", "424B1")
 PROSPECTUS_FORMS = ("S-1", "S-1/A", *FINAL_PROSPECTUS)
 PRICED = "pricing.ipo_price"
+FINAL_SHARES = "final.shares_offered"
+FINAL_TOTAL = "final.total"
 
 # What a form is, in plain words. A form that is not here is shown by its name alone.
 FORMS = {
@@ -429,6 +431,40 @@ def price_fact(price: Price, company: str) -> tuple[Fact, Document]:
         ),
     )
     return fact, document
+
+
+def cover_facts(price: Price) -> list[Fact]:
+    """The shares offered and the total on the same cover: the size of the offer as priced."""
+    context = (
+        "Read by the service from the cover of the final prospectus, beside the price. Checked: "
+        "the total is the price times this number of shares."
+    )
+    return [
+        Fact(
+            id=FINAL_SHARES,
+            title="Shares offered, final prospectus",
+            label="FILED",
+            value=float(price.shares),
+            unit="shares",
+            as_filed=f"{price.shares:,} Shares",
+            page="sheet cover",
+            section="Cover page",
+            quote=price.quote,
+            context=context,
+        ),
+        Fact(
+            id=FINAL_TOTAL,
+            title="Total at the IPO price, final prospectus",
+            label="FILED",
+            value=price.total,
+            unit="USD",
+            as_filed=f"${price.total:,.0f}",
+            page="sheet cover",
+            section="Cover page",
+            quote=price.quote,
+            context=context,
+        ),
+    ]
 
 
 class Watcher:

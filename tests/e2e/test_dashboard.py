@@ -503,6 +503,13 @@ def test_a_final_prospectus_on_a_phone(browser: Browser, final_url: str) -> None
     link = page.locator('.status a[href^="https://www.sec.gov/Archives/edgar/data/"]').first
     expect(link).to_be_in_viewport()
     assert "424B4" in link.inner_text()
+    # The value at the final price stays on the first screen, notice and all.
+    for ref in ("value.mcap_out.final", "value.equity_diluted.final", "ev.enterprise_value.final"):
+        box = page.locator(f'#value .tiles button[data-ref="{ref}"]').bounding_box()
+        assert box is not None, ref
+        assert box["y"] + box["height"] <= PHONE["height"], f"{ref} is below the first screen"
+    # The offer as priced, from the same cover.
+    assert page.locator('.glance button[data-ref="final.shares_offered"]').count() == 1
 
     # The price on the cover is the price of the page, and its card quotes the cover.
     # On a phone the price is in the strip at the top (the offer line is hidden there).

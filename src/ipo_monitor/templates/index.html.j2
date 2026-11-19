@@ -68,8 +68,8 @@
 <section class="glance" aria-label="The IPO at a glance">
   <dl class="stats">
     <div><dt>{% if priced %}IPO price{% else %}price range{% endif %}</dt><dd>{% if priced %}{{ n(price_ref) }}{% else %}{{ n("offering.price_low") }}<span class="to">–</span>{{ n("offering.price_high") }}{% endif %}</dd></div>
-    <div><dt>shares offered</dt><dd>{% if reported %}{{ n("press.ap.shares_total", "m") }}{% else %}{{ n("offering.shares_total", "m") }}{% endif %}</dd></div>
-    <div><dt>raises</dt><dd>{% if reported %}{{ n("press.ap.proceeds") }}{% elif priced %}{{ n("offering.size.final") }}{% else %}{{ n("offering.size.low") }}<span class="to">–</span>{{ n("offering.size.high") }}{% endif %}</dd></div>
+    <div><dt>shares offered</dt><dd>{% if sized %}{{ n(offered_ref, "m") }}{% else %}{{ n("offering.shares_total", "m") }}{% endif %}</dd></div>
+    <div><dt>raises</dt><dd>{% if sized %}{{ n(raised_ref) }}{% elif priced %}{{ n("offering.size.final") }}{% else %}{{ n("offering.size.low") }}<span class="to">–</span>{{ n("offering.size.high") }}{% endif %}</dd></div>
     <div><dt>value</dt><dd>{% if priced %}{{ n("value.mcap_out.final") }}{% else %}{{ n("value.mcap_out.low") }}<span class="to">–</span>{{ n("value.mcap_out.high") }}{% endif %}</dd></div>
     <div><dt>prices</dt><dd>{{ n("press.cnbc.pricing_date", "short") }}</dd></div>
     <div><dt>trades</dt><dd>{{ n("press.cnbc.trading_date", "short") }}</dd></div>
@@ -119,7 +119,7 @@
       {%- elif not filings.filings -%}
         <span class="wait">source unavailable</span> · the SEC's list of filings could not be read<span class="wide"> · {{ L(filings.detail) }}</span>
       {%- elif newer -%}
-        <span class="live">new filing</span> · <a href="{{ newer.url }}" rel="noopener" data-label>{{ newer.name }}</a>{% if newer.meaning %}, {{ L(newer.meaning) }}{% endif %} · filed {{ L(day(newer.filed)) }} · {% if filings.price and filings.prospectus == newer %}its price is used on this page; the other figures still come from {{ L(document.title) }}{% else %}its figures are not read by this page yet{% endif %}
+        <span class="live">new filing</span> · <a href="{{ newer.url }}" rel="noopener" data-label>{{ newer.name }}</a>{% if newer.meaning %}, {{ L(newer.meaning) }}{% endif %} · filed {{ L(day(newer.filed)) }} · {% if filings.price and filings.prospectus == newer %}its price is used on this page<span class="wide">; the other figures still come from {{ L(document.title) }}</span>{% else %}its figures are not read by this page yet{% endif %}
       {%- else -%}
         watching the SEC · latest: <a href="{{ listed[0].first.url }}" rel="noopener" data-label>{{ listed[0].first.name }}</a><span class="wide"> · filed {{ L(day(listed[0].first.filed)) }} · <a href="#filings">recent filings</a></span>
       {%- endif -%}

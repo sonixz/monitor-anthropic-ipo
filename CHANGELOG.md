@@ -4,6 +4,18 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.9.1] - 2026-11-19
+
+### Fixed
+
+- Once the final prospectus is read, the glance showed the offer at the filed 825 million
+  shares ($68.5B) while the prospectus's cover gives 980,000,000 shares and $81,340,000,000.
+  The two numbers beside the price on that cover, already checked against each other by the
+  service, are now FILED facts (`final.shares_offered`, `final.total`), and the glance shows them.
+- Phone, final prospectus filed: the "filings" line keeps the notice and the link and drops
+  the repeat about other figures (the header says it), so the enterprise value stays on the
+  first screen. Real-browser test added for that state.
+
 ## [0.9.0] - 2026-11-18
 
 ### Added
