@@ -220,7 +220,10 @@ def test_the_final_ipo_price_becomes_the_headline_price(facts: Facts) -> None:
 def test_the_page_before_the_listing_shows_no_price(page: Page) -> None:
     assert page.market == "awaiting"
     assert "awaiting listing" in page.html
-    assert 'id="market"' not in page.html
+    # The panel is there from the start, with no price: the values at the IPO price wait beside it.
+    panel = page.html[page.html.index('id="market"') : page.html.index('id="value"')]
+    assert "no trade yet" in panel
+    assert 'data-ref="value.mcap_out.' in panel
     assert "market.price" not in page.html
     assert "tag-market" not in page.html
 
@@ -256,7 +259,9 @@ def test_source_unavailable_with_and_without_a_last_quote(facts: Facts) -> None:
     assert page.market == "unavailable"
     assert "source unavailable" in page.html
     assert "no price is shown" in page.html
-    assert 'id="market"' not in page.html
+    panel = page.html[page.html.index('id="market"') : page.html.index('id="value"')]
+    assert "the source is unavailable" in panel
+    assert "market.price" not in page.html
     good = snapshot_of("ant-trading-TEST.json")
     stale = market.check(
         Fake(SourceError("no answer")), "ANT", "Anthropic", good, TRADING_NOW + 900

@@ -80,7 +80,7 @@
 </section>
 
 <nav class="keys" aria-label="Panels">
-  {% if quote %}<a href="#market" class="desk"><kbd aria-hidden="true">m</kbd>market</a>{% endif %}
+  {% if market %}<a href="#market" class="desk"><kbd aria-hidden="true">m</kbd>market</a>{% endif %}
   <a href="#value"><kbd aria-hidden="true">v</kbd>value</a>
   <a href="#ev"><kbd aria-hidden="true">e</kbd>ev<span class="wide"> bridge</span></a>
   <a href="#shares"><kbd aria-hidden="true">s</kbd>shares</a>
@@ -211,6 +211,30 @@
       <p class="aside">The share counts and the cash behind these values come from the filing; only the price moves. {% if quote.day_high is not none and quote.line|length > 1 %}The range counts regular trading hours only; the line can also show trades made before the open and after the close. {% endif %}{% if not priced %}The final IPO price is not recorded here yet, so the comparison uses the middle of the filed range.{% endif %}</p>
     </div>
   </div>
+</section>
+{% elif market %}
+<section class="panel" id="market" tabindex="-1" aria-labelledby="market-h">
+  <h2 id="market-h"><kbd aria-hidden="true">m</kbd> MARKET <span class="q">What is the market paying now?</span></h2>
+  <p class="lede"><span class="wait">{% if market.state == "unavailable" %}the source is unavailable{% else %}no trade yet{% endif %}</span> · checked {{ L(clock(market.checked)) }}<span class="wide"> · {{ market.source }}, delayed, unofficial</span></p>
+
+  <div class="tiles">
+    <div class="tile tile-key">
+      <h3>Last price</h3>
+      <p class="big wait">no trade yet</p>
+      <p class="sub">compared with {% if priced %}the IPO price, {{ n(price_ref) }}{% else %}{{ n(price_ref) }}, mid-range{% endif %}</p>
+    </div>
+    <div class="tile">
+      <h3>Value at the {% if priced %}IPO price{% else %}middle of the range{% endif %}</h3>
+      <p class="big">{{ n("value.mcap_out." ~ base_pt) }} <span class="to">to</span> {{ n("value.equity_diluted." ~ base_pt) }}</p>
+      <p class="sub">shares outstanding, then diluted</p>
+    </div>
+    <div class="tile">
+      <h3>Enterprise value at that price</h3>
+      <p class="big">{{ n("ev.enterprise_value." ~ base_pt) }}</p>
+      <p class="sub">the market price will replace it</p>
+    </div>
+  </div>
+  <p class="aside">The page asks {{ market.source }} every few minutes. With the first trade, this panel shows the last price, the values at that price and the day's line, by itself.</p>
 </section>
 {% endif %}
 
@@ -726,7 +750,7 @@
 <div popover id="help" class="src help">
   <header><strong>Keys</strong></header>
   <dl class="keylist">
-    {% if quote %}<div><dt><kbd>m</kbd></dt><dd>market</dd></div>{% endif %}
+    {% if market %}<div><dt><kbd>m</kbd></dt><dd>market</dd></div>{% endif %}
     <div><dt><kbd>v</kbd></dt><dd>value</dd></div>
     <div><dt><kbd>e</kbd></dt><dd>enterprise value bridge</dd></div>
     <div><dt><kbd>s</kbd></dt><dd>shares</dd></div>

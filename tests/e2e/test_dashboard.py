@@ -350,8 +350,12 @@ def test_phone_first_screen(browser: Browser, base_url: str) -> None:
             "value.equity_diluted.high",
             "ev.enterprise_value.mid",
         )
+    # Before the first trade the market panel comes first and shows these values, waiting for a
+    # price; the first of the two on the page is the one that must be on the first screen.
     for ref in refs:
-        box = page.locator(f'#value .tiles button[data-ref="{ref}"]').bounding_box()
+        box = page.locator(
+            f':is(#market, #value) .tiles button[data-ref="{ref}"]'
+        ).first.bounding_box()
         assert box is not None, ref
         assert box["y"] >= 0, ref
         assert box["y"] + box["height"] <= PHONE["height"], f"{ref} is below the first screen"
@@ -509,7 +513,9 @@ def test_a_final_prospectus_on_a_phone(browser: Browser, final_url: str) -> None
     expect(link).to_be_in_viewport()
     # The value at the final price stays on the first screen, notice and all.
     for ref in ("value.mcap_out.final", "value.equity_diluted.final", "ev.enterprise_value.final"):
-        box = page.locator(f'#value .tiles button[data-ref="{ref}"]').bounding_box()
+        box = page.locator(
+            f':is(#market, #value) .tiles button[data-ref="{ref}"]'
+        ).first.bounding_box()
         assert box is not None, ref
         assert box["y"] + box["height"] <= PHONE["height"], f"{ref} is below the first screen"
 

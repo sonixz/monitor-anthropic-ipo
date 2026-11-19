@@ -4,6 +4,15 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.10.2] - 2026-11-19
+
+### Added
+
+- **The MARKET panel before the first trade**, at the owner's request. It says "no trade yet", when
+  the source was last asked, and shows the values at the IPO price that the market price will
+  replace: value outstanding and diluted, and enterprise value. With the first trade the full panel
+  takes its place by itself. On a phone these values stay on the first screen.
+
 ## [0.10.1] - 2026-11-19
 
 ### Fixed
