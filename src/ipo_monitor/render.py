@@ -433,6 +433,8 @@ def render_page(
         "market": market,
         "quote": quote,
         "priced": priced,
+        # The price as the press reported it, before the final prospectus gives it.
+        "reported": priced and facts.get(PRICED).label == "PRESS",
         "at": at,
         "price_ref": price_ref,
         "document": document,

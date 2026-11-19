@@ -34,8 +34,30 @@ def snapshot_of(name: str, now: int = TRADING_NOW, previous: Snapshot | None = N
 Tamper = Callable[[dict[str, float | str]], Facts]
 
 
+# Recorded on the night of Nov 18 from the press, before the final prospectus.
+REPORTED = ("pricing.ipo_price",)
+
+
+def before_pricing() -> Facts:
+    """The facts as they stood before the price was known: most tests read this page."""
+    files = load_raw()
+    for file in files:
+        file["facts"] = [f for f in file["facts"] if f["id"] not in REPORTED]
+    history = tuple(
+        FactFile.model_validate(json.loads(p.read_text("utf-8")))
+        for p in sorted((FACTS_DIR / "history").glob("*.json"))
+    )
+    return Facts([FactFile.model_validate(f) for f in files], history)
+
+
 @pytest.fixture(scope="session")
 def facts() -> Facts:
+    return before_pricing()
+
+
+@pytest.fixture(scope="session")
+def reported() -> Facts:
+    """Every fact on file, the press price of Nov 18 included: the page as it is now."""
     return Facts.load(FACTS_DIR)
 
 
@@ -74,6 +96,8 @@ def tampered() -> Tamper:
 
     def build(changes: dict[str, float | str]) -> Facts:
         files = load_raw()
+        for file in files:
+            file["facts"] = [f for f in file["facts"] if f["id"] not in REPORTED]
         seen = set()
         for file in files:
             for fact in file["facts"]:

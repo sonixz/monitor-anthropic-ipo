@@ -4,6 +4,28 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.9.0] - 2026-11-18
+
+### Added
+
+- **The IPO price, as the press reported it** (pricing night): `pricing.ipo_price` is recorded
+  as a PRESS fact, $83 a share, from the Associated Press article of Nov 18 (opened and quoted),
+  with the reported offer of 980 million shares and $81 billion of proceeds. The page switches to
+  its priced state: values at $83, the IPO price in the glance. The glance shows the reported
+  offer size and says the values below still count the filed shares until the final
+  prospectus. When the service reads the price on the cover of the final prospectus, that FILED
+  price replaces the press one by itself.
+
+### Changed
+
+- Priced state on a phone: the countdown to pricing is gone once a price is recorded, and the
+  "next" line is shorter, so the enterprise value stays on the first screen.
+- The enterprise value at the middle of the range is written beside the range chart once
+  priced, so every value a chart draws is still a number on the page.
+- Tests: most read the page as it was before the price (`facts`); `tests/test_reported.py`
+  reads it with the press price (`reported`). Real-browser tests check the first screen in
+  either state.
+
 ## [0.8.2] - 2026-11-17
 
 ### Fixed

@@ -68,6 +68,13 @@ MARKET = ROOT / "tests" / "fixtures" / "market"
 EDGAR = ROOT / "tests" / "fixtures" / "edgar"
 
 
+def _price_point(page: Page) -> str:
+    """'final' once a price is recorded (press or final prospectus), 'mid' before."""
+    return (
+        "final" if page.locator('.glance button[data-ref="pricing.ipo_price"]').count() else "mid"
+    )
+
+
 @contextlib.contextmanager
 def _serve(answer: str, filings: str = "") -> Iterator[str]:
     """Run the service with recorded answers of its outside sources: no network in tests."""
@@ -208,8 +215,9 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
 
     # A calculated number: the card shows the formula and its inputs.
     page.keyboard.press("v")
-    page.locator('#value .tile-key button[data-ref="ev.enterprise_value.mid"]').click()
-    card = page.locator("#src-ev-enterprise-value-mid")
+    at = _price_point(page)
+    page.locator(f'#value .tile-key button[data-ref="ev.enterprise_value.{at}"]').click()
+    card = page.locator(f"#src-ev-enterprise-value-{at}")
     assert card.is_visible()
     text = card.inner_text()
     assert "CALC" in text
@@ -324,13 +332,21 @@ def test_phone_first_screen(browser: Browser, base_url: str) -> None:
     page, errors = _open(context, base_url)
 
     # Without scrolling: the value at the price range, outstanding and diluted, and the EV.
-    for ref in (
-        "value.mcap_out.low",
-        "value.mcap_out.high",
-        "value.equity_diluted.low",
-        "value.equity_diluted.high",
-        "ev.enterprise_value.mid",
-    ):
+    if _price_point(page) == "final":
+        refs: tuple[str, ...] = (
+            "value.mcap_out.final",
+            "value.equity_diluted.final",
+            "ev.enterprise_value.final",
+        )
+    else:
+        refs = (
+            "value.mcap_out.low",
+            "value.mcap_out.high",
+            "value.equity_diluted.low",
+            "value.equity_diluted.high",
+            "ev.enterprise_value.mid",
+        )
+    for ref in refs:
         box = page.locator(f'#value .tiles button[data-ref="{ref}"]').bounding_box()
         assert box is not None, ref
         assert box["y"] >= 0, ref

@@ -68,12 +68,13 @@
 <section class="glance" aria-label="The IPO at a glance">
   <dl class="stats">
     <div><dt>{% if priced %}IPO price{% else %}price range{% endif %}</dt><dd>{% if priced %}{{ n(price_ref) }}{% else %}{{ n("offering.price_low") }}<span class="to">–</span>{{ n("offering.price_high") }}{% endif %}</dd></div>
-    <div><dt>shares offered</dt><dd>{{ n("offering.shares_total", "m") }}</dd></div>
-    <div><dt>raises</dt><dd>{% if priced %}{{ n("offering.size.final") }}{% else %}{{ n("offering.size.low") }}<span class="to">–</span>{{ n("offering.size.high") }}{% endif %}</dd></div>
+    <div><dt>shares offered</dt><dd>{% if reported %}{{ n("press.ap.shares_total", "m") }}{% else %}{{ n("offering.shares_total", "m") }}{% endif %}</dd></div>
+    <div><dt>raises</dt><dd>{% if reported %}{{ n("press.ap.proceeds") }}{% elif priced %}{{ n("offering.size.final") }}{% else %}{{ n("offering.size.low") }}<span class="to">–</span>{{ n("offering.size.high") }}{% endif %}</dd></div>
     <div><dt>value</dt><dd>{% if priced %}{{ n("value.mcap_out.final") }}{% else %}{{ n("value.mcap_out.low") }}<span class="to">–</span>{{ n("value.mcap_out.high") }}{% endif %}</dd></div>
     <div><dt>prices</dt><dd>{{ n("press.cnbc.pricing_date", "short") }}</dd></div>
     <div><dt>trades</dt><dd>{{ n("press.cnbc.trading_date", "short") }}</dd></div>
   </dl>
+  {% if reported %}<p class="glance-note">Press figures; values below use the {{ n("offering.shares_total", "m") }} filed shares until the final prospectus.</p>{% endif %}
 </section>
 
 <nav class="keys" aria-label="Panels">
@@ -99,7 +100,7 @@
 <main id="main">
 
 <section class="status overview" aria-labelledby="overview-h">
-  <h2 id="overview-h" class="ov-head"><span class="ov-tag">OVERVIEW</span> <span class="ov-phase">{{ phase }}</span> <span class="ov-days" data-until="{{ pricing_day }}" hidden></span></h2>
+  <h2 id="overview-h" class="ov-head"><span class="ov-tag">OVERVIEW</span> <span class="ov-phase">{{ phase }}</span>{% if not priced %} <span class="ov-days" data-until="{{ pricing_day }}" hidden></span>{% endif %}</h2>
   <div class="ov-grid">
   <div class="ov-main">
   {% set stages = moments[-4:] %}
@@ -141,7 +142,7 @@
       {%- if quote -%}
         the share price is checked every few minutes; the lock-up steps are in <a href="#unlock">unlock</a>
       {%- elif priced -%}
-        first trade reported for {{ n("press.cnbc.trading_date", "short") }}; the market panel appears by itself with the first quote
+        first trade reported for {{ n("press.cnbc.trading_date", "short") }}<span class="wide">; the market panel appears by itself with the first quote</span>
       {%- else -%}
         pricing reported for {{ n("press.cnbc.pricing_date", "short") }}<span class="wide">; the final prospectus is due within two business days, and</span><span class="narrow">;</span> this page takes the final price by itself
       {%- endif -%}
@@ -307,7 +308,7 @@
     <figcaption>Before and after the cash, across the price range</figcaption>
     {{ chart("ev.ranges") }}
   </figure>
-  <p class="aside">Across the range: {{ n("ev.enterprise_value.low") }} at {{ n("offering.price_low") }}, {{ n("ev.enterprise_value.high") }} at {{ n("offering.price_high") }}. The notes still owed to Amazon (carried at {{ n("capitalization.convertible_notes.as_adjusted", "b1") }}) are counted as shares above, so they are not added again as debt.</p>
+  <p class="aside">Across the range: {{ n("ev.enterprise_value.low") }} at {{ n("offering.price_low") }}, {% if priced %}{{ n("ev.enterprise_value.mid") }} at {{ n("offering.price_mid") }}, {% endif %}{{ n("ev.enterprise_value.high") }} at {{ n("offering.price_high") }}. The notes still owed to Amazon (carried at {{ n("capitalization.convertible_notes.as_adjusted", "b1") }}) are counted as shares above, so they are not added again as debt.</p>
 
   <h3>The cash that comes with the company{% if priced %}, as filed at {{ n("offering.price_mid") }}{% endif %}</h3>
   <table class="lines">

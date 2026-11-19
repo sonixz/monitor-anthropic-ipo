@@ -53,6 +53,45 @@
    "url": "https://www.cnbc.com/2026/11/10/anthropic-sets-price-range-of-70-to-78-in-upcoming-ipo.html",
    "published": "2026-11-10",
    "accessed": "2026-11-15"
+  },
+  {
+   "id": "pricing.ipo_price",
+   "title": "Initial public offering price",
+   "value": 83.0,
+   "unit": "USD/share",
+   "as_filed": "$83 per share",
+   "quote": "Anthropic priced its initial public offering at $83 per share on Wednesday.",
+   "label": "PRESS",
+   "outlet": "Associated Press, via PBS NewsHour",
+   "url": "https://www.pbs.org/newshour/economy/anthropic-prices-its-ipo-at-83-per-share-valuing-the-ai-giant-at-1-5-trillion",
+   "published": "2026-11-18",
+   "accessed": "2026-11-18"
+  },
+  {
+   "id": "press.ap.shares_total",
+   "title": "Reported shares offered, after the offering grew",
+   "value": 980000000.0,
+   "unit": "shares",
+   "as_filed": "980 million shares",
+   "quote": "Anthropic said the offering consists of 980 million shares, roughly 956 million sold by the company.",
+   "label": "PRESS",
+   "outlet": "Associated Press, via PBS NewsHour",
+   "url": "https://www.pbs.org/newshour/economy/anthropic-prices-its-ipo-at-83-per-share-valuing-the-ai-giant-at-1-5-trillion",
+   "published": "2026-11-18",
+   "accessed": "2026-11-18"
+  },
+  {
+   "id": "press.ap.proceeds",
+   "title": "Reported proceeds",
+   "value": 81000000000.0,
+   "unit": "USD",
+   "as_filed": "$81 billion",
+   "quote": "Proceeds totaling $81 billion put Anthropic's IPO ahead of SpaceX, which raised about $75 billion in June.",
+   "label": "PRESS",
+   "outlet": "Associated Press, via PBS NewsHour",
+   "url": "https://www.pbs.org/newshour/economy/anthropic-prices-its-ipo-at-83-per-share-valuing-the-ai-giant-at-1-5-trillion",
+   "published": "2026-11-18",
+   "accessed": "2026-11-18"
   }
  ]
 }
