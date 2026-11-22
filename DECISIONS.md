@@ -177,3 +177,6 @@ A frame and a line that climbs in steps, in the page's palette. Nothing from Ant
 
 ## D-049 · The daily run lives in a session on the owner's PC (owner, 2026-11-22)
 **Owner:** "can't it be here? We have everything we need." **Decision (confirmed).** A cron job in the working Claude Code session runs ROUTINE.md on weekdays about 16:47 Toronto time and pushes with the session's deploy key. **Consequences.** It runs only while that session is open and the PC awake, and expires after 7 days (re-armed by the agent). A durable Windows task, or a cloud routine after `/web-setup`, remain options.
+
+## D-050 · The slot follows the confidence (owner, 2026-11-22)
+**Owner:** "not a position at any cost… if the stock is at medium confidence, how do we do it?"; chose the first of three options ("J'aime bien le point 1"). **Decision (confirmed).** Rules version 2: a slot of 20% of the envelope at high confidence, 10% at medium; low confidence is not eligible. Applied from the start of the simulation, before the first fill. **Alternatives.** A confirmation close above the signal session's high for medium confidence; high confidence only (no trade on Nov 20).

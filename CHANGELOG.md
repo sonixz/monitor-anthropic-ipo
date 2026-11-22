@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.14.1] - 2026-11-22
+
+### Changed
+
+- **Rules version 2** (owner's choice): the slot follows the signal's confidence, 20% of the
+  envelope at high confidence and 10% at medium. Applied from the start, before the first fill:
+  the Nov 23 orders become 4 FTS and 1 DOL. The rules page lists each version and its change.
+
 ## [0.14.0] - 2026-11-22
 
 ### Added

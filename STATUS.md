@@ -7,11 +7,11 @@
 | | |
 | --- | --- |
 | Site | https://antipo.watch (Cloudflare, Worker relaying to Fly.io; the Fly.io address still answers, see INFRASTRUCTURE.md) |
-| Version | 0.14.0 (tag `v0.14.0`), under the name antipo.watch |
+| Version | 0.14.1 (tag `v0.14.1`), under the name antipo.watch |
 | Home page | The AI signal scanner: the 50 most traded stocks of the S&P/TSX Composite, ranked on 2026-11-20 |
 | Signals | For the session of Fri 2026-11-20, 50 signals, written by Claude in a working session on 2026-11-22 (no strong signal; buys FTS and DOL at medium confidence) |
 | Daily run | Scheduled in the working session on the owner's PC, weekdays about 16:47 Toronto (D-049); first run Mon 2026-11-23 |
-| Simulated portfolio | `/portfolio`, $4,000 CAD from the Nov 20 decisions: buy 9 FTS and 3 DOL at the Nov 23 open |
+| Simulated portfolio | `/portfolio`, $4,000 CAD from the Nov 20 decisions: buy 4 FTS and 1 DOL at the Nov 23 open (rules v2) |
 | Closes | Yahoo Finance daily bars for 220 candidates, read at start and after each close; 0 failures on 2026-11-22 |
 | IPO page | `/ant`, unlinked: Form 424B4 at $83.00, market panel on ANT, SEC watch |
 | AI in the live service | None. The signals are JSON files written by a separate run and checked by code |

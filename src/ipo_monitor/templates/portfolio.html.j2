@@ -110,10 +110,10 @@
   <h2 id="rules-h">RULES <span class="q">How is it decided?</span></h2>
   <ul class="how">
     <li>A dedicated envelope of {{ L(money(rules.capital)) }} {{ rules.currency }}, simulated from {{ L(day(rules.start, "long")) }}; rules version {{ L(rules.version) }}, approved {{ L(day(rules.approved, "long")) }}.</li>
-    <li>At most {{ L(rules.max_positions) }} positions; each entry about {{ L(pct(rules.slot_fraction)) }} of the envelope's value; the loss at the stop never above {{ L(pct(rules.max_loss_fraction)) }} of it; whole shares; no leverage.</li>
+    <li>At most {{ L(rules.max_positions) }} positions; each entry {% for c, f in rules.slot_by_confidence.items() %}{{ L(pct(f)) }} of the envelope's value at {{ c }} confidence{% if not loop.last %}, {% endif %}{% else %}{{ L(pct(rules.slot_fraction)) }} of the envelope's value{% endfor %}; the loss at the stop never above {{ L(pct(rules.max_loss_fraction)) }} of it; whole shares; no leverage.</li>
     <li>{{ tag("AI") }} Claude decides buy, wait or pass among the signals the rules allow ({{ rules.entry_levels|join(" or ")|replace("_", " ") }}, {{ rules.entry_confidence|join(" or ") }} confidence, at most {{ L(rules.max_per_sector) }} per sector), and hold or exit for each position, with its reason.</li>
     <li>{{ tag("CALC") }} Code sizes each order, fills it at the next open, and closes a position at its stop, its target, after {{ L(hold) }} sessions, or at the next open when the signal turns to {{ rules.exit_levels|join(" or ")|replace("_", " ") }}.</li>
-    <li>Rule changes are proposed with figures in the weekly review and applied only after the owner's yes.</li>
+    <li>Rule changes are proposed with figures in the weekly review and applied only after the owner's yes.{% for h in rules.history %} Version {{ L(h.version) }}, {{ L(day(h.approved)) }}: {{ L(h.change) }}{% endfor %}</li>
   </ul>
   {% if board.refused_decisions %}<p class="aside wait">Refused decision files: {% for name, problems in board.refused_decisions %}{{ name }}{% if not loop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
 </section>
@@ -130,7 +130,7 @@
   <header>{{ tag("CALC") }} <strong>{{ o.symbol }} · how many shares</strong></header>
   <table class="src-terms"><tbody>
     <tr><th scope="row">envelope value at the close</th><td>{{ L(money(o.sizing.equity)) }}</td></tr>
-    <tr><th scope="row">slot = value × {{ L(pct(rules.slot_fraction)) }}</th><td>{{ L(money(o.sizing.slot)) }} → {{ L(o.sizing.by_slot) }} shares at {{ L(money(o.sizing.close)) }}</td></tr>
+    <tr><th scope="row">slot = value × {{ L(pct(o.sizing.fraction)) }} ({% for c, f in rules.slot_by_confidence.items() if f == o.sizing.fraction %}{{ c }} confidence{% endfor %})</th><td>{{ L(money(o.sizing.slot)) }} → {{ L(o.sizing.by_slot) }} shares at {{ L(money(o.sizing.close)) }}</td></tr>
     <tr><th scope="row">risk per share = close − stop</th><td>{{ L(money(o.sizing.risk_per_share)) }}</td></tr>
     <tr><th scope="row">loss allowed = value × {{ L(pct(rules.max_loss_fraction)) }}</th><td>{{ L(money(o.sizing.allowed_loss)) }} → {{ L(o.sizing.by_loss) }} shares</td></tr>
     <tr><th scope="row">cash available</th><td>{{ L(money(o.sizing.cash)) }} → {{ L(o.sizing.by_cash) }} shares</td></tr>

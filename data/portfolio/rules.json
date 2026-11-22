@@ -1,20 +1,45 @@
 {
  "schema": "antipo.rules/1",
- "version": 1,
+ "version": 2,
  "approved": "2026-11-22",
- "approved_by": "owner (Loop 012 answers: 4 or 5 positions, 10%, $4,000 dedicated, no leverage)",
+ "approved_by": "owner: v1 from the Loop 012 answers; v2 'J'aime bien le point 1' (size by confidence), before the first fill",
  "simulated": true,
  "capital": 4000,
  "currency": "CAD",
  "start": "2026-11-20",
  "max_positions": 5,
  "slot_fraction": 0.2,
+ "slot_by_confidence": {
+  "high": 0.2,
+  "medium": 0.1
+ },
  "max_loss_fraction": 0.1,
  "leverage": false,
  "commission": 0,
- "entry_levels": ["buy", "strong_buy"],
- "entry_confidence": ["medium", "high"],
+ "entry_levels": [
+  "buy",
+  "strong_buy"
+ ],
+ "entry_confidence": [
+  "medium",
+  "high"
+ ],
  "max_per_sector": 2,
- "exit_levels": ["sell", "strong_sell"],
- "benchmark": "XIC"
+ "exit_levels": [
+  "sell",
+  "strong_sell"
+ ],
+ "benchmark": "XIC",
+ "history": [
+  {
+   "version": 1,
+   "approved": "2026-11-22",
+   "change": "First rules: at most 5 positions, a slot of 20% of the envelope, the loss at the stop capped at 10%, no leverage."
+  },
+  {
+   "version": 2,
+   "approved": "2026-11-22",
+   "change": "The slot follows the signal's confidence: 20% at high, 10% at medium. Applies from the start, before the first fill."
+  }
+ ]
 }

@@ -23,15 +23,19 @@ def rules(**change: Any) -> Rules:
 def test_the_rules_file() -> None:
     assert (RULES.capital, RULES.max_positions, RULES.slot_fraction) == (4000, 5, 0.2)
     assert (RULES.max_loss_fraction, RULES.leverage, RULES.simulated) == (0.1, False, True)
+    assert RULES.version == 2
+    assert RULES.slot_by_confidence == {"high": 0.2, "medium": 0.1}
 
 
 def test_sizing_by_hand() -> None:
-    # FTS on Nov 20: close 84.87, stop 82.37. Slot 800 → 9 shares; loss allowed 400 at 2.50
-    # a share → 160; cash 4,000 → 47. The smallest: 9 shares, $763.83, risk $22.50.
-    found = size(4000, 4000, 84.87, 82.37, RULES)
-    assert (found.by_slot, found.by_loss, found.by_cash, found.shares) == (9, 160, 47, 9)
-    assert found.cost == pytest.approx(763.83)
-    assert found.risk == pytest.approx(22.5)
+    # FTS on Nov 20, medium confidence: close 84.87, stop 82.37. Slot 10% = 400 → 4 shares;
+    # loss allowed 400 at 2.50 a share → 160; cash 4,000 → 47. The smallest: 4, $339.48.
+    found = size(4000, 4000, 84.87, 82.37, RULES, "medium")
+    assert (found.by_slot, found.by_loss, found.by_cash, found.shares) == (4, 160, 47, 4)
+    assert found.cost == pytest.approx(339.48)
+    assert found.risk == pytest.approx(10.0)
+    # At high confidence the slot is 20%: 800 → 9 shares.
+    assert size(4000, 4000, 84.87, 82.37, RULES, "high").shares == 9
     # A wide stop: the loss cap binds. Close 100, stop 50: 400 / 50 = 8 < slot's 8? use 40.
     wide = size(4000, 4000, 100, 40, RULES)
     assert (wide.by_slot, wide.by_loss, wide.shares) == (8, 6, 6)
@@ -101,12 +105,12 @@ def test_a_buy_fills_at_the_next_open_and_exits_at_the_target() -> None:
     assert refused == []
     trade = book.positions[0]
     assert (trade.stop, trade.target) == (96.0, 106.0)
-    assert (trade.entered, trade.entry, trade.shares) == (x.bars[20].date, 101.0, 8)  # slot 800
+    assert (trade.entered, trade.entry, trade.shares) == (x.bars[20].date, 101.0, 4)  # slot 400 at the close of 100
     assert (trade.why_exit, trade.exit, trade.exited) == ("target", 106.0, x.bars[21].date)
-    assert trade.pnl == pytest.approx((106 - 101) * 8)
+    assert trade.pnl == pytest.approx((106 - 101) * 4)
     assert trade.r == pytest.approx(5 / 5)  # gain 5 over a risk of 101 − 96
     metrics = book.metrics()
-    assert metrics.equity == pytest.approx(4000 + 40)
+    assert metrics.equity == pytest.approx(4000 + 20)
     assert (metrics.closed, metrics.wins, metrics.win_rate) == (1, 1, 100)
 
 
@@ -198,5 +202,5 @@ def test_the_real_first_decisions_size_as_shown_to_the_owner() -> None:
     assert board.book is not None
     order = board.book.pending[0]
     assert order.symbol == "RY"
-    assert order.sizing.shares == 3  # 800 / 263.05
+    assert order.sizing.shares == 1  # medium confidence: 400 / 263.05
     assert board.refused_decisions == ()

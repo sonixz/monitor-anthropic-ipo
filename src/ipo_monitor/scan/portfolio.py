@@ -48,6 +48,7 @@ class Rules(BaseModel):
     start: str
     max_positions: int
     slot_fraction: float
+    slot_by_confidence: dict[str, float] = Field(default_factory=dict)
     max_loss_fraction: float
     leverage: bool
     commission: float
@@ -56,6 +57,11 @@ class Rules(BaseModel):
     max_per_sector: int
     exit_levels: list[str]
     benchmark: str
+    history: list[dict[str, object]] = Field(default_factory=list)
+
+    def slot_for(self, confidence: str) -> float:
+        """The share of the envelope an entry may take, by the signal's confidence."""
+        return self.slot_by_confidence.get(confidence, self.slot_fraction)
 
     @classmethod
     def load(cls, path: Path) -> Rules:
@@ -91,7 +97,8 @@ class Sizing:
     cash: float
     close: float
     stop: float
-    slot: float  # equity × slot fraction
+    fraction: float  # the slot's share of the envelope, by confidence
+    slot: float  # equity × fraction
     by_slot: int
     allowed_loss: float  # equity × max loss fraction
     risk_per_share: float
@@ -108,15 +115,20 @@ class Sizing:
         return self.shares * self.risk_per_share
 
 
-def size(equity: float, cash: float, close: float, stop: float, rules: Rules) -> Sizing:
-    slot = equity * rules.slot_fraction
+def size(
+    equity: float, cash: float, close: float, stop: float, rules: Rules, confidence: str = "high"
+) -> Sizing:
+    fraction = rules.slot_for(confidence)
+    slot = equity * fraction
     allowed = equity * rules.max_loss_fraction
     risk = close - stop
     by_slot = math.floor(slot / close) if close > 0 else 0
     by_loss = math.floor(allowed / risk) if risk > 0 else 0
     by_cash = math.floor(max(cash, 0.0) / close) if close > 0 else 0
     shares = max(0, min(by_slot, by_loss, by_cash))
-    return Sizing(equity, cash, close, stop, slot, by_slot, allowed, risk, by_loss, by_cash, shares)
+    return Sizing(
+        equity, cash, close, stop, fraction, slot, by_slot, allowed, risk, by_loss, by_cash, shares
+    )
 
 
 @dataclass
@@ -415,7 +427,7 @@ def simulate(
                 book.skipped.append((choice.symbol, f"already {rules.max_per_sector} in {sector}"))
                 continue
             close, stop = marks["entry"].value, marks["stop"].value
-            sizing = size(equity, cash, close, stop, rules)
+            sizing = size(equity, cash, close, stop, rules, signal.confidence)
             if sizing.shares <= 0:
                 book.skipped.append((choice.symbol, "the size rounds to zero shares"))
                 continue
