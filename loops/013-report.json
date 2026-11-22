@@ -1,0 +1,85 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-013",
+  "reportedAt": "2026-11-22T23:45:00Z",
+  "summary": "Version 0.16.0 is live: antipo.watch shows a clean login page; every page (scanner, portfolio, IPO page, dossier) answers only after signing in, on antipo.watch and on the Fly.io address, checked from outside. The owner's account (chosen by the owner in the chat) and the upload token are in the machine's secrets, typed in hidden prompts. Results live on the server only: the Nov 20 signals and decisions were uploaded through the new endpoint (checked by the same rules) and removed from the repository, which now ignores result files. The daily run uploads instead of pushing. VISION.md: signals are private to the owner.",
+  "delivered": [
+    "auth.py: account, signed session cookie (30 days), slowed wrong logins, bearer token.",
+    "login.html.j2 and its style; /login, /logout; the gate on every route but /login, /static, /health and the upload endpoint.",
+    "PUT /api/upload/<signals|decisions|ledger>/<name>, checked then stored in /data/results; the scanner reads /data/results.",
+    "python -m ipo_monitor.scan upload; ROUTINE.md step 9; the session cron prompt updated.",
+    "start.sh: SITE_USER, SITE_PASSWORD, UPLOAD_TOKEN, IPO_DATA_DIR=/data/results.",
+    "tests/test_auth.py; e2e sign-in on a phone.",
+    "VISION, DECISIONS D-052, CHANGELOG 0.16.0, INFRASTRUCTURE, README, .env.example, .gitignore."
+  ],
+  "changedFiles": [
+    "src/ipo_monitor/auth.py",
+    "src/ipo_monitor/web.py",
+    "src/ipo_monitor/config.py",
+    "src/ipo_monitor/templates/login.html.j2",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/scan/__main__.py",
+    "deploy/start.sh",
+    "tests/test_auth.py",
+    "tests/test_portfolio.py",
+    "tests/e2e/",
+    "ROUTINE.md",
+    "VISION.md",
+    "DECISIONS.md",
+    "CHANGELOG.md",
+    "INFRASTRUCTURE.md",
+    "README.md",
+    ".env.example",
+    ".gitignore",
+    "data/signals/",
+    "data/portfolio/decisions/",
+    "loops/013-mission.md"
+  ],
+  "decisions": [
+    "Confirmed: a login on the whole portal; results on the server only; signals private (D-052).",
+    "Proposed: ten wrong logins in ten minutes pause logins five minutes."
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "196 unit tests, including the gate on every route, cookie tampering and expiry, slowed logins, uploads refused and stored."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "18, including sign-in on a phone."
+    },
+    {
+      "command": "curl from outside on antipo.watch and fly.dev: /, /portfolio, /ant, /scan/dossier.json",
+      "result": "passed",
+      "notes": "303 to /login on both addresses; upload without token: 401."
+    },
+    {
+      "command": "scan upload for the Nov 20 signals and decisions",
+      "result": "passed",
+      "notes": "stored on the server; /health signals_session 2026-11-20 from 'server'."
+    },
+    {
+      "command": "Real use: Chromium at 390x844 signs in on antipo.watch with the owner's account",
+      "result": "passed",
+      "notes": "Secure, HttpOnly cookie; scanner and portfolio shown."
+    },
+    {
+      "command": "The first daily run with upload",
+      "result": "not_run",
+      "notes": "Mon 2026-11-23 about 17:17 Toronto."
+    }
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "A sign-out link on the pages (the /logout address works).",
+    "The password was given in the chat: change it later with set_secret if wanted.",
+    "Live browser tests against antipo.watch now meet the login: they run locally only.",
+    "Second Brain unavailable: file decisions D-047 to D-052 when it is back."
+  ],
+  "recommendedNextSteps": [
+    "Watch Monday's run: signals, decisions and uploads end to end."
+  ]
+}
