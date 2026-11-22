@@ -7,7 +7,7 @@
 | | |
 | --- | --- |
 | Site | https://antipo.watch (Cloudflare, Worker relaying to Fly.io; the Fly.io address still answers, see INFRASTRUCTURE.md) |
-| Version | 0.12.1 (tag `v0.12.1`), under the name antipo.watch |
+| Version | 0.13.0 (tag `v0.13.0`), under the name antipo.watch |
 | Home page | The AI signal scanner: the 50 most traded stocks of the S&P/TSX Composite, ranked on 2026-11-20 |
 | Signals | For the session of Fri 2026-11-20, 50 signals, written by Claude in a working session on 2026-11-22 (no strong signal; buys FTS and DOL at medium confidence) |
 | Daily run | **Not running yet**: the routine needs GitHub connected to the owner's Claude account |

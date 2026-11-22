@@ -206,7 +206,10 @@ def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
     def average(value: float | None) -> str:
         return "–" if value is None else show(value, "percent")
 
+    reads = [s.series.read_at for s in board.stocks if s.series is not None]
+    closes_read = stamp(max(reads)) if reads else ""
     html = template.render(
+        closes_read=closes_read,
         site=SITE,
         board=board,
         current=current,

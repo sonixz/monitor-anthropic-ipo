@@ -34,16 +34,27 @@
   </div>
   <p class="tagline">AI trading signals on the most traded Canadian stocks<span class="wide">, every reason tied to its source</span>.</p>
   <p class="disclaimer">Unofficial · signals written by an AI · not investment advice</p>
-  <p class="uptodate run">
-    {%- if current -%}
-      {{ tag("AI") }} signals for {{ L(day(current.session, "long")) }} · {{ current.written_by }}, {{ L(when(current.written)) }}
-      {%- if board.stale %} · <span class="wait">no signals yet for {{ L(day(board.session)) }}</span>{% endif %}
-    {%- else -%}
-      <span class="wait">no signals yet</span>
-    {%- endif -%}
-    <span class="wide"> · next run {{ L(when(board.next_run)) }}</span>
-  </p>
 </header>
+
+<section class="sys" aria-label="Is the system working?">
+  <div class="sys-cell">
+    <span class="sys-k"><span class="dot {{ 'dot-ok' if current and not board.stale else 'dot-wait' }}" aria-hidden="true"></span>last analysis {{ tag("AI") }}</span>
+    {% if current %}<span class="sys-v">{{ L(when(current.written)) }}</span>
+    <span class="sys-s">{{ current.written_by.split(",")[0] }} · for the {{ L(day(current.session)) }} session{% if board.stale %} · <span class="wait">none yet for {{ L(day(board.session)) }}</span>{% endif %}</span>
+    {% else %}<span class="sys-v wait">no analysis yet</span><span class="sys-s">the first run writes it after the close</span>{% endif %}
+  </div>
+  <div class="sys-cell">
+    <span class="sys-k"><span class="dot {{ 'dot-ok' if closes_read and not board.problems else 'dot-wait' }}" aria-hidden="true"></span>closes read {{ tag("MARKET") }}</span>
+    {% if closes_read %}<span class="sys-v">{{ L(closes_read) }}</span>
+    <span class="sys-s">{{ L(board.stocks|length) }} stocks · last session {{ L(day(board.session)) }}{% if board.problems %} · <span class="wait">{{ L(board.problems|length) }} not read</span>{% endif %}</span>
+    {% else %}<span class="sys-v wait">reading</span><span class="sys-s">within a minute or two</span>{% endif %}
+  </div>
+  <div class="sys-cell">
+    <span class="sys-k">next analysis</span>
+    <span class="sys-v">{{ L(when(board.next_run)) }}</span>
+    <span class="sys-s">weekdays after the close</span>
+  </div>
+</section>
 
 <main id="main">
 

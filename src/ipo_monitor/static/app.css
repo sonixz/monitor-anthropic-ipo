@@ -2089,3 +2089,155 @@ button.n.lv-neutral {
 .res-expired {
   color: var(--dim);
 }
+
+/* ---- the scanner: system status and a dense phone layout --------------- */
+
+.sys {
+  max-width: 1360px;
+  margin: 6px auto 22px;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+}
+
+.sys-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 10px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  min-width: 0;
+}
+
+.sys-k {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dim);
+  white-space: nowrap;
+}
+
+.sys-k .tag {
+  font-size: 10px;
+  text-transform: none;
+}
+
+.sys-v {
+  font-weight: 600;
+}
+
+.sys-s {
+  font-size: 12px;
+  color: var(--dim);
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: 1px;
+}
+
+.dot-ok {
+  background: var(--pos);
+}
+
+.dot-wait {
+  background: var(--accent);
+}
+
+@media (max-width: 640px) {
+  body.scan {
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  body.scan .hero {
+    padding-top: 12px;
+    gap: 2px;
+  }
+
+  body.scan .hero .mark {
+    width: 24px;
+    height: 24px;
+  }
+
+  body.scan .hero h1 {
+    font-size: 16px;
+  }
+
+  body.scan .tagline {
+    font-size: 12px;
+  }
+
+  body.scan .disclaimer {
+    font-size: 11px;
+  }
+
+  .sys {
+    padding: 0 8px;
+    margin: 4px auto 16px;
+    gap: 4px;
+  }
+
+  .sys-cell {
+    padding: 4px 6px;
+  }
+
+  .sys-v {
+    font-size: 12px;
+  }
+
+  .sys-s {
+    font-size: 11px;
+    line-height: 1.3;
+  }
+
+  .sys-k {
+    font-size: 10px;
+    white-space: normal;
+  }
+
+  body.scan main {
+    padding: 0 8px;
+  }
+
+  body.scan .panel {
+    padding: 0 8px 10px;
+    margin-bottom: 18px;
+  }
+
+  body.scan .sig-list {
+    gap: 4px;
+  }
+
+  body.scan .sig {
+    padding: 5px 7px;
+  }
+
+  body.scan .sig-sum {
+    font-size: 12px;
+    line-height: 1.35;
+    margin-top: 2px;
+  }
+
+  body.scan .sig-lv {
+    font-size: 12px;
+    margin-top: 2px;
+  }
+
+  body.scan .aside,
+  body.scan .lede {
+    font-size: 12px;
+  }
+
+  body.scan .scan-table th,
+  body.scan .scan-table td {
+    padding: 3px 5px;
+    font-size: 12px;
+  }
+}

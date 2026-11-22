@@ -30,7 +30,8 @@ def test_phone_first_screen_shows_the_strongest_signals(browser: Browser, base_u
     # and the strongest signals with their level, confidence and one line each.
     expect(page.locator(".disclaimer")).to_contain_text("not investment advice")
     expect(page.locator(".disclaimer")).to_be_in_viewport()
-    expect(page.locator(".run .tag-ai")).to_be_in_viewport()
+    # The time of the last analysis shows the system is working.
+    expect(page.locator(".sys .sys-v").first).to_be_in_viewport()
     first = page.locator("#today .sig").first
     expect(first).to_be_in_viewport(ratio=1)
     expect(first.locator(".conf")).to_be_visible()

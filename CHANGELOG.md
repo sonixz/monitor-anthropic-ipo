@@ -4,6 +4,20 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.13.0] - 2026-11-22
+
+### Added
+
+- **A status strip** under the title, at the owner's request: the date and time of the last
+  analysis (with its session), when the closes were last read and how many stocks, and the next
+  analysis. A green dot when up to date, amber when the analysis lags the last session or closes
+  could not be read.
+
+### Changed
+
+- **A denser phone layout** for the scanner: smaller title, margins and text, tighter signal cards
+  and table rows; about six signals with their entry, stop and target on the first screen.
+
 ## [0.12.1] - 2026-11-22
 
 ### Removed

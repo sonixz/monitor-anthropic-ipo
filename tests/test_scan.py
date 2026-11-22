@@ -217,7 +217,7 @@ def test_signals_from_an_earlier_session_are_named_as_such() -> None:
     old["session"] = "2026-11-19"
     board = build(CANDIDATES, SERIES, {"2026-11-19.json": old}, NOW)
     assert board.stale
-    assert "no signals yet for" in render_scan(board).html
+    assert "none yet for" in render_scan(board).html
 
 
 # -- the track record --------------------------------------------------------------
