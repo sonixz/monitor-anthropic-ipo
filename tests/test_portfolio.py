@@ -105,7 +105,11 @@ def test_a_buy_fills_at_the_next_open_and_exits_at_the_target() -> None:
     assert refused == []
     trade = book.positions[0]
     assert (trade.stop, trade.target) == (96.0, 106.0)
-    assert (trade.entered, trade.entry, trade.shares) == (x.bars[20].date, 101.0, 4)  # slot 400 at the close of 100
+    assert (trade.entered, trade.entry, trade.shares) == (
+        x.bars[20].date,
+        101.0,
+        4,
+    )  # slot 400 at the close of 100
     assert (trade.why_exit, trade.exit, trade.exited) == ("target", 106.0, x.bars[21].date)
     assert trade.pnl == pytest.approx((106 - 101) * 4)
     assert trade.r == pytest.approx(5 / 5)  # gain 5 over a risk of 101 − 96
