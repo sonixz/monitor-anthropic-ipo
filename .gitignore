@@ -41,3 +41,4 @@ data/signals/*.json
 data/portfolio/decisions/*.json
 data/portfolio/reviews/*.json
 data/portfolio/ledger.json
+data/discipline/

@@ -1,0 +1,56 @@
+{% macro L(text) %}<span data-label>{{ text }}</span>{% endmacro %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Discipline journal · antipo.watch</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/app.css?v={{ asset_version }}">
+</head>
+<body data-market="off" class="scan">
+<header class="top hero">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
+    <h1><span class="w1">ANTIPO</span><span class="w2">.</span><span class="w3">WATCH</span></h1>
+  </div>
+  <p class="tagline">discipline journal · <a href="/portfolio">portfolio</a> · <a href="/">scanner</a> · <a href="/logout">sign out</a></p>
+</header>
+
+<section class="sys" aria-label="Discipline at a glance">
+  <div class="sys-cell"><span class="sys-k">streak</span><span class="sys-v">{{ L(journal.streak) }} {{ "day" if journal.streak == 1 else "days" }}</span><span class="sys-s">best {{ L(journal.best) }}</span></div>
+  <div class="sys-cell"><span class="sys-k">assiduity</span><span class="sys-v">{{ L(pct(journal.assiduity_30)) }}</span><span class="sys-s">last thirty days · all {{ L(pct(journal.assiduity_all)) }}</span></div>
+  <div class="sys-cell"><span class="sys-k">gaps from the plan</span><span class="sys-v">{{ L(journal.gaps) }}</span><span class="sys-s">from your reported orders</span></div>
+</section>
+
+<main id="main">
+<section class="panel wide-panel" id="log" tabindex="-1" aria-labelledby="log-h">
+  <h2 id="log-h">JOURNAL <span class="q">Every trading day</span></h2>
+  {% if journal.rows %}
+  <div class="scroll"><table class="lines scan-table log">
+    <thead><tr><th scope="col">day</th><th scope="col">status</th><th scope="col">morning</th><th scope="col">evening</th><th scope="col">mood</th><th scope="col">orders</th><th scope="col">gaps</th><th scope="col">note</th></tr></thead>
+    <tbody>
+    {% for r in journal.rows %}
+      <tr class="st-{{ r.status }}">
+        <th scope="row" class="nowrap">{{ L(day(r.date)) }}</th>
+        <td><span class="stat stat-{{ r.status }}">{{ labels[r.status] }}</span></td>
+        <td>{% if r.entry %}{{ L(r.entry.morning) }}/{{ L(three) }}{% else %}–{% endif %}</td>
+        <td>{% if r.entry %}{{ L(r.entry.evening) }}/{{ L(two) }}{% else %}–{% endif %}</td>
+        <td>{% if r.entry and r.entry.mood %}{{ moods[r.entry.mood] }}{% else %}–{% endif %}</td>
+        <td>{% if r.orders %}{{ L(r.orders|join(" ")) }}{% else %}–{% endif %}</td>
+        <td>{% if r.gaps %}{% for g in r.gaps %}<span class="wait">{{ g.symbol }} {{ g.what }}</span>{% if not loop.last %}; {% endif %}{% endfor %}{% else %}–{% endif %}</td>
+        <td class="nm">{% if r.entry %}{% if r.entry.orders == "skipped" and r.entry.skip_reason %}skipped: {{ L(r.entry.skip_reason) }}. {% endif %}{{ L(r.entry.note) }}{% endif %}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table></div>
+  {% else %}
+  <p class="lede">The journal starts with the first trading day after {{ L(day(start, "long")) }}.</p>
+  {% endif %}
+  <p class="aside">Only today and the trading day before can be filled in, from the TODAY section of the portfolio; earlier days stay as they were. Weekends and market holidays have no row.</p>
+</section>
+</main>
+</body>
+</html>

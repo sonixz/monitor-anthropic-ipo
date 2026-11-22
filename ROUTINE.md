@@ -57,6 +57,11 @@ which checks and keeps them on the server. Nothing in the repository is changed 
    The token is in `~/.config/antipo/upload_token` (never print it). Keep the local copies: they
    are ignored by git and let `scan portfolio` replay the whole history on this PC.
 
+10. **Discipline.** Ask the site for today's checklist:
+    `curl -s -H "Authorization: Bearer $(cat ~/.config/antipo/upload_token)" https://antipo.watch/api/upload/discipline`
+    (never print the token). In the summary to the owner, say plainly if the morning list was not
+    checked, the streak, and any new gap from the plan. One line, no lecture.
+
 ## Never
 
 - Never invent a price, a figure or a news item; never quote an article you did not open.

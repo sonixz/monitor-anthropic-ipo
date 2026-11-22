@@ -39,6 +39,7 @@ class Settings:
     upload_token: str = field(default="", repr=False)
     data_dir: Path | None = None  # results kept on the machine: signals/, decisions/, ledger.json
     ledger: Path | None = None  # the owner's real orders; on the machine, outside git
+    today: str = ""  # for tests and demonstrations only: the date the journal treats as today
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> Settings:
@@ -144,4 +145,5 @@ class Settings:
             upload_token=source.get("UPLOAD_TOKEN", "").strip(),
             data_dir=data_dir,
             ledger=ledger,
+            today=source.get("IPO_TODAY", "").strip(),
         )

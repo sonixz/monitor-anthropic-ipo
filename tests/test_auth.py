@@ -63,6 +63,7 @@ def client(tmp_path: Path) -> TestClient:
         upload_token=TOKEN,
         data_dir=tmp_path,
         ledger=tmp_path / "ledger.json",
+        today="2026-11-23",  # a Monday after the simulation's start
     )
     app = create_app(settings)
     test = TestClient(app, base_url="https://testserver")
@@ -147,3 +148,42 @@ def test_uploads_are_checked_then_stored_on_the_server(client: TestClient, tmp_p
         client.put("/api/upload/ledger/ledger.json", json=ledger, headers=auth).status_code == 200
     )
     assert client.put("/api/upload/other/x.json", json={}, headers=auth).status_code == 404
+
+
+def test_the_checklist_is_saved_and_shows_in_the_journal(
+    client: TestClient, tmp_path: Path
+) -> None:
+    sign_in(client)
+    today = "2026-11-23"
+    saved = client.post(
+        "/discipline",
+        content=f"date={today}&read_orders=1&orders=none&stops_set=1&mood=4&note=calm",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        follow_redirects=False,
+    )
+    assert saved.status_code == 303
+    assert "saved=1" in saved.headers["location"]
+    assert (tmp_path / "discipline" / f"{today}.json").exists()
+    page = client.get("/portfolio?saved=1")
+    assert "TODAY" in page.text
+    assert 'name="read_orders" value="1" checked' in page.text
+    journal_page = client.get("/journal")
+    assert journal_page.status_code == 200
+    assert "JOURNAL" in journal_page.text
+    old = client.post(
+        "/discipline",
+        content="date=2026-01-02&read_orders=1",
+        headers={"Content-Type": "application/x-www-form-urlencoded"},
+        follow_redirects=False,
+    )
+    assert "refused=" in old.headers["location"]
+
+
+def test_the_evening_run_reads_the_checklist_status(client: TestClient) -> None:
+    assert client.get("/api/upload/discipline").status_code == 401
+    status = client.get(
+        "/api/upload/discipline", headers={"Authorization": f"Bearer {TOKEN}"}
+    ).json()
+    assert status["day"] == "2026-11-23"
+    assert status["status"] == "today"
+    assert "note" not in status

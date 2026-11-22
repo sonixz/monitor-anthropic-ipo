@@ -75,8 +75,10 @@ def test_the_simulated_portfolio_on_a_phone(browser: Browser, base_url: str) -> 
     )
     page, errors = _open(context, base_url, path="/portfolio")
     expect(page.locator(".sim").first).to_be_visible()  # it says it is simulated
+    # The day's checklist comes first, then the orders.
+    expect(page.locator("#today legend").first).to_be_in_viewport()
     first = page.locator("#orders .sig").first
-    expect(first).to_be_in_viewport()
+    first.scroll_into_view_if_needed()
     first.locator("button.n-calc").tap()
     card = page.locator(".src-calc:popover-open")
     expect(card).to_contain_text("the smallest")
@@ -107,4 +109,26 @@ def test_signing_in_on_a_phone(browser: Browser, private_url: str) -> None:
     expect(page.locator(".sim").first).to_be_visible()
     page.goto(private_url + "/")
     expect(page.locator("#today")).to_be_visible()  # still signed in
+    context.close()
+
+
+def test_the_checklist_on_a_phone(browser: Browser, base_url: str) -> None:
+    context = browser.new_context(
+        viewport=PHONE, device_scale_factor=2, is_mobile=True, has_touch=True
+    )
+    page, errors = _open(context, base_url, path="/portfolio")
+    form = page.locator("#today form")
+    box = form.bounding_box()
+    assert box is not None
+    assert box["height"] <= 2 * PHONE["height"]  # within two screens
+    page.locator('input[name="read_orders"]').check()
+    page.locator('input[name="orders"][value="none"]').check()
+    page.locator('input[name="mood"][value="4"]').check()
+    page.locator("#today button[type=submit]").tap()
+    page.wait_for_url("**saved=1**")
+    expect(page.locator('input[name="read_orders"]')).to_be_checked()
+    page.goto(base_url + "/journal")
+    expect(page.locator("#log")).to_be_visible()
+    _shot(page, "journal-phone")
+    assert errors == []
     context.close()

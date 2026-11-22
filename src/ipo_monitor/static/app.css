@@ -2360,3 +2360,94 @@ button.n.lv-neutral {
   text-transform: uppercase;
   color: var(--faint);
 }
+
+/* ---- discipline: the TODAY checklist and the journal -------------------- */
+
+.check fieldset {
+  border: 1px solid var(--line);
+  margin: 0 0 10px;
+  padding: 6px 10px 10px;
+}
+
+.check legend {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+  padding: 0 4px;
+}
+
+.check .tick,
+.check .choice label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  cursor: pointer;
+}
+
+.check input[type="checkbox"],
+.check input[type="radio"] {
+  width: 22px;
+  height: 22px;
+  accent-color: var(--accent);
+  flex: none;
+}
+
+.check .choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+}
+
+.check .line {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 7px 9px;
+  margin: 4px 0;
+}
+
+.check button {
+  width: 100%;
+  min-height: 44px;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--accent);
+  border: 0;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.stat {
+  white-space: nowrap;
+}
+
+.stat-complete {
+  color: var(--pos);
+}
+
+.stat-partial,
+.stat-today {
+  color: var(--accent);
+}
+
+.stat-missed {
+  color: var(--neg);
+}
+
+.log tr.st-missed th,
+.log tr.st-missed td {
+  background: color-mix(in srgb, var(--neg) 8%, transparent);
+}
+
+.nowrap {
+  white-space: nowrap;
+}

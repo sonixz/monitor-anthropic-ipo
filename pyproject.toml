@@ -1,6 +1,6 @@
 [project]
 name = "ipo-monitor"
-version = "0.16.0"
+version = "0.17.0"
 description = "Anthropic IPO Watch: an independent dashboard following Anthropic's IPO, every number sourced."
 readme = "README.md"
 requires-python = ">=3.12"

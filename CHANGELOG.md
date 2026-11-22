@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.17.0] - 2026-11-22
+
+### Added
+
+- **Discipline mode** (Loop 014): a TODAY checklist at the top of the portfolio (morning: read the
+  orders, placed or skipped on purpose or none planned, stops entered; evening: no trade outside
+  the plan, read the analysis; a mood and a note), saved on the server; works without JavaScript.
+- **The journal** (`/journal`): one row per trading day since the simulation started, missed days
+  included, newest first; streak, best streak, assiduity over 30 days and overall; the owner's
+  orders of the day and the gaps from the plan (outside the plan, above the advised size), by code.
+  Only today and the trading day before can be filled in.
+- Sign-out links on the pages; the evening run reads today's checklist status by token.
+
 ## [0.16.0] - 2026-11-22
 
 ### Added

@@ -21,7 +21,7 @@
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
     <h1><span class="w1">ANTIPO</span><span class="w2">.</span><span class="w3">WATCH</span></h1>
   </div>
-  <p class="tagline"><span class="sim">SIMULATED</span> portfolio guided by the AI signals · <a href="/">the scanner</a></p>
+  <p class="tagline"><span class="sim">SIMULATED</span> portfolio guided by the AI signals · <a href="/">the scanner</a> · <a href="/journal">journal</a> · <a href="/logout">sign out</a></p>
   <p class="disclaimer">Paper money, not the owner's account · not investment advice</p>
 </header>
 
@@ -44,6 +44,8 @@
 </section>
 
 <main id="main">
+
+{% if journal %}{% include "_today.html.j2" %}{% endif %}
 
 <section class="panel" id="orders" tabindex="-1" aria-labelledby="orders-h">
   <h2 id="orders-h">NEXT OPEN <span class="q">What to do at the next open?</span></h2>

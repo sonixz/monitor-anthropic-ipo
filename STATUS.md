@@ -7,7 +7,7 @@
 | | |
 | --- | --- |
 | Site | https://antipo.watch, private: a login page in front of every page, on both addresses (Loop 013) |
-| Version | 0.16.0 (tag `v0.16.0`), under the name antipo.watch |
+| Version | 0.17.0 (tag `v0.17.0`), under the name antipo.watch |
 | Home page | The AI signal scanner: the 50 most traded stocks of the S&P/TSX Composite, ranked on 2026-11-20 |
 | Signals | For the session of Fri 2026-11-20, 50 signals, written by Claude in a working session on 2026-11-22 (no strong signal; buys FTS and DOL at medium confidence) |
 | Daily run | Scheduled in the working session on the owner's PC, weekdays about 16:47 Toronto (D-049); first run Mon 2026-11-23 |

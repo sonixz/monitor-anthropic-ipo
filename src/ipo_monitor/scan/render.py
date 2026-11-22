@@ -18,6 +18,7 @@ from markupsafe import Markup
 from ipo_monitor import __version__
 from ipo_monitor.render import LOOP0_URL, REPOSITORY_URL, _environment, asset_version
 from ipo_monitor.scan.board import TORONTO, Board, Stock
+from ipo_monitor.scan.discipline import Journal
 from ipo_monitor.scan.indicators import Indicator, compute, show
 from ipo_monitor.scan.levels import HOLD
 from ipo_monitor.scan.portfolio import Holding, Ledger, holdings
@@ -243,7 +244,46 @@ def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
     return ScanPage(html, etag, len(board.stocks), signals)
 
 
-def render_portfolio(board: Board, *, release: str = "dev", ledger_path: str = "") -> ScanPage:
+MOODS = (
+    {"value": "1", "number": 1, "label": "tense"},
+    {"value": "2", "number": 2, "label": "uneasy"},
+    {"value": "3", "number": 3, "label": "neutral"},
+    {"value": "4", "number": 4, "label": "calm"},
+    {"value": "5", "number": 5, "label": "focused"},
+)
+STATUS = {
+    "complete": "✔ complete",
+    "partial": "◐ partial",
+    "missed": "✖ missed",
+    "today": "… today",
+}
+
+
+def render_journal(journal: Journal, start: str, *, release: str = "dev") -> str:
+    template = _environment().get_template("journal.html.j2")
+    return template.render(
+        journal=journal,
+        start=start,
+        day=day,
+        labels=STATUS,
+        moods={m["number"]: m["label"] for m in MOODS},
+        three=3,
+        two=2,
+        pct=lambda v: "–" if v is None else f"{v:.0f}%",
+        asset_version=asset_version(),
+        release=release,
+    )
+
+
+def render_portfolio(
+    board: Board,
+    *,
+    release: str = "dev",
+    ledger_path: str = "",
+    journal: Journal | None = None,
+    saved: bool = False,
+    refused: str = "",
+) -> ScanPage:
     """The simulated portfolio's page: next orders, positions, trades, metrics, rules."""
     book = board.book
     if book is None:
@@ -283,7 +323,14 @@ def render_portfolio(board: Board, *, release: str = "dev", ledger_path: str = "
     written = ""
     if book.last_decision is not None:
         written = when(datetime.fromisoformat(book.last_decision.written_at.replace("Z", "+00:00")))
+    entry = journal.target_entry if journal is not None else None
     html = template.render(
+        journal=journal,
+        entry=entry,
+        today=journal.target if journal else "",
+        saved=saved,
+        refused=refused,
+        moods=MOODS,
         real=real,
         real_cash=real_cash,
         written=written,

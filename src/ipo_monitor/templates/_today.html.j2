@@ -1,0 +1,36 @@
+{# The TODAY checklist, included in the portfolio page. Values come from the code. #}
+<section class="panel" id="today" tabindex="-1" aria-labelledby="today-h">
+  <h2 id="today-h">TODAY <span class="q">{{ L(day(today, "long")) }}</span></h2>
+  <p class="lede"><span class="dot {{ 'dot-ok' if journal.streak else 'dot-wait' }}" aria-hidden="true"></span>streak {{ L(journal.streak) }} {{ "day" if journal.streak == 1 else "days" }} · best {{ L(journal.best) }} · <a href="/journal">journal</a>{% if saved %} · <span class="ok">saved</span>{% endif %}{% if refused %} · <span class="wait">{{ refused }}</span>{% endif %}</p>
+  {% if today <= rules.start %}
+  <p class="aside">The checklist starts with the first session of the simulation, the next weekday after {{ L(day(rules.start, "long")) }}. Each trading day has a row in the <a href="/journal">journal</a>, checked or not.</p>
+  {% else %}
+  <form class="check" method="post" action="/discipline">
+    <input type="hidden" name="date" value="{{ today }}">
+    <fieldset>
+      <legend>morning, before the open</legend>
+      <label class="tick"><input type="checkbox" name="read_orders" value="1"{% if entry and entry.read_orders %} checked{% endif %}> I read today's orders</label>
+      <div class="choice" role="radiogroup" aria-label="Orders">
+        <label><input type="radio" name="orders" value="placed"{% if entry and entry.orders == "placed" %} checked{% endif %}> placed as planned</label>
+        <label><input type="radio" name="orders" value="skipped"{% if entry and entry.orders == "skipped" %} checked{% endif %}> skipped on purpose</label>
+        <label><input type="radio" name="orders" value="none"{% if entry and entry.orders == "none" %} checked{% endif %}> none planned</label>
+      </div>
+      <input class="line" type="text" name="skip_reason" maxlength="200" placeholder="why skipped" value="{{ entry.skip_reason if entry else '' }}" aria-label="Why the orders were skipped">
+      <label class="tick"><input type="checkbox" name="stops_set" value="1"{% if entry and entry.stops_set %} checked{% endif %}> a stop is entered for each position</label>
+    </fieldset>
+    <fieldset>
+      <legend>evening, after the analysis</legend>
+      <label class="tick"><input type="checkbox" name="no_unplanned" value="1"{% if entry and entry.no_unplanned %} checked{% endif %}> no trade outside the plan</label>
+      <label class="tick"><input type="checkbox" name="read_analysis" value="1"{% if entry and entry.read_analysis %} checked{% endif %}> I read the evening analysis</label>
+    </fieldset>
+    <fieldset>
+      <legend>how did it feel?</legend>
+      <div class="choice mood" role="radiogroup" aria-label="Mood">
+        {% for m in moods %}<label><input type="radio" name="mood" value="{{ m.value }}"{% if entry and entry.mood == m.number %} checked{% endif %}> {{ m.label }}</label>{% endfor %}
+      </div>
+      <input class="line" type="text" name="note" maxlength="200" placeholder="one line for the journal" value="{{ entry.note if entry else '' }}" aria-label="Note">
+    </fieldset>
+    <button type="submit">save</button>
+  </form>
+  {% endif %}
+</section>

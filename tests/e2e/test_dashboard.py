@@ -13,6 +13,7 @@ import os
 import socket
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 from collections.abc import Iterator
@@ -91,6 +92,8 @@ def _serve(answer: str, filings: str = "", extra: dict[str, str] | None = None) 
         "IPO_SCAN": f"file:{SCAN_BARS}",
         "IPO_SIGNALS": f"dir:{SCAN_SIGNALS}",
         "IPO_SCAN_CANDIDATES": str(ROOT / "tests" / "fixtures" / "scan" / "candidates-tsx60.json"),
+        "IPO_DATA_DIR": tempfile.mkdtemp(prefix="antipo-e2e-"),
+        "IPO_TODAY": "2026-11-23",  # a Monday after the simulation's start
         **(extra or {}),
     }
     process = subprocess.Popen(

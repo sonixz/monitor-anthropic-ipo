@@ -18,6 +18,7 @@ import time
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from datetime import date as Date
 from pathlib import Path
 from urllib.parse import parse_qs, quote
 
@@ -37,11 +38,13 @@ from ipo_monitor.market import Snapshot, Source, Watcher, source_from
 from ipo_monitor.render import Page, _environment, asset_version, render_page
 from ipo_monitor.scan import watch as scan_watch
 from ipo_monitor.scan.bars import BarSource, RecordedDaily, YahooDaily
+from ipo_monitor.scan.board import TORONTO, dossier
 from ipo_monitor.scan.board import Board as ScanBoard
 from ipo_monitor.scan.board import build as build_scan
-from ipo_monitor.scan.board import dossier
+from ipo_monitor.scan.discipline import Journal, Store, from_form
+from ipo_monitor.scan.discipline import journal as journal_of
 from ipo_monitor.scan.portfolio import Ledger, Rules
-from ipo_monitor.scan.render import ScanPage, render_portfolio, render_scan
+from ipo_monitor.scan.render import ScanPage, render_journal, render_portfolio, render_scan
 from ipo_monitor.scan.universe import Candidates
 from ipo_monitor.visits import Visits
 
@@ -502,16 +505,97 @@ def create_app(
             return html(request, scan[0].html.encode("utf-8"), scan[0].etag)
         return html(request, live[0].body, live[0].etag)
 
+    store = Store(
+        (settings.data_dir / "discipline") if settings.data_dir else Path("data/discipline")
+    )
+
+    def the_journal() -> Journal | None:
+        if scanner is None or scanner.board is None or scanner.board.book is None:
+            return None
+        board = scanner.board
+        book = board.book
+        if book is None:
+            return None
+        sessions = {b.date for one in scanner.series.values() for b in one.bars}
+        ledger = None
+        if settings.ledger is not None and settings.ledger.is_file():
+            try:
+                ledger = Ledger.model_validate(json.loads(settings.ledger.read_text("utf-8")))
+            except (OSError, ValueError, ValidationError):
+                ledger = None
+        today = (
+            Date.fromisoformat(settings.today)
+            if settings.today
+            else datetime.now(UTC).astimezone(TORONTO).date()
+        )
+        return journal_of(store.load(), book.rules.start, today, sessions, ledger, book)
+
+    @app.post("/discipline", include_in_schema=False)
+    async def discipline(request: Request) -> Response:
+        form = parse_qs((await request.body())[:8192].decode("utf-8", "replace"))
+        now = datetime.now(UTC).astimezone(TORONTO)
+        today = Date.fromisoformat(settings.today) if settings.today else now.date()
+        entry = from_form(form, today, now)
+        if isinstance(entry, str):
+            return Response(
+                status_code=303,
+                headers={"Location": "/portfolio?refused=" + quote(entry) + "#today"},
+            )
+        await asyncio.to_thread(store.save, entry)
+        log.event("discipline_saved", day=entry.date, checked=entry.checked)
+        return Response(status_code=303, headers={"Location": "/portfolio?saved=1#today"})
+
+    @app.get("/api/upload/discipline", include_in_schema=False)
+    async def discipline_status(request: Request) -> JSONResponse:
+        """For the evening run: today's checklist, by token. No note, no mood."""
+        if not bearer(request.headers.get("authorization", ""), settings.upload_token):
+            return JSONResponse({"error": "not allowed"}, status_code=401)
+        found = the_journal()
+        if found is None:
+            return JSONResponse({"error": "the portfolio is not ready"}, status_code=404)
+        row = next((r for r in found.rows if r.date == found.target), None)
+        return JSONResponse(
+            {
+                "day": found.target,
+                "status": row.status if row else "none",
+                "morning": row.entry.morning if row and row.entry else 0,
+                "evening": row.entry.evening if row and row.entry else 0,
+                "streak": found.streak,
+                "gaps": found.gaps,
+            },
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.api_route("/journal", methods=["GET", "HEAD"], include_in_schema=False)
+    async def journal_page() -> Response:
+        found = the_journal()
+        if found is None or scanner is None or scanner.board is None or scanner.board.book is None:
+            return JSONResponse({"error": "the portfolio is not ready"}, status_code=404)
+        body = render_journal(found, scanner.board.book.rules.start, release=settings.release)
+        return Response(
+            body, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-store"}
+        )
+
     @app.api_route("/portfolio", methods=["GET", "HEAD"], include_in_schema=False)
-    async def portfolio(request: Request) -> Response:
+    async def portfolio(request: Request, saved: str = "", refused: str = "") -> Response:
         ledger = settings.ledger
         changed = ledger.stat().st_mtime if ledger is not None and ledger.is_file() else 0.0
         if changed != ledger_seen[0] and scanner is not None and scanner.board is not None:
             ledger_seen[0] = changed  # a reported order: draw the page again
             scan_changed(scanner.board)
-        if not folio:
+        if not folio or scanner is None or scanner.board is None or scanner.board.book is None:
             return JSONResponse({"error": "the portfolio is not ready"}, status_code=404)
-        return html(request, folio[0].html.encode("utf-8"), folio[0].etag)
+        page = render_portfolio(
+            scanner.board,
+            release=settings.release,
+            ledger_path=str(settings.ledger) if settings.ledger else "",
+            journal=the_journal(),
+            saved=saved == "1",
+            refused=refused[:200],
+        )
+        return Response(
+            page.html, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-store"}
+        )
 
     @app.api_route("/ant", methods=["GET", "HEAD"], include_in_schema=False)
     async def dashboard(request: Request) -> Response:
