@@ -1767,14 +1767,5 @@
    "sector": "Industrials"
   }
  ],
- "pinned": [
-  {
-   "symbol": "ANT",
-   "name": "Anthropic, PBC",
-   "source_symbol": "ANT",
-   "exchange": "Nasdaq",
-   "currency": "USD",
-   "why": "The stock this site started with; listed on Nasdaq in US dollars."
-  }
- ]
+ "pinned": []
 }

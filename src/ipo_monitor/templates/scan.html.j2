@@ -88,7 +88,7 @@
     <tbody>
     {% for s in stocks %}
       <tr{% if s.rank is none %} class="pinned"{% endif %}>
-        <th scope="row"><span class="sig-sym">{{ s.symbol }}</span> <span class="nm">{{ s.candidate.name }}</span>{% if s.rank is none %} <a class="pin" href="/ant">IPO page</a>{% endif %}</th>
+        <th scope="row"><span class="sig-sym">{{ s.symbol }}</span> <span class="nm">{{ s.candidate.name }}</span></th>
         <td>{% if s.signal %}{{ signal(s, s.signal.label) }}{% else %}<span class="what">no signal</span>{% endif %}</td>
         <td>{{ ind(s, "close") }}</td>
         <td>{{ ind(s, "change_1d", true) }}</td>
@@ -147,7 +147,6 @@
     <li>Code checks every signal file before it is shown. A file that breaks a rule is refused whole and the last good signals stay.{% if board.refused %} <span class="wait">Refused: {% for c in board.refused %}{{ c.name }}{% if not loop.last %}, {% endif %}{% endfor %}.</span>{% endif %}</li>
     <li>The AI is not shown to beat the market. The track record is there so anyone can judge.</li>
   </ul>
-  <p class="aside">This site began as a page on Anthropic's IPO. <a href="/ant">That page is kept</a>, with its filings and their history.</p>
 </section>
 
 </main>

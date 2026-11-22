@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.12.1] - 2026-11-22
+
+### Removed
+
+- ANT is no longer in the scanner, at the owner's request: no ANT card, no link to the IPO page.
+  The IPO page still answers at `/ant` for those who have the address.
+
 ## [0.12.0] - 2026-11-22
 
 ### Added

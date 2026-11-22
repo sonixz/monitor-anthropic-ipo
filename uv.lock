@@ -320,7 +320,7 @@ wheels = [
 
 [[package]]
 name = "ipo-monitor"
-version = "0.11.0"
+version = "0.12.1"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },

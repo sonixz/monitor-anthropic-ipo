@@ -60,10 +60,8 @@ def test_desktop_list_and_track_record(browser: Browser, base_url: str) -> None:
     assert rows.count() >= 20
     expect(page.locator("#list .lede")).to_contain_text("ranked on")
     expect(page.locator("#record")).to_be_visible()
-    # The ANT page is one link away, and unchanged.
-    page.locator('#list a[href="/ant"]').click()
-    expect(page.locator("h1")).to_contain_text("ANTHROPIC")
-    page.go_back()
+    # The IPO page is no longer linked, but still answers at its address.
+    assert page.locator('a[href="/ant"]').count() == 0
     assert _serious(page) == []
     _shot(page, "scan-desktop", full=True)
     assert errors == []

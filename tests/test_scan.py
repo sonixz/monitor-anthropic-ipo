@@ -310,7 +310,7 @@ def test_the_page_names_every_source_and_types_no_number() -> None:
     for button in parser.buttons:
         assert button.get("popovertarget") in parser.popovers
     assert "not investment advice" in page.html
-    assert 'href="/ant"' in page.html
+    assert 'href="/ant"' not in page.html  # the IPO page is kept but no longer linked
     assert "Royal Bank reported results on Nov. 20." in page.html  # the quoted source
     assert "https://example.org/test-article" in page.html
 

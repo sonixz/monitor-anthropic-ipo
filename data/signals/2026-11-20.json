@@ -328,17 +328,6 @@
    ]
   },
   {
-   "symbol": "ANT",
-   "level": "neutral",
-   "confidence": "low",
-   "summary": "Too few sessions since the listing to read a trend.",
-   "reasons": [
-    {
-     "text": "Only two closes so far; the last is {close}, {change_1d} on the day."
-    }
-   ]
-  },
-  {
    "symbol": "FFH",
    "level": "buy",
    "confidence": "low",
