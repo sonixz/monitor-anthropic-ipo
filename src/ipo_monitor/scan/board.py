@@ -15,6 +15,7 @@ from zoneinfo import ZoneInfo
 from ipo_monitor.scan.bars import Series
 from ipo_monitor.scan.indicators import Indicator, compute
 from ipo_monitor.scan.levels import levels
+from ipo_monitor.scan.portfolio import Book, Rules, simulate
 from ipo_monitor.scan.signals import Checked, Signal, SignalFile, check
 from ipo_monitor.scan.track import Outcome, Summary, outcomes, summarize
 from ipo_monitor.scan.universe import Candidate, Candidates, Universe, rank, universe, week_ends
@@ -49,6 +50,8 @@ class Board:
     summary: tuple[Summary, ...]
     next_run: datetime
     problems: tuple[str, ...] = field(default=())  # bars that could not be read
+    book: Book | None = None  # the guided portfolio, when rules are given
+    refused_decisions: tuple[tuple[str, tuple[str, ...]], ...] = ()
 
     @property
     def stale(self) -> bool:
@@ -115,6 +118,8 @@ def build(
     files: dict[str, object],
     now: datetime,
     problems: tuple[str, ...] = (),
+    decisions: dict[str, object] | None = None,
+    rules: Rules | None = None,
 ) -> Board:
     """The board from what was read. `files` maps a signal file's name to its parsed JSON."""
     listed = {c.symbol for c in candidates.candidates}
@@ -153,6 +158,13 @@ def build(
         stocks.append(Stock(everyone[symbol], one, found, ranks.get(symbol), signal, marks))
 
     found_outcomes = outcomes(good, series)
+    book = None
+    refused_decisions: list[tuple[str, tuple[str, ...]]] = []
+    if rules is not None:
+        sectors = {c.symbol: c.sector or "" for c in candidates.candidates}
+        book, refused_decisions = simulate(
+            rules, {f.session: f for f in good}, decisions or {}, series, sectors
+        )
     return Board(
         candidates=candidates,
         session=session,
@@ -164,6 +176,8 @@ def build(
         summary=tuple(summarize(found_outcomes)),
         next_run=next_run(now),
         problems=problems,
+        book=book,
+        refused_decisions=tuple(refused_decisions),
     )
 
 

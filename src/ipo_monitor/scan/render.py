@@ -238,3 +238,63 @@ def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
     etag = '"' + hashlib.sha256(html.encode("utf-8")).hexdigest()[:20] + '"'
     signals = len(current.signals) if current else 0
     return ScanPage(html, etag, len(board.stocks), signals)
+
+
+def render_portfolio(board: Board, *, release: str = "dev") -> ScanPage:
+    """The simulated portfolio's page: next orders, positions, trades, metrics, rules."""
+    book = board.book
+    if book is None:
+        raise ValueError("no portfolio")
+    env = _environment()
+    template = env.get_template("portfolio.html.j2")
+    rules = book.rules
+    names = {s.symbol: s.candidate.name for s in board.stocks}
+    names.update({c.symbol: c.name for c in board.candidates.candidates})
+
+    def money(value: float | None) -> str:
+        return "–" if value is None else f"${value:,.2f}"
+
+    def signed(value: float | None, unit: str = "$") -> str:
+        if value is None:
+            return "–"
+        if unit == "%":
+            return f"{value:+.1f}%"
+        if unit == "R":
+            return f"{value:+.2f} R"
+        return f"{'+' if value >= 0 else '−'}${abs(value):,.2f}"
+
+    def tone(value: float | None) -> str:
+        if value is None or round(value, 2) == 0:
+            return ""
+        return "up" if value > 0 else "down"
+
+    last = book.days[-1] if book.days else None
+    written = ""
+    if book.last_decision is not None:
+        written = when(datetime.fromisoformat(book.last_decision.written_at.replace("Z", "+00:00")))
+    html = template.render(
+        written=written,
+        site=SITE,
+        board=board,
+        book=book,
+        rules=rules,
+        metrics=book.metrics(),
+        last=last,
+        names=names,
+        money=money,
+        signed=signed,
+        tone=tone,
+        day=day,
+        when=when,
+        hold=HOLD,
+        pct=lambda f: f"{f * 100:g}%",
+        whole=lambda v: f"{v:.0f}%",
+        enough=20,  # closed trades before the figures say more than chance
+        version=__version__,
+        release=release,
+        asset_version=asset_version(),
+        loop0_url=LOOP0_URL,
+        repository_url=REPOSITORY_URL,
+    )
+    etag = '"' + hashlib.sha256(html.encode("utf-8")).hexdigest()[:20] + '"'
+    return ScanPage(html, etag, len(book.open_positions), len(book.pending))

@@ -36,11 +36,27 @@ from ipo_monitor.scan.bars import BarSource, RecordedDaily, YahooDaily
 from ipo_monitor.scan.board import Board as ScanBoard
 from ipo_monitor.scan.board import build as build_scan
 from ipo_monitor.scan.board import dossier
-from ipo_monitor.scan.render import ScanPage, render_scan
+from ipo_monitor.scan.portfolio import Rules
+from ipo_monitor.scan.render import ScanPage, render_portfolio, render_scan
 from ipo_monitor.scan.universe import Candidates
 from ipo_monitor.visits import Visits
 
 SIGNALS = Path("data/signals")
+DECISIONS = Path("data/portfolio/decisions")
+RULES = Path("data/portfolio/rules.json")
+
+
+def decision_sources(settings: Settings) -> list[scan_watch.SignalSource]:
+    """Where the portfolio's decision files come from, alongside the signal files."""
+    found: list[scan_watch.SignalSource] = []
+    if settings.signals in ("auto", "local"):
+        found.append(scan_watch.Folder(DECISIONS))
+    if settings.signals == "auto":
+        found.append(scan_watch.GitHub(path=scan_watch.DECISIONS_PATH, name="GitHub decisions"))
+    if settings.signals.startswith("dir:"):
+        folder = Path(settings.signals[4:]).parent / "decisions"
+        found.append(scan_watch.Folder(folder, name="folder decisions"))
+    return found
 
 
 def scan_sources(
@@ -219,6 +235,7 @@ def create_app(
         filings_changed(filings_watcher.watch)  # a failure here leaves the page above
 
     scan: list[ScanPage] = []  # one item: the scanner page being served
+    folio: list[ScanPage] = []  # one item: the portfolio page being served
     scanner: scan_watch.ScanWatcher | None = None
 
     def scan_changed(board: ScanBoard) -> None:
@@ -228,6 +245,13 @@ def create_app(
             log.event("render_failed", level="error", part="scan", error=type(error).__name__)
             return
         scan[:] = [page]
+        if board.book is not None:
+            try:
+                folio[:] = [render_portfolio(board, release=settings.release)]
+            except Exception as error:
+                log.event(
+                    "render_failed", level="error", part="portfolio", error=type(error).__name__
+                )
         log.event(
             "scan_rendered",
             stocks=page.stocks,
@@ -241,6 +265,8 @@ def create_app(
         scanner = scan_watch.ScanWatcher(
             Candidates.load(settings.scan_candidates), bars, signal_sources, scan_changed
         )
+        scanner.decision_sources = decision_sources(settings)
+        scanner.rules = Rules.load(RULES) if RULES.is_file() else None
         # Until the first closes are read, the page says so instead of showing an empty list.
         scanner.board = build_scan(scanner.candidates, {}, {}, datetime.now(UTC))
         scan_changed(scanner.board)
@@ -309,6 +335,12 @@ def create_app(
         if scan:
             return html(request, scan[0].html.encode("utf-8"), scan[0].etag)
         return html(request, live[0].body, live[0].etag)
+
+    @app.api_route("/portfolio", methods=["GET", "HEAD"], include_in_schema=False)
+    async def portfolio(request: Request) -> Response:
+        if not folio:
+            return JSONResponse({"error": "the portfolio is not ready"}, status_code=404)
+        return html(request, folio[0].html.encode("utf-8"), folio[0].etag)
 
     @app.api_route("/ant", methods=["GET", "HEAD"], include_in_schema=False)
     async def dashboard(request: Request) -> Response:

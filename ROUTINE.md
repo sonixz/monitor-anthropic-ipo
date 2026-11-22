@@ -35,8 +35,22 @@ minutes. Nothing else in the repository is changed by the run.
    - Stops and targets are added by the site (2 × and 3 × ATR); do not write them.
 7. **Check.** `uv run python -m ipo_monitor.scan check data/signals/<session>.json`. Fix every
    problem it lists and check again until it says `ok`.
-8. **Commit and push only that file** to `main`:
-   `git add data/signals/<session>.json`,
+8. **The simulated portfolio.** Run `uv run python -m ipo_monitor.scan portfolio`. It replays the
+   envelope (`data/portfolio/rules.json`), lists the open positions and the signals the rules allow
+   to buy after this session. Write `data/portfolio/decisions/<session>.json`
+   (`schema` `antipo.decisions/1`, same `session`, `written_at`, `written_by`, `model`, optional
+   `note`):
+   - `entries`: for each allowed signal, `buy`, `wait` or `pass`, with a reason. Buy only what you
+     would really buy: a slot is precious (at most five), sectors are capped at two.
+   - `positions`: for each open position, `hold` or `exit`, with a reason. Stops, targets, the
+     holding period and a signal turned to sell are applied by code; exit early only for a reason.
+   - **No digit in a reason.** Sizes, prices and dates come from the code.
+   Run `portfolio` again: it must not list the file as refused.
+   **On Fridays**, also write `data/portfolio/reviews/<session>.json`: what worked and what did not
+   this week, by level, confidence and sector, and any rule change you propose with the figures
+   behind it (the owner decides; never change `rules.json` yourself).
+9. **Commit and push only those files** to `main`:
+   `git add data/signals/<session>.json data/portfolio/decisions/<session>.json` (and the review),
    commit message `chore(signals): session <session>` ending with the attribution lines below, then
    `git push origin main`. If the push is refused because main moved, `git pull --rebase` and push
    again. Never force-push, never change another file.
@@ -45,7 +59,7 @@ minutes. Nothing else in the repository is changed by the run.
 
 - Never invent a price, a figure or a news item; never quote an article you did not open.
 - Never put a secret, a personal detail or the owner's holdings in a file or a commit.
-- Never change code, tests or other signal files; a past signal stays as it was written.
+- Never change code, tests, the rules or other signal and decision files; the past stays as it was written.
 
 ## Attribution lines
 

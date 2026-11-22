@@ -1,0 +1,10 @@
+{
+ "schema": "antipo.decisions/1",
+ "session": "2026-11-20",
+ "written_at": "2026-11-20T22:20:00Z",
+ "written_by": "Claude, session",
+ "model": "TEST DATA",
+ "note": "TEST DATA: decisions written for the tests.",
+ "entries": [{"symbol": "RY", "action": "buy", "reason": "TEST DATA. A pullback inside an uptrend."}],
+ "positions": []
+}

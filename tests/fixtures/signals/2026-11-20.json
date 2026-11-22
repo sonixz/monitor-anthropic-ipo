@@ -6,22 +6,60 @@
  "model": "TEST DATA",
  "note": "TEST DATA: written for the tests, not a real signal.",
  "signals": [
-  {"symbol": "RY", "level": "buy", "confidence": "medium",
+  {
+   "symbol": "RY",
+   "level": "buy",
+   "confidence": "medium",
    "summary": "TEST DATA. Pulled back {vs_sma20} under its twenty-day average inside a longer uptrend.",
    "reasons": [
-    {"text": "The close is {vs_sma50} against its fifty-day average while the RSI reads {rsi14}."},
-    {"text": "A test article, quoted for the tests.",
-     "source": {"kind": "article", "url": "https://example.org/test-article", "outlet": "Example News (TEST DATA)",
-                "title": "Test article", "published": "2026-11-20", "quote": "Royal Bank reported results on Nov. 20."}}
-   ]},
-  {"symbol": "SHOP", "level": "strong_sell", "confidence": "low",
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average while the RSI reads {rsi14}."
+    },
+    {
+     "text": "A test article, quoted for the tests.",
+     "source": {
+      "kind": "article",
+      "url": "https://example.org/test-article",
+      "outlet": "Example News (TEST DATA)",
+      "title": "Test article",
+      "published": "2026-11-20",
+      "quote": "Royal Bank reported results on Nov. 20."
+     }
+    }
+   ]
+  },
+  {
+   "symbol": "SHOP",
+   "level": "strong_sell",
+   "confidence": "low",
    "summary": "TEST DATA. Stretched: the close sits {from_high52} from its high after a sharp run.",
-   "reasons": [{"text": "Volume ran at {vol_ratio} its usual pace on the day, {change_1d}."}]},
-  {"symbol": "ENB", "level": "neutral", "confidence": "high",
+   "reasons": [
+    {
+     "text": "Volume ran at {vol_ratio} its usual pace on the day, {change_1d}."
+    }
+   ]
+  },
+  {
+   "symbol": "ENB",
+   "level": "neutral",
+   "confidence": "high",
    "summary": "TEST DATA. No edge either way.",
-   "reasons": [{"text": "The RSI sits at {rsi14}, mid-range."}]},
-  {"symbol": "ANT", "level": "neutral", "confidence": "low",
+   "reasons": [
+    {
+     "text": "The RSI sits at {rsi14}, mid-range."
+    }
+   ]
+  },
+  {
+   "symbol": "ANT",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "TEST DATA. Too few sessions since the listing to read a trend.",
-   "reasons": [{"text": "Only two closes so far; the last is {close}."}]}
+   "reasons": [
+    {
+     "text": "Only two closes so far; the last is {close}."
+    }
+   ]
+  }
  ]
 }

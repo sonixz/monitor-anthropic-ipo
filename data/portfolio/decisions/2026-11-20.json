@@ -1,0 +1,13 @@
+{
+ "schema": "antipo.decisions/1",
+ "session": "2026-11-20",
+ "written_at": "2026-11-22T16:30:00Z",
+ "written_by": "Claude, session",
+ "model": "claude-opus-5-5",
+ "note": "The first decisions of the simulated envelope, written by hand in a working session for Friday's closes. Only two signals meet the entry rules in a market that has been falling for three weeks.",
+ "entries": [
+  {"symbol": "FTS", "action": "buy", "reason": "A leader that rose on a down day on heavy volume, above every average: the trend is with it, and the stop sits close."},
+  {"symbol": "DOL", "action": "buy", "reason": "Above every average and near its high while the market fell: relative strength in a defensive name, in a different sector from FTS."}
+ ],
+ "positions": []
+}

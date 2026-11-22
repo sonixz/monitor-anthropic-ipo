@@ -1767,5 +1767,15 @@
    "sector": "Industrials"
   }
  ],
- "pinned": []
+ "pinned": [],
+ "benchmarks": [
+  {
+   "symbol": "XIC",
+   "name": "iShares Core S&P/TSX Capped Composite Index ETF",
+   "source_symbol": "XIC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "why": "The benchmark of the simulated portfolio: the whole TSX in one fund."
+  }
+ ]
 }

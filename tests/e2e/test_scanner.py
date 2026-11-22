@@ -67,3 +67,21 @@ def test_desktop_list_and_track_record(browser: Browser, base_url: str) -> None:
     _shot(page, "scan-desktop", full=True)
     assert errors == []
     context.close()
+
+
+def test_the_simulated_portfolio_on_a_phone(browser: Browser, base_url: str) -> None:
+    context = browser.new_context(
+        viewport=PHONE, device_scale_factor=2, is_mobile=True, has_touch=True
+    )
+    page, errors = _open(context, base_url, path="/portfolio")
+    expect(page.locator(".sim").first).to_be_visible()  # it says it is simulated
+    first = page.locator("#orders .sig").first
+    expect(first).to_be_in_viewport()
+    first.locator("button.n-calc").tap()
+    card = page.locator(".src-calc:popover-open")
+    expect(card).to_contain_text("the smallest")
+    found = page.evaluate(OVERFLOW)
+    assert found["wide"] == []
+    _shot(page, "portfolio-phone")
+    assert errors == []
+    context.close()

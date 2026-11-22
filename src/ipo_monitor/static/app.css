@@ -2241,3 +2241,12 @@ button.n.lv-neutral {
     font-size: 12px;
   }
 }
+
+.sim {
+  color: var(--bg);
+  background: var(--accent);
+  border-radius: 3px;
+  padding: 0 0.35em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}

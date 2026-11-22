@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.14.0] - 2026-11-22
+
+### Added
+
+- **The simulated portfolio** (Loop 012), at `/portfolio`: a dedicated envelope of $4,000 CAD that
+  follows the AI signals by versioned rules (`data/portfolio/rules.json`): at most 5 positions,
+  about 20% of the envelope each, the loss at the stop capped at 10% of it, no leverage.
+- Claude's decision files (`data/portfolio/decisions/<session>.json`): buy, wait or pass for each
+  signal the rules allow; hold or exit for each position; reasons without numbers, checked by code.
+- `scan/portfolio.py`: sizing step by step, fills at the next open, stops, targets, holding period
+  and sell signals applied by code; metrics against XIC (return, win rate, average R, drawdown,
+  exposure) with their sample size.
+- `python -m ipo_monitor.scan portfolio`; ROUTINE.md steps for the decisions and a weekly review.
+- The first decisions, after Nov 20: buy 9 FTS and 3 DOL at the next open.
+- A link from the scanner to the simulated portfolio.
+
 ## [0.13.0] - 2026-11-22
 
 ### Added

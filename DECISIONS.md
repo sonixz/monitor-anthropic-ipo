@@ -168,3 +168,12 @@ A frame and a line that climbs in steps, in the page's palette. Nothing from Ant
 
 ## D-046 · A login on the scanner waits for two holes to close (proposed, 2026-11-22)
 **Owner:** wants the scanner behind a login (Cloudflare Access, a code by e-mail). **Proposal.** Before it means anything, two holes must close: the signal files are in the public repository, and the Fly.io address answers without Cloudflare (the origin lock the owner refused on 2026-11-17). Options for the owner: a private repository or another store for signals, and the origin lock or an equivalent. Deferred until the owner chooses.
+
+## D-047 · A guided portfolio, simulated first (owner, 2026-11-22)
+**Owner:** wants a portfolio of about $4,000 that the AI guides (buy, wait, how many), with repeatable metrics and learning, the orders placed by the owner. Answers: a simulation of 3 to 4 weeks first; "10%… 4 or 5 positions at the same time… the $4,000 is dedicated"; no leverage at first. **Decision (confirmed).** A paper envelope of $4,000 CAD from the Nov 20 decisions. Sizing by code: shares = the smallest of slot (20% of the envelope's value) ÷ close, loss allowed (10% of it) ÷ (close − stop), cash ÷ close. Fills at the next open; stop, target, 20 sessions and a sell signal close a position. **Proposed.** Entry only on buy or strong buy at medium or high confidence, two per sector at most; XIC as the benchmark; a weekly review on Fridays.
+
+## D-048 · The repository stays public; the model portfolio is public (owner, 2026-11-22)
+**Owner:** "the repo can stay open. I have nothing really to hide in there, right?" **Decision (confirmed).** The simulated portfolio is shown at `/portfolio` and its files are in the repository, labeled simulated everywhere. Privacy (a private store, Cloudflare Access, the Fly.io lock) is decided before any real money; the vision still refuses showing the owner's holdings.
+
+## D-049 · The daily run lives in a session on the owner's PC (owner, 2026-11-22)
+**Owner:** "can't it be here? We have everything we need." **Decision (confirmed).** A cron job in the working Claude Code session runs ROUTINE.md on weekdays about 16:47 Toronto time and pushes with the session's deploy key. **Consequences.** It runs only while that session is open and the PC awake, and expires after 7 days (re-armed by the agent). A durable Windows task, or a cloud routine after `/web-setup`, remain options.

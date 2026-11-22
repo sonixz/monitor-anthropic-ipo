@@ -1,0 +1,20 @@
+{
+ "schema": "antipo.rules/1",
+ "version": 1,
+ "approved": "2026-11-22",
+ "approved_by": "owner (Loop 012 answers: 4 or 5 positions, 10%, $4,000 dedicated, no leverage)",
+ "simulated": true,
+ "capital": 4000,
+ "currency": "CAD",
+ "start": "2026-11-20",
+ "max_positions": 5,
+ "slot_fraction": 0.2,
+ "max_loss_fraction": 0.1,
+ "leverage": false,
+ "commission": 0,
+ "entry_levels": ["buy", "strong_buy"],
+ "entry_confidence": ["medium", "high"],
+ "max_per_sector": 2,
+ "exit_levels": ["sell", "strong_sell"],
+ "benchmark": "XIC"
+}

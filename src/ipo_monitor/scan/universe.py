@@ -46,6 +46,7 @@ class Candidates(BaseModel):
     size: int = SIZE  # how many of the candidates the list keeps
     candidates: list[Candidate]
     pinned: list[Candidate] = []
+    benchmarks: list[Candidate] = []  # read like the others, not ranked or shown in the list
 
     @classmethod
     def load(cls, path: Path) -> Candidates:

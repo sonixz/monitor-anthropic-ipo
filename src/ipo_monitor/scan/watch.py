@@ -26,10 +26,12 @@ from ipo_monitor import log
 from ipo_monitor.market import USER_AGENT, SourceError
 from ipo_monitor.scan.bars import BarSource, Series
 from ipo_monitor.scan.board import TORONTO, Board, build
+from ipo_monitor.scan.portfolio import Rules
 from ipo_monitor.scan.universe import Candidates
 
 REPOSITORY = "sonixz/monitor-anthropic-ipo"
 SIGNALS_PATH = "data/signals"
+DECISIONS_PATH = "data/portfolio/decisions"
 EVERY = 900  # seconds between two looks
 CLOSED_AFTER = (16, 20)  # Toronto time: the session's closes are expected after this
 
@@ -138,6 +140,9 @@ class ScanWatcher:
     tried_for: str | None = None  # the session last fetched for
     signals_read: dict[str, str] = field(default_factory=dict)  # source → time or problem
     board: Board | None = None
+    decision_sources: list[SignalSource] = field(default_factory=list)
+    decisions: dict[str, object] = field(default_factory=dict)
+    rules: Rules | None = None
 
     def now(self) -> datetime:
         return datetime.fromtimestamp(self.clock(), UTC)
@@ -147,7 +152,8 @@ class ScanWatcher:
         now = int(self.clock())
         problems = []
         changed = False
-        for stock in self.candidates.candidates + self.candidates.pinned:
+        everyone = self.candidates.candidates + self.candidates.pinned + self.candidates.benchmarks
+        for stock in everyone:
             try:
                 series = self.bars.daily(stock.symbol, stock.source_symbol, now)
             except (SourceError, KeyError, TypeError, ValueError, IndexError) as error:
@@ -176,10 +182,27 @@ class ScanWatcher:
                 files.update({k: v for k, v in self.files.items() if k not in files})
         changed = files != self.files
         self.files = files
+        decisions: dict[str, object] = {}
+        for source in self.decision_sources:
+            try:
+                decisions.update(source.files())
+            except (SourceError, ValueError):
+                log.event("scan_decisions_failed", level="warning", source=source.name)
+                decisions.update({k: v for k, v in self.decisions.items() if k not in decisions})
+        changed = changed or decisions != self.decisions
+        self.decisions = decisions
         return changed
 
     def rebuild(self) -> Board:
-        self.board = build(self.candidates, self.series, self.files, self.now(), self.problems)
+        self.board = build(
+            self.candidates,
+            self.series,
+            self.files,
+            self.now(),
+            self.problems,
+            self.decisions,
+            self.rules,
+        )
         for refused in self.board.refused:
             log.event(
                 "scan_signal_file_refused",
