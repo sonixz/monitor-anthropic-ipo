@@ -1,0 +1,88 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-010",
+  "reportedAt": "2026-11-22T15:40:00Z",
+  "summary": "Version 0.11.0 is live: antipo.watch is an AI signal scanner on the 25 most traded stocks of the S&P/TSX 60, with indicators computed by code from Yahoo Finance daily bars, signal files written by Claude and checked by code, and a track record. The first signals (session Nov 20) were written by hand in the session: 26 signals, none strong. The IPO page moved to /ant. The deployment froze the 256 MB machine about 12 minutes; it was stopped and started and the build retried with uv's concurrency limited. The scheduled run is not created: it needs GitHub connected to the owner's Claude account. CDRs were dropped: Yahoo gives them no history.",
+  "delivered": [
+    "VISION.md approved by the owner; loops/010-mission.md.",
+    "src/ipo_monitor/scan/: bars, indicators, universe, signals, track, board, watch, render, CLI (dossier, check).",
+    "Routes: / scanner, /ant IPO page, /scan/dossier.json; health 'scan' block.",
+    "data/scan/candidates.json (S&P/TSX 60); data/signals/2026-11-20.json.",
+    "tests/test_scan.py, tests/e2e/test_scanner.py, fixtures of 61 real Yahoo answers."
+  ],
+  "changedFiles": [
+    "VISION.md",
+    "src/ipo_monitor/scan/",
+    "src/ipo_monitor/templates/scan.html.j2",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/web.py",
+    "src/ipo_monitor/config.py",
+    "data/scan/candidates.json",
+    "data/signals/2026-11-20.json",
+    "tests/test_scan.py",
+    "tests/e2e/test_scanner.py",
+    "tests/e2e/conftest.py",
+    "tests/e2e/test_dashboard.py",
+    "tests/fixtures/scan/",
+    "tests/fixtures/signals/",
+    "pyproject.toml",
+    "uv.lock",
+    "CHANGELOG.md",
+    "CLAUDE.md",
+    "STATUS.md"
+  ],
+  "decisions": [
+    "Confirmed: Claude judges in a scheduled run (owner 'c'est toi'); signals public; ANT into the scanner; CAD stocks; the vision.",
+    "Confirmed (owner 'Go'): signal files reach production through the public repository (D-041).",
+    "Proposed: universe rule, five levels, run time, the plain Yahoo client name (D-040, D-043).",
+    "Deviation: CDRs out (no history at Yahoo)."
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "176 unit tests, indicators checked by hand."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "16 (14 IPO page at /ant, 2 scanner)."
+    },
+    {
+      "command": "python -m ipo_monitor.scan check data/signals/2026-11-20.json --bars yahoo",
+      "result": "passed",
+      "notes": "26 signals, all rules met."
+    },
+    {
+      "command": "GitHub Actions CI and CodeQL on v0.11.0",
+      "result": "passed",
+      "notes": ""
+    },
+    {
+      "command": "sh /data/deploy.sh v0.11.0",
+      "result": "failed",
+      "notes": "The machine froze during the build; site down 14:13-14:25 UTC; stop/start; rebuilt with UV_CONCURRENT_*=1 and BUILD_ONLY=1, then switched."
+    },
+    {
+      "command": "curl https://antipo.watch/health; E2E_BASE_URL=https://antipo.watch pytest -m e2e",
+      "result": "passed",
+      "notes": "session 2026-11-20, 0 bar problems; one IPO-page test expected 'awaiting listing' (stale since ANT trades), fixed in Loop 011."
+    },
+    {
+      "command": "The first scheduled run",
+      "result": "not_run",
+      "notes": "Needs GitHub connected to the owner's Claude account."
+    }
+  ],
+  "blockers": [
+    "GitHub not connected to the owner's Claude account: the routine cannot be created."
+  ],
+  "remainingWork": [
+    "The scheduled run.",
+    "Docs (done in Loop 011)."
+  ],
+  "recommendedNextSteps": [
+    "Loop 011: a bigger list, stops and targets."
+  ]
+}

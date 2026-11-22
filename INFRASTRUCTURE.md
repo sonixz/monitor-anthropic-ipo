@@ -1,6 +1,6 @@
 # INFRASTRUCTURE · monitor-anthropic-ipo
 
-> How the project is built, run, deployed and rolled back. Last reviewed: 2026-11-17 · Loop: loop-005
+> How the project is built, run, deployed and rolled back. Last reviewed: 2026-11-22 · Loop: loop-011
 
 ## Environments
 
@@ -71,6 +71,10 @@ What `deploy.sh` does:
 
 The service refuses to start if its data does not reconcile, so a release with a wrong figure fails step 5 and never serves a page.
 
+**Memory.** The machine has 256 MB and about 86 MB free while the service runs. On 2026-11-22 a build of v0.11.0 with uv's default parallelism froze the whole machine; the site was down about 12 minutes until the machine was stopped and started from Agent Manager (the previous release came back by itself, since `/data/current` had not moved). `deploy.sh` now installs one package at a time (`UV_CONCURRENT_INSTALLS=1`, `UV_CONCURRENT_DOWNLOADS=1`, `UV_CONCURRENT_BUILDS=1`). The copy at `/data/deploy.sh` is refreshed by hand (the `curl` above); until it is, pass the three variables on the command line, and build first with `BUILD_ONLY=1`. D-044.
+
+**Signal files need no deployment.** The service reads `data/signals/` from GitHub every 15 minutes. A file that depends on new code (a new list, a new rule) must be pushed after that code is live, or the running release refuses it (seen on 2026-11-22, D-041).
+
 ## Roll back
 
 ```sh
@@ -98,6 +102,8 @@ The service makes two kinds of outbound requests, both over HTTPS and on a timer
 | To | For | Carries |
 | --- | --- | --- |
 | The quote service behind nasdaq.com, then Yahoo Finance chart data if it fails | The share price, every two to five minutes (`IPO_MARKET`: `auto`, `nasdaq`, `yahoo`, `off`) | No secret and no personal detail |
+| `query1.finance.yahoo.com` (then `query2`) | The scanner's daily bars, a year per candidate, at start and once after each close (`IPO_SCAN`: `auto`, `off`, `file:<folder>`); about 220 requests, 0.4 s apart | A plain client name (D-043), no secret |
+| `api.github.com`, `raw.githubusercontent.com` | The signal files in `data/signals/`, every 15 minutes (`IPO_SIGNALS`: `auto`, `local`, `off`, `dir:<folder>`) | No token, no secret |
 | `data.sec.gov` and `www.sec.gov` | The list of the company's filings every ten minutes, and the top of a final prospectus once (`IPO_FILINGS`: `auto`, `off`) | The contact address the SEC asks automated clients for, in the User-Agent. Sent to these two hosts only |
 
 `/health` reports the state of each source and the time of its last check.
@@ -162,6 +168,15 @@ curl -X PUT -H "Authorization: Bearer $TOKEN" \
 
 **Cost of the hop.** The Worker opens a connection to Fly.io: the page arrives about half a second later than at the fly.dev address (measured from a workstation in eastern North America: first byte 0.6 s against 0.14 s).
 
+## The scheduled AI run
+
+The signals are written by a Claude Code routine in Anthropic's cloud, on weekdays after the
+Toronto close. It clones this repository, follows [ROUTINE.md](ROUTINE.md), and pushes one file,
+`data/signals/<session>.json`, to `main`. It has no access to the machine. **Not created yet:** it
+needs the repository connected to the owner's Claude account (`/web-setup`, or
+claude.ai/connect-github). Proposed schedule: `45 21 * * 1-5` UTC (16:45 in Toronto in winter,
+17:45 in summer). The routine's runs use the owner's Claude plan.
+
 ## Visits
 
 The service keeps one number per day, the visits counted by the page's script, in `/data/visits.json` (`IPO_VISITS`, set by `start.sh`). Without the setting, as on a workstation, the counts live in memory. The file holds no address and no other detail about readers. If it is damaged, counting starts again and the log says `visits_reset`.
@@ -177,3 +192,5 @@ The service keeps one number per day, the visits counted by the page's script, i
 - Automated deployment from CI after tests pass, with deployment logs outside the machine. Planned for the next loops, as the owner's directive asks after the first authorized deployment.
 - Uptime monitoring and alerting from outside the machine.
 - A second environment to try a release before production.
+- The scheduled AI run (above): waits on the owner's GitHub connection.
+- A login on the scanner: deferred (D-046).

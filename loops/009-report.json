@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-009",
+  "reportedAt": "2026-11-22T15:40:00Z",
+  "summary": "Loop 009 had no mission file: it was run on the owner's requests of 2026-11-18 and 19 ('oui go', 'mets-moi tout ça en ligne'). Versions 0.9.0 to 0.10.2. The IPO price of $83 was recorded from the press (AP), then the final prospectus (Form 424B4, dated Nov 18, filed Nov 19) became the page's filing, extracted by the same code; the page computes at the IPO price only and HISTORY lists what changed from Amendment No. 3. On the listing morning, a Yahoo Finance placeholder ($83.00 with no volume) was shown as a last quote; fixed in 0.10.1. At the owner's request the market panel shows before the first trade (0.10.2).",
+  "delivered": [
+    "0.9.0: press price $83 (AP), glance as priced.",
+    "0.9.1: offer as priced from the final cover.",
+    "0.10.0: data/facts/p424b4.json, the extractor taught the final prospectus's wording; calc, reconcile and render without a range (D-037).",
+    "0.10.1: a Yahoo price counts only once shares traded.",
+    "0.10.2: the market panel before the first trade."
+  ],
+  "changedFiles": [
+    "src/ipo_monitor/extract.py",
+    "src/ipo_monitor/calc.py",
+    "src/ipo_monitor/reconcile.py",
+    "src/ipo_monitor/render.py",
+    "src/ipo_monitor/edgar.py",
+    "src/ipo_monitor/web.py",
+    "src/ipo_monitor/versions.py",
+    "src/ipo_monitor/market.py",
+    "src/ipo_monitor/templates/index.html.j2",
+    "src/ipo_monitor/static/app.css",
+    "data/facts/p424b4.json",
+    "data/facts/press.json",
+    "data/facts/history/s1a3.json",
+    "tests/test_final.py",
+    "tests/test_reported.py",
+    "tests/test_market.py",
+    "tests/fixtures/market/yahoo-ant-no-trade.json",
+    "CHANGELOG.md",
+    "DECISIONS.md",
+    "STATUS.md",
+    "CLAUDE.md"
+  ],
+  "decisions": [
+    "Owner, 2026-11-18: record the $83 press price ('oui go', 'oui oui deploie').",
+    "Owner, 2026-11-19: the final prospectus as the page's filing, range views off the main page ('mets-moi tout ça en ligne'); D-037.",
+    "Owner, 2026-11-19: show the market section before the first trade ('oui')."
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest (at 0.10.2)",
+      "result": "passed",
+      "notes": "150 unit tests; 159 consistency checks on the final prospectus."
+    },
+    {
+      "command": "uv run pytest -m e2e (local and E2E_BASE_URL=https://antipo.watch)",
+      "result": "passed",
+      "notes": "14."
+    },
+    {
+      "command": "GitHub Actions CI and CodeQL on v0.10.0, v0.10.1, v0.10.2",
+      "result": "passed",
+      "notes": "0.9.0 was deployed on the owner's go during an Ubuntu mirror outage that failed CI's browser install; later runs green."
+    }
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "No mission file exists for Loop 009: recorded here instead."
+  ],
+  "recommendedNextSteps": [
+    "Superseded by Loops 010 and 011 (the scanner)."
+  ]
+}

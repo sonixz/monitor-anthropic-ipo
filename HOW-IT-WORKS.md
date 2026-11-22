@@ -2,22 +2,77 @@
 
 > A plain-language tour of the whole system: how a figure travels from an SEC filing to the page,
 > who does what, what runs by itself, how a change reaches the site, and where AI is involved.
-> Last reviewed: 2026-11-16 · after loop-003
+> Last reviewed: 2026-11-22 · after loop-011. Since Loop 010 the home page is an AI signal scanner
+> on the most traded Canadian stocks; the Anthropic IPO page described further down runs at `/ant`.
 
 ## In one minute
 
-- **The page is produced by ordinary code.** A Python service reads figures that were copied out
-  of Anthropic's SEC filing, checks that they agree with each other, does the arithmetic and
-  draws one page. The same input always gives the same page.
-- **No AI model runs in the live service.** It calls no AI service (not OpenAI's, not
-  Anthropic's, none) and holds no AI key. Nothing on the page is written or computed by a model
-  while you read it.
+- **The scanner is produced by code and by one AI step.** Code reads the daily closes of the
+  candidates, ranks the 50 most traded, computes the indicators, stops and targets, and draws the
+  page. Once per trading day, **Claude**, in a scheduled run apart from the service, reads those
+  figures and the news and writes a signal file. Code checks that file before it shows.
+- **No AI model runs in the live service.** It calls no AI service and holds no AI key. The
+  signal file is plain JSON in this repository, written by the scheduled run and refused whole if
+  it breaks a rule (a typed number, a reason without a source, a stock outside the list).
 - **An AI coding agent built it.** The code, the tests, the extraction rules and these documents
-  were written by Claude Code, Anthropic's coding agent, working for the owner of this
-  repository. The owner starts each piece of work, takes the decisions and accepts the result.
-- **Disclosure.** That agent is made by Anthropic, the company this dashboard is about. The
-  project is independent and unofficial. The agent types no figure: every number comes from the
-  filing through code that anyone can read, and opens the passage it was copied from.
+  were written by Claude Code, working for the owner of this repository. The owner starts each
+  piece of work, takes the decisions and accepts the result.
+- **Disclosure.** The agent and the signal writer are made by Anthropic. The project is
+  independent and unofficial; the signals are general and are not investment advice.
+
+## The daily signals (Loop 010 and 011)
+
+```mermaid
+---
+title: From the close to a signal on the page
+---
+flowchart TD
+  yahoo[("Yahoo Finance: daily bars, delayed")]
+  cands[("data/scan/candidates.json: the 220 S&P/TSX Composite members")]
+  subgraph svc["The live service (code only)"]
+    bars["bars.py: a year of closes per stock"]
+    ind["indicators.py: averages, RSI, ATR, volume, year range"]
+    uni["universe.py: top 50 by value traded, weekly"]
+    check["signals.py: the rules a signal file must meet"]
+    lv["levels.py: stop and target from ATR"]
+    page(["The page: TODAY, LIST, TRACK RECORD"])
+  end
+  subgraph run["Claude's scheduled run, after the close"]
+    dossier["scan dossier: the same figures"]
+    news["News, opened and quoted"]
+    write["Writes data/signals/SESSION.json"]
+    ok["scan check: same rules as the site"]
+  end
+  gh[("GitHub: this repository")]
+  yahoo --> bars --> ind --> uni
+  cands --> uni
+  yahoo --> dossier --> write
+  news --> write --> ok -->|"push one file"| gh
+  gh -->|"every 15 minutes, no token"| check
+  uni --> page
+  check -->|"good file"| lv --> page
+  check -.->|"refused: the last good signals stay"| page
+```
+
+*Scope: one trading day, from the close to the page. Last reviewed: 2026-11-22.* The AI's only
+output is a JSON file, and the same rules run twice: in the scheduled run before the push and in
+the service before the page. A reason names an indicator as `{rsi14}`; the page writes the value
+computed from the same closes, so the AI cannot put a wrong number on the page. Left out: the
+weekly ranking date and the track record, which follows each signal for 20 sessions.
+
+| Step | Done by | By itself? |
+| --- | --- | --- |
+| Read a year of closes for 220 stocks | The service, `scan/bars.py` | Yes, at start and after each close |
+| Rank the 50 most traded, weekly | The service, `scan/universe.py` | Yes |
+| Compute indicators, stops and targets | The service, `scan/indicators.py`, `scan/levels.py` | Yes |
+| Write the signals | Claude, scheduled run ([ROUTINE.md](ROUTINE.md)) | Yes, once the routine exists; the first signals (Nov 20) were written in a working session |
+| Check the signal file | `python -m ipo_monitor.scan check`, then the service | Yes |
+| Score past signals | The service, `scan/track.py` | Yes |
+
+## The IPO page
+
+The sections below describe the Anthropic IPO page of Loops 001 to 009, which still runs at
+`/ant`, unlinked since 0.12.1: SEC filings, press figures and the share price.
 
 ## From a filing to a number on the page
 
@@ -75,6 +130,7 @@ the web layer around the page.
 | --- | --- | --- |
 | **The owner** | Starts each loop of work with a request in their own words; confirms or rejects decisions; saves filings; holds every secret; accepts or refuses the result | Write the code |
 | **The coding agent** (AI, at build time only) | Writes code, tests and documents; writes the extraction rules after reading the filing; records press figures; runs every check; deploys a release when all checks pass; reports what was not done | Type a figure into the page; change access, exposure or infrastructure without the owner; run inside the live service |
+| **Claude, scheduled run** (AI, once per trading day) | Builds the dossier, reads the figures and the news, writes one signal file, checks it and pushes it ([ROUTINE.md](ROUTINE.md)) | Type a number on the page; change code, tests or a past signal file; deploy |
 | **The live service** (ordinary code) | Loads the facts, checks them, computes, draws the page, asks for the share price and for the SEC's list of filings | Call an AI model; guess a missing figure; keep data between restarts |
 | **GitHub** | Runs the checks on every push (see below); scans for secrets and vulnerabilities; proposes dependency updates | Deploy: it holds no credential for the machine |
 | **The machine** | Runs one release at a time, built from this public repository; restarts the service if it stops | Hold a credential for GitHub |
@@ -91,7 +147,8 @@ the web layer around the page.
 | Choosing a method ("diluted", enterprise value) | **Proposed by the agent**, explained in [ANALYSIS.md](ANALYSIS.md) | Recorded in [DECISIONS.md](DECISIONS.md) with its status; only the owner confirms |
 | Writing code, tests, documents | **Yes, the agent** | The checks below, the real-browser tests, and a report per loop that names what was not run |
 | Releasing a version | **The agent**, when every check passes (decision D-016) | The machine checks the new release before switching and goes back if it fails |
-| Explaining a number in plain words, on demand | **Planned, not built** (D-014: OpenAI's API, with a capped key and a budget) | Would carry its own label, AI, apart from FILED, CALC, PRESS and MARKET |
+| Writing a trading signal and its reasons | **Yes: Claude, in a scheduled run apart from the service** (D-039) | No typed number (a reason names an indicator, the page writes its value); a reason without an indicator quotes an opened source; the file is checked twice and refused whole if it breaks a rule; every signal is scored afterwards |
+| Stops and targets | **No.** Code, from ATR (D-042) | The formula on every card; the AI cannot write them |
 
 **The limit to know.** The checks catch figures that disagree with each other. They do not catch
 a passage that was misread in a consistent way, and no person has audited the extraction line by
@@ -182,6 +239,10 @@ The owner starts every loop and is the only one who accepts it.
 | 001 | The page: five panels, every number traced to the filing | 0.1.0 | [mission](loops/001-mission.md) · [report](loops/001-report.json) · [devlog](devlog/loop-001.html) |
 | 002 | Charts, a phone-first layout, a market panel ready for the first trade | 0.2.0 to 0.3.2 | [mission](loops/002-mission.md) · [report](loops/002-report.json) · [devlog](devlog/loop-002.html) |
 | 003 | The SEC filings watched by the service (off until a contact address is set), the final price read from the prospectus, this documentation | 0.4.0 to 0.4.2 | [mission](loops/003-mission.md) · [report](loops/003-report.json) · [devlog](devlog/loop-003.html) |
+| 004 to 008a | Deal structure, the domain antipo.watch, the share card, the hero and rings, filing history | 0.5.0 to 0.8.2 | [devlog](devlog/index.html) |
+| 009 | Pricing at $83 and the final prospectus as the page's filing; the market panel before the first trade | 0.9.0 to 0.10.2 | [report](loops/009-report.json) · [devlog](devlog/loop-009.html) |
+| 010 | The AI signal scanner on the most traded TSX stocks; the IPO page moves to `/ant` | 0.11.0 | [mission](loops/010-mission.md) · [report](loops/010-report.json) · [devlog](devlog/loop-010.html) |
+| 011 | Top 50 of the Composite, stops and targets from ATR, the routine's steps; ANT leaves the scanner | 0.12.0, 0.12.1 | [mission](loops/011-mission.md) · [report](loops/011-report.json) · [devlog](devlog/loop-011.html) |
 
 Each loop leaves the same trail: the mission as it was given, a report that separates what was
 run from what was not, a devlog page with screenshots of the real application, and the decisions

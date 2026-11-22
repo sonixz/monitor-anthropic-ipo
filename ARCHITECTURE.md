@@ -1,8 +1,94 @@
 # ARCHITECTURE · monitor-anthropic-ipo
 
-> How the system is built and why. Read this before changing structure. Last reviewed: 2026-11-16 · Loop: loop-002
+> How the system is built and why. Read this before changing structure. Last reviewed: 2026-11-22 · Loop: loop-011
 
-## System context
+Since Loop 010 the service serves two pages: the **scanner** at `/` (this first part) and the
+**Anthropic IPO page** at `/ant` (the second part, from Loop 001). They share the web layer, the
+style and the source-card pattern, and nothing else.
+
+## The scanner: system context
+
+```mermaid
+---
+title: System context — the scanner
+---
+flowchart LR
+  reader(["Reader, any browser"])
+  owner(["Owner"])
+  yahoo[("Yahoo Finance: daily bars, delayed, unofficial")]
+  news[("News sites")]
+  subgraph cloud["Claude's scheduled run (Anthropic cloud)"]
+    routine["ROUTINE.md: dossier, judgement, check, push"]
+  end
+  gh[("GitHub: public repository, data/signals/")]
+  subgraph machine["Fly.io machine, run through Agent Manager"]
+    service["Web service, 127.0.0.1:8000"]
+  end
+  cf["Cloudflare: antipo.watch, Worker relay"]
+  owner -->|"starts loops, decides"| routine
+  routine -->|"reads closes"| yahoo
+  routine -->|"opens and quotes"| news
+  routine -->|"pushes one signal file a day"| gh
+  service -->|"reads closes after each close"| yahoo
+  service -->|"reads signal files every 15 min, no token"| gh
+  reader -->|"HTTPS"| cf --> service
+```
+
+*Scope: everything the scanner touches. Last reviewed: 2026-11-22.* Two parties compute from the
+same source: the service (to draw the page) and the scheduled run (to judge). Both read Yahoo
+Finance daily bars and use the same code (`ipo_monitor.scan`), so the AI judges the figures the
+page shows. The only thing that crosses from the AI to the site is a JSON file in the public
+repository, which the service checks before use. Trust boundaries: the machine holds no AI key
+and no GitHub credential; the scheduled run holds no access to the machine. Left out: the IPO
+page's sources (SEC, Nasdaq), described below.
+
+## The scanner: components
+
+```mermaid
+---
+title: Components — ipo_monitor.scan
+---
+flowchart TB
+  cands[("data/scan/candidates.json")]
+  bars["bars.py: Yahoo daily bars; a session still trading is left out"]
+  ind["indicators.py: each value with its formula and sessions"]
+  uni["universe.py: weekly top N by value traded"]
+  files[("data/signals/*.json: release and GitHub")]
+  watch["watch.py: when to read bars and signal files"]
+  sig["signals.py: the file format and its rules"]
+  lv["levels.py: stop and target from ATR"]
+  track["track.py: change after 5 and 20 sessions; stop or target first"]
+  board["board.py: the state of the scanner; the dossier"]
+  render["render.py, scan.html.j2: values and cards"]
+  web["web.py: /, /scan/dossier.json, /health"]
+  cli["__main__.py: dossier and check, for the scheduled run"]
+  watch --> bars --> ind
+  cands --> uni
+  ind --> uni --> board
+  watch --> files --> sig --> board
+  ind --> lv --> board
+  board --> track --> render
+  board --> render --> web
+  board --> cli
+```
+
+*Scope: `src/ipo_monitor/scan`. Last reviewed: 2026-11-22.* `board.build` is the one place that
+joins closes, the list and signal files; the page and the dossier both come from it. `signals.py`
+is the gate: a file is used only if every signal names a stock of the list in force (or the one
+before), types no digit, and gives every reason an indicator or a quoted source. Placeholders are
+filled by `render.py` with indicators computed as of the signal's session, so a value never
+drifts after the fact. `watch.py` reads bars once a session has closed (one try per session, so a
+holiday costs one round), and signal files every 15 minutes.
+
+| Choice | Why | Cost we accept | Decision |
+| --- | --- | --- | --- |
+| The AI writes JSON in a separate run | No AI key on the machine; every word checked before it shows | A day without a run shows the last signals, named as such | D-039 |
+| Signal files through the public repository | No inbound access to the machine; history in git | Signals are public as soon as pushed; a file must match the running release | D-041 |
+| Stops and targets in code | The AI types no number; the same rule for every stock | Fixed multiples, not tuned per stock | D-042 |
+| Bars from Yahoo Finance | Free, a year of history per request, CAD | Unofficial, delayed, may limit; no history for CDRs | D-040, D-043 |
+| Everything in memory | 220 series × 252 bars is small; restart rebuilds it in about two minutes | The page says "reading the closes" just after a restart | |
+
+## The IPO page: system context
 
 ```mermaid
 ---
@@ -33,7 +119,7 @@ flowchart LR
 
 *Scope: everything that touches the system. Last reviewed: 2026-11-16.* A reader only ever talks to the web service, through the HTTPS door that Fly.io and Agent Manager provide. The service reads two things from the internet, each on a timer: the share price, from free market sources (Nasdaq.com first, Yahoo Finance if it fails), and, when a contact address is configured on the machine, the SEC's list of the company's filings, plus the top of a final prospectus when one appears. Everything else is the fact files shipped with the code. The full filing still reaches the repository through one manual step: sec.gov requires automated clients to declare a contact address, which lives on the machine as a secret and must never be in a public repository. Trust boundaries: everything on the machine other than port 8000 is private; the repository holds no secret. Left out: AI, which does not exist in the service ([HOW-IT-WORKS.md](HOW-IT-WORKS.md) says where it is involved).
 
-## Components and data flow
+## The IPO page: components and data flow
 
 ```mermaid
 ---
@@ -110,6 +196,11 @@ The page is rendered once, at startup, and served from memory. This is what make
 
 | Path | Responsibility |
 | --- | --- |
+| `src/ipo_monitor/scan/` | The scanner: bars, indicators, list, signal files and rules, stops and targets, track record, page, dossier and check commands |
+| `src/ipo_monitor/templates/scan.html.j2` | The scanner page |
+| `data/scan/candidates.json` | The candidate list (S&P/TSX Composite), with its source |
+| `data/signals/` | Signal files, one per session, written by Claude |
+| `ROUTINE.md` | The steps of the scheduled AI run |
 | `src/ipo_monitor/extract.py` | Read the saved filing, write FILED facts with page and quote |
 | `src/ipo_monitor/facts.py` | Fact model, loading, lookup; the current filing and the earlier ones |
 | `src/ipo_monitor/versions.py` | What changed between filings in a row (HISTORY panel) |

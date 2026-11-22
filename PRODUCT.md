@@ -1,86 +1,90 @@
 # PRODUCT · monitor-anthropic-ipo
 
-> What Anthropic IPO Watch does, for whom, and how we know it works. It serves [VISION.md](VISION.md). Last reviewed: 2026-11-15 · Loop: loop-001
+> What antipo.watch does, for whom, and how we know it works. It serves [VISION.md](VISION.md). Last reviewed: 2026-11-22 · Loop: loop-011
 
 ## The problem
 
-Anthropic's IPO filing (Form S-1/A, Amendment No. 2, filed 2026-11-10) runs to 431 pages. The answers a small investor wants are in it, but scattered, and the press quotes valuations from $1.0 trillion to $1.4 trillion for the same document. A reader cannot tell which number to believe, or why they differ.
+The owner trades by hand on Wealthsimple, on a margin account, over days to weeks. Hundreds of
+Canadian stocks move every day; the ones that suit trading are the liquid ones, and the reasons
+to buy or sell one are scattered across price charts, volume and news. Signal services say "buy"
+without saying why, and never show how their past calls turned out.
 
 ## Users
 
 | Who | What they want | Verified? |
 | --- | --- | --- |
-| The owner, a small investor, not an analyst | Plain answers: worth, contracts, valuation, over- or undervalued | Stated by the owner |
-| Other small investors and curious readers | The same, without jargon | Assumption |
+| The owner, a small investor, not an analyst | A short list of strong signals on liquid CAD stocks, with the reasons, an exit price and a target, to act on by hand | Stated by the owner (2026-11-21, 2026-11-22) |
+| Other readers of antipo.watch | The same, general, with the track record to judge it | Assumption: the signals are public by the owner's choice |
 | People evaluating the Loop0 Method | A real product with its public build history | Owner's directive |
 
 ## What it gives them
 
-One page, five panels, each answering one question, and a sixth that appears when the stock trades:
-
 | Panel | Question | What it shows |
 | --- | --- | --- |
-| VALUE | What is Anthropic worth at the IPO price? | The value at $70, $74 and $78, counting shares three ways, and why headlines disagree |
-| EV BRIDGE | What does that price really buy? | From diluted value to enterprise value, and that price against three revenue measures |
-| CONTRACTS | What is signed, in both directions? | $13.8B owed to Anthropic, $900.9B owed by it, when it falls due and what it is made of |
-| GROWTH | How fast is it growing, and what does growth cost? | Seven quarters of revenue, growth, compute cost and operating result |
-| LOSSES | Is the huge loss real spending? | The $104.0B nine-month loss split into accounting charge and operating loss |
-| MARKET (once the stock trades) | What is the market paying now? | The last price, its change against the IPO price, the value and enterprise value at that price, the day's range, volume and price line |
+| TODAY | Which signals are strongest, and why? | Up to six signals, strongest first: level, confidence, the day's close and move, a one-line reason, entry, stop and target |
+| LIST | What is in the list this week? | The 50 most traded stocks of the S&P/TSX Composite, ranked by value traded, entries and exits; close, day, RSI, trend against the 50-day average, volume, value traded, signal, stop and target |
+| TRACK RECORD | Were the signals right? | By level: how many, the average change after 5 and 20 sessions, how many were right, how many hit the target or the stop first; then every signal one by one |
+| HOW | Who does what? | Code reads and computes, the AI judges, code checks; refused files named |
 
-Every number is a button. It opens the passage of the filing it was copied from (FILED), the formula and inputs behind it (CALC), the article that reported it (PRESS), or the quote of the market source with its time (MARKET, delayed and unofficial).
+Every value is a button. A close opens the market source's card (MARKET); an indicator, a stop or
+a target opens its formula and the sessions it used (CALC); a signal opens its reasons, each with
+its figures or the article it quotes (AI). The AI never types a number.
 
-Each panel leads with a chart or a large figure: nine charts drawn from the same facts. Every mark on a chart is a button too, and every value a chart draws is also in a table. On a phone nothing scrolls sideways; the tables behind the charts stay folded until asked for.
-
-Before the listing the page shows no price and says "awaiting listing". It never shows a price that a source did not give for this company.
+The Anthropic IPO page of the first loops still runs at `/ant`, unlinked.
 
 ## User journey
 
 ```mermaid
 ---
-title: From a question to a checked answer
+title: From the evening close to a trade placed by hand
 ---
 flowchart LR
-  need(["I hold a few shares. Is the price fair?"])
-  open["Open the page"]
-  glance["Read the value range and enterprise value on the first screen"]
-  doubt{"Do I trust this number?"}
-  source["Select it: passage of the filing, or formula and inputs"]
-  sec["Open the filing on sec.gov"]
-  answer(["I know what I am buying and where each figure comes from"])
-  need --> open --> glance --> doubt
-  doubt -->|"yes"| answer
-  doubt -->|"not yet"| source --> answer
-  source -.->|"to be sure"| sec
+  close(["The market closes"])
+  run["Claude's scheduled run writes the signals"]
+  open["The owner opens antipo.watch"]
+  today["TODAY: the strongest signals with entry, stop and target"]
+  doubt{"Is the reason solid?"}
+  card["Open the signal: each reason, its figure or its article"]
+  record["Check the track record of that level"]
+  trade(["Place the trade by hand on Wealthsimple, or pass"])
+  close --> run --> open --> today --> doubt
+  doubt -->|"yes"| trade
+  doubt -->|"not sure"| card --> record --> trade
 ```
 
-*Scope: one visit by one reader. Last reviewed: 2026-11-15.* The journey has no account, no form and no setting: the reader arrives, reads, and checks what they doubt. The step that matters is the diamond. A dashboard that only states numbers stops there; this one lets the reader go one step further, to the source. Left out: returning visits and alerts, which do not exist yet.
+*Scope: one evening, one reader. Last reviewed: 2026-11-22.* The journey has no account and no
+setting. The site never places an order and knows nothing of the reader's portfolio; the diamond
+is where the reader checks the reason, and the track record is what tells them how much to trust
+a level. Left out: alerts, which do not exist yet.
 
 ## Product principles
 
-1. A number without a source is not shown.
-2. A fact, our arithmetic and a press report never look the same.
-3. Plain words first; the analyst's term only where it helps to search further.
-4. The first screen answers the main question, on a phone, without scrolling.
-5. Nothing on the page tells the reader what to do with their money.
+1. A number without a source is not shown; the AI never types one.
+2. A close, our arithmetic and the AI's judgement never look the same (MARKET, CALC, AI).
+3. Strong signals are rare and must say why; neutral is an honest answer.
+4. Every past signal stays, scored, wins and losses alike.
+5. General signals only: nothing about the reader's account, size or margin.
+6. The first screen on a phone shows the strongest signals with their stop and target.
 
 ## Goals we can measure
 
-| Goal | Measure | Status at Loop 001 |
+| Goal | Measure | Status at Loop 011 |
 | --- | --- | --- |
-| A newcomer gets the three answers quickly | "Worth, owes, growing" answered in under 60 seconds | Tried by the owner on a phone on 2026-11-16 (version 0.4.2): no difficulty reported, no time recorded |
-| Every number is traceable | A test fails if a digit appears outside a sourced number or a period label | In place (`tests/test_web.py`) |
-| The figures agree with each other | Reconciliation checks pass; one failure blocks the start | 129 checks pass |
-| The first screen is enough on a phone | Value range and enterprise value visible at 390×844 without scrolling | In place (real-browser test) |
-| The page is fast and light | Loads in under 1 second; runs on a 256 MB machine | Measured in the Loop 001 report |
+| Signals every trading day without the owner | A scheduled run writes, checks and pushes a file; the page shows it within 15 minutes | Not yet: the routine waits for GitHub to be linked to the owner's Claude account |
+| Every value traceable | A test fails if a digit appears outside a sourced value or a label; the signal checker refuses typed digits | In place (`tests/test_scan.py`, `scan/signals.py`) |
+| Honest scoring | Each signal followed for 20 sessions; nothing removed | In place; first results from late November 2026 |
+| The first screen is enough | On 390×844, the strongest signals with entry, stop and target, without scrolling past two cards | In place (real-browser test) |
+| Light | Runs on a 256 MB machine; the page renders from memory | In place; builds limited to one install at a time |
 
 ## Non-goals
 
-- Advice, price targets or scores.
-- Completeness: governance, competition and product strategy are in the filing, not here (yet).
-- Real-time trading data. After listing, quotes will be delayed and labeled as such.
+- Orders, broker links, position sizing or margin advice.
+- Intraday signals: the data is delayed and the owner trades over days to weeks.
+- Short-selling advice: a sell means exit or avoid.
 
 ## Assumptions and unknowns
 
-- The listing date (2026-11-19) comes from the press, not from a filing.
-- Our "diluted" count is a choice: everything already owed or granted, nothing merely reserved. It is explained on the page and in [ANALYSIS.md](ANALYSIS.md).
-- Whether other readers want this is untested; only the owner has asked for it.
+- Whether publishing general signals is allowed in Canada: the owner is to check (D-038).
+- Whether the AI's signals beat chance: unknown; the track record will tell, slowly.
+- Yahoo Finance is free, unofficial and may change or limit its answers.
+- CDRs would add large US names in CAD, but Yahoo gives no history for them (D-040).

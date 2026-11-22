@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 010 — The AI signal scanner · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 010 — The AI signal scanner</h1>
+<p class="lead">2026-11-22 · antipo.watch becomes a scanner: the most traded TSX stocks, indicators computed by code, signals written by Claude and checked by code, a track record. The IPO page moves to /ant. Version 0.11.0.</p>
+<h2>Why</h2>
+<blockquote><p>I want to keep my page, but build a scanner for buy signals. Keep the domain, the sandbox and everything. Widen it to several stocks, 100% AI. Then, when the signals come out strong, I can manage a portfolio by hand on my Wealthsimple. … For the AI process, it's you. You do all of it, you run on a schedule, and you update the site. … Ideally, stocks in CAD.</p></blockquote>
+<p><small>The owner's words, reworded in English.</small></p>
+<h2>What changed</h2>
+<div class="pair">
+  <figure><img src="img/loop-010-phone.png" alt="The scanner on a phone: TODAY, the strongest signals."><figcaption>The first screen on a phone.</figcaption></figure>
+  <figure><img src="img/loop-010-card.png" alt="A signal's card: buy, medium confidence, two reasons with their figures."><figcaption>A signal's card: each figure opens its formula.</figcaption></figure>
+</div>
+<ul>
+  <li><strong>Code computes:</strong> a year of daily bars per stock from Yahoo Finance; averages, RSI, volume, the year's range; the top 25 of the S&amp;P/TSX 60 by value traded, weekly.</li>
+  <li><strong>Claude judges:</strong> one JSON file per session. It never types a number: a reason names an indicator as <code>{rsi14}</code>, or quotes an article it opened.</li>
+  <li><strong>Code checks:</strong> a file with a typed number, an unsourced reason or a stock outside the list is refused whole; the last good signals stay.</li>
+  <li><strong>The first signals</strong>, for Friday Nov 20, written in the session: none strong in a broad pullback.</li>
+</ul>
+<h2>What went wrong</h2>
+<ul>
+  <li>The build of 0.11.0 froze the 256 MB machine: the site was down about 12 minutes. Stopped and started; rebuilt one package at a time.</li>
+  <li>Yahoo refuses a client that pretends to be Chrome; the scanner names itself plainly.</li>
+  <li>CDRs dropped: Yahoo gives them no history.</li>
+</ul>
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit tests</td><td>passed</td><td>176, indicators by hand.</td></tr>
+  <tr><td>Real-browser tests</td><td>passed</td><td>16 local; scanner tests pass live.</td></tr>
+  <tr><td>Signal file against live closes</td><td>passed</td><td>26 signals, all rules met.</td></tr>
+  <tr><td>Deployment</td><td>failed, then passed</td><td>Frozen machine, see above.</td></tr>
+  <tr><td>The scheduled run</td><td>not run</td><td>Needs GitHub connected to the owner's Claude account.</td></tr>
+</table>
+<p class="nav">Mission: <code>loops/010-mission.md</code> · Report: <code>loops/010-report.json</code></p>
+</main>
+</body>
+</html>
