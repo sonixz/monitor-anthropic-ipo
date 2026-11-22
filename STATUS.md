@@ -1,13 +1,13 @@
 # STATUS · monitor-anthropic-ipo
 
-> Where the project stands, verified. Last reviewed: 2026-11-22 · loop-014
+> Where the project stands, verified. Last reviewed: 2026-11-22 · loop-015
 
 ## Live
 
 | | |
 | --- | --- |
 | Site | https://antipo.watch, private: a login page in front of every page, on both addresses (Loop 013) |
-| Version | 0.17.0 (tag `v0.17.0`, release `ddf1bd5b3ede`, live since 2026-11-22), under the name antipo.watch |
+| Version | 0.18.0 (tag `v0.18.0`, release `0e1056f3a18b`, live since 2026-11-22), under the name antipo.watch |
 | Home page | The AI signal scanner: the 50 most traded stocks of the S&P/TSX Composite, ranked on 2026-11-20 |
 | Signals | For the session of Fri 2026-11-20, 50 signals, written by Claude in a working session on 2026-11-22 (no strong signal; buys FTS and DOL at medium confidence) |
 | Daily run | Scheduled in the working session on the owner's PC, weekdays about 16:47 Toronto (D-049); first run Mon 2026-11-23 |
@@ -24,7 +24,7 @@
 - Every value is a button: a close opens its MARKET card, an indicator, stop or target its formula (CALC), a signal its reasons (AI) with their quoted sources.
 - Signal files are checked in the run (`scan check`) and in the service; a refused file is named on the page and the last good signals stay (seen live on 2026-11-22, when a file reached the old release first).
 - Result files (signals, decisions, real orders) are uploaded by the daily run with a token and kept on the server only (`signals_read.server` in `/health`, Loop 013).
-- Tests: 204 unit tests (indicators, ATR, stops and targets, the track record, the portfolio, the gate and the discipline journal checked against counts by hand), 19 real-browser tests at 390 and 1280 px; CI and CodeQL green on `v0.17.0`.
+- Tests: 226 unit tests (indicators, ATR, stops and targets, the track record, the portfolio, the gate and the discipline journal checked against counts by hand), 21 real-browser tests at 390 and 1280 px; CI and CodeQL green on `v0.18.0`.
 
 ## Known limits
 
@@ -40,6 +40,7 @@
 
 - A full day of the service with the scanner: memory after the evening read of 220 series.
 - The discipline checklist saved on the live site from a phone (tested locally in a real browser; the owner's first save is Mon 2026-11-23).
+- Session prices on a real trading day with open positions, and the machine's memory meanwhile (first chance Tue 2026-11-24).
 - Holiday handling: the service tries once per expected session; the run stops on its own if no new session.
 
 Next steps are in [BACKLOG.md](BACKLOG.md).

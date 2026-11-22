@@ -1,0 +1,84 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-015",
+  "reportedAt": "2026-11-22T23:00:00Z",
+  "summary": "Version 0.18.0 is live (release 0e1056f3a18b, CI green; /health shows the session watcher closed on a Sunday with no request made). The portfolio page has an IN SESSION panel: for each open position, simulated or real, a recent Yahoo Finance price and its time (MARKET, may be delayed), the change since entry in % and R, the distance to stop and target, and a flag with a word and a mark (target reached, stop reached, near stop within half an ATR). Prices are read every five minutes from 9:30 to 16:00 Toronto, at most ten symbols, never outside those hours; a price counts only with shares traded, in CAD, for the symbol asked, on the day it is read; otherwise the last close, named as such. Display only: the simulation stays on daily bars. No notifications, at the owner's request. The owner approved the screenshots before release.",
+  "delivered": [
+    "scan/session.py: read_chart, in_session, SessionWatcher (five-minute rounds in session only, ten symbols, page symbol to Yahoo symbol), live (one position's row and its flag), Recorded answers for tests.",
+    "IN SESSION panel on /portfolio and its style; /health session; IPO_SESSION and IPO_NOW (tests only).",
+    "tests/test_session.py: a real Yahoo answer for FTS.TO, refused answers, hours with summer time, no request outside the session, rows and flags against arithmetic by hand, the page in and after the session; e2e on a phone and a desktop.",
+    "DECISIONS D-054, CHANGELOG 0.18.0, STATUS, ARCHITECTURE, PRODUCT, .env.example, devlog."
+  ],
+  "changedFiles": [
+    "src/ipo_monitor/scan/session.py",
+    "src/ipo_monitor/scan/render.py",
+    "src/ipo_monitor/web.py",
+    "src/ipo_monitor/config.py",
+    "src/ipo_monitor/templates/portfolio.html.j2",
+    "src/ipo_monitor/static/app.css",
+    "tests/test_session.py",
+    "tests/fixtures/session/",
+    "tests/e2e/test_dashboard.py",
+    "tests/e2e/test_scanner.py",
+    "tests/e2e/conftest.py",
+    "DECISIONS.md",
+    "CHANGELOG.md",
+    "STATUS.md",
+    "ARCHITECTURE.md",
+    "PRODUCT.md",
+    ".env.example",
+    "loops/015-mission.md",
+    "loops/015-report.json",
+    "devlog/loop-015.html",
+    "devlog/index.html"
+  ],
+  "decisions": [
+    "Confirmed: open positions only; no notifications for now (owner).",
+    "Proposed, built as proposed: every five minutes in regular hours, ten symbols at most, near stop within half an ATR, no automatic reload (D-054).",
+    "Release approved by the owner after screenshots (2026-11-22)."
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "226 unit tests, 22 of them new for the session prices."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "21 in Chromium, including the IN SESSION panel on a phone and a desktop with no horizontal overflow."
+    },
+    {
+      "command": "GitHub CI and CodeQL on 0e1056f",
+      "result": "passed",
+      "notes": "Both green before the deploy."
+    },
+    {
+      "command": "Deploy v0.18.0 and curl from outside",
+      "result": "passed",
+      "notes": "/health 0.18.0, 50 stocks, signals 2026-11-20, session state closed with zero requests; /portfolio answers 303 to the login."
+    },
+    {
+      "command": "Real use: a local server in Chromium at 11:20 on a made-up day with recorded TEST prices",
+      "result": "passed",
+      "notes": "Screenshots in the devlog."
+    },
+    {
+      "command": "Live session prices during a real trading session, and memory on the 256 MB machine",
+      "result": "not_run",
+      "notes": "No open position until the first simulated fills are counted on Mon 2026-11-23 evening; first useful session Tue 2026-11-24."
+    }
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "Check the live panel and the machine's memory during the session of Tue 2026-11-24.",
+    "Watch Monday's first daily run end to end (signals, decisions, uploads, fills, checklist status).",
+    "The session cron expires about 2026-11-29.",
+    "Second Brain unavailable: file D-047 to D-054 when it is back.",
+    "watch.py's docstring still says signal files come from GitHub; tidy it."
+  ],
+  "recommendedNextSteps": [
+    "Owner: enter the stop of each real position in Wealthsimple; the panel only shows."
+  ]
+}
