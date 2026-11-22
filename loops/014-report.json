@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-014",
+  "reportedAt": "2026-11-22T21:30:00Z",
+  "summary": "Version 0.17.0 is live (release ddf1bd5b3ede, CI green, scanner reloaded with 50 stocks and the Nov 20 signals, no file refused). The portfolio page opens on a TODAY checklist: three morning items (read the orders; placed, skipped on purpose with a reason, or none planned; a stop for each position), two evening items (no trade outside the plan; read the evening analysis), a mood and a note, one save button, no JavaScript. /journal has one row per trading day since the simulation started, newest first, missed days included and highlighted, with the streak, the best streak, assiduity over 30 days and overall, and gaps between the plan and the owner's real orders computed from the ledger. Only today and the trading day before can be saved. Entries live on the server in /data/results/discipline. The owner approved the screenshots before release. The evening run reads the checklist status and mentions it in one line.",
+  "delivered": [
+    "scan/discipline.py: Entry (3 morning items, 2 evening items, mood, note), Store (one file a day), trading_days (market holidays skipped once a later session exists), gaps_of (outside the plan, above the advised size, a sale of shares not bought here), journal (statuses, streak, best, assiduity, gaps), from_form (only today and the trading day before, never a weekend).",
+    "_today.html.j2 at the top of /portfolio and POST /discipline; journal.html.j2 at /journal; sign-out links on the pages.",
+    "GET /api/upload/discipline (Bearer): the day's status without the note, for the evening run; ROUTINE.md step 10; the session cron prompt updated.",
+    "tests/test_discipline.py (statuses, streaks, assiduity, gaps and holidays against hand counts), tests/test_auth.py (form, refused dates, status endpoint), e2e checklist and journal on a phone.",
+    "DECISIONS D-053, CHANGELOG 0.17.0, STATUS, devlog."
+  ],
+  "changedFiles": [
+    "src/ipo_monitor/scan/discipline.py",
+    "src/ipo_monitor/scan/render.py",
+    "src/ipo_monitor/web.py",
+    "src/ipo_monitor/config.py",
+    "src/ipo_monitor/templates/_today.html.j2",
+    "src/ipo_monitor/templates/journal.html.j2",
+    "src/ipo_monitor/templates/portfolio.html.j2",
+    "src/ipo_monitor/templates/scan.html.j2",
+    "src/ipo_monitor/static/app.css",
+    "tests/test_discipline.py",
+    "tests/test_auth.py",
+    "tests/e2e/test_scanner.py",
+    "tests/e2e/test_dashboard.py",
+    "ROUTINE.md",
+    "DECISIONS.md",
+    "CHANGELOG.md",
+    "STATUS.md",
+    ".gitignore",
+    "loops/014-mission.md",
+    "loops/014-report.json",
+    "devlog/loop-014.html",
+    "devlog/index.html"
+  ],
+  "decisions": [
+    "Confirmed: TODAY at the top of /portfolio, the journal at /journal (owner); release approved after screenshots (owner, 2026-11-22).",
+    "Proposed, built as proposed: the five checklist items; complete, partial, missed; only today and the trading day before can be saved (D-053).",
+    "Proposed: on a weekend the form targets the last trading day; the status column sits second so it stays visible on a phone."
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "204 unit tests, including statuses, streaks and assiduity matched to hand counts, gaps from the ledger, refused dates."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "19 in Chromium, including checking and saving the list on a phone at 390x844 and seeing it in the journal after reload."
+    },
+    {
+      "command": "GitHub CI and CodeQL on ddf1bd5",
+      "result": "passed",
+      "notes": "Both green before the tag."
+    },
+    {
+      "command": "Deploy v0.17.0 and curl from outside",
+      "result": "passed",
+      "notes": "/health version 0.17.0, release ddf1bd5b3ede, 50 stocks, signals_session 2026-11-20, no refused file; /journal and /portfolio answer 303 to the login."
+    },
+    {
+      "command": "Real use: a local server in Chromium, checklist saved and journal read on a phone and a desktop",
+      "result": "passed",
+      "notes": "Screenshots in the devlog, with example days marked DEMO."
+    },
+    {
+      "command": "Real use on the live site: the owner signs in and saves the checklist",
+      "result": "not_run",
+      "notes": "The owner's account password is not kept in this session; the first real save is the owner's, Mon 2026-11-23."
+    },
+    {
+      "command": "The evening run reads the discipline status",
+      "result": "not_run",
+      "notes": "First run Mon 2026-11-23 about 17:17 Toronto."
+    }
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "Watch Monday's first daily run end to end: signals, decisions, uploads, first simulated fills, the checklist status.",
+    "The session cron expires about 2026-11-29: re-arm it or set up a lasting task on the PC.",
+    "The password was given in the chat: change it later if wanted.",
+    "Second Brain unavailable (its archivist is out of credits): file D-047 to D-053 when it is back."
+  ],
+  "recommendedNextSteps": [
+    "Owner: on Monday morning, open /portfolio, tick the morning list after placing (or skipping) the orders, save; in the evening, tick the two evening items."
+  ]
+}

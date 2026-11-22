@@ -53,15 +53,17 @@ flowchart TB
   bars["bars.py: Yahoo daily bars; a session still trading is left out"]
   ind["indicators.py: each value with its formula and sessions"]
   uni["universe.py: weekly top N by value traded"]
-  files[("data/signals/*.json: release and GitHub")]
+  files[("/data/results: signals, decisions, ledger, discipline (uploaded)")]
   watch["watch.py: when to read bars and signal files"]
   sig["signals.py: the file format and its rules"]
   lv["levels.py: stop and target from ATR"]
   track["track.py: change after 5 and 20 sessions; stop or target first"]
   board["board.py: the state of the scanner; the dossier"]
   render["render.py, scan.html.j2: values and cards"]
-  web["web.py: /, /scan/dossier.json, /health"]
-  cli["__main__.py: dossier and check, for the scheduled run"]
+  pf["portfolio.py: rules, sizing, the simulated book, the real-orders ledger"]
+  disc["discipline.py: the day's checklist, the journal, gaps from the ledger"]
+  web["web.py: login gate; /, /portfolio, /journal, /discipline, /api/upload, /health"]
+  cli["__main__.py: dossier, check, portfolio and upload, for the scheduled run"]
   watch --> bars --> ind
   cands --> uni
   ind --> uni --> board
@@ -70,6 +72,9 @@ flowchart TB
   board --> track --> render
   board --> render --> web
   board --> cli
+  files --> pf --> render
+  pf --> disc --> render
+  cli --> web
 ```
 
 *Scope: `src/ipo_monitor/scan`. Last reviewed: 2026-11-22.* `board.build` is the one place that
@@ -78,12 +83,17 @@ is the gate: a file is used only if every signal names a stock of the list in fo
 before), types no digit, and gives every reason an indicator or a quoted source. Placeholders are
 filled by `render.py` with indicators computed as of the signal's session, so a value never
 drifts after the fact. `watch.py` reads bars once a session has closed (one try per session, so a
-holiday costs one round), and signal files every 15 minutes.
+holiday costs one round), and result files every 15 minutes. Every page is behind the login
+(`auth.py`); the scheduled run uploads its files with a token to `/api/upload`, which applies the
+same rules before storing them in `/data/results` (Loop 013). `portfolio.py` replays the decision
+files on the closes into the simulated book; `discipline.py` keeps one checklist file a day and
+builds the journal of every trading day, with gaps between the plan and the real orders (Loop 014).
 
 | Choice | Why | Cost we accept | Decision |
 | --- | --- | --- | --- |
 | The AI writes JSON in a separate run | No AI key on the machine; every word checked before it shows | A day without a run shows the last signals, named as such | D-039 |
-| Signal files through the public repository | No inbound access to the machine; history in git | Signals are public as soon as pushed; a file must match the running release | D-041 |
+| Result files uploaded to the server, never in git | Signals, decisions and the owner's orders stay private; the code stays public | No public history of results; the server's volume is the only copy besides the PC | D-052 |
+| A checklist past days cannot change | The journal stays honest: a missed day stays missed | A day forgotten past the next trading day cannot be fixed | D-053 |
 | Stops and targets in code | The AI types no number; the same rule for every stock | Fixed multiples, not tuned per stock | D-042 |
 | Bars from Yahoo Finance | Free, a year of history per request, CAD | Unofficial, delayed, may limit; no history for CDRs | D-040, D-043 |
 | Everything in memory | 220 series × 252 bars is small; restart rebuilds it in about two minutes | The page says "reading the closes" just after a restart | |
@@ -198,8 +208,12 @@ The page is rendered once, at startup, and served from memory. This is what make
 | --- | --- |
 | `src/ipo_monitor/scan/` | The scanner: bars, indicators, list, signal files and rules, stops and targets, track record, page, dossier and check commands |
 | `src/ipo_monitor/templates/scan.html.j2` | The scanner page |
+| `src/ipo_monitor/scan/portfolio.py`, `templates/portfolio.html.j2` | The simulated $4,000 portfolio, its rules (`data/portfolio/rules.json`) and the ledger of real orders |
+| `src/ipo_monitor/scan/discipline.py`, `templates/_today.html.j2`, `journal.html.j2` | The TODAY checklist and the journal |
+| `src/ipo_monitor/auth.py`, `templates/login.html.j2` | The login gate and the upload token |
+| `/data/results/` (server) | Signals, decisions, the ledger and the checklist entries; never in git |
 | `data/scan/candidates.json` | The candidate list (S&P/TSX Composite), with its source |
-| `data/signals/` | Signal files, one per session, written by Claude |
+| `data/signals/` | Local copies of the signal files written by Claude, ignored by git |
 | `ROUTINE.md` | The steps of the scheduled AI run |
 | `src/ipo_monitor/extract.py` | Read the saved filing, write FILED facts with page and quote |
 | `src/ipo_monitor/facts.py` | Fact model, loading, lookup; the current filing and the earlier ones |

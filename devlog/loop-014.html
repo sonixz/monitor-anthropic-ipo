@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 014 — Discipline mode · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 014 — Discipline mode</h1>
+<p class="lead">2026-11-22 · A TODAY checklist at the top of the private portfolio, and a journal with one row for every trading day, missed days included. Version 0.17.0.</p>
+<h2>Why</h2>
+<blockquote><p>Maybe a discipline mode: every day we come and check, we tick boxes. I would like a trading discipline. A TODAY section with the boxes to tick, all of it sent to a log, a really clean log, a table with the whole history. All the discipline, day by day, and the days we were not diligent.</p></blockquote>
+<p><small>The owner's words, reworded in English.</small></p>
+<h2>What changed</h2>
+<div class="trio">
+  <figure><img src="img/loop-014-today-phone.png" alt="The TODAY checklist on a phone: three morning items, two evening items, a mood, a note and a save button."><figcaption>TODAY, at the top of the portfolio.</figcaption></figure>
+  <figure><img src="img/loop-014-journal-phone.png" alt="The journal on a phone: streak and assiduity, then one row per day with its status."><figcaption>The journal on a phone.</figcaption></figure>
+  <figure><img src="img/loop-014-journal-desktop.png" alt="The journal on a desktop: day, status, morning, evening, mood, orders, gaps and note."><figcaption>The journal on a desktop.</figcaption></figure>
+</div>
+<p><small>The screenshots use example days marked DEMO, from a local server; no real orders.</small></p>
+<ul>
+  <li><strong>The checklist:</strong> morning — read the orders; placed, skipped on purpose with a reason, or none planned; a stop entered for each position. Evening — no trade outside the plan; read the evening analysis. A mood, a note, one save button; it works without JavaScript.</li>
+  <li><strong>An honest journal:</strong> every trading day has a row; a day that ends with nothing saved stays missed. Only today and the trading day before can be filled in.</li>
+  <li><strong>Gaps by code:</strong> an order outside the plan or above the advised size is found from the ledger of real orders, never typed.</li>
+  <li><strong>On the server only,</strong> behind the login; the evening run reads the day's status and mentions it in one line.</li>
+</ul>
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit and browser tests</td><td>passed</td><td>204 and 19; streaks and assiduity matched to counts by hand.</td></tr>
+  <tr><td>CI and CodeQL</td><td>passed</td><td>Green on the release commit.</td></tr>
+  <tr><td>Live after deploy</td><td>passed</td><td>Version 0.17.0 answers; the new pages ask for the login; 50 stocks and their signals reloaded.</td></tr>
+  <tr><td>The owner's first save on the live site</td><td>not run</td><td>Monday Nov 23.</td></tr>
+  <tr><td>The evening run reading the checklist</td><td>not run</td><td>Monday Nov 23.</td></tr>
+</table>
+<p class="nav">Mission: <code>loops/014-mission.md</code> · Report: <code>loops/014-report.json</code></p>
+</main>
+</body>
+</html>

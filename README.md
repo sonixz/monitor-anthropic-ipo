@@ -27,7 +27,8 @@ and every past signal stays on the page, scored.
 | **LIST** | The 50 most traded stocks this week: close, day, RSI, trend, volume, signal, stop and target |
 | **TRACK RECORD** | Were the signals right? Change after 5 and 20 sessions; target or stop hit first |
 | **HOW** | Who does what: code, the AI, the checks |
-| **[/portfolio](https://antipo.watch/portfolio)** | A simulated $4,000 envelope that follows the signals by fixed rules: next orders, positions, results against the TSX |
+| **[/portfolio](https://antipo.watch/portfolio)** | A simulated $4,000 envelope that follows the signals by fixed rules: next orders, positions, results against the TSX; a TODAY checklist on top |
+| **/journal** | One row per trading day: the checklist, missed days, streaks, gaps between the plan and the real orders |
 
 Each value carries a label that says where it comes from:
 
