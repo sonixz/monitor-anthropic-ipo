@@ -436,3 +436,84 @@ def simulate(
             count += 1
             per_sector[sector] = per_sector.get(sector, 0) + 1
     return book, refused
+
+
+# -- the owner's real orders --------------------------------------------------------
+
+
+class Fill(BaseModel):
+    """One order the owner placed and reported: the price and shares they got."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
+    symbol: str = Field(min_length=1, max_length=12)
+    side: Literal["buy", "sell"]
+    shares: int = Field(gt=0)
+    price: float = Field(gt=0)
+    note: str | None = Field(default=None, max_length=200)
+
+
+class Ledger(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_: Literal["antipo.ledger/1"] = Field(alias="schema")
+    real: bool
+    fills: list[Fill] = Field(default_factory=list)
+
+
+@dataclass
+class Holding:
+    """A real position, from the owner's fills; stop and target from the recommendation."""
+
+    symbol: str
+    shares: int
+    cost: float  # average price paid
+    last: float | None
+    stop: float | None
+    target: float | None
+    recommended: float | None  # the reference close of the recommendation
+    since: str
+
+    @property
+    def pnl(self) -> float | None:
+        return None if self.last is None else (self.last - self.cost) * self.shares
+
+    @property
+    def slippage(self) -> float | None:
+        """Price paid against the recommendation's reference close, in percent."""
+        return None if self.recommended is None else (self.cost / self.recommended - 1) * 100
+
+
+def holdings(ledger: Ledger, book: Book, series: dict[str, Series]) -> tuple[list[Holding], float]:
+    """The owner's open positions and the cash left in the envelope."""
+    cash = book.rules.capital
+    lots: dict[str, list[Fill]] = {}
+    for fill in sorted(ledger.fills, key=lambda f: f.date):
+        sign = -1 if fill.side == "buy" else 1
+        cash += sign * fill.shares * fill.price - book.rules.commission
+        lots.setdefault(fill.symbol, []).append(fill)
+    found = []
+    advice = {p.symbol: p for p in book.positions + book.pending}
+    for symbol, fills in lots.items():
+        bought = [f for f in fills if f.side == "buy"]
+        shares = sum(f.shares for f in bought) - sum(f.shares for f in fills if f.side == "sell")
+        if shares <= 0 or not bought:
+            continue
+        cost = sum(f.shares * f.price for f in bought) / sum(f.shares for f in bought)
+        one = series.get(symbol)
+        last = one.bars[-1].close if one and one.bars else None
+        rec = advice.get(symbol)
+        found.append(
+            Holding(
+                symbol,
+                shares,
+                cost,
+                last,
+                rec.stop if rec else None,
+                rec.target if rec else None,
+                rec.sizing.close if rec else None,
+                bought[0].date,
+            )
+        )
+    return found, cash

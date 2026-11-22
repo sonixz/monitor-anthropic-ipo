@@ -73,6 +73,17 @@
   {% if book.skipped %}<p class="aside">Not bought by the rules: {% for s, why in book.skipped %}{{ s }} ({{ why }}){% if not loop.last %}; {% endif %}{% endfor %}.</p>{% endif %}
 </section>
 
+{% if real %}
+<section class="panel wide-panel" id="real" tabindex="-1" aria-labelledby="real-h">
+  <h2 id="real-h"><span class="real">REAL</span> YOUR ORDERS <span class="q">What you actually bought</span></h2>
+  <p class="lede">From the orders you reported. Cash left in the envelope {{ L(money(real_cash)) }}. Stop and target from the recommendation each order followed.</p>
+  <div class="scroll"><table class="lines scan-table">
+    <thead><tr><th scope="col">stock</th><th scope="col">shares</th><th scope="col">paid</th><th scope="col">vs advice</th><th scope="col">last</th><th scope="col">stop</th><th scope="col">target</th><th scope="col">gain</th></tr></thead>
+    <tbody>{% for h in real %}<tr><th scope="row"><span class="sig-sym">{{ h.symbol }}</span> <span class="nm">{{ L(day(h.since)) }}</span></th><td>{{ L(h.shares) }}</td><td>{{ L(money(h.cost)) }}</td><td><span class="chg {{ tone(-(h.slippage or 0)) }}">{{ L(signed(h.slippage, "%")) }}</span></td><td>{{ L(money(h.last)) }}</td><td>{{ L(money(h.stop)) }}</td><td>{{ L(money(h.target)) }}</td><td><span class="chg {{ tone(h.pnl) }}">{{ L(signed(h.pnl)) }}</span></td></tr>{% endfor %}</tbody>
+  </table></div>
+</section>
+{% endif %}
+
 <section class="panel wide-panel" id="positions" tabindex="-1" aria-labelledby="positions-h">
   <h2 id="positions-h">POSITIONS <span class="q">What does the envelope hold?</span></h2>
   <p class="lede">Cash {{ L(money(book.cash)) }}{% if last %} · invested {{ L(money(last.invested)) }} at the {{ L(day(last.date)) }} close{% endif %}.</p>

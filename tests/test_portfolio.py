@@ -208,3 +208,76 @@ def test_the_real_first_decisions_size_as_shown_to_the_owner() -> None:
     assert order.symbol == "RY"
     assert order.sizing.shares == 1  # medium confidence: 400 / 263.05
     assert board.refused_decisions == ()
+
+
+def test_the_owner_s_real_orders() -> None:
+    from ipo_monitor.scan.portfolio import Book, Ledger, Position, holdings
+
+    book = Book(RULES, cash=RULES.capital)
+    book.pending.append(
+        Position(
+            "DOL", "2026-11-20", size(4000, 4000, 216.61, 208.23, RULES, "medium"), 208.23, 229.18
+        )
+    )
+    ledger = Ledger.model_validate(
+        {
+            "schema": "antipo.ledger/1",
+            "real": True,
+            "fills": [
+                {"date": "2026-11-23", "symbol": "DOL", "side": "buy", "shares": 1, "price": 217.10}
+            ],
+        }
+    )
+    dol = series("DOL", [(216.0, 218.0, 215.0, 216.61)])
+    found, cash = holdings(ledger, book, {"DOL": dol})
+    assert cash == pytest.approx(4000 - 217.10)
+    held = found[0]
+    assert (held.shares, held.cost, held.stop, held.target) == (1, 217.10, 208.23, 229.18)
+    assert held.slippage == pytest.approx((217.10 / 216.61 - 1) * 100)
+    assert held.pnl == pytest.approx(216.61 - 217.10)
+
+
+def test_the_portfolio_page_asks_for_the_password() -> None:
+    import base64
+
+    from fastapi.testclient import TestClient
+
+    from ipo_monitor.config import Settings
+    from ipo_monitor.web import authorized, create_app
+
+    def basic(password: str) -> str:
+        return "Basic " + base64.b64encode(f"owner:{password}".encode()).decode()
+
+    assert authorized(basic("s3cret pass"), "s3cret pass")
+    assert not authorized(basic("wrong"), "s3cret pass")
+    assert not authorized("Bearer x", "s3cret pass")
+    assert not authorized("Basic !!!", "s3cret pass")
+    fixtures = ROOT / "tests" / "fixtures"
+    settings = Settings(
+        "127.0.0.1",
+        8000,
+        ROOT / "data" / "facts",
+        "test",
+        "info",
+        scan=f"file:{fixtures / 'scan' / '2026-11-20'}",
+        signals=f"dir:{fixtures / 'signals'}",
+        scan_candidates=fixtures / "scan" / "candidates-tsx60.json",
+        portfolio_password="s3cret pass",  # noqa: S106 - a test password
+    )
+    app = create_app(settings)
+    with TestClient(app) as client:
+        app.state.scanner.start()
+        app.state.scanner.on_change(app.state.scanner.board)
+        locked = client.get("/portfolio")
+        assert locked.status_code == 401
+        assert "WWW-Authenticate" in locked.headers
+        assert (
+            client.get("/portfolio", headers={"Authorization": basic("wrong")}).status_code == 401
+        )
+        page = client.get("/portfolio", headers={"Authorization": basic("s3cret pass")})
+        assert page.status_code == 200
+        assert "NEXT OPEN" in page.text
+        assert page.headers["Cache-Control"] == "private, no-store"
+        assert client.get("/").status_code == 200  # the scanner stays public
+        assert "s3cret" not in client.get("/health").text
+    assert "s3cret" not in repr(settings)

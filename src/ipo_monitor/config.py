@@ -32,6 +32,9 @@ class Settings:
     scan: str = "off"  # the scanner's closes: auto (Yahoo Finance), off, or file:<folder>
     signals: str = "off"  # signal files: auto (release and GitHub), local, off, or dir:<folder>
     scan_candidates: Path = Path("data/scan/candidates.json")  # the stocks the list ranks
+    # The password of the portfolio page. Personal: never printed, never logged.
+    portfolio_password: str = field(default="", repr=False)
+    ledger: Path | None = None  # the owner's real orders; on the machine, outside git
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> Settings:
@@ -101,6 +104,13 @@ class Settings:
                 f"IPO_SCAN_CANDIDATES must be a candidate list file, got {str(scan_candidates)!r}"
             )
 
+        ledger_text = source.get("IPO_LEDGER", "").strip()
+        ledger = Path(ledger_text) if ledger_text else None
+        if ledger is not None and not ledger.parent.is_dir():
+            raise ConfigError(
+                f"IPO_LEDGER must be a file in an existing directory, got {ledger_text!r}"
+            )
+
         host = source.get("IPO_HOST", "127.0.0.1")
         if not host:
             raise ConfigError("IPO_HOST must not be empty")
@@ -119,4 +129,6 @@ class Settings:
             scan=scan,
             signals=signals,
             scan_candidates=scan_candidates,
+            portfolio_password=source.get("PORTFOLIO_PASSWORD", ""),
+            ledger=ledger,
         )

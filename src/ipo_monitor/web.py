@@ -9,8 +9,10 @@ if that rendering fails, the previous page stays.
 from __future__ import annotations
 
 import asyncio
+import base64
 import contextlib
 import hashlib
+import hmac
 import re
 import threading
 import time
@@ -44,6 +46,19 @@ from ipo_monitor.visits import Visits
 SIGNALS = Path("data/signals")
 DECISIONS = Path("data/portfolio/decisions")
 RULES = Path("data/portfolio/rules.json")
+
+
+def authorized(header: str, password: str) -> bool:
+    """HTTP Basic: any user name, the configured password, compared in constant time."""
+    scheme, _, value = header.partition(" ")
+    if scheme.lower() != "basic" or not value:
+        return False
+    try:
+        decoded = base64.b64decode(value, validate=True).decode("utf-8")
+    except (ValueError, UnicodeDecodeError):
+        return False
+    _, _, given = decoded.partition(":")
+    return hmac.compare_digest(given.encode("utf-8"), password.encode("utf-8"))
 
 
 def decision_sources(settings: Settings) -> list[scan_watch.SignalSource]:
@@ -236,6 +251,7 @@ def create_app(
 
     scan: list[ScanPage] = []  # one item: the scanner page being served
     folio: list[ScanPage] = []  # one item: the portfolio page being served
+    ledger_seen: list[float] = [0.0]  # when the ledger file last changed, as rendered
     scanner: scan_watch.ScanWatcher | None = None
 
     def scan_changed(board: ScanBoard) -> None:
@@ -247,7 +263,13 @@ def create_app(
         scan[:] = [page]
         if board.book is not None:
             try:
-                folio[:] = [render_portfolio(board, release=settings.release)]
+                folio[:] = [
+                    render_portfolio(
+                        board,
+                        release=settings.release,
+                        ledger_path=str(settings.ledger) if settings.ledger else "",
+                    )
+                ]
             except Exception as error:
                 log.event(
                     "render_failed", level="error", part="portfolio", error=type(error).__name__
@@ -338,9 +360,29 @@ def create_app(
 
     @app.api_route("/portfolio", methods=["GET", "HEAD"], include_in_schema=False)
     async def portfolio(request: Request) -> Response:
+        if settings.portfolio_password and not authorized(
+            request.headers.get("authorization", ""), settings.portfolio_password
+        ):
+            return Response(
+                "This page is private.",
+                status_code=401,
+                headers={
+                    "WWW-Authenticate": 'Basic realm="antipo.watch portfolio", charset="UTF-8"',
+                    "Cache-Control": "no-store",
+                },
+            )
+        ledger = settings.ledger
+        changed = ledger.stat().st_mtime if ledger is not None and ledger.is_file() else 0.0
+        if changed != ledger_seen[0] and scanner is not None and scanner.board is not None:
+            ledger_seen[0] = changed  # a reported order: draw the page again
+            scan_changed(scanner.board)
         if not folio:
             return JSONResponse({"error": "the portfolio is not ready"}, status_code=404)
-        return html(request, folio[0].html.encode("utf-8"), folio[0].etag)
+        response = html(request, folio[0].html.encode("utf-8"), folio[0].etag)
+        if settings.portfolio_password:
+            response.headers["Cache-Control"] = "private, no-store"
+            response.headers["X-Robots-Tag"] = "noindex"
+        return response
 
     @app.api_route("/ant", methods=["GET", "HEAD"], include_in_schema=False)
     async def dashboard(request: Request) -> Response:

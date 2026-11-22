@@ -2250,3 +2250,10 @@ button.n.lv-neutral {
   font-weight: 700;
   letter-spacing: 0.06em;
 }
+
+.real {
+  color: var(--bg);
+  background: var(--pos);
+  border-radius: 3px;
+  padding: 0 0.35em;
+}

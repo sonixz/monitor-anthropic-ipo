@@ -10,6 +10,7 @@ load_secrets() {
   while IFS='=' read -r name value; do
     case "$name" in
       SEC_CONTACT) export SEC_CONTACT="$value" ;;
+      PORTFOLIO_PASSWORD) export PORTFOLIO_PASSWORD="$value" ;;
     esac
   done < /data/secrets.env
 }
@@ -17,7 +18,7 @@ load_secrets() {
 while true; do
   load_secrets
   if cd /data/current 2>/dev/null; then
-    IPO_HOST=127.0.0.1 IPO_PORT=8000 IPO_VISITS=/data/visits.json \
+    IPO_HOST=127.0.0.1 IPO_PORT=8000 IPO_VISITS=/data/visits.json IPO_LEDGER=/data/ledger.json \
       IPO_RELEASE="$(cat RELEASE 2>/dev/null || echo unknown)" \
       .venv/bin/python -m ipo_monitor &
     echo $! > /data/service.pid

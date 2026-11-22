@@ -4,6 +4,18 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.15.0] - 2026-11-22
+
+### Added
+
+- **A password on `/portfolio`** (owner: "a small login, very simple, just to say it's private"):
+  HTTP Basic checked by the service itself, so it also holds on the Fly.io address; the password
+  comes from `PORTFOLIO_PASSWORD` in the machine's secrets file and is never printed. The scanner
+  stays public. Private pages are sent with `Cache-Control: private, no-store` and `noindex`.
+- **The owner's real orders** (`IPO_LEDGER`, `/data/ledger.json` on the machine, outside git): a
+  REAL section beside the simulation, with the price paid against the advice, the stop and target
+  of the recommendation followed, and the gain.
+
 ## [0.14.1] - 2026-11-22
 
 ### Changed

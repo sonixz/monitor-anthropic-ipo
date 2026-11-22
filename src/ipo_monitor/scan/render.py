@@ -7,9 +7,11 @@ AI for a signal (level, confidence, reasons and the sources each reason cites).
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from pathlib import Path
 
 from markupsafe import Markup
 
@@ -18,6 +20,7 @@ from ipo_monitor.render import LOOP0_URL, REPOSITORY_URL, _environment, asset_ve
 from ipo_monitor.scan.board import TORONTO, Board, Stock
 from ipo_monitor.scan.indicators import Indicator, compute, show
 from ipo_monitor.scan.levels import HOLD
+from ipo_monitor.scan.portfolio import Holding, Ledger, holdings
 from ipo_monitor.scan.signals import LEVELS, Signal, fill
 from ipo_monitor.scan.track import HORIZONS, Outcome
 
@@ -240,7 +243,7 @@ def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
     return ScanPage(html, etag, len(board.stocks), signals)
 
 
-def render_portfolio(board: Board, *, release: str = "dev") -> ScanPage:
+def render_portfolio(board: Board, *, release: str = "dev", ledger_path: str = "") -> ScanPage:
     """The simulated portfolio's page: next orders, positions, trades, metrics, rules."""
     book = board.book
     if book is None:
@@ -269,10 +272,20 @@ def render_portfolio(board: Board, *, release: str = "dev") -> ScanPage:
         return "up" if value > 0 else "down"
 
     last = book.days[-1] if book.days else None
+    real: list[Holding] = []
+    real_cash: float | None = None
+    path = Path(ledger_path or "data/portfolio/ledger.json")
+    if path.is_file():
+        ledger = Ledger.model_validate(json.loads(path.read_text("utf-8")))
+        if ledger.fills:
+            series = {s.symbol: s.series for s in board.stocks if s.series is not None}
+            real, real_cash = holdings(ledger, book, series)
     written = ""
     if book.last_decision is not None:
         written = when(datetime.fromisoformat(book.last_decision.written_at.replace("Z", "+00:00")))
     html = template.render(
+        real=real,
+        real_cash=real_cash,
         written=written,
         site=SITE,
         board=board,
