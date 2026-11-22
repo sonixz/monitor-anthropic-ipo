@@ -132,3 +132,29 @@ def test_the_checklist_on_a_phone(browser: Browser, base_url: str) -> None:
     _shot(page, "journal-phone")
     assert errors == []
     context.close()
+
+
+@pytest.mark.parametrize("viewport", [PHONE, DESKTOP], ids=["phone", "desktop"])
+def test_prices_during_the_session(browser: Browser, session_url: str, viewport: object) -> None:
+    phone = viewport == PHONE
+    context = browser.new_context(
+        viewport=viewport,  # type: ignore[arg-type]
+        device_scale_factor=2,
+        is_mobile=phone,
+        has_touch=phone,
+    )
+    page, errors = _open(context, session_url, path="/portfolio")
+    panel = page.locator("#session")
+    expect(panel).to_contain_text("IN SESSION")
+    expect(panel).to_contain_text("TEST DATA, not a real quote")
+    row = panel.locator(".live").first
+    expect(row).to_contain_text("RY")
+    expect(row).to_contain_text("11:15 ET")
+    expect(row.locator(".live-flag")).to_have_text("▲ target reached")
+    found = page.evaluate(OVERFLOW)
+    assert found["wide"] == []
+    assert found["page"] <= viewport["width"]  # type: ignore[index]
+    panel.scroll_into_view_if_needed()
+    _shot(page, "session-" + ("phone" if phone else "desktop"))
+    assert errors == []
+    context.close()

@@ -36,6 +36,7 @@ from ipo_monitor.edgar import Index, Watch
 from ipo_monitor.facts import Facts
 from ipo_monitor.market import Snapshot, Source, Watcher, source_from
 from ipo_monitor.render import Page, _environment, asset_version, render_page
+from ipo_monitor.scan import session as scan_session
 from ipo_monitor.scan import watch as scan_watch
 from ipo_monitor.scan.bars import BarSource, RecordedDaily, YahooDaily
 from ipo_monitor.scan.board import TORONTO, dossier
@@ -326,6 +327,47 @@ def create_app(
         scanner.board = build_scan(scanner.candidates, {}, {}, datetime.now(UTC))
         scan_changed(scanner.board)
 
+    def clock() -> datetime:
+        return datetime.fromisoformat(settings.now) if settings.now else datetime.now(UTC)
+
+    def read_ledger() -> Ledger | None:
+        if settings.ledger is None or not settings.ledger.is_file():
+            return None
+        try:
+            return Ledger.model_validate(json.loads(settings.ledger.read_text("utf-8")))
+        except (OSError, ValueError, ValidationError):
+            return None
+
+    def open_symbols() -> list[str]:
+        """The simulated positions and the owner's real holdings, for the session prices."""
+        found: list[str] = []
+        if scanner is not None and scanner.board is not None and scanner.board.book is not None:
+            found += [p.symbol for p in scanner.board.book.open_positions]
+        ledger = read_ledger()
+        if ledger is not None:
+            held: dict[str, int] = {}
+            for fill in ledger.fills:
+                held[fill.symbol] = held.get(fill.symbol, 0) + (
+                    fill.shares if fill.side == "buy" else -fill.shares
+                )
+            found += [symbol for symbol, shares in held.items() if shares > 0]
+        return list(dict.fromkeys(found))
+
+    session_watcher: scan_session.SessionWatcher | None = None
+    if scanner is not None and settings.session != "off":
+        recorded = settings.session.startswith("file:")
+        names = {c.symbol: c.source_symbol for c in scanner.candidates.candidates}
+        fetch = (
+            scan_session.Recorded(Path(settings.session[5:])) if recorded else scan_session.yahoo
+        )
+        session_watcher = scan_session.SessionWatcher(
+            fetch,
+            open_symbols,
+            clock,
+            source=scan_session.Recorded.name if recorded else scan_session.SOURCE,
+            source_of=lambda symbol: names.get(symbol, f"{symbol}.TO"),
+        )
+
     async def first_scan() -> None:
         if scanner is None:
             return
@@ -341,6 +383,8 @@ def create_app(
         tasks = [asyncio.create_task(each.run()) for each in (watcher, filings_watcher) if each]
         if scanner is not None:
             tasks.append(asyncio.create_task(first_scan()))
+        if session_watcher is not None:
+            tasks.append(asyncio.create_task(session_watcher.run()))
         yield
         for task in tasks:
             task.cancel()
@@ -359,6 +403,7 @@ def create_app(
     app.state.filings = filings_watcher
     app.state.visits = visits
     app.state.scanner = scanner
+    app.state.session = session_watcher
     app.add_middleware(GZipMiddleware, minimum_size=1024)
 
     gate = Gate(settings.site_user, settings.site_password)
@@ -517,12 +562,7 @@ def create_app(
         if book is None:
             return None
         sessions = {b.date for one in scanner.series.values() for b in one.bars}
-        ledger = None
-        if settings.ledger is not None and settings.ledger.is_file():
-            try:
-                ledger = Ledger.model_validate(json.loads(settings.ledger.read_text("utf-8")))
-            except (OSError, ValueError, ValidationError):
-                ledger = None
+        ledger = read_ledger()
         today = (
             Date.fromisoformat(settings.today)
             if settings.today
@@ -592,6 +632,8 @@ def create_app(
             journal=the_journal(),
             saved=saved == "1",
             refused=refused[:200],
+            session=session_watcher,
+            now=clock(),
         )
         return Response(
             page.html, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-store"}
@@ -632,6 +674,7 @@ def create_app(
                 },
                 "filings": _filings_health(filings_watcher),
                 "scan": scan_watch.health(scanner),
+                "session": session_watcher.health() if session_watcher else {"state": "off"},
                 "visits": {
                     key: value
                     for key, value in visits.summary().items()

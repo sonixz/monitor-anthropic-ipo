@@ -94,6 +94,7 @@ def _serve(answer: str, filings: str = "", extra: dict[str, str] | None = None) 
         "IPO_SCAN_CANDIDATES": str(ROOT / "tests" / "fixtures" / "scan" / "candidates-tsx60.json"),
         "IPO_DATA_DIR": tempfile.mkdtemp(prefix="antipo-e2e-"),
         "IPO_TODAY": "2026-11-23",  # a Monday after the simulation's start
+        "IPO_SESSION": "off",  # no price during the session unless a test records one
         **(extra or {}),
     }
     process = subprocess.Popen(
@@ -151,6 +152,23 @@ def final_url() -> Iterator[str]:
 def private_url() -> Iterator[str]:
     """A local site behind the login, with a test account."""
     extra = {"SITE_USER": "owner", "SITE_PASSWORD": "a long test passphrase"}
+    with _serve("ant-awaiting.json", extra=extra) as url:
+        yield url
+
+
+@pytest.fixture(scope="module")
+def session_url() -> Iterator[str]:
+    """A local site at 11:20 on a made-up trading day, with one real position reported and
+    invented prices during the session. The data names itself as test data."""
+    folder = Path(tempfile.mkdtemp(prefix="antipo-e2e-ledger-"))
+    fill = {"date": "2026-11-23", "symbol": "RY", "side": "buy", "shares": 1, "price": 264.1}
+    ledger = {"schema": "antipo.ledger/1", "real": True, "fills": [fill]}
+    (folder / "ledger.json").write_text(json.dumps(ledger), "utf-8")
+    extra = {
+        "IPO_LEDGER": str(folder / "ledger.json"),
+        "IPO_SESSION": f"file:{ROOT / 'tests' / 'fixtures' / 'session' / '2026-11-23-TEST'}",
+        "IPO_NOW": "2026-11-23T11:20:00-05:00",
+    }
     with _serve("ant-awaiting.json", extra=extra) as url:
         yield url
 

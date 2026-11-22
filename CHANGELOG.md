@@ -4,6 +4,19 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.18.0] - 2026-11-22
+
+### Added
+
+- **Prices during the session** (Loop 015): on `/portfolio`, an IN SESSION panel for each open
+  position, simulated and real: a recent price and its time (MARKET, Yahoo Finance, may be
+  delayed), the change since entry in % and in R, how far the stop and the target are, and a flag
+  with a word and a mark: target reached, stop reached (by the session's high or low), near stop
+  (within half an ATR). Read every five minutes from 9:30 to 16:00 Toronto, at most ten symbols,
+  nothing outside those hours. Outside the session or without today's price, the last close,
+  named as such. Display only: the simulation and the track record still use daily closes.
+- `/health` reports the session watcher (`session`); `IPO_SESSION` (auto, off, file:<folder>).
+
 ## [0.17.0] - 2026-11-22
 
 ### Added

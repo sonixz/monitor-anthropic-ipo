@@ -22,6 +22,7 @@ from ipo_monitor.scan.discipline import Journal
 from ipo_monitor.scan.indicators import Indicator, compute, show
 from ipo_monitor.scan.levels import HOLD
 from ipo_monitor.scan.portfolio import Holding, Ledger, holdings
+from ipo_monitor.scan.session import Live, SessionWatcher, in_session, live
 from ipo_monitor.scan.signals import LEVELS, Signal, fill
 from ipo_monitor.scan.track import HORIZONS, Outcome
 
@@ -251,6 +252,17 @@ MOODS = (
     {"value": "4", "number": 4, "label": "calm"},
     {"value": "5", "number": 5, "label": "focused"},
 )
+FLAGS = {  # a word and a mark, never colour alone
+    "stop reached": "▼ stop reached",
+    "target reached": "▲ target reached",
+    "near stop": "! near stop",
+}
+STATE = {
+    "closed": "session closed · last close",
+    "unavailable": "no price yet today · last close",
+    "late": "late",
+    "live": "",
+}
 STATUS = {
     "complete": "✔ complete",
     "partial": "◐ partial",
@@ -283,6 +295,8 @@ def render_portfolio(
     journal: Journal | None = None,
     saved: bool = False,
     refused: str = "",
+    session: SessionWatcher | None = None,
+    now: datetime | None = None,
 ) -> ScanPage:
     """The simulated portfolio's page: next orders, positions, trades, metrics, rules."""
     book = board.book
@@ -320,6 +334,29 @@ def render_portfolio(
         if ledger.fills:
             series = {s.symbol: s.series for s in board.stocks if s.series is not None}
             real, real_cash = holdings(ledger, book, series)
+    moment = now or datetime.now(UTC)
+    lives: list[Live] = []
+    if session is not None:
+        atrs = {
+            s.symbol: s.indicators["atr14"].value for s in board.stocks if "atr14" in s.indicators
+        }
+        held = [
+            (p.symbol, "simulated", p.entry, p.stop, p.target, p.last) for p in book.open_positions
+        ] + [(h.symbol, "real", h.cost, h.stop, h.target, h.last) for h in real]
+        for symbol, kind, entry_price, stop, target, close in held:
+            lives.append(
+                live(
+                    symbol,
+                    kind,
+                    tick=session.ticks.get(symbol),
+                    entry=entry_price,
+                    stop=stop,
+                    target=target,
+                    atr=atrs.get(symbol),
+                    last_close=close,
+                    now=moment,
+                )
+            )
     written = ""
     if book.last_decision is not None:
         written = when(datetime.fromisoformat(book.last_decision.written_at.replace("Z", "+00:00")))
@@ -333,6 +370,12 @@ def render_portfolio(
         moods=MOODS,
         real=real,
         real_cash=real_cash,
+        lives=lives,
+        session=session,
+        in_session=in_session(moment),
+        clock=lambda t: stamp(t).split(", ")[-1],
+        flags=FLAGS,
+        states=STATE,
         written=written,
         site=SITE,
         board=board,

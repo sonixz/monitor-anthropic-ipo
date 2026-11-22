@@ -5,6 +5,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
+from datetime import datetime
 from pathlib import Path
 
 from ipo_monitor.edgar import valid_contact
@@ -40,6 +41,8 @@ class Settings:
     data_dir: Path | None = None  # results kept on the machine: signals/, decisions/, ledger.json
     ledger: Path | None = None  # the owner's real orders; on the machine, outside git
     today: str = ""  # for tests and demonstrations only: the date the journal treats as today
+    session: str = "off"  # prices during the session for open positions: auto, off, file:<folder>
+    now: str = ""  # for tests and demonstrations only: the moment the session prices treat as now
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> Settings:
@@ -122,6 +125,19 @@ class Settings:
                 f"IPO_LEDGER must be a file in an existing directory, got {ledger_text!r}"
             )
 
+        session = source.get("IPO_SESSION", "auto")
+        if not re.fullmatch(r"off|auto|file:.+", session):
+            raise ConfigError(f"IPO_SESSION must be auto, off or file:<folder>, got {session!r}")
+        now = source.get("IPO_NOW", "").strip()
+        if now:
+            try:
+                if datetime.fromisoformat(now).tzinfo is None:
+                    raise ValueError
+            except ValueError:
+                raise ConfigError(
+                    f"IPO_NOW must be a moment with its time zone, got {now!r}"
+                ) from None
+
         host = source.get("IPO_HOST", "127.0.0.1")
         if not host:
             raise ConfigError("IPO_HOST must not be empty")
@@ -146,4 +162,6 @@ class Settings:
             data_dir=data_dir,
             ledger=ledger,
             today=source.get("IPO_TODAY", "").strip(),
+            session=session,
+            now=now,
         )

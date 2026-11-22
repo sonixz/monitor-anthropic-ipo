@@ -75,6 +75,25 @@
   {% if book.skipped %}<p class="aside">Not bought by the rules: {% for s, why in book.skipped %}{{ s }} ({{ why }}){% if not loop.last %}; {% endif %}{% endfor %}.</p>{% endif %}
 </section>
 
+{% if lives %}
+<section class="panel wide-panel" id="session" tabindex="-1" aria-labelledby="session-h">
+  <h2 id="session-h">IN SESSION <span class="q">Where are the open positions now?</span></h2>
+  <p class="lede">{{ tag("MARKET") }} {% if in_session %}{{ session.source }}, read every five minutes from {{ L("9:30 to 16:00") }} Toronto; it may be delayed. Reload the page to update.{% else %}The session is closed: each position shows its last close. Prices resume at the next open, {{ L("9:30") }} Toronto.{% endif %}</p>
+  <ul class="live-list">
+    {% for v in lives %}
+    <li class="live live-{{ v.state }}{% if v.flag %} flag-{{ v.flag|replace(' ', '-') }}{% endif %}">
+      <div class="sig-head"><span class="sig-sym">{{ v.symbol }}</span> {% if v.kind == "real" %}<span class="real">REAL</span>{% else %}<span class="sim">SIM</span>{% endif %}
+        <span class="live-px">{{ L(money(v.price)) }}</span>
+        <span class="nm">{% if v.time %}{{ L(clock(v.time)) }}{% if v.state == "late" %} · late{% endif %}{% else %}{{ states[v.state] }}{% endif %}</span>
+        {% if v.flag %}<span class="live-flag">{{ flags[v.flag] }}</span>{% endif %}</div>
+      <p class="live-k"><span class="nowrap">since entry <span class="chg {{ tone(v.change) }}">{{ L(signed(v.change, "%")) }}</span></span> · <span class="nowrap">{{ L(signed(v.r, "R")) }}</span> · <span class="nowrap">stop {{ L(signed(v.to_stop, "%")) }}</span> · <span class="nowrap">target {{ L(signed(v.to_target, "%")) }}</span></p>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="aside">Display only: the simulation fills stops and targets from daily bars, after the close. A stop protects a real position only when it is entered at the broker.</p>
+</section>
+{% endif %}
+
 {% if real %}
 <section class="panel wide-panel" id="real" tabindex="-1" aria-labelledby="real-h">
   <h2 id="real-h"><span class="real">REAL</span> YOUR ORDERS <span class="q">What you actually bought</span></h2>

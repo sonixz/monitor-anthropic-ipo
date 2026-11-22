@@ -11,6 +11,7 @@
 | Home page | The AI signal scanner: the 50 most traded stocks of the S&P/TSX Composite, ranked on 2026-11-20 |
 | Signals | For the session of Fri 2026-11-20, 50 signals, written by Claude in a working session on 2026-11-22 (no strong signal; buys FTS and DOL at medium confidence) |
 | Daily run | Scheduled in the working session on the owner's PC, weekdays about 16:47 Toronto (D-049); first run Mon 2026-11-23 |
+| Session prices | `/portfolio` IN SESSION: open positions' prices every five minutes, 9:30 to 16:00 Toronto, display only (Loop 015) |
 | Discipline | TODAY checklist at the top of `/portfolio`, journal at `/journal`, starting Mon 2026-11-23; entries kept in `/data/results/discipline` (Loop 014) |
 | Simulated portfolio | `/portfolio`, $4,000 CAD from the Nov 20 decisions: buy 4 FTS and 1 DOL at the Nov 23 open (rules v2) |
 | Closes | Yahoo Finance daily bars for 220 candidates, read at start and after each close; 0 failures on 2026-11-22 |

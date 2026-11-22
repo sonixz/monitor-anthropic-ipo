@@ -1,0 +1,161 @@
+{
+ "chart": {
+  "result": [
+   {
+    "meta": {
+     "currency": "CAD",
+     "symbol": "RY.TO",
+     "exchangeName": "TOR",
+     "fullExchangeName": "Toronto",
+     "instrumentType": "EQUITY",
+     "firstTradeDate": 789921000,
+     "regularMarketTime": 1795450500,
+     "hasPrePostMarketData": false,
+     "gmtoffset": -18000,
+     "timezone": "EST",
+     "exchangeTimezoneName": "America/Toronto",
+     "regularMarketPrice": 279.1,
+     "regularMarketChangePercent": 0.557,
+     "fulldayPrice": 84.87,
+     "fulldayChange": 0.47,
+     "fulldayChangePercent": 0.557,
+     "fiftyTwoWeekHigh": 86.35,
+     "fiftyTwoWeekLow": 69.06,
+     "regularMarketDayHigh": 279.4,
+     "regularMarketDayLow": 268.2,
+     "regularMarketVolume": 1234567,
+     "longName": "Royal Bank of Canada (TEST DATA)",
+     "shortName": "Royal Bank of Canada",
+     "chartPreviousClose": 84.4,
+     "previousClose": 84.4,
+     "scale": 3,
+     "priceHint": 2,
+     "currentTradingPeriod": {
+      "pre": {
+       "timezone": "EST",
+       "end": 1795185000,
+       "start": 1795179600,
+       "gmtoffset": -18000
+      },
+      "regular": {
+       "timezone": "EST",
+       "end": 1795208400,
+       "start": 1795185000,
+       "gmtoffset": -18000
+      },
+      "post": {
+       "timezone": "EST",
+       "end": 1795212000,
+       "start": 1795208400,
+       "gmtoffset": -18000
+      }
+     },
+     "tradingPeriods": [
+      [
+       {
+        "timezone": "EST",
+        "end": 1795208400,
+        "start": 1795185000,
+        "gmtoffset": -18000
+       }
+      ]
+     ],
+     "dataGranularity": "5m",
+     "range": "1d",
+     "validRanges": [
+      "1d",
+      "5d",
+      "1mo",
+      "3mo",
+      "6mo",
+      "1y",
+      "2y",
+      "5y",
+      "10y",
+      "ytd",
+      "max"
+     ]
+    },
+    "timestamp": [
+     1795447500,
+     1795447800,
+     1795448100,
+     1795448400,
+     1795448700,
+     1795449000,
+     1795449300,
+     1795449600,
+     1795449900,
+     1795450200
+    ],
+    "indicators": {
+     "quote": [
+      {
+       "high": [
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1
+       ],
+       "low": [
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1
+       ],
+       "close": [
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1
+       ],
+       "open": [
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1,
+        279.1
+       ],
+       "volume": [
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000,
+        1000
+       ]
+      }
+     ]
+    }
+   }
+  ],
+  "error": null
+ }
+}

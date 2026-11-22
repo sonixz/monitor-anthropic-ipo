@@ -61,6 +61,7 @@ flowchart TB
   board["board.py: the state of the scanner; the dossier"]
   render["render.py, scan.html.j2: values and cards"]
   pf["portfolio.py: rules, sizing, the simulated book, the real-orders ledger"]
+  sess["session.py: prices during the session for open positions, display only"]
   disc["discipline.py: the day's checklist, the journal, gaps from the ledger"]
   web["web.py: login gate; /, /portfolio, /journal, /discipline, /api/upload, /health"]
   cli["__main__.py: dossier, check, portfolio and upload, for the scheduled run"]
@@ -74,6 +75,7 @@ flowchart TB
   board --> cli
   files --> pf --> render
   pf --> disc --> render
+  pf --> sess --> render
   cli --> web
 ```
 
@@ -209,6 +211,7 @@ The page is rendered once, at startup, and served from memory. This is what make
 | `src/ipo_monitor/scan/` | The scanner: bars, indicators, list, signal files and rules, stops and targets, track record, page, dossier and check commands |
 | `src/ipo_monitor/templates/scan.html.j2` | The scanner page |
 | `src/ipo_monitor/scan/portfolio.py`, `templates/portfolio.html.j2` | The simulated $4,000 portfolio, its rules (`data/portfolio/rules.json`) and the ledger of real orders |
+| `src/ipo_monitor/scan/session.py` | Prices during the session for open positions (Loop 015); display only |
 | `src/ipo_monitor/scan/discipline.py`, `templates/_today.html.j2`, `journal.html.j2` | The TODAY checklist and the journal |
 | `src/ipo_monitor/auth.py`, `templates/login.html.j2` | The login gate and the upload token |
 | `/data/results/` (server) | Signals, decisions, the ledger and the checklist entries; never in git |

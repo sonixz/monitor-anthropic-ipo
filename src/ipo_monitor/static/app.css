@@ -2451,3 +2451,66 @@ button.n.lv-neutral {
 .nowrap {
   white-space: nowrap;
 }
+
+/* ---- prices during the session (Loop 015) ------------------------------ */
+
+.live-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 6px;
+}
+
+.live {
+  border: 1px solid var(--line);
+  border-left-width: 3px;
+  padding: 8px 10px;
+}
+
+.live-px {
+  font-weight: 700;
+}
+
+.live-k {
+  margin: 4px 0 0;
+  color: var(--dim);
+  font-size: 13px;
+}
+
+.live-flag {
+  margin-left: auto;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.live.flag-stop-reached {
+  border-left-color: var(--neg);
+}
+
+.live.flag-stop-reached .live-flag {
+  color: var(--neg);
+}
+
+.live.flag-near-stop {
+  border-left-color: var(--accent);
+}
+
+.live.flag-near-stop .live-flag {
+  color: var(--accent);
+}
+
+.live.flag-target-reached {
+  border-left-color: var(--pos);
+}
+
+.live.flag-target-reached .live-flag {
+  color: var(--pos);
+}
+
+.live-closed .live-px,
+.live-unavailable .live-px {
+  font-weight: 400;
+  color: var(--dim);
+}
