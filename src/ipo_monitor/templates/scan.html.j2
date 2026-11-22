@@ -1,0 +1,190 @@
+{# The scanner. No number is typed here: values come from ind(), signal(), change() and the board. #}
+{% macro tag(kind) %}<span class="tag tag-{{ kind|lower }}">{{ kind }}</span>{% endmacro %}
+{% macro L(text) %}<span data-label>{{ text }}</span>{% endmacro %}
+{% macro level(sig) %}<span class="lv lv-{{ sig.level }}">{{ sig.label }}</span>{% endmacro %}
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ site.title }}</title>
+<meta name="description" content="{{ site.description }}">
+<meta name="color-scheme" content="dark">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="{{ site.url }}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{{ site.name }}">
+<meta property="og:title" content="{{ site.title }}">
+<meta property="og:description" content="{{ site.description }}">
+<meta property="og:url" content="{{ site.url }}">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{{ site.title }}">
+<meta name="twitter:description" content="{{ site.description }}">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/app.css?v={{ asset_version }}">
+<script src="/static/app.js?v={{ asset_version }}" defer></script>
+</head>
+<body data-market="off" class="scan">
+<a class="skip" href="#main">Skip to the signals</a>
+
+<header class="top hero">
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
+    <h1><span class="w1">ANTIPO</span><span class="w2">.</span><span class="w3">WATCH</span></h1>
+  </div>
+  <p class="tagline">AI trading signals on the most traded Canadian stocks<span class="wide">, every reason tied to its source</span>.</p>
+  <p class="disclaimer">Unofficial · signals written by an AI · not investment advice</p>
+  <p class="uptodate run">
+    {%- if current -%}
+      {{ tag("AI") }} signals for {{ L(day(current.session, "long")) }} · {{ current.written_by }}, {{ L(when(current.written)) }}
+      {%- if board.stale %} · <span class="wait">no signals yet for {{ L(day(board.session)) }}</span>{% endif %}
+    {%- else -%}
+      <span class="wait">no signals yet</span>
+    {%- endif -%}
+    <span class="wide"> · next run {{ L(when(board.next_run)) }}</span>
+  </p>
+</header>
+
+<main id="main">
+
+<section class="panel" id="today" tabindex="-1" aria-labelledby="today-h">
+  <h2 id="today-h">TODAY <span class="q">The strongest signals</span></h2>
+  {% if strongest %}
+  <ul class="sig-list">
+    {% for s in strongest %}
+    <li class="sig">
+      <div class="sig-head">
+        <span class="sig-sym">{{ s.symbol }}</span>
+        {{ signal(s, s.signal.label) }}
+        <span class="conf conf-{{ s.signal.confidence }}">{{ s.signal.confidence }}</span>
+        <span class="sig-close">{{ ind(s, "close") }} {{ ind(s, "change_1d", true) }}</span>
+      </div>
+      <p class="sig-sum">{{ reason(s, s.signal.summary) }}</p>
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="aside">Select a signal to read its reasons and their sources. All signals are in the list below.</p>
+  {% else %}
+  <p class="lede"><span class="wait">No signals have been published yet.</span> The first run writes them after the close; until then the list below shows the figures the AI will read.</p>
+  {% endif %}
+</section>
+
+<section class="panel wide-panel" id="list" tabindex="-1" aria-labelledby="list-h">
+  <h2 id="list-h">LIST <span class="q">The most traded stocks this week</span></h2>
+  {% if board.universe %}
+  <p class="lede">The {{ L(board.universe.ranked|length) }} stocks of the {{ L(board.candidates.title) }} with the highest average value traded a day over the last twenty sessions, ranked on {{ L(day(board.universe.date, "long")) }}.
+    {%- if board.universe.entered %} Entered this week: {{ board.universe.entered|join(", ") }}.{% endif %}
+    {%- if board.universe.left %} Left: {{ board.universe.left|join(", ") }}.{% endif %}</p>
+  {% elif not board.problems %}
+  <p class="lede"><span class="wait">Reading the closes: the list fills in within a minute.</span></p>
+  {% else %}
+  <p class="lede"><span class="wait">The list could not be ranked: no closes were read.</span></p>
+  {% endif %}
+  <div class="scroll">
+  <table class="lines scan-table">
+    <caption class="vh">Each stock, its close, its signal and the main indicators</caption>
+    <thead><tr><th scope="col">stock</th><th scope="col">signal</th><th scope="col">close</th><th scope="col">day</th><th scope="col"><abbr title="RSI over fourteen sessions">RSI</abbr></th><th scope="col">vs fifty-day</th><th scope="col">volume</th><th scope="col">value traded</th></tr></thead>
+    <tbody>
+    {% for s in stocks %}
+      <tr{% if s.rank is none %} class="pinned"{% endif %}>
+        <th scope="row"><span class="sig-sym">{{ s.symbol }}</span> <span class="nm">{{ s.candidate.name }}</span>{% if s.rank is none %} <a class="pin" href="/ant">IPO page</a>{% endif %}</th>
+        <td>{% if s.signal %}{{ signal(s, s.signal.label) }}{% else %}<span class="what">no signal</span>{% endif %}</td>
+        <td>{{ ind(s, "close") }}</td>
+        <td>{{ ind(s, "change_1d", true) }}</td>
+        <td>{{ ind(s, "rsi14") }}</td>
+        <td>{{ ind(s, "vs_sma50", true) }}</td>
+        <td>{{ ind(s, "vol_ratio") }}</td>
+        <td>{{ ind(s, "dollar_vol20") }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="aside">Closes are read from {{ board.stocks[0].series.source if board.stocks and board.stocks[0].series else "the market source" }} after each session: delayed and unofficial. Candidates: <a href="{{ board.candidates.url }}" rel="noopener" data-label>{{ board.candidates.source }}</a>. Prices in Canadian dollars{% for s in stocks if s.rank is none %}, except {{ s.symbol }} in {{ s.candidate.currency }} ({{ s.candidate.exchange }}){% endfor %}.{% if board.problems %} <span class="wait">Some closes could not be read: {{ board.problems|join("; ") }}.</span>{% endif %}</p>
+</section>
+
+<section class="panel wide-panel" id="record" tabindex="-1" aria-labelledby="record-h">
+  <h2 id="record-h">TRACK RECORD <span class="q">Were the signals right?</span></h2>
+  {% if board.outcomes %}
+  <p class="lede">Every signal shown since the first run, with what the stock did next. A buy counts as right when the stock rose, a sell when it fell. Nothing is left out.</p>
+  <div class="scroll">
+  <table class="lines">
+    <caption>By signal</caption>
+    <thead><tr><th scope="col">signal</th><th scope="col">given</th>{% for h in horizons %}<th scope="col">scored, {{ L(h) }} sessions</th><th scope="col">average change</th><th scope="col">right</th>{% endfor %}</tr></thead>
+    <tbody>
+    {% for row in board.summary if row.count %}
+      <tr><th scope="row"><span class="lv lv-{{ row.level }}">{{ row.label }}</span></th><td>{{ L(row.count) }}</td>{% for h in horizons %}<td>{{ L(row.scored[h]) }}</td><td>{{ L(average(row.average[h])) }}</td><td>{% if row.level == "neutral" %}<span class="what">not scored</span>{% elif row.scored[h] %}{{ L(row.right[h]) }}{% else %}<span class="what">–</span>{% endif %}</td>{% endfor %}</tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <details class="fold">
+    <summary>Each signal</summary>
+    <div class="scroll">
+    <table class="lines">
+      <thead><tr><th scope="col">session</th><th scope="col">stock</th><th scope="col">signal</th><th scope="col">close then</th>{% for h in horizons %}<th scope="col">after {{ L(h) }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for o in board.outcomes %}
+        <tr><th scope="row">{{ L(day(o.session)) }}</th><td>{{ o.symbol }}</td><td><span class="lv lv-{{ o.level }}">{{ levels[o.level] }}</span> <span class="conf conf-{{ o.confidence }}">{{ o.confidence }}</span></td><td>{% if o.close is not none %}{{ L(money(o.close, o.currency)) }}{% else %}<span class="what">–</span>{% endif %}</td>{% for h in horizons %}<td>{{ change(o, h) }}</td>{% endfor %}</tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </details>
+  {% else %}
+  <p class="lede">No signal has been scored yet. Each signal will be measured after five and twenty sessions, by code, from the same closes.</p>
+  {% endif %}
+</section>
+
+<section class="panel wide-panel" id="how" tabindex="-1" aria-labelledby="how-h">
+  <h2 id="how-h">HOW <span class="q">Who does what</span></h2>
+  <ul class="how">
+    <li>{{ tag("MARKET") }} Code reads each stock's daily closes and volumes after the session.</li>
+    <li>{{ tag("CALC") }} Code computes the indicators: averages, RSI, volume, distance from the year's high and low. Each value opens its formula.</li>
+    <li>{{ tag("AI") }} Claude, on a schedule after the close, reads those figures and the news, and writes a signal for each stock with its reasons. It never types a number: each reason names an indicator or quotes a source with its link.</li>
+    <li>Code checks every signal file before it is shown. A file that breaks a rule is refused whole and the last good signals stay.{% if board.refused %} <span class="wait">Refused: {% for c in board.refused %}{{ c.name }}{% if not loop.last %}, {% endif %}{% endfor %}.</span>{% endif %}</li>
+    <li>The AI is not shown to beat the market. The track record is there so anyone can judge.</li>
+  </ul>
+  <p class="aside">This site began as a page on Anthropic's IPO. <a href="/ant">That page is kept</a>, with its filings and their history.</p>
+</section>
+
+</main>
+
+<footer class="bottom">
+  <p>Unofficial. Signals are written by an AI and are general, the same for every reader: not investment advice, not a recommendation to you. Prices are delayed. Check the sources before relying on anything here.</p>
+  <p><a href="{{ loop0_url }}" rel="noopener" data-label>Built with the Loop0 Method</a> · <a href="{{ repository_url }}" rel="noopener">Source code</a> · <span data-label>v{{ version }} · {{ release }}</span></p>
+</footer>
+
+{% for c in cards.signal_cards() %}
+<div popover id="{{ c.slug }}" class="src src-ai">
+  <header>{{ tag("AI") }} <strong>{{ c.title }}</strong></header>
+  <p class="src-value">{{ level(c.signal) }} <span class="conf conf-{{ c.signal.confidence }}">{{ c.signal.confidence }} confidence</span></p>
+  <p>{{ reason(c.stock, c.signal.summary) }}</p>
+  <ol class="reasons">
+    {% for r in c.signal.reasons %}
+    <li>{{ reason(c.stock, r.text) }}
+      {% if r.source %}<blockquote>{{ r.source.quote }}</blockquote>
+      <p class="src-where">{{ r.source.outlet }} · {{ L(day(r.source.published)) }} · <a href="{{ r.source.url }}" rel="noopener">{{ r.source.title }} ↗</a></p>{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="src-note">Written by {{ current.written_by }} ({{ L(current.model) }}) for the session of {{ L(day(current.session, "long")) }}. General, not advice.</p>
+  <p class="src-end"><button type="button" class="close" popovertarget="{{ c.slug }}" popovertargetaction="hide">close</button></p>
+</div>
+{% endfor %}
+{% for c in cards.plain_cards() %}
+<div popover id="{{ c.slug }}" class="src src-{{ c.label|lower }}">
+  <header>{{ tag(c.label) }} <strong>{{ c.title }}</strong></header>
+  <p class="src-value">{{ c.value }}{% if c.period %} <span class="src-period">{{ c.period }}</span>{% endif %}</p>
+  {% if c.formula %}<p class="src-formula">= {{ c.formula }}</p>{% endif %}
+  {% if c.lines %}
+  <table class="src-terms"><tbody>
+    {% for k, v in c.lines %}<tr><th scope="row">{{ k }}</th><td>{{ v }}</td></tr>{% endfor %}
+  </tbody></table>
+  {% endif %}
+  <p class="src-end">{% if c.url %}<a href="{{ c.url }}" rel="noopener">{{ c.link_text }} ↗</a>{% endif %}<button type="button" class="close" popovertarget="{{ c.slug }}" popovertargetaction="hide">close</button></p>
+</div>
+{% endfor %}
+
+</body>
+</html>

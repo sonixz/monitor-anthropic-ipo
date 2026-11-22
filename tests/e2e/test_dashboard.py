@@ -8,6 +8,7 @@ Keep screenshots:  E2E_SHOTS=devlog/img pytest -m e2e
 from __future__ import annotations
 
 import contextlib
+import json
 import os
 import socket
 import subprocess
@@ -65,6 +66,8 @@ def _free_port() -> int:
 
 
 MARKET = ROOT / "tests" / "fixtures" / "market"
+SCAN_BARS = ROOT / "tests" / "fixtures" / "scan" / "2026-11-20"
+SCAN_SIGNALS = ROOT / "tests" / "fixtures" / "signals"
 EDGAR = ROOT / "tests" / "fixtures" / "edgar"
 
 
@@ -85,6 +88,8 @@ def _serve(answer: str, filings: str = "") -> Iterator[str]:
         "IPO_RELEASE": "e2e",
         "IPO_MARKET": f"file:{MARKET / answer}",
         "IPO_FILINGS": f"file:{EDGAR / filings}" if filings else "off",
+        "IPO_SCAN": f"file:{SCAN_BARS}",
+        "IPO_SIGNALS": f"dir:{SCAN_SIGNALS}",
     }
     process = subprocess.Popen(
         [sys.executable, "-m", "ipo_monitor"],
@@ -95,12 +100,15 @@ def _serve(answer: str, filings: str = "") -> Iterator[str]:
     )
     url = f"http://127.0.0.1:{port}"
     try:
-        for _ in range(100):
+        for _ in range(200):
             try:
-                with urllib.request.urlopen(f"{url}/health", timeout=1):  # noqa: S310
-                    break
+                with urllib.request.urlopen(f"{url}/health", timeout=1) as reply:  # noqa: S310
+                    # The scanner reads its closes after startup: wait until they are in.
+                    if json.loads(reply.read()).get("scan", {}).get("session"):
+                        break
             except OSError:
-                time.sleep(0.1)
+                pass
+            time.sleep(0.1)
         else:
             pytest.fail("the service did not start")
         yield url
@@ -147,7 +155,9 @@ def browser() -> Iterator[Browser]:
 NOT_A_READER = "try { sessionStorage.setItem('ipo-seen', '1') } catch (e) {}"
 
 
-def _open(context: BrowserContext, url: str, *, counted: bool = True) -> tuple[Page, list[str]]:
+def _open(
+    context: BrowserContext, url: str, *, counted: bool = True, path: str = "/ant"
+) -> tuple[Page, list[str]]:
     if counted:
         # A test is not a reader: the session is marked as already counted, so a run against
         # the live site does not add to its visits.
@@ -158,7 +168,7 @@ def _open(context: BrowserContext, url: str, *, counted: bool = True) -> tuple[P
         "console", lambda message: errors.append(message.text) if message.type == "error" else None
     )
     page.on("pageerror", lambda error: errors.append(str(error)))
-    response = page.goto(url + "/")
+    response = page.goto(url + path)
     assert response is not None
     assert response.status == 200
     return page, errors
@@ -441,7 +451,7 @@ def test_loads_fast(browser: Browser, base_url: str) -> None:
     context.add_init_script(NOT_A_READER)
     page = context.new_page()
     begin = time.perf_counter()
-    page.goto(base_url + "/", wait_until="load")
+    page.goto(base_url + "/ant", wait_until="load")
     elapsed = time.perf_counter() - begin
     assert elapsed < 1.0, f"page load took {elapsed:.2f}s"
     context.close()
@@ -556,7 +566,7 @@ def test_trading_day_on_a_desktop(browser: Browser, trading_url: str) -> None:
 
 
 def test_page_weight(base_url: str) -> None:
-    request = urllib.request.Request(base_url + "/", headers={"Accept-Encoding": "gzip"})  # noqa: S310
+    request = urllib.request.Request(base_url + "/ant", headers={"Accept-Encoding": "gzip"})  # noqa: S310
     with urllib.request.urlopen(request, timeout=10) as response:  # noqa: S310
         assert response.headers["Content-Encoding"] == "gzip"
         compressed = len(response.read())

@@ -17,6 +17,7 @@ import time
 from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from pathlib import Path
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse, Response
@@ -30,7 +31,39 @@ from ipo_monitor.edgar import Index, Watch
 from ipo_monitor.facts import Facts
 from ipo_monitor.market import Snapshot, Source, Watcher, source_from
 from ipo_monitor.render import Page, render_page
+from ipo_monitor.scan import watch as scan_watch
+from ipo_monitor.scan.bars import BarSource, RecordedDaily, YahooDaily
+from ipo_monitor.scan.board import Board as ScanBoard
+from ipo_monitor.scan.board import build as build_scan
+from ipo_monitor.scan.board import dossier
+from ipo_monitor.scan.render import ScanPage, render_scan
+from ipo_monitor.scan.universe import Candidates
 from ipo_monitor.visits import Visits
+
+CANDIDATES = Path("data/scan/candidates.json")
+SIGNALS = Path("data/signals")
+
+
+def scan_sources(
+    settings: Settings,
+) -> tuple[BarSource | None, list[scan_watch.SignalSource]]:
+    """The scanner's closes and signal files, as configured."""
+    if settings.scan == "off":
+        return None, []
+    bars: BarSource = (
+        RecordedDaily(Path(settings.scan[5:]))
+        if settings.scan.startswith("file:")
+        else YahooDaily()
+    )
+    signals: list[scan_watch.SignalSource] = []
+    if settings.signals in ("auto", "local"):
+        signals.append(scan_watch.Folder(SIGNALS))
+    if settings.signals == "auto":
+        signals.append(scan_watch.GitHub())
+    if settings.signals.startswith("dir:"):
+        signals.append(scan_watch.Folder(Path(settings.signals[4:]), name="folder"))
+    return bars, signals
+
 
 COMPANY = "Anthropic"  # the market source must name the company so, or its price is not shown
 
@@ -186,9 +219,48 @@ def create_app(
         )
         filings_changed(filings_watcher.watch)  # a failure here leaves the page above
 
+    scan: list[ScanPage] = []  # one item: the scanner page being served
+    scanner: scan_watch.ScanWatcher | None = None
+
+    def scan_changed(board: ScanBoard) -> None:
+        try:
+            page = render_scan(board, release=settings.release)
+        except Exception as error:  # the page being served stays
+            log.event("render_failed", level="error", part="scan", error=type(error).__name__)
+            return
+        scan[:] = [page]
+        log.event(
+            "scan_rendered",
+            stocks=page.stocks,
+            signals=page.signals,
+            session=board.session,
+            bytes=len(page.html),
+        )
+
+    bars, signal_sources = scan_sources(settings)
+    if bars is not None:
+        scanner = scan_watch.ScanWatcher(
+            Candidates.load(CANDIDATES), bars, signal_sources, scan_changed
+        )
+        # Until the first closes are read, the page says so instead of showing an empty list.
+        scanner.board = build_scan(scanner.candidates, {}, {}, datetime.now(UTC))
+        scan_changed(scanner.board)
+
+    async def first_scan() -> None:
+        if scanner is None:
+            return
+        try:
+            board = await asyncio.to_thread(scanner.start)
+            scan_changed(board)
+        except Exception as error:
+            log.event("scan_error", level="error", error=type(error).__name__)
+        await scanner.run()
+
     @contextlib.asynccontextmanager
     async def lifespan(_: FastAPI) -> AsyncIterator[None]:
         tasks = [asyncio.create_task(each.run()) for each in (watcher, filings_watcher) if each]
+        if scanner is not None:
+            tasks.append(asyncio.create_task(first_scan()))
         yield
         for task in tasks:
             task.cancel()
@@ -206,6 +278,7 @@ def create_app(
     app.state.watcher = watcher
     app.state.filings = filings_watcher
     app.state.visits = visits
+    app.state.scanner = scanner
     app.add_middleware(GZipMiddleware, minimum_size=1024)
 
     @app.middleware("http")
@@ -226,13 +299,29 @@ def create_app(
             )
         return response
 
-    @app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
-    async def dashboard(request: Request) -> Response:
-        current = live[0]
-        headers = {"ETag": current.etag, "Cache-Control": "no-cache"}
-        if request.headers.get("if-none-match") == current.etag:
+    def html(request: Request, body: bytes, etag: str) -> Response:
+        headers = {"ETag": etag, "Cache-Control": "no-cache"}
+        if request.headers.get("if-none-match") == etag:
             return Response(status_code=304, headers=headers)
-        return Response(current.body, media_type="text/html; charset=utf-8", headers=headers)
+        return Response(body, media_type="text/html; charset=utf-8", headers=headers)
+
+    @app.api_route("/", methods=["GET", "HEAD"], include_in_schema=False)
+    async def home(request: Request) -> Response:
+        if scan:
+            return html(request, scan[0].html.encode("utf-8"), scan[0].etag)
+        return html(request, live[0].body, live[0].etag)
+
+    @app.api_route("/ant", methods=["GET", "HEAD"], include_in_schema=False)
+    async def dashboard(request: Request) -> Response:
+        return html(request, live[0].body, live[0].etag)
+
+    @app.get("/scan/dossier.json", include_in_schema=False)
+    async def scan_dossier() -> JSONResponse:
+        if scanner is None or scanner.board is None:
+            return JSONResponse({"error": "the scanner is off"}, status_code=404)
+        return JSONResponse(
+            dossier(scanner.board, datetime.now(UTC)), headers={"Cache-Control": "no-cache"}
+        )
 
     @app.api_route("/health", methods=["GET", "HEAD"], include_in_schema=False)
     async def health() -> JSONResponse:
@@ -256,6 +345,7 @@ def create_app(
                     else None,
                 },
                 "filings": _filings_health(filings_watcher),
+                "scan": scan_watch.health(scanner),
                 "visits": {
                     key: value
                     for key, value in visits.summary().items()

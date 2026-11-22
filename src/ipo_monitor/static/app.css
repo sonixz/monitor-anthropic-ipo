@@ -12,6 +12,7 @@
   --accent: #d9b36c; /* CALC */
   --press: #9fb7d9; /* PRESS */
   --market: #c7a8e6; /* MARKET */
+  --ai: #8fd0c9; /* AI */
   --pos: #8fc79a;
   --neg: #e39a9a;
   --s1: #5a8fd6; /* first chart series; the pair passes the colour-blind check on --panel */
@@ -1911,5 +1912,161 @@ span.fg-blank {
   .hero .uptodate {
     font-size: 11px;
     line-height: 1.25;
+  }
+}
+
+/* ---- the scanner ------------------------------------------------------ */
+
+.tag-ai {
+  color: var(--ai);
+}
+
+button.n-ai {
+  color: var(--ai);
+  border-bottom-style: solid;
+}
+
+.lv {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lv-strong_buy,
+.lv-buy,
+button.n.lv-strong_buy,
+button.n.lv-buy {
+  color: var(--pos);
+}
+
+.lv-strong_sell,
+.lv-sell,
+button.n.lv-strong_sell,
+button.n.lv-sell {
+  color: var(--neg);
+}
+
+.lv-neutral,
+button.n.lv-neutral {
+  color: var(--dim);
+  font-weight: 400;
+}
+
+.lv-strong_buy::before,
+.lv-strong_sell::before {
+  content: "▲▲ ";
+  font-size: 0.75em;
+}
+
+.lv-strong_sell::before {
+  content: "▼▼ ";
+}
+
+.conf {
+  font-size: 12px;
+  color: var(--dim);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 0 0.35em;
+  white-space: nowrap;
+}
+
+.conf-high {
+  color: var(--text);
+  border-color: var(--text);
+}
+
+.sig-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+  gap: 6px;
+}
+
+.sig {
+  border: 1px solid var(--line);
+  padding: 8px 10px;
+}
+
+.sig-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+}
+
+.sig-sym {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.sig-close {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+.sig-sum {
+  margin: 4px 0 0;
+  color: var(--dim);
+  line-height: 1.4;
+}
+
+.scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.scan-table .nm {
+  color: var(--dim);
+  font-size: 12px;
+}
+
+.scan-table tr.pinned th,
+.scan-table tr.pinned td {
+  border-top: 1px dashed var(--line-strong);
+}
+
+.pin {
+  font-size: 12px;
+}
+
+.chg.up {
+  color: var(--pos);
+}
+
+.chg.down {
+  color: var(--neg);
+}
+
+.how {
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.how li {
+  margin: 0.3rem 0;
+}
+
+.reasons {
+  margin: 0.4rem 0;
+  padding-left: 1.2rem;
+}
+
+.reasons li {
+  margin: 0.4rem 0;
+}
+
+.src-ai {
+  border-color: var(--ai);
+}
+
+@container (max-width: 34rem) {
+  .scan-table .nm {
+    display: none;
+  }
+
+  .sig-list {
+    grid-template-columns: 1fr;
   }
 }

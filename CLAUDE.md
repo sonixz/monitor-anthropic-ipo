@@ -16,7 +16,18 @@ uv run mypy                          # types, strict
 uv run pytest                        # unit tests
 uv run pytest -m e2e                 # real-browser tests (Playwright, Chromium)
 uv run python -m ipo_monitor.extract "data/raw/sec/<file>.html" --id p424b4   # rebuild data/facts/p424b4.json
+uv run python -m ipo_monitor.scan dossier --out dossier.json   # what the AI reads before writing signals
+uv run python -m ipo_monitor.scan check data/signals/<session>.json   # the site's rules, before a commit
 ```
+
+## The scanner (Loop 010)
+
+- The home page is the scanner; the Anthropic IPO page is at `/ant`. Code in `src/ipo_monitor/scan/`.
+- **Signal files are written by Claude**, one per session, `data/signals/YYYY-MM-DD.json`. Never type a
+  number in a summary or a reason: name an indicator as `{rsi14}`. A reason without an indicator quotes a
+  source (link, outlet, date, the source's own words), opened before it is quoted. Run `check` before
+  committing; a refused file is never shown.
+- Yahoo Finance refuses requests that claim to be a desktop browser; `scan/bars.py` names itself plainly.
 
 ## Conventions
 

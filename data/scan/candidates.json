@@ -1,0 +1,440 @@
+{
+ "title": "S&P/TSX 60 members",
+ "as_of": "2026-01-31",
+ "source": "Wikipedia, \"S&P/TSX 60\", constituents table (list current as of January 31, 2026)",
+ "url": "https://en.wikipedia.org/wiki/S%26P/TSX_60",
+ "accessed": "2026-11-22",
+ "note": "The candidate list. The scanner ranks these by average value traded a day and keeps the top 25.",
+ "candidates": [
+  {
+   "symbol": "AEM",
+   "name": "Agnico Eagle Mines Limited",
+   "source_symbol": "AEM.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "ATD",
+   "name": "Alimentation Couche-Tard Inc.",
+   "source_symbol": "ATD.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "BMO",
+   "name": "Bank of Montreal",
+   "source_symbol": "BMO.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "BNS",
+   "name": "Bank of Nova Scotia",
+   "source_symbol": "BNS.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "ABX",
+   "name": "Barrick Mining Corporation",
+   "source_symbol": "ABX.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "BCE",
+   "name": "BCE Inc.",
+   "source_symbol": "BCE.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "BAM",
+   "name": "Brookfield Asset Management Ltd.",
+   "source_symbol": "BAM.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "BN",
+   "name": "Brookfield Corporation",
+   "source_symbol": "BN.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "BIP.UN",
+   "name": "Brookfield Infrastructure Partners L.P.",
+   "source_symbol": "BIP-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CAE",
+   "name": "CAE Inc.",
+   "source_symbol": "CAE.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CCO",
+   "name": "Cameco Corporation",
+   "source_symbol": "CCO.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CM",
+   "name": "Canadian Imperial Bank of Commerce",
+   "source_symbol": "CM.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CNR",
+   "name": "Canadian National Railway Company",
+   "source_symbol": "CNR.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CNQ",
+   "name": "Canadian Natural Resources Limited",
+   "source_symbol": "CNQ.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CP",
+   "name": "Canadian Pacific Kansas City Limited",
+   "source_symbol": "CP.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CTC.A",
+   "name": "Canadian Tire Corporation Limited",
+   "source_symbol": "CTC-A.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CCL.B",
+   "name": "CCL Industries Inc.",
+   "source_symbol": "CCL-B.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CLS",
+   "name": "Celestica Inc.",
+   "source_symbol": "CLS.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CVE",
+   "name": "Cenovus Energy Inc.",
+   "source_symbol": "CVE.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "GIB.A",
+   "name": "CGI Inc.",
+   "source_symbol": "GIB-A.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "CSU",
+   "name": "Constellation Software Inc.",
+   "source_symbol": "CSU.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "DOL",
+   "name": "Dollarama Inc.",
+   "source_symbol": "DOL.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "EMA",
+   "name": "Emera Incorporated",
+   "source_symbol": "EMA.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "ENB",
+   "name": "Enbridge Inc.",
+   "source_symbol": "ENB.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "FFH",
+   "name": "Fairfax Financial Holdings Limited",
+   "source_symbol": "FFH.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "FM",
+   "name": "First Quantum Minerals Ltd.",
+   "source_symbol": "FM.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "FSV",
+   "name": "FirstService Corporation",
+   "source_symbol": "FSV.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "FTS",
+   "name": "Fortis Inc.",
+   "source_symbol": "FTS.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "FNV",
+   "name": "Franco-Nevada Corporation",
+   "source_symbol": "FNV.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "WN",
+   "name": "George Weston Limited",
+   "source_symbol": "WN.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "GIL",
+   "name": "Gildan Activewear Inc.",
+   "source_symbol": "GIL.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "H",
+   "name": "Hydro One Limited",
+   "source_symbol": "H.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "IMO",
+   "name": "Imperial Oil Limited",
+   "source_symbol": "IMO.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "IFC",
+   "name": "Intact Financial Corporation",
+   "source_symbol": "IFC.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "K",
+   "name": "Kinross Gold Corporation",
+   "source_symbol": "K.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "L",
+   "name": "Loblaw Companies Limited",
+   "source_symbol": "L.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "MG",
+   "name": "Magna International Inc.",
+   "source_symbol": "MG.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "MFC",
+   "name": "Manulife Financial Corporation",
+   "source_symbol": "MFC.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "MRU",
+   "name": "Metro Inc.",
+   "source_symbol": "MRU.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "NA",
+   "name": "National Bank of Canada",
+   "source_symbol": "NA.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "NTR",
+   "name": "Nutrien Ltd.",
+   "source_symbol": "NTR.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "OTEX",
+   "name": "Open Text Corporation",
+   "source_symbol": "OTEX.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "PPL",
+   "name": "Pembina Pipeline Corporation",
+   "source_symbol": "PPL.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "POW",
+   "name": "Power Corporation of Canada",
+   "source_symbol": "POW.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "QSR",
+   "name": "Restaurant Brands International Inc.",
+   "source_symbol": "QSR.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "RCI.B",
+   "name": "Rogers Communications Inc.",
+   "source_symbol": "RCI-B.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "RY",
+   "name": "Royal Bank of Canada",
+   "source_symbol": "RY.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "SAP",
+   "name": "Saputo Inc.",
+   "source_symbol": "SAP.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "SHOP",
+   "name": "Shopify Inc.",
+   "source_symbol": "SHOP.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "SLF",
+   "name": "Sun Life Financial Inc.",
+   "source_symbol": "SLF.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "SU",
+   "name": "Suncor Energy Inc.",
+   "source_symbol": "SU.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "TRP",
+   "name": "TC Energy Corporation",
+   "source_symbol": "TRP.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "TECK.B",
+   "name": "Teck Resources Limited",
+   "source_symbol": "TECK-B.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "T",
+   "name": "Telus Corporation",
+   "source_symbol": "T.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "TRI",
+   "name": "Thomson Reuters Corporation",
+   "source_symbol": "TRI.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "TD",
+   "name": "Toronto-Dominion Bank",
+   "source_symbol": "TD.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "TOU",
+   "name": "Tourmaline Oil Corp.",
+   "source_symbol": "TOU.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "WCN",
+   "name": "Waste Connections Inc.",
+   "source_symbol": "WCN.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "WPM",
+   "name": "Wheaton Precious Metals Corp.",
+   "source_symbol": "WPM.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  },
+  {
+   "symbol": "WSP",
+   "name": "WSP Global Inc.",
+   "source_symbol": "WSP.TO",
+   "exchange": "TSX",
+   "currency": "CAD"
+  }
+ ],
+ "pinned": [
+  {
+   "symbol": "ANT",
+   "name": "Anthropic, PBC",
+   "source_symbol": "ANT",
+   "exchange": "Nasdaq",
+   "currency": "USD",
+   "why": "The stock this site started with; listed on Nasdaq in US dollars."
+  }
+ ]
+}

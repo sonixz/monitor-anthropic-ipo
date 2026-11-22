@@ -29,6 +29,8 @@ class Settings:
     sec_contact: str = field(default="", repr=False)
     sec_contact_refused: bool = False  # a value was given and is not one e-mail address
     visits: Path | None = None  # the file of the visit counts; None keeps them in memory
+    scan: str = "off"  # the scanner's closes: auto (Yahoo Finance), off, or file:<folder>
+    signals: str = "off"  # signal files: auto (release and GitHub), local, off, or dir:<folder>
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> Settings:
@@ -83,6 +85,15 @@ class Settings:
                 f"IPO_VISITS must be a file in an existing directory, got {visits_text!r}"
             )
 
+        scan = source.get("IPO_SCAN", "auto")
+        if not re.fullmatch(r"off|auto|file:.+", scan):
+            raise ConfigError(f"IPO_SCAN must be auto, off or file:<folder>, got {scan!r}")
+        signals = source.get("IPO_SIGNALS", "auto")
+        if not re.fullmatch(r"off|auto|local|dir:.+", signals):
+            raise ConfigError(
+                f"IPO_SIGNALS must be auto, local, off or dir:<folder>, got {signals!r}"
+            )
+
         host = source.get("IPO_HOST", "127.0.0.1")
         if not host:
             raise ConfigError("IPO_HOST must not be empty")
@@ -98,4 +109,6 @@ class Settings:
             sec_contact="" if refused else sec_contact,
             sec_contact_refused=refused,
             visits=visits,
+            scan=scan,
+            signals=signals,
         )

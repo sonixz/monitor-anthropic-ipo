@@ -4,6 +4,31 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.11.0] - 2026-11-22
+
+### Added
+
+- **The scanner is the home page** (Loop 010). The 25 stocks of the S&P/TSX 60 with the highest
+  average value traded a day over 20 sessions, ranked each week, with entries and exits named;
+  ANT stays as a pinned card in US dollars.
+- Daily bars from Yahoo Finance (`scan/bars.py`), read after each close; a session still trading
+  is left out.
+- Indicators with their formulas (`scan/indicators.py`): averages over 20, 50 and 200 sessions,
+  RSI over 14, change over 20 sessions, volume against its average, value traded, 52-week range.
+- AI signal files (`data/signals/YYYY-MM-DD.json`) and their rules (`scan/signals.py`): five
+  levels, a confidence, reasons that name indicators as `{key}` or quote a source with its link.
+  A file that types a number, cites nothing or names a stock outside the list is refused whole.
+- The track record (`scan/track.py`): every signal with its close, and the change after 5 and 20
+  sessions, wins and losses alike.
+- Signal files are read from the release and from the public repository on GitHub, every 15
+  minutes, without a token (`scan/watch.py`).
+- `python -m ipo_monitor.scan dossier` and `check`, for the scheduled run; `/scan/dossier.json`.
+- The first signals, for Friday Nov 20, written by Claude in a working session.
+
+### Changed
+
+- The Anthropic IPO page moves to `/ant`, unchanged.
+
 ## [0.10.2] - 2026-11-19
 
 ### Added
