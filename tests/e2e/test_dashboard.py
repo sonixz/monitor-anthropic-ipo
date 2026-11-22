@@ -364,6 +364,10 @@ def test_phone_first_screen(browser: Browser, base_url: str) -> None:
         )
     # Before the first trade the market panel comes first and shows these values, waiting for a
     # price; the first of the two on the page is the one that must be on the first screen.
+    # Once the stock trades (the live site since Nov 19), the market panel's own values come
+    # first instead: test_trading_day_on_a_phone checks those.
+    if page.locator("body").get_attribute("data-market") in {"trading", "closed"}:
+        refs = ()
     for ref in refs:
         box = page.locator(
             f':is(#market, #value) .tiles button[data-ref="{ref}"]'
