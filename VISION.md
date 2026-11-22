@@ -1,55 +1,59 @@
 # VISION · monitor-anthropic-ipo
 
-> Why ANT IPO Monitor exists, its promise and what it will never be. One page. It changes only when the owner says so. Last reviewed: 2026-11-15
+> Why the product exists, its promise and what it will never be. One page. It changes only when the owner says so. Last reviewed: 2026-11-22
 
 The owner speaks French; their words are given here in English, reworded at their request, with the meaning unchanged. Anything the owner has not said is marked *(assumption)*.
 
 ## Why it exists
 
-Anthropic is going public, and the owner has a small stake in the IPO. They want one place to understand it and then to follow the stock, and they want to build it with AI rather than read a 400-page filing.
+It started as a page about Anthropic's IPO, so the owner could understand it without reading a 400-page filing. Once the stock listed, the owner widened it:
 
-> When I look at a dashboard like the one I showed you, I want to know whether Anthropic is undervalued. That dashboard is very complete; I'd rather keep mine smoother. Tell me: what is it worth right now? What contracts does it have? What is the valuation, and is it really overvalued?
+> I want to keep my page, but build a scanner for buy signals and so on. Keep the domain, the sandbox and everything. Instead of focusing on the ANT IPO, widen it to several stocks, 100% AI. Then, when the signals come out strong, I can manage a portfolio by hand on my Wealthsimple.
 
-> I mainly want to try using AI to build a system that monitors all of this.
+> For the AI process, it's you. You do all of it, you run on a schedule, and you update the site.
+
+The stocks are the most traded ones, the ones that suit trading, and ideally in Canadian dollars.
 
 ## For whom
 
-- The owner first: a small investor who is not a financial analyst and wants plain answers.
-- Other small investors and curious readers who want the same answers without an analyst's vocabulary *(assumption)*.
+- The owner first: a small investor, not an analyst, who trades by hand on Wealthsimple and wants plain signals with their reasons.
+- Other readers of antipo.watch: the signals are public (owner's decision, 2026-11-21).
 - People looking at how software is built with the Loop0 Method: the product doubles as a real case study (owner's directive).
 
 ## The promise
 
-**Anthropic's IPO in numbers you can trace: what it is worth, what it owes, how it grows — every figure sourced.**
+**AI trading signals on the most traded Canadian-dollar stocks: every signal with its reasons, every reason with its source, every past signal kept and scored.**
 
-The wording is the agent's; the owner accepted it with the Loop 001 mission on 2026-11-15.
+The wording is the agent's, proposed on 2026-11-22 for the owner's approval.
 
 ## What success looks like
 
-- The owner opens the page and answers "what is it worth, what does it owe, is it growing" in under a minute *(assumption, tested in Loop 001)*.
-- When a new filing or the first trade arrives, the page changes without anyone asking (owner: the application must operate independently of coding-agent sessions).
-- After the listing, the owner follows price and volume there: "so I can follow it".
-- Nobody finds a number on the page that cannot be traced to its source.
+- After the close, without anyone asking, each stock in the list has a signal for the day, written by the scheduled AI (Claude) and live on the site.
+- The owner can tell in under a minute which stocks have a strong signal today and why *(assumption, tested in Loop 010)*.
+- Every past signal stays on the site with the price when it was given and what the stock did next, so the owner can judge whether the signals deserve trust before acting on them.
+- Nobody finds a price or a figure on the site that cannot be traced to its source.
 
 ## What it will never be
 
-- **Investment advice.** No buy or sell recommendation. It helps a reader understand what they are buying; the decision is theirs.
-- **A source of invented facts.** Owner's directive: "Never fabricate prices, market events, or financial facts." A missing figure stays missing.
-- **An official Anthropic product.** No logo, no Anthropic visual identity, and a visible "Unofficial" notice *(assumption: the owner approved the notice on the first page)*.
-- **A rumour feed.** What the press reports is labeled as press, with its link, and never presented as filed *(assumption)*.
-- **A 14-section analyst book.** The owner wants it "smoother": a few panels that answer plain questions.
-- **Loud.** A terminal, code-like look, "not neon". The Loop0 attribution stays "elegant and secondary to the financial dashboard itself".
+- **Personal advice, or a broker.** The signals are general, the same for every reader, and the site places no orders. The owner decides and trades by hand. "Not investment advice" stays visible. The owner is to check the legal side of publishing signals in Canada *(assumption: raised on 2026-11-21, not yet answered)*.
+- **A source of invented facts.** Owner's directive: "Never fabricate prices, market events, or financial facts." Prices, volumes and indicators come from code reading a named source; the AI never types a price. A signal without a source is not published.
+- **A promise of returns.** The track record shows wins and losses alike, and is never hidden or trimmed.
+- **About the owner's own portfolio.** No positions, holdings or trades of the owner on the site.
+- **An official product of any company it covers.** No logos, no borrowed visual identity, an "Unofficial" notice.
+- **Loud.** The terminal, code-like look stays, "not neon".
 
 ## Principles
 
-- **Sourced or silent.** Every number carries a label (FILED, CALC, PRESS, later AI) and a way to check it. No label, no number.
-- **Code computes, AI explains.** Figures are extracted and checked by code. AI, when it arrives, writes explanations that cite them *(owner's directive on fabrication; the split is the agent's design)*.
-- **Go live early, improve continuously.** Owner's directive. Working features ship in small loops.
-- **Efficient and light.** Owner's words. A small machine, few dependencies, a fast page.
-- **Public by default, safe by default.** The repository is public from the first commit: no secret, contact address or internal access detail in it, in the devlog or on the page.
-- **The owner decides.** Significant product choices, public exposure, infrastructure and anything destructive need the owner's approval.
-- **English on the page.** All user-facing content is in English (owner's directive).
+- **Sourced or silent.** Every number carries a label (FILED, CALC, PRESS, MARKET, and now AI) and a way to check it.
+- **Code computes, AI judges.** Code fetches prices and computes indicators; the AI reads them, the filings and the news, and writes the signal and its reasons, citing them. The AI's part is labeled AI.
+- **Scored in public.** Each signal is recorded when it is given and measured afterwards, by code.
+- **Runs without the owner.** The scan, the AI's judgment and the update happen on a schedule.
+- **Go live early, improve continuously; efficient and light.** Owner's directives.
+- **Public by default, safe by default.** No secret, contact address or internal access detail in the repository, the devlog or the site.
+- **The owner decides.** Product choices, public exposure, infrastructure and anything destructive need the owner's approval.
+- **English on the site.**
 
 ## How the vision changed
 
-- 2026-11-15 · First version. The owner set the direction: a smooth dashboard about value, contracts and valuation; a calm terminal look; live early; built with the Loop0 Method.
+- 2026-11-15 · First version. The owner set the direction: a smooth dashboard about Anthropic's value, contracts and valuation; a calm terminal look; live early; built with the Loop0 Method.
+- 2026-11-22 · From one IPO to a signal scanner. The owner: "widen it to several stocks, 100% AI", "it's you, you run on a schedule and update the site", the most traded stocks, "ideally in CAD"; the signals are public; the ANT page becomes one card in the scanner. This reverses the earlier refusal "no buy or sell recommendation", at the owner's request.
