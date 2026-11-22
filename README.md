@@ -3,7 +3,7 @@
 [![CI](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/sonixz/monitor-anthropic-ipo/actions/workflows/codeql.yml)
 
-**Live: https://antipo.watch**
+**Live: https://antipo.watch** (private: a login page; the code and the build history are public)
 
 AI trading signals on the most traded Canadian stocks. After each trading day, the 50 most
 traded stocks of the S&P/TSX Composite each get a signal (strong buy, buy, neutral, sell, strong

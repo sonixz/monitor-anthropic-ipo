@@ -3,6 +3,10 @@
     python -m ipo_monitor.scan dossier [--bars yahoo|file:<folder>] [--out <file>]
     python -m ipo_monitor.scan check <signal file> [--bars yahoo|file:<folder>]
     python -m ipo_monitor.scan portfolio [--bars yahoo|file:<folder>]
+    python -m ipo_monitor.scan upload <file> [--url https://antipo.watch]
+
+`upload` sends a signal, decision or ledger file to the site, which checks it and keeps it on the
+server only. The token comes from ANTIPO_UPLOAD_TOKEN or ~/.config/antipo/upload_token.
 
 `portfolio` replays the simulated envelope from the signal and decision files, says which signals
 the rules allow to buy after the latest session and which positions are open, and checks every
@@ -16,8 +20,11 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 import time
+import urllib.error
+import urllib.request
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -56,7 +63,12 @@ def main(argv: list[str] | None = None) -> int:
     three = sub.add_parser("portfolio", help="replay the envelope and check decision files")
     three.add_argument("--bars", default="yahoo")
     three.add_argument("--candidates", type=Path, default=CANDIDATES)
+    four = sub.add_parser("upload", help="send a result file to the site")
+    four.add_argument("file", type=Path)
+    four.add_argument("--url", default="https://antipo.watch")
     args = parser.parse_args(argv)
+    if args.command == "upload":
+        return upload(args.file, args.url)
 
     candidates = Candidates.load(args.candidates)
     watcher = ScanWatcher(candidates, bar_source(args.bars), [Folder(SIGNALS)], lambda _: None)
@@ -118,6 +130,44 @@ def portfolio(candidates: Candidates, watcher: ScanWatcher, now: datetime) -> in
         for problem in problems:
             print(f"  - {problem}")
     return 1 if board.refused_decisions else 0
+
+
+def upload(path: Path, base: str) -> int:
+    token = os.environ.get("ANTIPO_UPLOAD_TOKEN", "").strip()
+    stored = Path.home() / ".config" / "antipo" / "upload_token"
+    if not token and stored.is_file():
+        token = stored.read_text("utf-8").strip()
+    if not token:
+        print("no upload token: set ANTIPO_UPLOAD_TOKEN or ~/.config/antipo/upload_token")
+        return 1
+    if path.name == "ledger.json":
+        kind = "ledger"
+    elif "decisions" in path.parts:
+        kind = "decisions"
+    else:
+        kind = "signals"
+    body = path.read_bytes()
+    request = urllib.request.Request(  # noqa: S310 - the site's own address
+        f"{base.rstrip('/')}/api/upload/{kind}/{path.name}",
+        data=body,
+        method="PUT",
+        headers={
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "User-Agent": "antipo.watch upload",
+        },
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=60) as answer:  # noqa: S310
+            print(f"stored on the server: {kind}/{path.name} ({json.loads(answer.read())})")
+            return 0
+    except urllib.error.HTTPError as error:
+        detail = error.read()[:4000].decode("utf-8", "replace")
+        print(f"refused ({error.code}): {detail}")
+        return 1
+    except OSError as error:
+        print(f"could not reach the site: {type(error).__name__}")
+        return 1
 
 
 if __name__ == "__main__":

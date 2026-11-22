@@ -35,3 +35,9 @@ node_modules/
 Thumbs.db
 desktop.ini
 *.Zone.Identifier
+
+# Results files are uploaded to the server, never committed (Loop 013).
+data/signals/*.json
+data/portfolio/decisions/*.json
+data/portfolio/reviews/*.json
+data/portfolio/ledger.json

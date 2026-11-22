@@ -32,8 +32,12 @@ class Settings:
     scan: str = "off"  # the scanner's closes: auto (Yahoo Finance), off, or file:<folder>
     signals: str = "off"  # signal files: auto (release and GitHub), local, off, or dir:<folder>
     scan_candidates: Path = Path("data/scan/candidates.json")  # the stocks the list ranks
-    # The password of the portfolio page. Personal: never printed, never logged.
-    portfolio_password: str = field(default="", repr=False)
+    # The owner's account for the portal, and the token of the upload endpoint. Personal:
+    # never printed, never logged. Without a user and a password the portal is open.
+    site_user: str = field(default="", repr=False)
+    site_password: str = field(default="", repr=False)
+    upload_token: str = field(default="", repr=False)
+    data_dir: Path | None = None  # results kept on the machine: signals/, decisions/, ledger.json
     ledger: Path | None = None  # the owner's real orders; on the machine, outside git
 
     @classmethod
@@ -104,8 +108,14 @@ class Settings:
                 f"IPO_SCAN_CANDIDATES must be a candidate list file, got {str(scan_candidates)!r}"
             )
 
+        data_text = source.get("IPO_DATA_DIR", "").strip()
+        data_dir = Path(data_text) if data_text else None
+        if data_dir is not None and not data_dir.is_dir():
+            raise ConfigError(f"IPO_DATA_DIR must be an existing directory, got {data_text!r}")
         ledger_text = source.get("IPO_LEDGER", "").strip()
         ledger = Path(ledger_text) if ledger_text else None
+        if ledger is None and data_dir is not None:
+            ledger = data_dir / "ledger.json"
         if ledger is not None and not ledger.parent.is_dir():
             raise ConfigError(
                 f"IPO_LEDGER must be a file in an existing directory, got {ledger_text!r}"
@@ -129,6 +139,9 @@ class Settings:
             scan=scan,
             signals=signals,
             scan_candidates=scan_candidates,
-            portfolio_password=source.get("PORTFOLIO_PASSWORD", ""),
+            site_user=source.get("SITE_USER", "").strip(),
+            site_password=source.get("SITE_PASSWORD", ""),
+            upload_token=source.get("UPLOAD_TOKEN", "").strip(),
+            data_dir=data_dir,
             ledger=ledger,
         )

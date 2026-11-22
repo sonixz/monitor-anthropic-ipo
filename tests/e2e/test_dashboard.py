@@ -79,7 +79,7 @@ def _price_point(page: Page) -> str:
 
 
 @contextlib.contextmanager
-def _serve(answer: str, filings: str = "") -> Iterator[str]:
+def _serve(answer: str, filings: str = "", extra: dict[str, str] | None = None) -> Iterator[str]:
     """Run the service with recorded answers of its outside sources: no network in tests."""
     port = _free_port()
     env = {
@@ -91,6 +91,7 @@ def _serve(answer: str, filings: str = "") -> Iterator[str]:
         "IPO_SCAN": f"file:{SCAN_BARS}",
         "IPO_SIGNALS": f"dir:{SCAN_SIGNALS}",
         "IPO_SCAN_CANDIDATES": str(ROOT / "tests" / "fixtures" / "scan" / "candidates-tsx60.json"),
+        **(extra or {}),
     }
     process = subprocess.Popen(
         [sys.executable, "-m", "ipo_monitor"],
@@ -140,6 +141,14 @@ def trading_url() -> Iterator[str]:
 def final_url() -> Iterator[str]:
     """A local site after a made-up final prospectus. The data names itself as test data."""
     with _serve("ant-awaiting.json", "filings-final-TEST.json") as url:
+        yield url
+
+
+@pytest.fixture(scope="module")
+def private_url() -> Iterator[str]:
+    """A local site behind the login, with a test account."""
+    extra = {"SITE_USER": "owner", "SITE_PASSWORD": "a long test passphrase"}
+    with _serve("ant-awaiting.json", extra=extra) as url:
         yield url
 
 

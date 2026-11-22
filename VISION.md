@@ -17,7 +17,7 @@ The stocks are the most traded ones, the ones that suit trading, and ideally in 
 ## For whom
 
 - The owner first: a small investor, not an analyst, who trades by hand on Wealthsimple and wants plain signals with their reasons.
-- Other readers of antipo.watch: the signals are public (owner's decision, 2026-11-21).
+- The owner only, behind a login (owner, 2026-11-22: "the web portal… a login… just a username and a password"). The code and the build history stay public.
 - People looking at how software is built with the Loop0 Method: the product doubles as a real case study (owner's directive).
 
 ## The promise
@@ -56,4 +56,5 @@ The wording is the agent's, proposed on 2026-11-22 for the owner's approval.
 ## How the vision changed
 
 - 2026-11-15 · First version. The owner set the direction: a smooth dashboard about Anthropic's value, contracts and valuation; a calm terminal look; live early; built with the Loop0 Method.
+- 2026-11-22 · A private portal. The owner: "the repo… we can leave it public… but the web portal… a clean login with my style… just the results on the web server". Signals, portfolio and real orders are private to the owner; the code stays public. This replaces "the signals are public".
 - 2026-11-22 · From one IPO to a signal scanner. The owner: "widen it to several stocks, 100% AI", "it's you, you run on a schedule and update the site", the most traded stocks, "ideally in CAD"; the signals are public; the ANT page becomes one card in the scanner. This reverses the earlier refusal "no buy or sell recommendation", at the owner's request.

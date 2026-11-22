@@ -1,8 +1,10 @@
 # ROUTINE.md · the daily signal run
 
+> Since Loop 013 results are uploaded to the server, not committed.
+
 The scheduled Claude run follows this file, every weekday after the Toronto close. It writes one
-signal file for the latest session and pushes it; the site reads it from GitHub within 15
-minutes. Nothing else in the repository is changed by the run.
+signal file and the portfolio's decisions for the latest session and uploads them to the site,
+which checks and keeps them on the server. Nothing in the repository is changed by the run.
 
 ## Steps
 
@@ -49,11 +51,11 @@ minutes. Nothing else in the repository is changed by the run.
    **On Fridays**, also write `data/portfolio/reviews/<session>.json`: what worked and what did not
    this week, by level, confidence and sector, and any rule change you propose with the figures
    behind it (the owner decides; never change `rules.json` yourself).
-9. **Commit and push only those files** to `main`:
-   `git add data/signals/<session>.json data/portfolio/decisions/<session>.json` (and the review),
-   commit message `chore(signals): session <session>` ending with the attribution lines below, then
-   `git push origin main`. If the push is refused because main moved, `git pull --rebase` and push
-   again. Never force-push, never change another file.
+9. **Upload, never commit.** Results live on the server only (Loop 013). Send each file with
+   `uv run python -m ipo_monitor.scan upload data/signals/<session>.json`, then the decision file
+   (and the review): the site checks it with the same rules and answers `stored` or the problems.
+   The token is in `~/.config/antipo/upload_token` (never print it). Keep the local copies: they
+   are ignored by git and let `scan portfolio` replay the whole history on this PC.
 
 ## Never
 

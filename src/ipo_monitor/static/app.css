@@ -2257,3 +2257,106 @@ button.n.lv-neutral {
   border-radius: 3px;
   padding: 0 0.35em;
 }
+
+/* ---- the login page ---------------------------------------------------- */
+
+.login-body {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+}
+
+.login {
+  width: 100%;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.login-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login-brand .mark {
+  width: 30px;
+  height: 30px;
+}
+
+.login-brand h1 {
+  margin: 0;
+  font-size: 19px;
+  letter-spacing: 0.18em;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+}
+
+.login-form label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--dim);
+  margin-top: 6px;
+}
+
+.login-form input {
+  font: inherit;
+  font-size: 16px; /* no zoom on a phone */
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 9px 10px;
+}
+
+.login-form input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  border-color: var(--accent);
+}
+
+.login-form button {
+  margin-top: 14px;
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background: var(--accent);
+  border: 0;
+  border-radius: 3px;
+  padding: 10px;
+  cursor: pointer;
+}
+
+.login-form button:hover,
+.login-form button:focus-visible {
+  filter: brightness(1.1);
+}
+
+.login-error {
+  margin: 8px 0 0;
+  color: var(--neg);
+  font-size: 13px;
+}
+
+.login-foot {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--faint);
+}

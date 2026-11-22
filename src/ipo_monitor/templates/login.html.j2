@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>antipo.watch · sign in</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/app.css?v={{ asset_version }}">
+</head>
+<body class="login-body">
+<main class="login">
+  <div class="brand login-brand">
+    <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
+    <h1><span class="w1">ANTIPO</span><span class="w2">.</span><span class="w3">WATCH</span></h1>
+  </div>
+  <form class="login-form" method="post" action="/login">
+    <input type="hidden" name="next" value="{{ next }}">
+    <label for="user">username</label>
+    <input id="user" name="username" type="text" autocomplete="username" autocapitalize="none" spellcheck="false" required{% if not error %} autofocus{% endif %}>
+    <label for="password">password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required{% if error %} autofocus{% endif %}>
+    {% if error %}<p class="login-error" role="alert">{{ error }}</p>{% endif %}
+    <button type="submit">sign in</button>
+  </form>
+  <p class="login-foot">private</p>
+</main>
+</body>
+</html>

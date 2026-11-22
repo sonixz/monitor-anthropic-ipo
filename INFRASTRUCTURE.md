@@ -113,7 +113,8 @@ The service makes two kinds of outbound requests, both over HTTPS and on a timer
 | Name | For | Where it lives |
 | --- | --- | --- |
 | `SEC_CONTACT` | The contact address sec.gov requires. Without it the filings watch is off and nothing is asked from the SEC | On the machine: `/data/secrets.env`, readable by root only. On a workstation: `.env`, ignored by git |
-| `PORTFOLIO_PASSWORD` | The password of `/portfolio` (HTTP Basic, any user name). Without it the page is open | On the machine: `/data/secrets.env`, typed by the owner in a hidden prompt (below). Never printed or logged |
+| `SITE_USER`, `SITE_PASSWORD` | The owner's account for the portal's login page. Without both the portal is open | On the machine: `/data/secrets.env`, typed by the owner in hidden prompts (below). Never printed or logged |
+| `UPLOAD_TOKEN` | The token of the upload endpoint used by the daily run | On the machine: `/data/secrets.env`; on the owner's PC: `~/.config/antipo/upload_token` (mode 600), outside the repository |
 | `OPENAI_API_KEY` (final name to confirm) | AI explanations. Planned, not present | To decide when it is built |
 
 Agent Manager cannot assign a secret to a machine that already exists, so the owner types the address into the machine's session, where it is not echoed. The command answers `saved` only if the file was written; typed in another terminal, it says so:
@@ -122,14 +123,18 @@ Agent Manager cannot assign a secret to a machine that already exists, so the ow
 ( umask 077; read -rs -p "SEC contact address: " a; echo; printf 'SEC_CONTACT=%s\n' "$a" > /data/secrets.env && echo saved || echo "NOT saved: is this the ipo-monitor machine?" )
 ```
 
-The portfolio password is added the same way, without touching the other lines:
+The portal's account is added the same way, without touching the other lines (`set_secret NAME`
+asks for the value without showing it):
 
 ```sh
-( umask 077; read -rs -p "Portfolio password: " a; echo; touch /data/secrets.env; grep -v '^PORTFOLIO_PASSWORD=' /data/secrets.env > /data/secrets.tmp; printf 'PORTFOLIO_PASSWORD=%s\n' "$a" >> /data/secrets.tmp && mv /data/secrets.tmp /data/secrets.env && echo saved || echo "NOT saved" )
+set_secret() { ( umask 077; read -rs -p "$1: " a; echo; touch /data/secrets.env; grep -v "^$1=" /data/secrets.env > /data/secrets.tmp; printf '%s=%s\n' "$1" "$a" >> /data/secrets.tmp && mv /data/secrets.tmp /data/secrets.env && echo saved || echo "NOT saved" ); }
+set_secret SITE_USER; set_secret SITE_PASSWORD
 kill "$(cat /data/service.pid)"   # start.sh starts the service again and reads the file
 ```
 
-The owner's real orders live in `/data/ledger.json` (`IPO_LEDGER`, set by `start.sh`), outside git: the agent updates it through the machine's session when the owner reports an order, and the page draws it again on the next visit.
+Results (signal files, decision files, the owner's real orders in `ledger.json`) live in
+`/data/results` (`IPO_DATA_DIR`, set by `start.sh`), outside git. The daily run sends them with
+`python -m ipo_monitor.scan upload`; the service checks each file and draws the pages again.
 
 `start.sh` reads that file at every start of the service, takes only the names it knows and never prints a value. The service never logs the address and never shows it; a test proves it. An address that is not one e-mail address switches the filings watch off and logs why, without the value: the page does not go down for an optional source.
 

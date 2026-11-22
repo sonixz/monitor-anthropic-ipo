@@ -85,3 +85,26 @@ def test_the_simulated_portfolio_on_a_phone(browser: Browser, base_url: str) -> 
     _shot(page, "portfolio-phone")
     assert errors == []
     context.close()
+
+
+def test_signing_in_on_a_phone(browser: Browser, private_url: str) -> None:
+    context = browser.new_context(
+        viewport=PHONE, device_scale_factor=2, is_mobile=True, has_touch=True
+    )
+    page = context.new_page()
+    page.goto(private_url + "/portfolio")
+    assert "/login" in page.url
+    expect(page.locator(".login-form button")).to_be_in_viewport()
+    _shot(page, "login-phone")
+    page.fill("#user", "owner")
+    page.fill("#password", "wrong")
+    page.locator(".login-form button").tap()
+    expect(page.locator(".login-error")).to_contain_text("Wrong username or password")
+    page.fill("#user", "owner")
+    page.fill("#password", "a long test passphrase")
+    page.locator(".login-form button").tap()
+    page.wait_for_url("**/portfolio")
+    expect(page.locator(".sim").first).to_be_visible()
+    page.goto(private_url + "/")
+    expect(page.locator("#today")).to_be_visible()  # still signed in
+    context.close()

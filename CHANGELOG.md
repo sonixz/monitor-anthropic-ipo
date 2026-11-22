@@ -4,6 +4,26 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.16.0] - 2026-11-22
+
+### Added
+
+- **A private portal** (Loop 013): a clean login page in the site's style, one username and one
+  password from the machine's secrets, a session of 30 days, wrong logins slowed down. Every page
+  is behind it, on antipo.watch and on the Fly.io address; `/health` shows no result.
+- **Results on the server only:** `PUT /api/upload/<signals|decisions|ledger>/<name>` with a
+  token, checked by the same rules before it is stored in `/data/results`;
+  `python -m ipo_monitor.scan upload <file>`. The repository ignores result files.
+
+### Changed
+
+- The daily run uploads its files instead of pushing them (ROUTINE.md step 9).
+- The scanner no longer reads result files from GitHub.
+
+### Removed
+
+- The HTTP Basic password on `/portfolio` (0.15.0), replaced by the login.
+
 ## [0.15.0] - 2026-11-22
 
 ### Added
