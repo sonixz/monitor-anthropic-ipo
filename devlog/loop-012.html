@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 012 — A guided portfolio, simulated in public · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 012 — A guided portfolio, simulated in public</h1>
+<p class="lead">2026-11-22 · A $4,000 envelope that follows the AI signals by fixed rules, sized and filled by code, scored against the TSX; plus the status strip and a denser phone layout. Versions 0.13.0 and 0.14.0.</p>
+<h2>Why</h2>
+<blockquote><p>I want it really AI-analyzed, with repeatable metrics, and I want learning. Give my agent a portfolio of about $4,000: do you wait, do you buy, and if I buy, how many. I want it guided. Then I make the choice to place the orders or not, and I tell you after.</p></blockquote>
+<p><small>The owner's words, reworded in English. Answers: simulation first; 4 or 5 positions, 10%, a dedicated envelope; no leverage; the repository stays public.</small></p>
+<h2>What changed</h2>
+<div class="pair">
+  <figure><img src="img/loop-012-portfolio-phone.png" alt="The simulated portfolio on a phone: next open orders, positions, results, rules."><figcaption>/portfolio on a phone.</figcaption></figure>
+  <figure><img src="img/loop-012-sizing-card.png" alt="The sizing card: slot, loss allowed, cash, the smallest."><figcaption>How many shares, step by step.</figcaption></figure>
+</div>
+<ul>
+  <li><strong>Rules, versioned:</strong> at most 5 positions, about 20% each, the loss at the stop never above 10% of the envelope, no leverage; entries on buy or strong buy at medium or high confidence, two per sector.</li>
+  <li><strong>Claude decides, code computes:</strong> buy, wait or pass; hold or exit; reasons without numbers. Sizes, fills at the next open, stops, targets and metrics come from code, the same every time.</li>
+  <li><strong>The first decisions:</strong> buy 9 FTS and 3 DOL at the Nov 23 open.</li>
+  <li><strong>The daily run lives here</strong>, in the working session, weekdays about 16:47.</li>
+  <li><strong>0.13.0:</strong> the date and time of the last analysis in a status strip; a denser phone layout.</li>
+</ul>
+<figure><img src="img/loop-012-status-strip-phone.png" alt="The scanner with its status strip: last analysis, closes read, next analysis." style="max-width:360px"><figcaption>The status strip on the scanner.</figcaption></figure>
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit tests</td><td>passed</td><td>188; sizing, fills and exits by hand.</td></tr>
+  <tr><td>Real-browser tests</td><td>passed</td><td>17 local; applicable ones live.</td></tr>
+  <tr><td>The owner saw screenshots before release</td><td>passed</td><td>"Oui go".</td></tr>
+  <tr><td>First scheduled run, first fills</td><td>not run</td><td>Monday Nov 23.</td></tr>
+</table>
+<p class="nav">Mission: <code>loops/012-mission.md</code> · Report: <code>loops/012-report.json</code></p>
+</main>
+</body>
+</html>

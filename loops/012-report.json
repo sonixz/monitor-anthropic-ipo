@@ -1,0 +1,90 @@
+{
+  "schemaVersion": "loop0.report/1",
+  "projectId": "monitor-anthropic-ipo",
+  "loopId": "loop-012",
+  "reportedAt": "2026-11-22T21:45:00Z",
+  "summary": "Version 0.14.0 is live: antipo.watch/portfolio shows a simulated $4,000 CAD envelope guided by the AI signals. Code sizes each order from versioned rules (at most 5 positions, about 20% each, the loss at the stop capped at 10% of the envelope, no leverage), fills it at the next open, closes positions at stop, target, 20 sessions or a sell signal, and computes metrics against XIC with their sample size. Claude wrote the first decisions after the Nov 20 close: buy 9 FTS and 3 DOL at the Nov 23 open. The repository stays public and the model portfolio is public at the owner's word; privacy is deferred to real money. The daily run is scheduled in the working session (weekdays about 16:47 Toronto), first run Nov 23. Also shipped in 0.13.0: the status strip with the last analysis and a denser phone layout.",
+  "delivered": [
+    "data/portfolio/rules.json (v1); scan/portfolio.py (sizing, fills, exits, metrics); decision files and their checks.",
+    "/portfolio page with the sizing card; link from the scanner.",
+    "python -m ipo_monitor.scan portfolio; ROUTINE.md steps 8 and 9; the session cron prompt updated.",
+    "XIC as a benchmark series in the candidate file.",
+    "tests/test_portfolio.py (sizing, fills, gap through the stop, slots and sectors, the real first decisions); e2e portfolio on a phone.",
+    "0.13.0: status strip, dense phone layout.",
+    "CHANGELOG, DECISIONS D-047 to D-049, STATUS."
+  ],
+  "changedFiles": [
+    "data/portfolio/",
+    "data/scan/candidates.json",
+    "src/ipo_monitor/scan/portfolio.py",
+    "src/ipo_monitor/scan/board.py",
+    "src/ipo_monitor/scan/watch.py",
+    "src/ipo_monitor/scan/render.py",
+    "src/ipo_monitor/scan/universe.py",
+    "src/ipo_monitor/scan/__main__.py",
+    "src/ipo_monitor/templates/portfolio.html.j2",
+    "src/ipo_monitor/templates/scan.html.j2",
+    "src/ipo_monitor/static/app.css",
+    "src/ipo_monitor/web.py",
+    "tests/test_portfolio.py",
+    "tests/e2e/test_scanner.py",
+    "tests/fixtures/",
+    "ROUTINE.md",
+    "CHANGELOG.md",
+    "DECISIONS.md",
+    "STATUS.md",
+    "loops/012-mission.md",
+    "devlog/"
+  ],
+  "decisions": [
+    "Confirmed by the owner: simulation first, 4-5 positions with a 10% cap, no leverage, public repository and model portfolio, the daily run here (D-047 to D-049).",
+    "Proposed: the entry rule, XIC, the weekly review."
+  ],
+  "tests": [
+    {
+      "command": "uv run pytest",
+      "result": "passed",
+      "notes": "188 unit tests; sizing checked by hand (FTS: 9 shares, $763.83, risk $22.50 at the rounded stop)."
+    },
+    {
+      "command": "uv run pytest -m e2e",
+      "result": "passed",
+      "notes": "17, including the portfolio on a phone."
+    },
+    {
+      "command": "python -m ipo_monitor.scan portfolio",
+      "result": "passed",
+      "notes": "orders: buy 9 FTS, 3 DOL; no file refused."
+    },
+    {
+      "command": "CI and CodeQL on v0.14.0; BUILD_ONLY then deploy",
+      "result": "passed",
+      "notes": "site stayed up during the build."
+    },
+    {
+      "command": "E2E_BASE_URL=https://antipo.watch (applicable tests); curl /portfolio",
+      "result": "passed",
+      "notes": "NEXT OPEN shows the two orders."
+    },
+    {
+      "command": "A daily run with nobody typing",
+      "result": "not_run",
+      "notes": "First scheduled run on Mon 2026-11-23 about 17:17 Toronto."
+    },
+    {
+      "command": "A weekly review",
+      "result": "not_run",
+      "notes": "First on Fri 2026-11-27."
+    }
+  ],
+  "blockers": [],
+  "remainingWork": [
+    "Watch the first scheduled run and the first simulated fills on Nov 23.",
+    "The session cron expires after 7 days: re-arm by Nov 29 or make it a Windows task.",
+    "Second Brain unavailable: file the decisions since 2026-11-22 when it is back.",
+    "Privacy for real money (D-048)."
+  ],
+  "recommendedNextSteps": [
+    "After 3-4 weeks of simulation, review the metrics with the owner before any real money."
+  ]
+}
