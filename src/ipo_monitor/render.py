@@ -32,7 +32,7 @@ LOOP0_URL = "https://agmgd-on-loop0-22c0a8ea.fly.dev/"
 # The name and the words that present the page: the tab, the share card on X, the search result.
 SITE = {
     "name": "Anthropic IPO Watch",
-    "url": "https://antipo.watch/",
+    "url": "https://antipo.watch/ant",  # the scanner took the home page (Loop 010)
     "title": "Anthropic IPO Watch: Anthropic's IPO in numbers you can trace",
     "description": (
         "An unofficial dashboard on Anthropic's IPO: the value at the IPO price, the deal, the "
@@ -467,7 +467,7 @@ def render_page(
         "loop0_url": LOOP0_URL,
         "site": SITE,
         "share": {
-            "image": f"{SITE['url']}static/{SHARE_IMAGE[0]}?v={asset_version()}",
+            "image": f"https://antipo.watch/static/{SHARE_IMAGE[0]}?v={asset_version()}",
             "width": SHARE_IMAGE[1],
             "height": SHARE_IMAGE[2],
         },

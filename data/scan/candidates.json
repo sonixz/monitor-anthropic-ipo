@@ -1,430 +1,1770 @@
 {
- "title": "S&P/TSX 60 members",
- "as_of": "2026-01-31",
- "source": "Wikipedia, \"S&P/TSX 60\", constituents table (list current as of January 31, 2026)",
- "url": "https://en.wikipedia.org/wiki/S%26P/TSX_60",
+ "title": "S&P/TSX Composite members",
+ "as_of": "2026-04-20",
+ "source": "Wikipedia, \"S&P/TSX Composite Index\", list of companies (220 companies on April 20, 2026, after TMX Info Services)",
+ "url": "https://en.wikipedia.org/wiki/S%26P/TSX_Composite_Index",
  "accessed": "2026-11-22",
- "note": "The candidate list. The scanner ranks these by average value traded a day and keeps the top 25.",
+ "note": "The candidate list. The scanner ranks these by average value traded a day and keeps the top 50. A member without twenty sessions of closes at the source is not ranked.",
  "candidates": [
+  {
+   "symbol": "VNP",
+   "name": "5N Plus Inc.",
+   "source_symbol": "VNP.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "ABRA",
+   "name": "AbraSilver Resource Corp.",
+   "source_symbol": "ABRA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "AAV",
+   "name": "Advantage Energy Ltd.",
+   "source_symbol": "AAV.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "ARE",
+   "name": "Aecon Group Inc.",
+   "source_symbol": "ARE.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
   {
    "symbol": "AEM",
    "name": "Agnico Eagle Mines Limited",
    "source_symbol": "AEM.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "AC",
+   "name": "Air Canada",
+   "source_symbol": "AC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "AGI",
+   "name": "Alamos Gold Inc.",
+   "source_symbol": "AGI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "AQN",
+   "name": "Algonquin Power & Utilities Corp.",
+   "source_symbol": "AQN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Utilities"
   },
   {
    "symbol": "ATD",
    "name": "Alimentation Couche-Tard Inc.",
    "source_symbol": "ATD.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "AAUC",
+   "name": "Allied Gold Corporation",
+   "source_symbol": "AAUC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "AP.UN",
+   "name": "Allied Properties Real Estate Investment Trust",
+   "source_symbol": "AP-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "ALA",
+   "name": "AltaGas Ltd.",
+   "source_symbol": "ALA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "AIF",
+   "name": "Altus Group Limited",
+   "source_symbol": "AIF.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "USA",
+   "name": "Americas Gold And Silver Corporation",
+   "source_symbol": "USA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "ARX",
+   "name": "ARC Resources Ltd.",
+   "source_symbol": "ARX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "ARIS",
+   "name": "Aris Mining Corporation",
+   "source_symbol": "ARIS.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "ATZ",
+   "name": "Aritzia Inc.",
+   "source_symbol": "ATZ.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "ACO.X",
+   "name": "ATCO Ltd.",
+   "source_symbol": "ACO-X.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "ATH",
+   "name": "Athabasca Oil Corporation",
+   "source_symbol": "ATH.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "ATRL",
+   "name": "AtkinsRéalis Group Inc.",
+   "source_symbol": "ATRL.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "ATS",
+   "name": "ATS Corporation",
+   "source_symbol": "ATS.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "ASM",
+   "name": "Avino Silver & Gold Mines Ltd.",
+   "source_symbol": "ASM.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "AYA",
+   "name": "Aya Gold & Silver Inc.",
+   "source_symbol": "AYA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "BTO",
+   "name": "B2Gold Corp.",
+   "source_symbol": "BTO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "BDGI",
+   "name": "Badger Infrastructure Solutions Ltd.",
+   "source_symbol": "BDGI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "BMO",
    "name": "Bank of Montreal",
    "source_symbol": "BMO.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "BNS",
    "name": "Bank of Nova Scotia",
    "source_symbol": "BNS.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "ABX",
-   "name": "Barrick Mining Corporation",
+   "name": "Barrick Gold Corporation",
    "source_symbol": "ABX.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "BHC",
+   "name": "Bausch Health Companies Inc.",
+   "source_symbol": "BHC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Healthcare"
+  },
+  {
+   "symbol": "BTE",
+   "name": "Baytex Energy Corp.",
+   "source_symbol": "BTE.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "BCE",
    "name": "BCE Inc.",
    "source_symbol": "BCE.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Communication Services"
+  },
+  {
+   "symbol": "BIR",
+   "name": "Birchcliff Energy Ltd.",
+   "source_symbol": "BIR.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "BDT",
+   "name": "Bird Construction Inc.",
+   "source_symbol": "BDT.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "BB",
+   "name": "BlackBerry Limited",
+   "source_symbol": "BB.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "BEI.UN",
+   "name": "Boardwalk Real Estate Investment Trust",
+   "source_symbol": "BEI-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "BBD.B",
+   "name": "Bombardier Inc.",
+   "source_symbol": "BBD-B.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "BLX",
+   "name": "Boralex Inc.",
+   "source_symbol": "BLX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "BYD",
+   "name": "Boyd Group Services Inc.",
+   "source_symbol": "BYD.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
   },
   {
    "symbol": "BAM",
    "name": "Brookfield Asset Management Ltd.",
    "source_symbol": "BAM.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "BBUC",
+   "name": "Brookfield Business Corporation",
+   "source_symbol": "BBUC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "BN",
    "name": "Brookfield Corporation",
    "source_symbol": "BN.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "BIP.UN",
    "name": "Brookfield Infrastructure Partners L.P.",
    "source_symbol": "BIP-UN.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "BEP.UN",
+   "name": "Brookfield Renewable Partners L.P.",
+   "source_symbol": "BEP-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "DOO",
+   "name": "BRP Inc.",
+   "source_symbol": "DOO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
   },
   {
    "symbol": "CAE",
    "name": "CAE Inc.",
    "source_symbol": "CAE.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "CCO",
    "name": "Cameco Corporation",
    "source_symbol": "CCO.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "CAR.UN",
+   "name": "Canadian Apartment Properties Real Estate Investment Trust",
+   "source_symbol": "CAR-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
   },
   {
    "symbol": "CM",
    "name": "Canadian Imperial Bank of Commerce",
    "source_symbol": "CM.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "CNR",
    "name": "Canadian National Railway Company",
    "source_symbol": "CNR.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "CNQ",
    "name": "Canadian Natural Resources Limited",
    "source_symbol": "CNQ.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "CP",
    "name": "Canadian Pacific Kansas City Limited",
    "source_symbol": "CP.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "CTC.A",
    "name": "Canadian Tire Corporation Limited",
    "source_symbol": "CTC-A.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "CU",
+   "name": "Canadian Utilities Limited",
+   "source_symbol": "CU.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "CPX",
+   "name": "Capital Power Corporation",
+   "source_symbol": "CPX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "CS",
+   "name": "Capstone Copper Corp.",
+   "source_symbol": "CS.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "CJT",
+   "name": "Cargojet Inc.",
+   "source_symbol": "CJT.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "CCL.B",
    "name": "CCL Industries Inc.",
    "source_symbol": "CCL-B.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
   },
   {
    "symbol": "CLS",
    "name": "Celestica Inc.",
    "source_symbol": "CLS.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Information Technology"
   },
   {
    "symbol": "CVE",
    "name": "Cenovus Energy Inc.",
    "source_symbol": "CVE.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "CG",
+   "name": "Centerra Gold Inc.",
+   "source_symbol": "CG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "CEU",
+   "name": "CES Energy Solutions Corp.",
+   "source_symbol": "CEU.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "GIB.A",
    "name": "CGI Inc.",
    "source_symbol": "GIB-A.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "CSH.UN",
+   "name": "Chartwell Retirement Residences",
+   "source_symbol": "CSH-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "CHP.UN",
+   "name": "Choice Properties Real Estate Investment Trust",
+   "source_symbol": "CHP-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "CCA",
+   "name": "Cogeco Communications Inc.",
+   "source_symbol": "CCA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Communication Services"
+  },
+  {
+   "symbol": "CIGI",
+   "name": "Colliers International Group Inc.",
+   "source_symbol": "CIGI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
   },
   {
    "symbol": "CSU",
    "name": "Constellation Software Inc.",
    "source_symbol": "CSU.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "CRR.UN",
+   "name": "Crombie Real Estate Investment Trust",
+   "source_symbol": "CRR-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "CRT.UN",
+   "name": "CT Real Estate Investment Trust",
+   "source_symbol": "CRT-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "CURA",
+   "name": "Curaleaf Holdings, Inc.",
+   "source_symbol": "CURA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Healthcare"
+  },
+  {
+   "symbol": "DFY",
+   "name": "Definity Financial Corporation",
+   "source_symbol": "DFY.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "DML",
+   "name": "Denison Mines Corp.",
+   "source_symbol": "DML.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "DSG",
+   "name": "Descartes Systems Group Inc.",
+   "source_symbol": "DSG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "DSV",
+   "name": "Discovery Silver Corp.",
+   "source_symbol": "DSV.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "DOL",
    "name": "Dollarama Inc.",
    "source_symbol": "DOL.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "DIR.UN",
+   "name": "Dream Industrial Real Estate Investment Trust",
+   "source_symbol": "DIR-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "DPM",
+   "name": "Dundee Precious Metals Inc.",
+   "source_symbol": "DPM.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "ELD",
+   "name": "Eldorado Gold Corporation",
+   "source_symbol": "ELD.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "EFN",
+   "name": "Element Fleet Management Corp.",
+   "source_symbol": "EFN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "EMA",
    "name": "Emera Incorporated",
    "source_symbol": "EMA.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "EMP.A",
+   "name": "Empire Company Limited",
+   "source_symbol": "EMP-A.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Staples"
   },
   {
    "symbol": "ENB",
    "name": "Enbridge Inc.",
    "source_symbol": "ENB.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "EDR",
+   "name": "Endeavour Silver Corp.",
+   "source_symbol": "EDR.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "EFR",
+   "name": "Energy Fuels Inc.",
+   "source_symbol": "EFR.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "EQB",
+   "name": "EQB Inc.",
+   "source_symbol": "EQB.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "EFX",
+   "name": "Equifax Inc.",
+   "source_symbol": "EFX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "EQX",
+   "name": "Equinox Gold Corp.",
+   "source_symbol": "EQX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "ERO",
+   "name": "Ero Copper Corp.",
+   "source_symbol": "ERO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "EIF",
+   "name": "id=Exchange Income Corporation| Exchange Income Corporation",
+   "source_symbol": "EIF.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "FFH",
    "name": "Fairfax Financial Holdings Limited",
    "source_symbol": "FFH.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "FTT",
+   "name": "Finning International Inc.",
+   "source_symbol": "FTT.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "FCR.UN",
+   "name": "First Capital Real Estate Investment Trust",
+   "source_symbol": "FCR-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "AG",
+   "name": "First Majestic Silver Corp.",
+   "source_symbol": "AG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "FM",
    "name": "First Quantum Minerals Ltd.",
    "source_symbol": "FM.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "FSV",
    "name": "FirstService Corporation",
    "source_symbol": "FSV.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Real Estate"
   },
   {
    "symbol": "FTS",
    "name": "Fortis Inc.",
    "source_symbol": "FTS.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "FVI",
+   "name": "Fortuna Mining Corp.",
+   "source_symbol": "FVI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "FNV",
    "name": "Franco-Nevada Corporation",
    "source_symbol": "FNV.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "FRU",
+   "name": "Freehold Royalties Ltd.",
+   "source_symbol": "FRU.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "GMIN",
+   "name": "G Mining Ventures Corp.",
+   "source_symbol": "GMIN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "WN",
    "name": "George Weston Limited",
    "source_symbol": "WN.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "GFL",
+   "name": "GFL Environmental Inc.",
+   "source_symbol": "GFL.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "GEI",
+   "name": "Gibson Energy Inc.",
+   "source_symbol": "GEI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "GIL",
    "name": "Gildan Activewear Inc.",
    "source_symbol": "GIL.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "GSY",
+   "name": "goeasy Ltd.",
+   "source_symbol": "GSY.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "GRT.UN",
+   "name": "Granite Real Estate Investment Trust",
+   "source_symbol": "GRT-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "GWO",
+   "name": "Great-West Lifeco Inc.",
+   "source_symbol": "GWO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "HR.UN",
+   "name": "H&R Real Estate Investment Trust",
+   "source_symbol": "HR-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "HWX",
+   "name": "Headwater Exploration Inc.",
+   "source_symbol": "HWX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "HBM",
+   "name": "Hudbay Minerals Inc.",
+   "source_symbol": "HBM.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "H",
    "name": "Hydro One Limited",
    "source_symbol": "H.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "IAU",
+   "name": "I-80 Gold Corp.",
+   "source_symbol": "IAU.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "IAG",
+   "name": "iA Financial Corporation Inc.",
+   "source_symbol": "IAG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "IMG",
+   "name": "Iamgold Corporation",
+   "source_symbol": "IMG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "IGM",
+   "name": "IGM Financial Inc.",
+   "source_symbol": "IGM.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "IMO",
    "name": "Imperial Oil Limited",
    "source_symbol": "IMO.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "IFC",
    "name": "Intact Financial Corporation",
    "source_symbol": "IFC.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "IPCO",
+   "name": "International Petroleum Corporation",
+   "source_symbol": "IPCO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "IIP.UN",
+   "name": "InterRent Real Estate Investment Trust",
+   "source_symbol": "IIP-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "IVN",
+   "name": "Ivanhoe Mines Ltd.",
+   "source_symbol": "IVN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "JWEL",
+   "name": "Jamieson Wellness Inc.",
+   "source_symbol": "JWEL.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "KNT",
+   "name": "K92 Mining Inc.",
+   "source_symbol": "KNT.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "KEL",
+   "name": "Kelt Exploration Ltd.",
+   "source_symbol": "KEL.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "KEY",
+   "name": "Keyera Corp.",
+   "source_symbol": "KEY.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "KMP.UN",
+   "name": "Killam Apartment Real Estate Investment Trust",
+   "source_symbol": "KMP-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "KXS",
+   "name": "Kinaxis Inc.",
+   "source_symbol": "KXS.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Information Technology"
   },
   {
    "symbol": "K",
    "name": "Kinross Gold Corporation",
    "source_symbol": "K.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "LIF",
+   "name": "Labrador Iron Ore Royalty Corporation",
+   "source_symbol": "LIF.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "LB",
+   "name": "Laurentian Bank of Canada",
+   "source_symbol": "LB.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "LSPD",
+   "name": "Lightspeed Commerce Inc.",
+   "source_symbol": "LSPD.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "LNR",
+   "name": "Linamar Corporation",
+   "source_symbol": "LNR.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "LAC",
+   "name": "Lithium Americas Corp.",
+   "source_symbol": "LAC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "L",
    "name": "Loblaw Companies Limited",
    "source_symbol": "L.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "LUG",
+   "name": "Lundin Gold Inc.",
+   "source_symbol": "LUG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "LUN",
+   "name": "Lundin Mining Corporation",
+   "source_symbol": "LUN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "MG",
    "name": "Magna International Inc.",
    "source_symbol": "MG.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
   },
   {
    "symbol": "MFC",
    "name": "Manulife Financial Corporation",
    "source_symbol": "MFC.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "MFI",
+   "name": "Maple Leaf Foods Inc.",
+   "source_symbol": "MFI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "MDA",
+   "name": "MDA Space Ltd.",
+   "source_symbol": "MDA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "MX",
+   "name": "Methanex Corporation",
+   "source_symbol": "MX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "MRU",
    "name": "Metro Inc.",
    "source_symbol": "MRU.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "MAU",
+   "name": "Montage Gold Corp.",
+   "source_symbol": "MAU.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "MTL",
+   "name": "Mullen Group Ltd.",
+   "source_symbol": "MTL.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "NA",
    "name": "National Bank of Canada",
    "source_symbol": "NA.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "NXE",
+   "name": "NexGen Energy Ltd.",
+   "source_symbol": "NXE.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "NFI",
+   "name": "NFI Group Inc.",
+   "source_symbol": "NFI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "NGEX",
+   "name": "NGEx Minerals Ltd.",
+   "source_symbol": "NGEX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "NWC",
+   "name": "North West Company Inc.",
+   "source_symbol": "NWC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "NPI",
+   "name": "Northland Power Inc.",
+   "source_symbol": "NPI.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "NG",
+   "name": "NovaGold Resources Inc.",
+   "source_symbol": "NG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "NTR",
    "name": "Nutrien Ltd.",
    "source_symbol": "NTR.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "OGC",
+   "name": "OceanaGold Corporation",
+   "source_symbol": "OGC.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "ONEX",
+   "name": "Onex Corporation",
+   "source_symbol": "ONEX.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "OTEX",
    "name": "Open Text Corporation",
    "source_symbol": "OTEX.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "OLA",
+   "name": "Orla Mining Ltd.",
+   "source_symbol": "OLA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "OR",
+   "name": "Osisko Gold Royalties Ltd.",
+   "source_symbol": "OR.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "PAAS",
+   "name": "Pan American Silver Corp.",
+   "source_symbol": "PAAS.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "POU",
+   "name": "Paramount Resources Ltd.",
+   "source_symbol": "POU.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "PXT",
+   "name": "Parex Resources Inc.",
+   "source_symbol": "PXT.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "PPL",
    "name": "Pembina Pipeline Corporation",
    "source_symbol": "PPL.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "PPTA",
+   "name": "Perpetua Resources Corp.",
+   "source_symbol": "PPTA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "PET",
+   "name": "Pet Valu Holdings Ltd.",
+   "source_symbol": "PET.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "PEY",
+   "name": "Peyto Exploration & Development Corp.",
+   "source_symbol": "PEY.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "POW",
    "name": "Power Corporation of Canada",
    "source_symbol": "POW.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "PSK",
+   "name": "PrairieSky Royalty Ltd.",
+   "source_symbol": "PSK.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "PBH",
+   "name": "Premium Brands Holdings Corporation",
+   "source_symbol": "PBH.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "PMZ.UN",
+   "name": "Primaris Real Estate Investment Trust",
+   "source_symbol": "PMZ-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "QBR.B",
+   "name": "Quebecor Inc.",
+   "source_symbol": "QBR-B.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Communication Services"
+  },
+  {
+   "symbol": "RBA",
+   "name": "RB Global, Inc.",
+   "source_symbol": "RBA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "QSR",
    "name": "Restaurant Brands International Inc.",
    "source_symbol": "QSR.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "RCH",
+   "name": "Richelieu Hardware Ltd.",
+   "source_symbol": "RCH.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "REI.UN",
+   "name": "RioCan Real Estate Investment Trust",
+   "source_symbol": "REI-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
   },
   {
    "symbol": "RCI.B",
    "name": "Rogers Communications Inc.",
    "source_symbol": "RCI-B.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Communication Services"
   },
   {
    "symbol": "RY",
    "name": "Royal Bank of Canada",
    "source_symbol": "RY.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "RUS",
+   "name": "Russel Metals Inc.",
+   "source_symbol": "RUS.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "SAP",
    "name": "Saputo Inc.",
    "source_symbol": "SAP.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Consumer Staples"
+  },
+  {
+   "symbol": "SEA",
+   "name": "Seabridge Gold Inc.",
+   "source_symbol": "SEA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "SES",
+   "name": "Secure Energy Services Inc.",
+   "source_symbol": "SES.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "SHOP",
    "name": "Shopify Inc.",
    "source_symbol": "SHOP.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Information Technology"
+  },
+  {
+   "symbol": "SIA",
+   "name": "Sienna Senior Living Inc.",
+   "source_symbol": "SIA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Healthcare"
+  },
+  {
+   "symbol": "SVM",
+   "name": "Silvercorp Metals Inc.",
+   "source_symbol": "SVM.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "SKE",
+   "name": "Skeena Resources Limited",
+   "source_symbol": "SKE.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "SRU.UN",
+   "name": "SmartCentres Real Estate Investment Trust",
+   "source_symbol": "SRU-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "SOBO",
+   "name": "South Bow Corporation",
+   "source_symbol": "SOBO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "SII",
+   "name": "Sprott Inc.",
+   "source_symbol": "SII.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "SSRM",
+   "name": "SSR Mining Inc.",
+   "source_symbol": "SSRM.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "STN",
+   "name": "Stantec Inc.",
+   "source_symbol": "STN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "SJ",
+   "name": "Stella-Jones Inc.",
+   "source_symbol": "SJ.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "SCR",
+   "name": "Strathcona Resources Ltd.",
+   "source_symbol": "SCR.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "SLF",
    "name": "Sun Life Financial Inc.",
    "source_symbol": "SLF.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "SU",
    "name": "Suncor Energy Inc.",
    "source_symbol": "SU.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "SPB",
+   "name": "Superior Plus Corp.",
+   "source_symbol": "SPB.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "TVE",
+   "name": "Tamarack Valley Energy Ltd.",
+   "source_symbol": "TVE.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "TKO",
+   "name": "Taseko Mines Limited",
+   "source_symbol": "TKO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "TRP",
    "name": "TC Energy Corporation",
    "source_symbol": "TRP.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
   },
   {
    "symbol": "TECK.B",
    "name": "Teck Resources Limited",
    "source_symbol": "TECK-B.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "T",
    "name": "Telus Corporation",
    "source_symbol": "T.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Communication Services"
+  },
+  {
+   "symbol": "TVK",
+   "name": "TerraVest Industries Inc.",
+   "source_symbol": "TVK.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "TFII",
+   "name": "TFI International Inc.",
+   "source_symbol": "TFII.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "TRI",
    "name": "Thomson Reuters Corporation",
    "source_symbol": "TRI.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "X",
+   "name": "TMX Group Limited",
+   "source_symbol": "X.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "TPZ",
+   "name": "Topaz Energy Corp.",
+   "source_symbol": "TPZ.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "TXG",
+   "name": "Torex Gold Resources Inc.",
+   "source_symbol": "TXG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "TIH",
+   "name": "Toromont Industries Ltd.",
+   "source_symbol": "TIH.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Industrials"
   },
   {
    "symbol": "TD",
    "name": "Toronto-Dominion Bank",
    "source_symbol": "TD.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Financials"
   },
   {
    "symbol": "TOU",
    "name": "Tourmaline Oil Corp.",
    "source_symbol": "TOU.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "TA",
+   "name": "TransAlta Corporation",
+   "source_symbol": "TA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Utilities"
+  },
+  {
+   "symbol": "TCL.A",
+   "name": "Transcontinental Inc.",
+   "source_symbol": "TCL-A.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
+  },
+  {
+   "symbol": "TFPM",
+   "name": "Triple Flag Precious Metals Corp.",
+   "source_symbol": "TFPM.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "TSU",
+   "name": "Trisura Group Ltd.",
+   "source_symbol": "TSU.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Financials"
+  },
+  {
+   "symbol": "VET",
+   "name": "Vermilion Energy Inc.",
+   "source_symbol": "VET.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "VITL.UN",
+   "name": "Vital Infrastructure Property Trust.",
+   "source_symbol": "VITL-UN.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Real Estate"
+  },
+  {
+   "symbol": "VZLA",
+   "name": "Vizsla Silver Corp.",
+   "source_symbol": "VZLA.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "WCN",
    "name": "Waste Connections Inc.",
    "source_symbol": "WCN.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Industrials"
+  },
+  {
+   "symbol": "WDO",
+   "name": "Wesdome Gold Mines Ltd.",
+   "source_symbol": "WDO.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "WFG",
+   "name": "West Fraser Timber Co. Ltd.",
+   "source_symbol": "WFG.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Materials"
   },
   {
    "symbol": "WPM",
    "name": "Wheaton Precious Metals Corp.",
    "source_symbol": "WPM.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Materials"
+  },
+  {
+   "symbol": "WCP",
+   "name": "Whitecap Resources Inc.",
+   "source_symbol": "WCP.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Energy"
+  },
+  {
+   "symbol": "WPK",
+   "name": "Winpak Ltd.",
+   "source_symbol": "WPK.TO",
+   "exchange": "TSX",
+   "currency": "CAD",
+   "sector": "Consumer Discretionary"
   },
   {
    "symbol": "WSP",
    "name": "WSP Global Inc.",
    "source_symbol": "WSP.TO",
    "exchange": "TSX",
-   "currency": "CAD"
+   "currency": "CAD",
+   "sector": "Industrials"
   }
  ],
  "pinned": [

@@ -136,10 +136,15 @@ class Source(Protocol):
     def ask(self, symbol: str, company: str, now: int) -> Snapshot: ...
 
 
-def get_json(url: str) -> Any:
+# Yahoo Finance answers "too many requests" to a client that claims to be a desktop browser
+# without behaving like one, and answers a plainly named client (seen on 2026-11-22).
+PLAIN_AGENT = "antipo.watch/1.0 (+https://antipo.watch)"
+
+
+def get_json(url: str, agent: str = USER_AGENT) -> Any:
     """One HTTPS request for JSON. Raises SourceError with a short reason."""
     headers = {
-        "User-Agent": USER_AGENT,
+        "User-Agent": agent,
         "Accept": "application/json, text/plain, */*",
         "Accept-Language": "en-US,en;q=0.9",
     }
@@ -441,7 +446,7 @@ class YahooChart:
         for host in self.hosts:
             url = f"https://{host}/v8/finance/chart/{symbol}?range=1d&interval=5m&includePrePost=false"
             try:
-                payload = get_json(url)
+                payload = get_json(url, PLAIN_AGENT)
             except SourceError as error:
                 if str(error) == "HTTP 404":  # the source's way of saying: unknown symbol
                     return {"chart": {"result": None, "error": {"code": "Not Found"}}}

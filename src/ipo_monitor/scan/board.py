@@ -14,6 +14,7 @@ from zoneinfo import ZoneInfo
 
 from ipo_monitor.scan.bars import Series
 from ipo_monitor.scan.indicators import Indicator, compute
+from ipo_monitor.scan.levels import levels
 from ipo_monitor.scan.signals import Checked, Signal, SignalFile, check
 from ipo_monitor.scan.track import Outcome, Summary, outcomes, summarize
 from ipo_monitor.scan.universe import Candidate, Candidates, Universe, rank, universe, week_ends
@@ -29,6 +30,7 @@ class Stock:
     indicators: dict[str, Indicator]
     rank: int | None
     signal: Signal | None
+    marks: dict[str, Indicator] = field(default_factory=dict)  # entry, stop, target, risk, reward
 
     @property
     def symbol(self) -> str:
@@ -94,7 +96,7 @@ def allowed(candidates: Candidates, series: dict[str, Series], session: str) -> 
     ends = week_ends(sessions)
     names: set[str] = {c.symbol for c in candidates.pinned}
     for end in ends[-2:]:
-        names |= {r.symbol for r in rank(listed, end)}
+        names |= {r.symbol for r in rank(listed, end, candidates.size)}
     return names
 
 
@@ -116,7 +118,7 @@ def build(
 ) -> Board:
     """The board from what was read. `files` maps a signal file's name to its parsed JSON."""
     listed = {c.symbol for c in candidates.candidates}
-    week = universe({k: v for k, v in series.items() if k in listed})
+    week = universe({k: v for k, v in series.items() if k in listed}, candidates.size)
     sessions = [one.bars[-1].date for k, one in series.items() if k in listed and one.bars]
     session = max(sessions) if sessions else None
 
@@ -142,7 +144,13 @@ def build(
     for symbol in order:
         one = series.get(symbol)
         found = compute(one.bars, one.currency) if one and one.bars else {}
-        stocks.append(Stock(everyone[symbol], one, found, ranks.get(symbol), by_symbol.get(symbol)))
+        signal = by_symbol.get(symbol)
+        marks: dict[str, Indicator] = {}
+        if signal is not None and one is not None and current is not None:
+            at = one.upto(current.session)
+            if at and at[-1].date == current.session:
+                marks = levels(signal.level, compute(at, one.currency))
+        stocks.append(Stock(everyone[symbol], one, found, ranks.get(symbol), signal, marks))
 
     found_outcomes = outcomes(good, series)
     return Board(
@@ -196,7 +204,10 @@ def dossier(board: Board, now: datetime) -> dict[str, Any]:
         "session": board.session,
         "list": {
             "ranked_on": board.universe.date if board.universe else None,
-            "rule": "top 25 by average value traded a day over 20 sessions, close at least $5",
+            "rule": (
+                f"top {board.candidates.size} by average value traded a day over 20 sessions, "
+                "close at least $5"
+            ),
             "candidates": board.candidates.title,
             "entered": list(board.universe.entered) if board.universe else [],
             "left": list(board.universe.left) if board.universe else [],
@@ -206,6 +217,10 @@ def dossier(board: Board, now: datetime) -> dict[str, Any]:
             "schema": "antipo.signals/1",
             "levels": ["strong_buy", "buy", "neutral", "sell", "strong_sell"],
             "confidence": ["low", "medium", "high"],
+            "stops_and_targets": (
+                "Code adds to each buy and sell a stop at 2 × ATR(14) and a target at 3 × ATR(14) "
+                "from the entry close, followed for up to 20 sessions. A sell means exit or avoid."
+            ),
             "rules": [
                 "No digit anywhere in summary or reason text: name an indicator as {key}.",
                 "Every reason names at least one {indicator} or has a source with url and quote.",

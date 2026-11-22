@@ -18,7 +18,7 @@ from pydantic import BaseModel, ConfigDict
 from ipo_monitor.scan.bars import Series
 from ipo_monitor.scan.indicators import compute
 
-SIZE = 25
+SIZE = 50
 LOWEST_PRICE = 5.0
 
 
@@ -30,6 +30,7 @@ class Candidate(BaseModel):
     source_symbol: str
     exchange: str
     currency: str
+    sector: str | None = None
     why: str | None = None
 
 
@@ -42,6 +43,7 @@ class Candidates(BaseModel):
     url: str
     accessed: str
     note: str
+    size: int = SIZE  # how many of the candidates the list keeps
     candidates: list[Candidate]
     pinned: list[Candidate] = []
 

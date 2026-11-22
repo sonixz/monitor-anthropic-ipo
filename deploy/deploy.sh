@@ -17,6 +17,8 @@ REPOSITORY="https://github.com/sonixz/monitor-anthropic-ipo.git"
 DATA=/data
 UV="$DATA/bin/uv"
 export UV_CACHE_DIR="$DATA/.cache/uv" UV_PYTHON_DOWNLOADS=never UV_COMPILE_BYTECODE=1
+# One install at a time: on a 256 MB machine, parallel installs froze it (2026-11-22).
+export UV_CONCURRENT_INSTALLS=1 UV_CONCURRENT_DOWNLOADS=1 UV_CONCURRENT_BUILDS=1
 
 current() { readlink "$DATA/current" 2>/dev/null || true; }
 

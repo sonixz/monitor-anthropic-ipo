@@ -17,6 +17,7 @@ from ipo_monitor import __version__
 from ipo_monitor.render import LOOP0_URL, REPOSITORY_URL, _environment, asset_version
 from ipo_monitor.scan.board import TORONTO, Board, Stock
 from ipo_monitor.scan.indicators import Indicator, compute, show
+from ipo_monitor.scan.levels import HOLD
 from ipo_monitor.scan.signals import LEVELS, Signal, fill
 from ipo_monitor.scan.track import HORIZONS, Outcome
 
@@ -25,9 +26,9 @@ SITE = {
     "url": "https://antipo.watch/",
     "title": "antipo.watch: AI trading signals on the most traded Canadian stocks",
     "description": (
-        "Each trading day after the close, an AI (Claude) writes a signal for the 25 most traded "
-        "stocks of the S&P/TSX 60, every reason tied to a figure or a source, every past signal "
-        "scored. Unofficial. Not investment advice."
+        "Each trading day after the close, an AI (Claude) writes a signal for the 50 most traded "
+        "stocks of the S&P/TSX Composite, every reason tied to a figure or a source, every past "
+        "signal scored. Unofficial. Not investment advice."
     ),
     "image_alt": "antipo.watch: AI trading signals, every reason sourced. Not investment advice.",
 }
@@ -189,6 +190,12 @@ def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
             return Markup('<span class="what">–</span>')
         return cards.indicator(stock, found, toned=toned)
 
+    def mark(stock: Stock, key: str) -> Markup:
+        found = stock.marks.get(key)
+        if found is None:
+            return Markup('<span class="what">–</span>')
+        return cards.indicator(stock, found)
+
     def change(outcome: Outcome, horizon: int) -> Markup:
         value = outcome.after.get(horizon)
         if value is None:
@@ -207,6 +214,8 @@ def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
         stocks=board.stocks,
         by_symbol=by_symbol,
         ind=ind,
+        mark=mark,
+        hold=HOLD,
         signal=cards.signal,
         reason=cards.reason_parts,
         change=change,

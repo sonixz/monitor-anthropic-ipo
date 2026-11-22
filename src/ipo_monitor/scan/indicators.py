@@ -69,6 +69,25 @@ def rsi(closes: Sequence[float], n: int = 14) -> float | None:
     return 100 - 100 / (1 + gain / loss)
 
 
+def atr(bars: Sequence[Bar], n: int = 14) -> float | None:
+    """Wilder's average true range over n sessions.
+
+    True range: the largest of high − low, |high − previous close| and |low − previous close|.
+    The first average is the plain mean of the first n true ranges; each later one is folded in
+    as (previous average × (n − 1) + true range) / n.
+    """
+    if len(bars) < n + 1:
+        return None
+    ranges = [
+        max(b.high - b.low, abs(b.high - a.close), abs(b.low - a.close))
+        for a, b in itertools.pairwise(bars)
+    ]
+    average = sum(ranges[:n]) / n
+    for one in ranges[n:]:
+        average = (average * (n - 1) + one) / n
+    return average
+
+
 def pct(a: float, b: float) -> float:
     """How far a is from b, in percent of b."""
     return (a / b - 1) * 100
@@ -125,6 +144,15 @@ def compute(bars: Sequence[Bar], currency: str) -> dict[str, Indicator]:
         "index",
         "Wilder's RSI: 100 − 100 ÷ (1 + average gain ÷ average loss), smoothed over 14 sessions "
         "from the first session given",
+        len(bars),
+    )
+    add(
+        "atr14",
+        "Average true range (14 days)",
+        atr(bars, 14),
+        currency,
+        "Wilder's average of the true range (the largest of high − low, |high − previous close| "
+        "and |low − previous close|), smoothed over 14 sessions from the first session given",
         len(bars),
     )
     if len(bars) >= 21:

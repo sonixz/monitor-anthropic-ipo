@@ -28,7 +28,8 @@ from .test_web import Audit
 ROOT = Path(__file__).resolve().parents[1]
 BARS = ROOT / "tests" / "fixtures" / "scan" / "2026-11-20"
 SIGNALS = ROOT / "tests" / "fixtures" / "signals"
-CANDIDATES = Candidates.load(ROOT / "data" / "scan" / "candidates.json")
+CANDIDATES_FILE = ROOT / "tests" / "fixtures" / "scan" / "candidates-tsx60.json"
+CANDIDATES = Candidates.load(CANDIDATES_FILE)
 AFTER_CLOSE = 1795219200  # 2026-11-20 22:20 UTC, a Friday evening in Toronto
 NOW = datetime.fromtimestamp(AFTER_CLOSE, UTC)
 
@@ -127,7 +128,7 @@ def test_week_ends() -> None:
 
 def test_the_list_is_the_most_traded_in_dollars() -> None:
     listed = {k: v for k, v in SERIES.items() if k != "ANT"}
-    week = universe(listed)
+    week = universe(listed, CANDIDATES.size)
     assert week is not None
     assert week.date == "2026-11-20"
     assert week.symbols[:3] == ("RY", "ENB", "TD")
@@ -334,6 +335,7 @@ def test_the_service_serves_the_scanner_and_keeps_the_ant_page() -> None:
         "info",
         scan=f"file:{BARS}",
         signals=f"dir:{SIGNALS}",
+        scan_candidates=CANDIDATES_FILE,
     )
     app = create_app(settings)
     with TestClient(app) as client:
@@ -347,3 +349,76 @@ def test_the_service_serves_the_scanner_and_keeps_the_ant_page() -> None:
         assert health["session"] == "2026-11-20"
         assert health["signals_session"] == "2026-11-20"
         assert client.get("/scan/dossier.json").json()["session"] == "2026-11-20"
+
+
+def test_the_composite_candidate_list() -> None:
+    composite = Candidates.load(ROOT / "data" / "scan" / "candidates.json")
+    assert composite.size == 50
+    assert len(composite.candidates) == 220
+    symbols = {c.symbol: c for c in composite.candidates}
+    assert symbols["RY"].source_symbol == "RY.TO"
+    assert symbols["BBD.B"].source_symbol == "BBD-B.TO"
+    assert symbols["AP.UN"].source_symbol == "AP-UN.TO"
+    assert all(c.currency == "CAD" and c.sector for c in composite.candidates)
+
+
+# -- stops and targets -------------------------------------------------------------
+
+
+def test_atr_by_hand() -> None:
+    from ipo_monitor.scan.indicators import atr
+
+    rows = [
+        Bar("2026-01-01", 10, 11, 9, 10, 1),
+        Bar("2026-01-02", 10, 12, 10, 11, 1),  # true range max(2, |12-10|, |10-10|) = 2
+        Bar("2026-01-03", 11, 11, 8, 9, 1),  # max(3, |11-11|, |8-11|) = 3
+        Bar("2026-01-04", 9, 13, 9, 12, 1),  # max(4, |13-9|, |9-9|) = 4
+    ]
+    # n = 2: first average (2 + 3) / 2 = 2.5, then (2.5 × 1 + 4) / 2 = 3.25.
+    assert atr(rows, 2) == pytest.approx(3.25)
+    assert atr(rows[:2], 2) is None
+
+
+def test_stop_and_target_by_hand() -> None:
+    from ipo_monitor.scan.indicators import Indicator
+    from ipo_monitor.scan.levels import levels
+
+    found = {
+        "close": Indicator("close", "Close", 100.0, "CAD", "f", 1, "2026-01-02", "2026-01-02"),
+        "atr14": Indicator("atr14", "ATR", 2.5, "CAD", "f", 15, "2026-01-01", "2026-01-02"),
+    }
+    buy = levels("buy", found)
+    assert (buy["stop"].value, buy["target"].value) == (95.0, 107.5)  # 100 − 2 × 2.5, + 3 × 2.5
+    assert (buy["risk"].value, buy["reward"].value) == (5.0, 7.5)
+    sell = levels("strong_sell", found)
+    assert (sell["stop"].value, sell["target"].value) == (105.0, 92.5)
+    assert levels("neutral", found) == {}
+
+
+def test_which_came_first_stop_or_target() -> None:
+    from ipo_monitor.scan.track import follow
+
+    def day(i: int, low: float, high: float) -> Bar:
+        return Bar(f"2026-02-{i:02d}", 100, high, low, 100, 1)
+
+    assert follow([day(1, 99, 101), day(2, 99, 108)], True, 95, 107.5) == ("target", "2026-02-02")
+    assert follow([day(1, 94, 101)], True, 95, 107.5) == ("stop", "2026-02-01")
+    assert follow([day(1, 94, 109)], True, 95, 107.5) == ("stop", "2026-02-01")  # both: worse
+    assert follow([day(1, 99, 101)], True, 95, 107.5) == ("open", None)
+    assert follow([day(i, 99, 101) for i in range(1, 4)], True, 95, 107.5, hold=3) == (
+        "expired",
+        "2026-02-03",
+    )
+    assert follow([day(1, 92, 101)], False, 105, 92.5) == ("target", "2026-02-01")  # a sell
+
+
+def test_every_buy_and_sell_on_the_page_has_its_stop_and_target() -> None:
+    board = build(CANDIDATES, SERIES, {"2026-11-20.json": signal_file()}, NOW)
+    ry = next(s for s in board.stocks if s.symbol == "RY")
+    atr14 = ry.indicators["atr14"].value
+    assert ry.marks["stop"].value == pytest.approx(ry.indicators["close"].value - 2 * atr14)
+    enb = next(s for s in board.stocks if s.symbol == "ENB")
+    assert enb.marks == {}  # neutral
+    html = render_scan(board).html
+    assert "risk per share" in html
+    assert "not advice to sell short" in html  # SHOP is a strong sell in the test file

@@ -86,7 +86,7 @@ class SignalFile(BaseModel):
     model: str = Field(min_length=1, max_length=60)
     run: str | None = Field(default=None, max_length=300)
     note: str | None = Field(default=None, max_length=400)
-    signals: list[Signal] = Field(min_length=1, max_length=40)
+    signals: list[Signal] = Field(min_length=1, max_length=120)
 
     @property
     def written(self) -> datetime:

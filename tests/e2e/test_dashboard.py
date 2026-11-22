@@ -90,6 +90,7 @@ def _serve(answer: str, filings: str = "") -> Iterator[str]:
         "IPO_FILINGS": f"file:{EDGAR / filings}" if filings else "off",
         "IPO_SCAN": f"file:{SCAN_BARS}",
         "IPO_SIGNALS": f"dir:{SCAN_SIGNALS}",
+        "IPO_SCAN_CANDIDATES": str(ROOT / "tests" / "fixtures" / "scan" / "candidates-tsx60.json"),
     }
     process = subprocess.Popen(
         [sys.executable, "-m", "ipo_monitor"],
@@ -198,7 +199,8 @@ def test_desktop_reading_and_keyboard(browser: Browser, base_url: str) -> None:
     assert page.get_by_text("not investment advice").first.is_visible()
     footer_link = page.get_by_role("link", name="Built with the Loop0 Method")
     assert footer_link.get_attribute("href") == "https://agmgd-on-loop0-22c0a8ea.fly.dev/"
-    assert page.get_by_text("awaiting listing").is_visible()
+    if not os.environ.get("E2E_BASE_URL"):  # the live site is past the listing
+        assert page.get_by_text("awaiting listing").is_visible()
     _shot(page, "loop-002-desktop")
     _shot(page, "loop-002-desktop-full", full=True)
 

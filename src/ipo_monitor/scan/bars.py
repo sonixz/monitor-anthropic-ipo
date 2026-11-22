@@ -10,34 +10,15 @@ from __future__ import annotations
 import json
 import math
 import time
-import urllib.error
-import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
-from ipo_monitor.market import SourceError
+from ipo_monitor.market import PLAIN_AGENT, SourceError, get_json
 
 SOURCE = "Yahoo Finance"
-# A plain name for this client. The source answers "too many requests" to a request that claims
-# to be a desktop browser without behaving like one (seen on 2026-11-22), not to this.
-USER_AGENT = "antipo.watch/1.0 (+https://antipo.watch)"
-
-
-def get_json(url: str) -> Any:
-    """One HTTPS request for JSON. Raises SourceError with a short reason."""
-    request = urllib.request.Request(  # noqa: S310 - fixed https addresses
-        url, headers={"User-Agent": USER_AGENT, "Accept": "application/json"}
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=15) as response:  # noqa: S310
-            return json.loads(response.read(3_000_000))
-    except urllib.error.HTTPError as error:
-        raise SourceError(f"HTTP {error.code}") from error
-    except (OSError, ValueError) as error:
-        raise SourceError(type(error).__name__) from error
 
 
 @dataclass(frozen=True)
@@ -152,7 +133,7 @@ class YahooDaily:
         for host in self.hosts:
             url = f"https://{host}/v8/finance/chart/{source_symbol}?range=1y&interval=1d"
             try:
-                payload = get_json(url)
+                payload = get_json(url, PLAIN_AGENT)
             except SourceError as error:
                 problem = str(error)
                 self.sleep(self.pause)

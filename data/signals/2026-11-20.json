@@ -1,152 +1,626 @@
 {
  "schema": "antipo.signals/1",
  "session": "2026-11-20",
- "written_at": "2026-11-22T14:04:00Z",
+ "written_at": "2026-11-22T14:50:00Z",
  "written_by": "Claude, session",
  "model": "claude-opus-5-5",
- "note": "The first run, written by hand in a working session on Sunday for Friday's closes. Most of the list is in a broad pullback; no signal is strong.",
+ "note": "The first run, written by hand in a working session on Sunday for Friday's closes, then extended to the fifty stocks of the new list. Most of the list is in a broad pullback; no signal is strong.",
  "signals": [
-  {"symbol": "RY", "level": "buy", "confidence": "low",
+  {
+   "symbol": "RY",
+   "level": "buy",
+   "confidence": "low",
    "summary": "Oversold after a steady slide, while still close to its long-term average.",
    "reasons": [
-    {"text": "The RSI reads {rsi14}, a level that often comes before a rebound."},
-    {"text": "The close is {vs_sma200} against its two-hundred-day average: the long trend is roughly intact, the drop is recent ({ret20} in twenty sessions)."}
-   ]},
-  {"symbol": "ENB", "level": "sell", "confidence": "low",
+    {
+     "text": "The RSI reads {rsi14}, a level that often comes before a rebound."
+    },
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average: the long trend is roughly intact, the drop is recent ({ret20} in twenty sessions)."
+    }
+   ]
+  },
+  {
+   "symbol": "ENB",
+   "level": "sell",
+   "confidence": "low",
    "summary": "Below its long-term average and drifting toward its low of the year.",
    "reasons": [
-    {"text": "The close is {vs_sma200} against its two-hundred-day average and only {from_low52} above its low of the year."},
-    {"text": "Volume ran at {vol_ratio} its usual pace on a down day ({change_1d}): sellers were active."}
-   ]},
-  {"symbol": "TD", "level": "buy", "confidence": "low",
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average and only {from_low52} above its low of the year."
+    },
+    {
+     "text": "Volume ran at {vol_ratio} its usual pace on a down day ({change_1d}): sellers were active."
+    }
+   ]
+  },
+  {
+   "symbol": "TD",
+   "level": "buy",
+   "confidence": "low",
    "summary": "A pullback inside an uptrend: oversold, still above its long-term average.",
    "reasons": [
-    {"text": "The RSI reads {rsi14} after {ret20} in twenty sessions."},
-    {"text": "The close stays {vs_sma200} against its two-hundred-day average, so the longer uptrend holds for now."}
-   ]},
-  {"symbol": "BMO", "level": "neutral", "confidence": "low",
+    {
+     "text": "The RSI reads {rsi14} after {ret20} in twenty sessions."
+    },
+    {
+     "text": "The close stays {vs_sma200} against its two-hundred-day average, so the longer uptrend holds for now."
+    }
+   ]
+  },
+  {
+   "symbol": "BMO",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Oversold, but sitting right on its long-term average: no clear edge yet.",
    "reasons": [
-    {"text": "The RSI reads {rsi14} while the close is {vs_sma200} against its two-hundred-day average: a test of support, not yet a turn."}
-   ]},
-  {"symbol": "CNQ", "level": "neutral", "confidence": "low",
+    {
+     "text": "The RSI reads {rsi14} while the close is {vs_sma200} against its two-hundred-day average: a test of support, not yet a turn."
+    }
+   ]
+  },
+  {
+   "symbol": "CNQ",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "A sharp energy sell-off with heavy volume: oversold, but the fall is still going.",
    "reasons": [
-    {"text": "Down {ret20} in twenty sessions with an RSI of {rsi14}."},
-    {"text": "Volume ran at {vol_ratio} its usual pace: the selling has not dried up."}
-   ]},
-  {"symbol": "SU", "level": "neutral", "confidence": "low",
+    {
+     "text": "Down {ret20} in twenty sessions with an RSI of {rsi14}."
+    },
+    {
+     "text": "Volume ran at {vol_ratio} its usual pace: the selling has not dried up."
+    }
+   ]
+  },
+  {
+   "symbol": "SU",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Down hard with the energy group, still just above its long-term average.",
    "reasons": [
-    {"text": "Down {ret20} in twenty sessions; the RSI reads {rsi14}; the close is {vs_sma200} against its two-hundred-day average."}
-   ]},
-  {"symbol": "BNS", "level": "buy", "confidence": "low",
+    {
+     "text": "Down {ret20} in twenty sessions; the RSI reads {rsi14}; the close is {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "BNS",
+   "level": "buy",
+   "confidence": "low",
    "summary": "Oversold in a longer uptrend, like the other large banks.",
    "reasons": [
-    {"text": "The RSI reads {rsi14}, and the close is still {vs_sma200} against its two-hundred-day average."}
-   ]},
-  {"symbol": "SHOP", "level": "neutral", "confidence": "low",
+    {
+     "text": "The RSI reads {rsi14}, and the close is still {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "SHOP",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "A steep fall: oversold, but momentum is still down, so no call either way.",
    "reasons": [
-    {"text": "Down {ret20} in twenty sessions and {change_1d} on the day, with an RSI of {rsi14}."},
-    {"text": "The close is {vs_sma50} against its fifty-day average and {from_high52} from its high of the year: the trend has turned down."}
-   ]},
-  {"symbol": "CM", "level": "neutral", "confidence": "low",
+    {
+     "text": "Down {ret20} in twenty sessions and {change_1d} on the day, with an RSI of {rsi14}."
+    },
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average and {from_high52} from its high of the year: the trend has turned down."
+    }
+   ]
+  },
+  {
+   "symbol": "CM",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Oversold, but below its long-term average, unlike the stronger banks.",
    "reasons": [
-    {"text": "The RSI reads {rsi14}, while the close is {vs_sma200} against its two-hundred-day average."}
-   ]},
-  {"symbol": "MFC", "level": "buy", "confidence": "low",
+    {
+     "text": "The RSI reads {rsi14}, while the close is {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "MFC",
+   "level": "buy",
+   "confidence": "low",
    "summary": "A quiet pullback that kept the long-term uptrend.",
    "reasons": [
-    {"text": "The close is {vs_sma200} against its two-hundred-day average with an RSI of {rsi14}."},
-    {"text": "Volume was light, {vol_ratio} its usual pace: no sign of heavy selling."}
-   ]},
-  {"symbol": "TRP", "level": "neutral", "confidence": "medium",
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average with an RSI of {rsi14}."
+    },
+    {
+     "text": "Volume was light, {vol_ratio} its usual pace: no sign of heavy selling."
+    }
+   ]
+  },
+  {
+   "symbol": "TRP",
+   "level": "neutral",
+   "confidence": "medium",
    "summary": "Holding steady while the market fell: no stretch either way.",
    "reasons": [
-    {"text": "The RSI sits at {rsi14}, mid-range, and the close is {vs_sma50} against its fifty-day average."}
-   ]},
-  {"symbol": "NA", "level": "neutral", "confidence": "low",
+    {
+     "text": "The RSI sits at {rsi14}, mid-range, and the close is {vs_sma50} against its fifty-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "NA",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Oversold, but below its long-term average.",
    "reasons": [
-    {"text": "The RSI reads {rsi14}; the close is {vs_sma200} against its two-hundred-day average."}
-   ]},
-  {"symbol": "CVE", "level": "neutral", "confidence": "low",
+    {
+     "text": "The RSI reads {rsi14}; the close is {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "CVE",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Energy weakness: well off its fifty-day average, near its long-term one.",
    "reasons": [
-    {"text": "The close is {vs_sma50} against its fifty-day average but {vs_sma200} against its two-hundred-day average; the RSI reads {rsi14}."}
-   ]},
-  {"symbol": "CLS", "level": "sell", "confidence": "low",
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average but {vs_sma200} against its two-hundred-day average; the RSI reads {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "CLS",
+   "level": "sell",
+   "confidence": "low",
    "summary": "A broken trend in AI hardware: far below its averages, near its low of the year.",
    "reasons": [
-    {"text": "The close is {vs_sma200} against its two-hundred-day average and {from_high52} from its high of the year, after {change_1d} on the day."},
-    {"text": "Cash is the risk named in coverage of the fall.",
-     "source": {"kind": "article", "url": "https://www.tikr.com/blog/celestica-lost-36-in-a-month-cibc-sees-101-upside-from-here", "outlet": "TIKR", "title": "Celestica Lost 36% in a Month. CIBC Sees 101% Upside From Here", "published": "2026-11-03", "quote": "The main risk is cash: Celestica cut its 2026 free cash flow outlook to $460 million"}}
-   ]},
-  {"symbol": "AEM", "level": "sell", "confidence": "low",
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average and {from_high52} from its high of the year, after {change_1d} on the day."
+    },
+    {
+     "text": "Cash is the risk named in coverage of the fall.",
+     "source": {
+      "kind": "article",
+      "url": "https://www.tikr.com/blog/celestica-lost-36-in-a-month-cibc-sees-101-upside-from-here",
+      "outlet": "TIKR",
+      "title": "Celestica Lost 36% in a Month. CIBC Sees 101% Upside From Here",
+      "published": "2026-11-03",
+      "quote": "The main risk is cash: Celestica cut its 2026 free cash flow outlook to $460 million"
+     }
+    }
+   ]
+  },
+  {
+   "symbol": "AEM",
+   "level": "sell",
+   "confidence": "low",
    "summary": "Gold miners keep falling: well below the long-term average.",
    "reasons": [
-    {"text": "The close is {vs_sma200} against its two-hundred-day average and {from_high52} from its high of the year; RSI {rsi14}."}
-   ]},
-  {"symbol": "CNR", "level": "neutral", "confidence": "medium",
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average and {from_high52} from its high of the year; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "CNR",
+   "level": "neutral",
+   "confidence": "medium",
    "summary": "Steady above its averages while the market fell.",
    "reasons": [
-    {"text": "The close is {vs_sma50} against its fifty-day average and {vs_sma200} against its two-hundred-day average; RSI {rsi14}."}
-   ]},
-  {"symbol": "ABX", "level": "sell", "confidence": "low",
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average and {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "ABX",
+   "level": "sell",
+   "confidence": "low",
    "summary": "At its low of the year and far below its long-term average.",
    "reasons": [
-    {"text": "The close is only {from_low52} above its low of the year and {vs_sma200} against its two-hundred-day average."},
-    {"text": "The RSI reads {rsi14}: oversold, but nothing yet shows the fall is ending."}
-   ]},
-  {"symbol": "SLF", "level": "neutral", "confidence": "low",
+    {
+     "text": "The close is only {from_low52} above its low of the year and {vs_sma200} against its two-hundred-day average."
+    },
+    {
+     "text": "The RSI reads {rsi14}: oversold, but nothing yet shows the fall is ending."
+    }
+   ]
+  },
+  {
+   "symbol": "SLF",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Very heavy volume on a down day; oversold below its long-term average.",
    "reasons": [
-    {"text": "Volume ran at {vol_ratio} its usual pace with a move of {change_1d}; the RSI reads {rsi14}."},
-    {"text": "The last quarter was mixed: underlying earnings up, reported earnings down.",
-     "source": {"kind": "release", "url": "https://finviz.com/news/416188/sunlife-reports-third-quarter-2026-results", "outlet": "PR Newswire, via Finviz", "title": "Sun Life reports Third Quarter 2026 results", "published": "2026-11-04", "quote": "Underlying EPS(2)(4) of $2.05 increased 10% from Q3'25; reported EPS(4) of $1.40 decreased 29% from Q3'25."}}
-   ]},
-  {"symbol": "BN", "level": "sell", "confidence": "low",
+    {
+     "text": "Volume ran at {vol_ratio} its usual pace with a move of {change_1d}; the RSI reads {rsi14}."
+    },
+    {
+     "text": "The last quarter was mixed: underlying earnings up, reported earnings down.",
+     "source": {
+      "kind": "release",
+      "url": "https://finviz.com/news/416188/sunlife-reports-third-quarter-2026-results",
+      "outlet": "PR Newswire, via Finviz",
+      "title": "Sun Life reports Third Quarter 2026 results",
+      "published": "2026-11-04",
+      "quote": "Underlying EPS(2)(4) of $2.05 increased 10% from Q3'25; reported EPS(4) of $1.40 decreased 29% from Q3'25."
+     }
+    }
+   ]
+  },
+  {
+   "symbol": "BN",
+   "level": "sell",
+   "confidence": "low",
    "summary": "Below its long-term average and close to its low of the year.",
    "reasons": [
-    {"text": "The close is {vs_sma200} against its two-hundred-day average and {from_low52} above its low of the year."}
-   ]},
-  {"symbol": "CSU", "level": "neutral", "confidence": "low",
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average and {from_low52} above its low of the year."
+    }
+   ]
+  },
+  {
+   "symbol": "CSU",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "A pullback that kept the long-term uptrend; volume was high.",
    "reasons": [
-    {"text": "The close is {vs_sma200} against its two-hundred-day average, the RSI {rsi14}, volume {vol_ratio} its usual pace."}
-   ]},
-  {"symbol": "CP", "level": "neutral", "confidence": "medium",
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average, the RSI {rsi14}, volume {vol_ratio} its usual pace."
+    }
+   ]
+  },
+  {
+   "symbol": "CP",
+   "level": "neutral",
+   "confidence": "medium",
    "summary": "Holding above its averages through the market's fall.",
    "reasons": [
-    {"text": "The close is {vs_sma50} against its fifty-day average; RSI {rsi14}."}
-   ]},
-  {"symbol": "FTS", "level": "buy", "confidence": "medium",
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "FTS",
+   "level": "buy",
+   "confidence": "medium",
    "summary": "One of the few leaders: above every average, near its high, on heavy volume.",
    "reasons": [
-    {"text": "The close is {vs_sma50} against its fifty-day average and {vs_sma200} against its two-hundred-day average, only {from_high52} from its high of the year."},
-    {"text": "It rose {change_1d} on a down day for the market, on volume {vol_ratio} its usual pace; the RSI of {rsi14} is firm, not stretched."}
-   ]},
-  {"symbol": "PPL", "level": "neutral", "confidence": "medium",
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average and {vs_sma200} against its two-hundred-day average, only {from_high52} from its high of the year."
+    },
+    {
+     "text": "It rose {change_1d} on a down day for the market, on volume {vol_ratio} its usual pace; the RSI of {rsi14} is firm, not stretched."
+    }
+   ]
+  },
+  {
+   "symbol": "PPL",
+   "level": "neutral",
+   "confidence": "medium",
    "summary": "Steady, above its averages, with no stretch.",
    "reasons": [
-    {"text": "The close is {vs_sma200} against its two-hundred-day average; RSI {rsi14}."}
-   ]},
-  {"symbol": "IMO", "level": "neutral", "confidence": "low",
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "IMO",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Down with the energy group, below its long-term average.",
    "reasons": [
-    {"text": "Down {ret20} in twenty sessions; the close is {vs_sma200} against its two-hundred-day average."}
-   ]},
-  {"symbol": "BCE", "level": "neutral", "confidence": "low",
+    {
+     "text": "Down {ret20} in twenty sessions; the close is {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "BCE",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "A sharp rebound, but still under its long-term average.",
    "reasons": [
-    {"text": "Up {ret20} in twenty sessions with an RSI of {rsi14}, yet the close is {vs_sma200} against its two-hundred-day average."}
-   ]},
-  {"symbol": "ANT", "level": "neutral", "confidence": "low",
+    {
+     "text": "Up {ret20} in twenty sessions with an RSI of {rsi14}, yet the close is {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "ANT",
+   "level": "neutral",
+   "confidence": "low",
    "summary": "Too few sessions since the listing to read a trend.",
    "reasons": [
-    {"text": "Only two closes so far; the last is {close}, {change_1d} on the day."}
-   ]}
+    {
+     "text": "Only two closes so far; the last is {close}, {change_1d} on the day."
+    }
+   ]
+  },
+  {
+   "symbol": "FFH",
+   "level": "buy",
+   "confidence": "low",
+   "summary": "A steady uptrend near its high of the year.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average and {from_high52} from its high of the year; the RSI of {rsi14} leaves room."
+    }
+   ]
+  },
+  {
+   "symbol": "POW",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "A shallow pullback inside a longer uptrend.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average but {vs_sma200} against its two-hundred-day one; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "CCO",
+   "level": "sell",
+   "confidence": "low",
+   "summary": "A collapse to its low of the year, far below its long-term average.",
+   "reasons": [
+    {
+     "text": "The close is only {from_low52} above its low of the year and {vs_sma200} against its two-hundred-day average."
+    },
+    {
+     "text": "Down {ret20} in twenty sessions; the RSI of {rsi14} is deeply oversold, but nothing yet shows a turn."
+    }
+   ]
+  },
+  {
+   "symbol": "MG",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Weak, below its averages, without a clear stretch.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "T",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "A very sharp run: overbought, so no fresh buy here.",
+   "reasons": [
+    {
+     "text": "Up {ret20} in twenty sessions with an RSI of {rsi14} and volume {vol_ratio} its usual pace: stretched after the move."
+    }
+   ]
+  },
+  {
+   "symbol": "WPM",
+   "level": "sell",
+   "confidence": "low",
+   "summary": "Precious metals keep sliding: well below the long-term average.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average and {from_high52} from its high of the year."
+    }
+   ]
+  },
+  {
+   "symbol": "EMA",
+   "level": "neutral",
+   "confidence": "medium",
+   "summary": "A strong uptrend, but stretched: better entries come on pullbacks.",
+   "reasons": [
+    {
+     "text": "The RSI reads {rsi14} with the close {from_high52} from its high of the year and {vs_sma50} against its fifty-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "RCI.B",
+   "level": "buy",
+   "confidence": "low",
+   "summary": "Momentum building above its long-term average, not yet stretched.",
+   "reasons": [
+    {
+     "text": "Up {ret20} in twenty sessions, the close {vs_sma200} against its two-hundred-day average, RSI {rsi14}."
+    },
+    {
+     "text": "Volume ran at {vol_ratio} its usual pace on a day of {change_1d}."
+    }
+   ]
+  },
+  {
+   "symbol": "K",
+   "level": "sell",
+   "confidence": "low",
+   "summary": "At its low of the year after a steep fall.",
+   "reasons": [
+    {
+     "text": "The close is {from_low52} above its low of the year and {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "NTR",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Oversold, but below its long-term average.",
+   "reasons": [
+    {
+     "text": "The RSI reads {rsi14}; the close is {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "WCN",
+   "level": "neutral",
+   "confidence": "medium",
+   "summary": "A calm uptrend, mid-range: nothing to act on today.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average with an RSI of {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "WCP",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Down with the energy group, near its long-term average.",
+   "reasons": [
+    {
+     "text": "Down {ret20} in twenty sessions; the close is {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "TOU",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Flat, close to its averages.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average and {vs_sma200} against its two-hundred-day one; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "TRI",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "A sharp recent drop, but still above its long-term average.",
+   "reasons": [
+    {
+     "text": "Down {ret20} in twenty sessions, yet {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "IFC",
+   "level": "buy",
+   "confidence": "low",
+   "summary": "A steady defensive uptrend, holding firm while the market fell.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average and {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "FNV",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Pulled back with gold, still above its low of the year by a margin.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average; volume {vol_ratio} its usual pace; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "QBR.B",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "A bounce on the day inside a downtrend.",
+   "reasons": [
+    {
+     "text": "Up {change_1d} on the day, but the close is {vs_sma50} against its fifty-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "DOL",
+   "level": "buy",
+   "confidence": "medium",
+   "summary": "One of the leaders: above every average and close to its high.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average and {vs_sma200} against its two-hundred-day average, {from_high52} from its high of the year."
+    },
+    {
+     "text": "The RSI of {rsi14} is firm without being stretched."
+    }
+   ]
+  },
+  {
+   "symbol": "ATD",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Flat, near its averages, with heavier volume.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma50} against its fifty-day average; volume {vol_ratio} its usual pace; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "GWO",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Heavy volume on a down day, still well above its long-term average.",
+   "reasons": [
+    {
+     "text": "Volume ran at {vol_ratio} its usual pace with a move of {change_1d}; the close is {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "TECK.B",
+   "level": "sell",
+   "confidence": "low",
+   "summary": "A steep fall below its long-term average.",
+   "reasons": [
+    {
+     "text": "The close is {vs_sma200} against its two-hundred-day average after {ret20} in twenty sessions; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "WSP",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "Far below its high, under its long-term average, no stretch either way.",
+   "reasons": [
+    {
+     "text": "The close is {from_high52} from its high of the year and {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "LUN",
+   "level": "sell",
+   "confidence": "low",
+   "summary": "Base metals in a steep fall, at the low of the year.",
+   "reasons": [
+    {
+     "text": "The close is {from_low52} above its low of the year and {vs_sma200} against its two-hundred-day average."
+    }
+   ]
+  },
+  {
+   "symbol": "ATZ",
+   "level": "neutral",
+   "confidence": "low",
+   "summary": "A pullback close to its long-term average.",
+   "reasons": [
+    {
+     "text": "Down {ret20} in twenty sessions; the close is {vs_sma200} against its two-hundred-day average; RSI {rsi14}."
+    }
+   ]
+  },
+  {
+   "symbol": "FM",
+   "level": "sell",
+   "confidence": "low",
+   "summary": "At its low of the year after a sharp fall, on heavy volume.",
+   "reasons": [
+    {
+     "text": "The close is {from_low52} above its low of the year and {vs_sma200} against its two-hundred-day average; volume {vol_ratio} its usual pace."
+    }
+   ]
+  }
  ]
 }

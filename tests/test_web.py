@@ -248,8 +248,8 @@ def test_share_card_for_x(client: TestClient) -> None:
     ):
         assert tags.get(name), name
     assert tags["twitter:card"] == "summary_large_image"
-    assert tags["og:url"] == "https://antipo.watch/"
-    assert '<link rel="canonical" href="https://antipo.watch/">' in html
+    assert tags["og:url"] == "https://antipo.watch/ant"
+    assert '<link rel="canonical" href="https://antipo.watch/ant">' in html
     assert tags["og:image"].startswith("https://antipo.watch/static/og.png?v=")
     assert tags["twitter:image"] == tags["og:image"]
     assert "Anthropic IPO Watch" in tags["og:title"]

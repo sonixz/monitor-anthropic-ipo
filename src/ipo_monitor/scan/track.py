@@ -2,18 +2,25 @@
 
 For each signal: the close of its session, then the change after 5 and after 20 sessions,
 computed from the same bars. A buy is counted right when the stock rose, a sell when it fell;
-neutral is not counted either way. Nothing is left out: losses stay with the wins.
+neutral is not counted either way.
+
+Each buy and sell is also followed against its stop and target (`levels.py`), session by
+session from the next one, for up to `HOLD` sessions: whichever the day's low or high reaches
+first. A session that reaches both is counted as the stop, the worse case. After `HOLD`
+sessions with neither, the signal has expired. Nothing is left out: losses stay with the wins.
 """
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from ipo_monitor.scan.bars import Series
-from ipo_monitor.scan.indicators import pct
+from ipo_monitor.scan.bars import Bar, Series
+from ipo_monitor.scan.indicators import compute, pct
+from ipo_monitor.scan.levels import HOLD, levels
 from ipo_monitor.scan.signals import LEVELS, STRENGTH, SignalFile
 
 HORIZONS = (5, 20)
+RESULTS = {"target": "target hit", "stop": "stop hit", "expired": "expired", "open": "open"}
 
 
 @dataclass(frozen=True)
@@ -25,6 +32,10 @@ class Outcome:
     close: float | None
     currency: str
     after: dict[int, float | None]  # horizon → change in percent, None until it has passed
+    stop: float | None = None
+    target: float | None = None
+    result: str | None = None  # target, stop, expired, open; None for neutral
+    result_date: str | None = None
 
     def right(self, horizon: int) -> bool | None:
         change = self.after.get(horizon)
@@ -32,6 +43,10 @@ class Outcome:
         if change is None or strength == 0:
             return None
         return change > 0 if strength > 0 else change < 0
+
+    @property
+    def result_label(self) -> str:
+        return RESULTS.get(self.result or "", "")
 
 
 @dataclass(frozen=True)
@@ -42,6 +57,23 @@ class Summary:
     scored: dict[int, int]
     average: dict[int, float | None]
     right: dict[int, int]
+    results: dict[str, int] = field(default_factory=dict)
+
+
+def follow(
+    later: list[Bar], up: bool, stop: float, target: float, hold: int = HOLD
+) -> tuple[str, str | None]:
+    """Which of stop and target the sessions after the signal reached first."""
+    for bar in later[:hold]:
+        stopped = bar.low <= stop if up else bar.high >= stop
+        reached = bar.high >= target if up else bar.low <= target
+        if stopped:
+            return "stop", bar.date
+        if reached:
+            return "target", bar.date
+    if len(later) >= hold:
+        return "expired", later[hold - 1].date
+    return "open", None
 
 
 def outcomes(files: list[SignalFile], series: dict[str, Series]) -> list[Outcome]:
@@ -53,6 +85,8 @@ def outcomes(files: list[SignalFile], series: dict[str, Series]) -> list[Outcome
             close = None
             after: dict[int, float | None] = dict.fromkeys(HORIZONS)
             currency = one.currency if one else ""
+            stop = target = None
+            result = result_date = None
             if one is not None:
                 dates = [b.date for b in one.bars]
                 if file.session in dates:
@@ -61,6 +95,11 @@ def outcomes(files: list[SignalFile], series: dict[str, Series]) -> list[Outcome
                     for horizon in HORIZONS:
                         if index + horizon < len(one.bars):
                             after[horizon] = pct(one.bars[index + horizon].close, close)
+                    marks = levels(signal.level, compute(one.bars[: index + 1], one.currency))
+                    if marks:
+                        stop, target = marks["stop"].value, marks["target"].value
+                        up = STRENGTH[signal.level] > 0
+                        result, result_date = follow(list(one.bars[index + 1 :]), up, stop, target)
             found.append(
                 Outcome(
                     file.session,
@@ -70,6 +109,10 @@ def outcomes(files: list[SignalFile], series: dict[str, Series]) -> list[Outcome
                     close,
                     currency,
                     after,
+                    stop,
+                    target,
+                    result,
+                    result_date,
                 )
             )
     return found
@@ -87,5 +130,6 @@ def summarize(found: list[Outcome]) -> list[Summary]:
             scored[horizon] = len(changes)
             average[horizon] = sum(changes) / len(changes) if changes else None
             right[horizon] = sum(1 for o in mine if o.right(horizon))
-        out.append(Summary(level, label, len(mine), scored, average, right))
+        results = {key: sum(1 for o in mine if o.result == key) for key in RESULTS}
+        out.append(Summary(level, label, len(mine), scored, average, right, results))
     return out

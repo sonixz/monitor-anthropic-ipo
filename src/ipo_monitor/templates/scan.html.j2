@@ -60,6 +60,7 @@
         <span class="sig-close">{{ ind(s, "close") }} {{ ind(s, "change_1d", true) }}</span>
       </div>
       <p class="sig-sum">{{ reason(s, s.signal.summary) }}</p>
+      {% if s.marks %}<p class="sig-lv">entry {{ mark(s, "entry") }} · {% if s.signal.strength > 0 %}stop{% else %}cancel above{% endif %} {{ mark(s, "stop") }} · target {{ mark(s, "target") }}</p>{% endif %}
     </li>
     {% endfor %}
   </ul>
@@ -83,7 +84,7 @@
   <div class="scroll">
   <table class="lines scan-table">
     <caption class="vh">Each stock, its close, its signal and the main indicators</caption>
-    <thead><tr><th scope="col">stock</th><th scope="col">signal</th><th scope="col">close</th><th scope="col">day</th><th scope="col"><abbr title="RSI over fourteen sessions">RSI</abbr></th><th scope="col">vs fifty-day</th><th scope="col">volume</th><th scope="col">value traded</th></tr></thead>
+    <thead><tr><th scope="col">stock</th><th scope="col">signal</th><th scope="col">close</th><th scope="col">day</th><th scope="col"><abbr title="RSI over fourteen sessions">RSI</abbr></th><th scope="col">vs fifty-day</th><th scope="col">volume</th><th scope="col">value traded</th><th scope="col">stop · target</th></tr></thead>
     <tbody>
     {% for s in stocks %}
       <tr{% if s.rank is none %} class="pinned"{% endif %}>
@@ -95,6 +96,7 @@
         <td>{{ ind(s, "vs_sma50", true) }}</td>
         <td>{{ ind(s, "vol_ratio") }}</td>
         <td>{{ ind(s, "dollar_vol20") }}</td>
+        <td>{% if s.marks %}{{ mark(s, "stop") }} · {{ mark(s, "target") }}{% else %}<span class="what">–</span>{% endif %}</td>
       </tr>
     {% endfor %}
     </tbody>
@@ -106,14 +108,14 @@
 <section class="panel wide-panel" id="record" tabindex="-1" aria-labelledby="record-h">
   <h2 id="record-h">TRACK RECORD <span class="q">Were the signals right?</span></h2>
   {% if board.outcomes %}
-  <p class="lede">Every signal shown since the first run, with what the stock did next. A buy counts as right when the stock rose, a sell when it fell. Nothing is left out.</p>
+  <p class="lede">Every signal shown since the first run, with what the stock did next. A buy counts as right when the stock rose, a sell when it fell. Each buy and sell is also followed against its stop and target for up to {{ L(hold) }} sessions: whichever the day's range reached first. Nothing is left out.</p>
   <div class="scroll">
   <table class="lines">
     <caption>By signal</caption>
-    <thead><tr><th scope="col">signal</th><th scope="col">given</th>{% for h in horizons %}<th scope="col">scored, {{ L(h) }} sessions</th><th scope="col">average change</th><th scope="col">right</th>{% endfor %}</tr></thead>
+    <thead><tr><th scope="col">signal</th><th scope="col">given</th>{% for h in horizons %}<th scope="col">scored, {{ L(h) }} sessions</th><th scope="col">average change</th><th scope="col">right</th>{% endfor %}<th scope="col">target hit</th><th scope="col">stop hit</th><th scope="col">open</th><th scope="col">expired</th></tr></thead>
     <tbody>
     {% for row in board.summary if row.count %}
-      <tr><th scope="row"><span class="lv lv-{{ row.level }}">{{ row.label }}</span></th><td>{{ L(row.count) }}</td>{% for h in horizons %}<td>{{ L(row.scored[h]) }}</td><td>{{ L(average(row.average[h])) }}</td><td>{% if row.level == "neutral" %}<span class="what">not scored</span>{% elif row.scored[h] %}{{ L(row.right[h]) }}{% else %}<span class="what">–</span>{% endif %}</td>{% endfor %}</tr>
+      <tr><th scope="row"><span class="lv lv-{{ row.level }}">{{ row.label }}</span></th><td>{{ L(row.count) }}</td>{% for h in horizons %}<td>{{ L(row.scored[h]) }}</td><td>{{ L(average(row.average[h])) }}</td><td>{% if row.level == "neutral" %}<span class="what">not scored</span>{% elif row.scored[h] %}{{ L(row.right[h]) }}{% else %}<span class="what">–</span>{% endif %}</td>{% endfor %}{% for k in ("target", "stop", "open", "expired") %}<td>{% if row.level == "neutral" %}<span class="what">–</span>{% else %}{{ L(row.results[k]) }}{% endif %}</td>{% endfor %}</tr>
     {% endfor %}
     </tbody>
   </table>
@@ -122,10 +124,10 @@
     <summary>Each signal</summary>
     <div class="scroll">
     <table class="lines">
-      <thead><tr><th scope="col">session</th><th scope="col">stock</th><th scope="col">signal</th><th scope="col">close then</th>{% for h in horizons %}<th scope="col">after {{ L(h) }}</th>{% endfor %}</tr></thead>
+      <thead><tr><th scope="col">session</th><th scope="col">stock</th><th scope="col">signal</th><th scope="col">close then</th>{% for h in horizons %}<th scope="col">after {{ L(h) }}</th>{% endfor %}<th scope="col">stop · target</th><th scope="col">result</th></tr></thead>
       <tbody>
       {% for o in board.outcomes %}
-        <tr><th scope="row">{{ L(day(o.session)) }}</th><td>{{ o.symbol }}</td><td><span class="lv lv-{{ o.level }}">{{ levels[o.level] }}</span> <span class="conf conf-{{ o.confidence }}">{{ o.confidence }}</span></td><td>{% if o.close is not none %}{{ L(money(o.close, o.currency)) }}{% else %}<span class="what">–</span>{% endif %}</td>{% for h in horizons %}<td>{{ change(o, h) }}</td>{% endfor %}</tr>
+        <tr><th scope="row">{{ L(day(o.session)) }}</th><td>{{ o.symbol }}</td><td><span class="lv lv-{{ o.level }}">{{ levels[o.level] }}</span> <span class="conf conf-{{ o.confidence }}">{{ o.confidence }}</span></td><td>{% if o.close is not none %}{{ L(money(o.close, o.currency)) }}{% else %}<span class="what">–</span>{% endif %}</td>{% for h in horizons %}<td>{{ change(o, h) }}</td>{% endfor %}<td>{% if o.stop is not none %}{{ L(money(o.stop, o.currency)) }} · {{ L(money(o.target, o.currency)) }}{% else %}<span class="what">–</span>{% endif %}</td><td>{% if o.result %}<span class="res res-{{ o.result }}">{{ o.result_label }}</span>{% if o.result_date %} {{ L(day(o.result_date)) }}{% endif %}{% else %}<span class="what">–</span>{% endif %}</td></tr>
       {% endfor %}
       </tbody>
     </table>
@@ -168,6 +170,16 @@
     </li>
     {% endfor %}
   </ol>
+  {% if c.stock.marks %}
+  <table class="src-terms lv-terms"><tbody>
+    <tr><th scope="row">entry</th><td>{{ mark(c.stock, "entry") }}</td></tr>
+    <tr><th scope="row">{% if c.signal.strength > 0 %}stop{% else %}cancels the sell above{% endif %}</th><td>{{ mark(c.stock, "stop") }}</td></tr>
+    <tr><th scope="row">target</th><td>{{ mark(c.stock, "target") }}</td></tr>
+    <tr><th scope="row">risk per share</th><td>{{ mark(c.stock, "risk") }}</td></tr>
+    <tr><th scope="row">reward per share</th><td>{{ mark(c.stock, "reward") }}</td></tr>
+  </tbody></table>
+  <p class="src-note">Stop and target are computed by code from the average true range, followed for up to {{ L(hold) }} sessions.{% if c.signal.strength < 0 %} A sell means exit or avoid, not advice to sell short.{% endif %}</p>
+  {% endif %}
   <p class="src-note">Written by {{ current.written_by }} ({{ L(current.model) }}) for the session of {{ L(day(current.session, "long")) }}. General, not advice.</p>
   <p class="src-end"><button type="button" class="close" popovertarget="{{ c.slug }}" popovertargetaction="hide">close</button></p>
 </div>

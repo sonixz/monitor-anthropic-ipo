@@ -31,6 +31,7 @@ class Settings:
     visits: Path | None = None  # the file of the visit counts; None keeps them in memory
     scan: str = "off"  # the scanner's closes: auto (Yahoo Finance), off, or file:<folder>
     signals: str = "off"  # signal files: auto (release and GitHub), local, off, or dir:<folder>
+    scan_candidates: Path = Path("data/scan/candidates.json")  # the stocks the list ranks
 
     @classmethod
     def from_env(cls, env: dict[str, str] | None = None) -> Settings:
@@ -94,6 +95,12 @@ class Settings:
                 f"IPO_SIGNALS must be auto, local, off or dir:<folder>, got {signals!r}"
             )
 
+        scan_candidates = Path(source.get("IPO_SCAN_CANDIDATES", "data/scan/candidates.json"))
+        if scan != "off" and not scan_candidates.is_file():
+            raise ConfigError(
+                f"IPO_SCAN_CANDIDATES must be a candidate list file, got {str(scan_candidates)!r}"
+            )
+
         host = source.get("IPO_HOST", "127.0.0.1")
         if not host:
             raise ConfigError("IPO_HOST must not be empty")
@@ -111,4 +118,5 @@ class Settings:
             visits=visits,
             scan=scan,
             signals=signals,
+            scan_candidates=scan_candidates,
         )

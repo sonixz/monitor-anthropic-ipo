@@ -40,7 +40,6 @@ from ipo_monitor.scan.render import ScanPage, render_scan
 from ipo_monitor.scan.universe import Candidates
 from ipo_monitor.visits import Visits
 
-CANDIDATES = Path("data/scan/candidates.json")
 SIGNALS = Path("data/signals")
 
 
@@ -240,7 +239,7 @@ def create_app(
     bars, signal_sources = scan_sources(settings)
     if bars is not None:
         scanner = scan_watch.ScanWatcher(
-            Candidates.load(CANDIDATES), bars, signal_sources, scan_changed
+            Candidates.load(settings.scan_candidates), bars, signal_sources, scan_changed
         )
         # Until the first closes are read, the page says so instead of showing an empty list.
         scanner.board = build_scan(scanner.candidates, {}, {}, datetime.now(UTC))

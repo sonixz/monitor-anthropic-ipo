@@ -4,6 +4,28 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.12.0] - 2026-11-22
+
+### Added
+
+- **Top 50 of the S&P/TSX Composite** (Loop 011): 220 candidates (`data/scan/candidates.json`,
+  with sectors), ranked weekly by value traded; the list size comes from the candidate file.
+- **Stops and targets** for every buy and sell (`scan/levels.py`): stop at 2 × ATR(14) and target
+  at 3 × ATR(14) from the entry close, risk and reward per share, each opening its formula. A
+  sell means exit or avoid, not advice to sell short.
+- ATR(14), Wilder's average true range, among the indicators.
+- The track record follows each buy and sell for up to 20 sessions: target hit, stop hit (a day
+  that reaches both counts as the stop), expired or open.
+- `ROUTINE.md`: the steps the scheduled run follows to write, check and push a signal file.
+- The Nov 20 signals cover the 50 stocks of the new list.
+
+### Fixed
+
+- Builds on the 256 MB machine install one package at a time (`deploy.sh`): a parallel build
+  froze it on 2026-11-22.
+- The ANT market watcher asks Yahoo Finance with a plain client name, which it answers.
+- The IPO page's canonical address is `/ant`.
+
 ## [0.11.0] - 2026-11-22
 
 ### Added
