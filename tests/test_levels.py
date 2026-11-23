@@ -237,3 +237,21 @@ def test_levels_need_the_login(tmp_path: Path) -> None:
     client.cookies.clear()
     assert save(client, stop="260").status_code == 401
     assert not (tmp_path / "levels.json").exists()
+
+
+def test_the_real_table_uses_the_session_price_and_says_so(tmp_path: Path) -> None:
+    page = portal(tmp_path).get("/portfolio").text
+    real = page[page.index('id="real"') : page.index('id="broker-h"')]
+    # 1 RY bought at 264.10; the recorded price at 11:15 is 279.10: a gain of $15.00.
+    assert "$279.10" in real
+    assert "11:15 ET" in real
+    assert "+$15.00" in real
+
+
+def test_after_the_close_the_real_table_names_the_close(tmp_path: Path) -> None:
+    page = portal(tmp_path, "2026-11-23T18:00:00-05:00")
+    text = page.get("/portfolio").text
+    real = text[text.index('id="real"') : text.index('id="broker-h"')]
+    # The last close read is Nov 20's, 263.05: 263.05 − 264.10 = −1.05.
+    assert "close <span data-label>Nov 20</span>" in real
+    assert "−$1.05" in real

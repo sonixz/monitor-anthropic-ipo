@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.19.1] - 2026-11-23
+
+### Fixed
+
+- The REAL table's price and gain used the last daily close (Friday's on Monday) without saying
+  so. During the session they now use the session price with its time; otherwise the column
+  names the close it shows ("close Nov 20"). Owner: "are these numbers right?"
+
 ## [0.19.0] - 2026-11-23
 
 ### Added

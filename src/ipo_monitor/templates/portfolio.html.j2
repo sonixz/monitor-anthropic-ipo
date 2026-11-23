@@ -104,8 +104,8 @@
   <h2 id="real-h"><span class="real">REAL</span> YOUR ORDERS <span class="q">What you actually bought</span></h2>
   <p class="lede">From the orders you reported. Cash left in the envelope {{ L(money(real_cash)) }}.{% if levels_saved %} <span class="ok">levels saved</span>{% endif %}{% if levels_refused %} <span class="wait">not saved: {{ L(levels_refused) }}</span>{% endif %}</p>
   <div class="scroll"><table class="lines scan-table">
-    <thead><tr><th scope="col">stock</th><th scope="col">shares</th><th scope="col">paid</th><th scope="col">vs advice</th><th scope="col">last</th><th scope="col">gain</th></tr></thead>
-    <tbody>{% for h in real %}<tr><th scope="row"><span class="sig-sym">{{ h.symbol }}</span> <span class="nm">{{ L(day(h.since)) }}</span></th><td>{{ L(h.shares) }}</td><td>{{ L(money(h.cost)) }}</td><td><span class="chg {{ tone(-(h.slippage or 0)) }}">{{ L(signed(h.slippage, "%")) }}</span></td><td>{{ L(money(h.last)) }}</td><td><span class="chg {{ tone(h.pnl) }}">{{ L(signed(h.pnl)) }}</span></td></tr>{% endfor %}</tbody>
+    <thead><tr><th scope="col">stock</th><th scope="col">shares</th><th scope="col">paid</th><th scope="col">vs advice</th><th scope="col">price</th><th scope="col">gain</th></tr></thead>
+    <tbody>{% for h in real %}{% set v = now_of.get(h.symbol) %}{% set px = v.price if v else h.last %}<tr><th scope="row"><span class="sig-sym">{{ h.symbol }}</span> <span class="nm">{{ L(day(h.since)) }}</span></th><td>{{ L(h.shares) }}</td><td>{{ L(money(h.cost)) }}</td><td><span class="chg {{ tone(-(h.slippage or 0)) }}">{{ L(signed(h.slippage, "%")) }}</span></td><td>{{ L(money(px)) }}<span class="nm px-when">{% if v %}{{ L(clock(v.time)) }}{% else %}close {{ L(day(last_session)) }}{% endif %}</span></td><td>{% if px is not none %}<span class="chg {{ tone((px - h.cost) * h.shares) }}">{{ L(signed((px - h.cost) * h.shares)) }}</span>{% else %}–{% endif %}</td></tr>{% endfor %}</tbody>
   </table></div>
   <h3 id="broker-h">At the broker · what to enter, and what you entered</h3>
   <table class="lines broker" aria-labelledby="broker-h">

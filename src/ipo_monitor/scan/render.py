@@ -390,6 +390,8 @@ def render_portfolio(
         real=real,
         real_cash=real_cash,
         real_symbols={h.symbol: h for h in real},
+        now_of={v.symbol: v for v in lives if v.kind == "real" and v.time is not None},
+        last_session=board.session,
         plan_near=plan_near,
         levels_saved=levels_saved,
         levels_refused=levels_refused,
