@@ -44,7 +44,17 @@ from ipo_monitor.scan.board import Board as ScanBoard
 from ipo_monitor.scan.board import build as build_scan
 from ipo_monitor.scan.discipline import Journal, Store, from_form
 from ipo_monitor.scan.discipline import journal as journal_of
-from ipo_monitor.scan.portfolio import Ledger, Rules
+from ipo_monitor.scan.portfolio import (
+    Holding,
+    Ledger,
+    LevelsFile,
+    Rules,
+    held_of,
+    holdings,
+    levels_from_form,
+    read_levels,
+    write_levels,
+)
 from ipo_monitor.scan.render import ScanPage, render_journal, render_portfolio, render_scan
 from ipo_monitor.scan.universe import Candidates
 from ipo_monitor.visits import Visits
@@ -290,7 +300,9 @@ def create_app(
 
     def scan_changed(board: ScanBoard) -> None:
         try:
-            page = render_scan(board, release=settings.release)
+            page = render_scan(
+                board, release=settings.release, held=held_of(board.book, real_holdings(board))
+            )
         except Exception as error:  # the page being served stays
             log.event("render_failed", level="error", part="scan", error=type(error).__name__)
             return
@@ -337,6 +349,16 @@ def create_app(
             return Ledger.model_validate(json.loads(settings.ledger.read_text("utf-8")))
         except (OSError, ValueError, ValidationError):
             return None
+
+    levels_path = settings.ledger.parent / "levels.json" if settings.ledger else None
+
+    def real_holdings(board: ScanBoard) -> list[Holding]:
+        """The owner's open positions, with their levels at the broker."""
+        ledger = read_ledger()
+        if ledger is None or not ledger.fills or board.book is None:
+            return []
+        series = {s.symbol: s.series for s in board.stocks if s.series is not None}
+        return holdings(ledger, board.book, series, read_levels(levels_path))[0]
 
     def open_symbols() -> list[str]:
         """The simulated positions and the owner's real holdings, for the session prices."""
@@ -585,6 +607,26 @@ def create_app(
         log.event("discipline_saved", day=entry.date, checked=entry.checked)
         return Response(status_code=303, headers={"Location": "/portfolio?saved=1#today"})
 
+    @app.post("/levels", include_in_schema=False)
+    async def save_levels(request: Request) -> Response:
+        """The owner's levels at the broker, for each real position."""
+        if levels_path is None or scanner is None or scanner.board is None:
+            return JSONResponse({"error": "no ledger here"}, status_code=404)
+        form = parse_qs((await request.body())[:8192].decode("utf-8", "replace"))
+        board = scanner.board
+        held = real_holdings(board)
+        moment = datetime.now(UTC).isoformat(timespec="seconds")
+        found = levels_from_form(form, held, moment)
+        if isinstance(found, str):
+            return Response(
+                status_code=303,
+                headers={"Location": "/portfolio?lrefused=" + quote(found) + "#real"},
+            )
+        await asyncio.to_thread(write_levels, levels_path, LevelsFile(levels=found))
+        log.event("levels_saved", positions=len(found))
+        scan_changed(board)
+        return Response(status_code=303, headers={"Location": "/portfolio?lsaved=1#real"})
+
     @app.get("/api/upload/discipline", include_in_schema=False)
     async def discipline_status(request: Request) -> JSONResponse:
         """For the evening run: today's checklist, by token. No note, no mood."""
@@ -617,7 +659,13 @@ def create_app(
         )
 
     @app.api_route("/portfolio", methods=["GET", "HEAD"], include_in_schema=False)
-    async def portfolio(request: Request, saved: str = "", refused: str = "") -> Response:
+    async def portfolio(
+        request: Request,
+        saved: str = "",
+        refused: str = "",
+        lsaved: str = "",
+        lrefused: str = "",
+    ) -> Response:
         ledger = settings.ledger
         changed = ledger.stat().st_mtime if ledger is not None and ledger.is_file() else 0.0
         if changed != ledger_seen[0] and scanner is not None and scanner.board is not None:
@@ -634,6 +682,8 @@ def create_app(
             refused=refused[:200],
             session=session_watcher,
             now=clock(),
+            levels_saved=lsaved == "1",
+            levels_refused=lrefused[:200],
         )
         return Response(
             page.html, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-store"}

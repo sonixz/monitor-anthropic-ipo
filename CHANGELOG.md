@@ -4,6 +4,21 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.19.0] - 2026-11-23
+
+### Added
+
+- **Your levels at the broker** (Loop 016): on `/portfolio`, an "At the broker" table for each
+  real position: stop market, target alert and near-stop alert, the owner's level marked YOURS with
+  the plan's beside it; without one, the plan's applies. A form changes them (comma or dot);
+  a typo is refused with its reason (not a price, too far from the last price, stop above the
+  target, near-stop alert outside them) and nothing is stored. Kept in `levels.json` next to the
+  ledger, so an upload of the ledger keeps them. The IN SESSION panel uses them for real
+  positions; the simulation never reads them.
+- **Held stocks**: a HELD badge on the scanner's TODAY and LIST, with real shares and price and
+  simulated shares; a buy signal on a held stock reads as a position to manage, with the stop
+  and target in force. NEXT OPEN marks an order for a stock already held for real.
+
 ## [0.18.0] - 2026-11-22
 
 ### Added

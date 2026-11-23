@@ -22,6 +22,7 @@ from __future__ import annotations
 
 import json
 import math
+import re
 from dataclasses import dataclass, field
 from datetime import date as Date
 from pathlib import Path
@@ -462,18 +463,56 @@ class Ledger(BaseModel):
     fills: list[Fill] = Field(default_factory=list)
 
 
+class BrokerLevel(BaseModel):
+    """The levels the owner says they entered at the broker for one real position. Typed by
+    the owner: shown as theirs, never as a computed or market value, never read by the
+    simulation."""
+
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    stop: float | None = Field(default=None, gt=0)  # the stop market order's price
+    target: float | None = Field(default=None, gt=0)  # the price alert at the target
+    near: float | None = Field(default=None, gt=0)  # the price alert just above the stop
+    updated: str = ""
+
+
+class LevelsFile(BaseModel):
+    model_config = ConfigDict(frozen=True, extra="forbid")
+
+    schema_: Literal["antipo.levels/1"] = Field(default="antipo.levels/1", alias="schema")
+    levels: dict[str, BrokerLevel] = Field(default_factory=dict)
+
+
+def read_levels(path: Path | None) -> LevelsFile:
+    """The owner's levels; none when the file is missing or unreadable."""
+    if path is None or not path.is_file():
+        return LevelsFile()
+    try:
+        return LevelsFile.model_validate(json.loads(path.read_text("utf-8")))
+    except (OSError, ValueError, ValidationError):
+        return LevelsFile()
+
+
+def write_levels(path: Path, found: LevelsFile) -> None:
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(found.model_dump_json(by_alias=True, indent=1), "utf-8")
+    temporary.replace(path)
+
+
 @dataclass
 class Holding:
-    """A real position, from the owner's fills; stop and target from the recommendation."""
+    """A real position, from the owner's fills; stop and target from the recommendation,
+    unless the owner entered their own at the broker."""
 
     symbol: str
     shares: int
     cost: float  # average price paid
     last: float | None
-    stop: float | None
-    target: float | None
+    stop: float | None  # the plan's
+    target: float | None  # the plan's
     recommended: float | None  # the reference close of the recommendation
     since: str
+    mine: BrokerLevel | None = None
 
     @property
     def pnl(self) -> float | None:
@@ -484,8 +523,25 @@ class Holding:
         """Price paid against the recommendation's reference close, in percent."""
         return None if self.recommended is None else (self.cost / self.recommended - 1) * 100
 
+    @property
+    def stop_used(self) -> float | None:
+        return self.mine.stop if self.mine and self.mine.stop else self.stop
 
-def holdings(ledger: Ledger, book: Book, series: dict[str, Series]) -> tuple[list[Holding], float]:
+    @property
+    def target_used(self) -> float | None:
+        return self.mine.target if self.mine and self.mine.target else self.target
+
+    @property
+    def near_used(self) -> float | None:
+        return self.mine.near if self.mine and self.mine.near else None
+
+
+def holdings(
+    ledger: Ledger,
+    book: Book,
+    series: dict[str, Series],
+    mine: LevelsFile | None = None,
+) -> tuple[list[Holding], float]:
     """The owner's open positions and the cash left in the envelope."""
     cash = book.rules.capital
     lots: dict[str, list[Fill]] = {}
@@ -514,6 +570,95 @@ def holdings(ledger: Ledger, book: Book, series: dict[str, Series]) -> tuple[lis
                 rec.target if rec else None,
                 rec.sizing.close if rec else None,
                 bought[0].date,
+                mine.levels.get(symbol) if mine else None,
             )
         )
     return found, cash
+
+
+PRICE = re.compile(r"\d{1,6}(\.\d{1,4})?")
+FAR = 0.5  # a level more than half the last close away is taken for a typo
+
+
+def _price(text: str) -> float | str | None:
+    """A price typed by the owner: '208.23', '208,23', '$208.23'. Empty is None."""
+    cleaned = text.strip().replace("$", "").replace(" ", "").replace("\u00a0", "")
+    if not cleaned:
+        return None
+    cleaned = cleaned.replace(",", ".")
+    if not PRICE.fullmatch(cleaned) or float(cleaned) <= 0:
+        return f"{text.strip()[:20]!r} is not a price"
+    return float(cleaned)
+
+
+def levels_from_form(
+    form: dict[str, list[str]], held: list[Holding], updated: str
+) -> dict[str, BrokerLevel] | str:
+    """The levels from the form, one set per real position, or the reason they are refused.
+    An empty field means the plan's level applies."""
+    found: dict[str, BrokerLevel] = {}
+    for h in held:
+        values: dict[str, float | None] = {}
+        for key, name in (
+            ("stop", "stop"),
+            ("target", "target alert"),
+            ("near", "near-stop alert"),
+        ):
+            raw = (form.get(f"{key}_{h.symbol}") or [""])[0]
+            value = _price(raw)
+            if isinstance(value, str):
+                return f"{h.symbol} {name}: {value}"
+            reference = h.last or h.cost
+            if value is not None and abs(value / reference - 1) > FAR:
+                far = f"{value:.2f} is too far from the last price, {reference:.2f}"
+                return f"{h.symbol} {name}: {far}"
+            values[key] = value
+        stop = values["stop"] if values["stop"] is not None else h.stop
+        target = values["target"] if values["target"] is not None else h.target
+        near = values["near"]
+        if stop is not None and target is not None and stop >= target:
+            return f"{h.symbol}: the stop must be below the target alert"
+        if near is not None and stop is not None and near <= stop:
+            return f"{h.symbol}: the near-stop alert must be above the stop"
+        if near is not None and target is not None and near >= target:
+            return f"{h.symbol}: the near-stop alert must be below the target alert"
+        if any(v is not None for v in values.values()):
+            found[h.symbol] = BrokerLevel(
+                stop=values["stop"], target=values["target"], near=near, updated=updated
+            )
+    return found
+
+
+@dataclass(frozen=True)
+class Held:
+    """What is held of one stock, for the scanner and the orders."""
+
+    symbol: str
+    real_shares: int = 0
+    real_cost: float | None = None
+    sim_shares: int = 0
+    stop: float | None = None  # in force: the owner's, else the plan's
+    target: float | None = None
+    yours: bool = False  # the stop or target is the owner's
+
+
+def held_of(book: Book | None, real: list[Holding]) -> dict[str, Held]:
+    found: dict[str, Held] = {}
+    for h in real:
+        found[h.symbol] = Held(
+            h.symbol,
+            real_shares=h.shares,
+            real_cost=h.cost,
+            stop=h.stop_used,
+            target=h.target_used,
+            yours=bool(h.mine and (h.mine.stop or h.mine.target)),
+        )
+    for p in book.open_positions if book else []:
+        one = found.get(p.symbol)
+        if one is None:
+            found[p.symbol] = Held(p.symbol, sim_shares=p.shares, stop=p.stop, target=p.target)
+        else:
+            found[p.symbol] = Held(
+                p.symbol, one.real_shares, one.real_cost, p.shares, one.stop, one.target, one.yours
+            )
+    return found

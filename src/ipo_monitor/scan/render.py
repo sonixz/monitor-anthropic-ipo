@@ -21,8 +21,8 @@ from ipo_monitor.scan.board import TORONTO, Board, Stock
 from ipo_monitor.scan.discipline import Journal
 from ipo_monitor.scan.indicators import Indicator, compute, show
 from ipo_monitor.scan.levels import HOLD
-from ipo_monitor.scan.portfolio import Holding, Ledger, holdings
-from ipo_monitor.scan.session import Live, SessionWatcher, in_session, live
+from ipo_monitor.scan.portfolio import Held, Holding, Ledger, holdings, read_levels
+from ipo_monitor.scan.session import NEAR, Live, SessionWatcher, in_session, live
 from ipo_monitor.scan.signals import LEVELS, Signal, fill
 from ipo_monitor.scan.track import HORIZONS, Outcome
 
@@ -182,7 +182,13 @@ class ScanPage:
     signals: int
 
 
-def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
+def dollars(value: float | None) -> str:
+    return "–" if value is None else f"${value:,.2f}"
+
+
+def render_scan(
+    board: Board, *, release: str = "dev", held: dict[str, Held] | None = None
+) -> ScanPage:
     cards = Cards(board.current.session if board.current else None)
     env = _environment()
     template = env.get_template("scan.html.j2")
@@ -215,6 +221,8 @@ def render_scan(board: Board, *, release: str = "dev") -> ScanPage:
     closes_read = stamp(max(reads)) if reads else ""
     html = template.render(
         closes_read=closes_read,
+        held=held or {},
+        dollars=dollars,
         site=SITE,
         board=board,
         current=current,
@@ -297,6 +305,8 @@ def render_portfolio(
     refused: str = "",
     session: SessionWatcher | None = None,
     now: datetime | None = None,
+    levels_saved: bool = False,
+    levels_refused: str = "",
 ) -> ScanPage:
     """The simulated portfolio's page: next orders, positions, trades, metrics, rules."""
     book = board.book
@@ -308,8 +318,7 @@ def render_portfolio(
     names = {s.symbol: s.candidate.name for s in board.stocks}
     names.update({c.symbol: c.name for c in board.candidates.candidates})
 
-    def money(value: float | None) -> str:
-        return "–" if value is None else f"${value:,.2f}"
+    money = dollars
 
     def signed(value: float | None, unit: str = "$") -> str:
         if value is None:
@@ -333,17 +342,26 @@ def render_portfolio(
         ledger = Ledger.model_validate(json.loads(path.read_text("utf-8")))
         if ledger.fills:
             series = {s.symbol: s.series for s in board.stocks if s.series is not None}
-            real, real_cash = holdings(ledger, book, series)
+            real, real_cash = holdings(
+                ledger, book, series, read_levels(path.parent / "levels.json")
+            )
     moment = now or datetime.now(UTC)
+    atrs = {s.symbol: s.indicators["atr14"].value for s in board.stocks if "atr14" in s.indicators}
+    plan_near = {
+        h.symbol: h.stop + NEAR * atrs[h.symbol]
+        for h in real
+        if h.stop is not None and h.symbol in atrs
+    }
     lives: list[Live] = []
     if session is not None:
-        atrs = {
-            s.symbol: s.indicators["atr14"].value for s in board.stocks if "atr14" in s.indicators
-        }
         held = [
-            (p.symbol, "simulated", p.entry, p.stop, p.target, p.last) for p in book.open_positions
-        ] + [(h.symbol, "real", h.cost, h.stop, h.target, h.last) for h in real]
-        for symbol, kind, entry_price, stop, target, close in held:
+            (p.symbol, "simulated", p.entry, p.stop, p.target, p.last, None)
+            for p in book.open_positions
+        ] + [
+            (h.symbol, "real", h.cost, h.stop_used, h.target_used, h.last, h.near_used)
+            for h in real
+        ]
+        for symbol, kind, entry_price, stop, target, close, near in held:
             lives.append(
                 live(
                     symbol,
@@ -355,6 +373,7 @@ def render_portfolio(
                     atr=atrs.get(symbol),
                     last_close=close,
                     now=moment,
+                    near=near,
                 )
             )
     written = ""
@@ -370,6 +389,10 @@ def render_portfolio(
         moods=MOODS,
         real=real,
         real_cash=real_cash,
+        real_symbols={h.symbol: h for h in real},
+        plan_near=plan_near,
+        levels_saved=levels_saved,
+        levels_refused=levels_refused,
         lives=lives,
         session=session,
         in_session=in_session(moment),

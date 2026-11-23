@@ -219,8 +219,11 @@ def live(
     atr: float | None,
     last_close: float | None,
     now: datetime,
+    near: float | None = None,
 ) -> Live:
-    """One position's row. Outside the session, or without today's price, the last close."""
+    """One position's row. Outside the session, or without today's price, the last close.
+    `near` is the owner's near-stop alert: at or below it counts as near the stop, in place of
+    half an ATR."""
     today = tick if tick is not None and tick.day == session_day(now) else None
     if not in_session(now):
         state, price, time = "closed", last_close, None
@@ -245,6 +248,8 @@ def live(
             flag = "stop reached"  # both in one session counts as the stop, as in the simulation
         elif target is not None and today.high is not None and today.high >= target:
             flag = "target reached"
+        elif near is not None:
+            flag = "near stop" if today.price <= near else ""
         elif stop is not None and atr is not None and today.price - stop <= NEAR * atr:
             flag = "near stop"
     return Live(

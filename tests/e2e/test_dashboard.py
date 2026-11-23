@@ -156,8 +156,7 @@ def private_url() -> Iterator[str]:
         yield url
 
 
-@pytest.fixture(scope="module")
-def session_url() -> Iterator[str]:
+def _session_site() -> Iterator[str]:
     """A local site at 11:20 on a made-up trading day, with one real position reported and
     invented prices during the session. The data names itself as test data."""
     folder = Path(tempfile.mkdtemp(prefix="antipo-e2e-ledger-"))
@@ -171,6 +170,17 @@ def session_url() -> Iterator[str]:
     }
     with _serve("ant-awaiting.json", extra=extra) as url:
         yield url
+
+
+@pytest.fixture(scope="module")
+def session_url() -> Iterator[str]:
+    yield from _session_site()
+
+
+@pytest.fixture(scope="module")
+def levels_url() -> Iterator[str]:
+    """The same site, apart: its levels change during the test."""
+    yield from _session_site()
 
 
 @pytest.fixture(scope="module")

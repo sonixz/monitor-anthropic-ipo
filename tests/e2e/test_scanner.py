@@ -158,3 +158,47 @@ def test_prices_during_the_session(browser: Browser, session_url: str, viewport:
     _shot(page, "session-" + ("phone" if phone else "desktop"))
     assert errors == []
     context.close()
+
+
+@pytest.mark.parametrize("viewport", [PHONE, DESKTOP], ids=["phone", "desktop"])
+def test_levels_at_the_broker(browser: Browser, levels_url: str, viewport: object) -> None:
+    """The owner types the levels entered at the broker, saves, and sees them as theirs."""
+    phone = viewport == PHONE
+    context = browser.new_context(
+        viewport=viewport,  # type: ignore[arg-type]
+        device_scale_factor=2,
+        is_mobile=phone,
+        has_touch=phone,
+    )
+    page, errors = _open(context, levels_url, path="/portfolio")
+    real = page.locator("#real")
+    broker = real.locator("table.broker")
+    expect(broker).to_contain_text("stop market")
+    # A typo first: refused with its reason, nothing saved.
+    real.locator("summary", has_text="change your levels").click()
+    page.fill("input[name=stop_RY]", "2600")
+    page.click("form.levels button[type=submit]")
+    expect(page.locator("#real .lede")).to_contain_text("too far from the last price")
+    # Then the levels as typed on a phone, with a comma.
+    page.fill("input[name=stop_RY]", "260,00" if phone else "259.5")
+    page.fill("input[name=target_RY]", "285")
+    page.fill("input[name=near_RY]", "280")
+    page.click("form.levels button[type=submit]")
+    expect(page.locator("#real .lede")).to_contain_text("levels saved")
+    row = page.locator("table.broker tbody tr").first
+    expect(row).to_contain_text("$260.00" if phone else "$259.50")
+    expect(row).to_contain_text("YOURS")
+    expect(row).to_contain_text("plan $252.69")
+    flag = page.locator("#session .live .live-flag").first
+    expect(flag).to_have_text("! near stop")
+    found = page.evaluate(OVERFLOW)
+    assert found["wide"] == []
+    assert found["page"] <= viewport["width"]  # type: ignore[index]
+    real.scroll_into_view_if_needed()
+    _shot(page, "levels-" + ("phone" if phone else "desktop"))
+    # The scanner knows the stock is held.
+    page.goto(levels_url + "/")
+    expect(page.locator("#list .held").first).to_be_visible()
+    _shot(page, "held-" + ("phone" if phone else "desktop"))
+    assert errors == []
+    context.close()

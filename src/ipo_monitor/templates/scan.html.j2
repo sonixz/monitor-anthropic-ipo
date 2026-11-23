@@ -1,6 +1,9 @@
 {# The scanner. No number is typed here: values come from ind(), signal(), change() and the board. #}
 {% macro tag(kind) %}<span class="tag tag-{{ kind|lower }}">{{ kind }}</span>{% endmacro %}
 {% macro L(text) %}<span data-label>{{ text }}</span>{% endmacro %}
+{% macro holding(h) -%}
+<span class="held">HELD</span>{% if h.real_shares %} <span class="real">REAL</span> <span data-label>{{ h.real_shares }} at {{ dollars(h.real_cost) }}</span>{% endif %}{% if h.sim_shares %} <span class="sim">SIM</span> <span data-label>{{ h.sim_shares }}</span>{% endif %}
+{%- endmacro %}
 {% macro level(sig) %}<span class="lv lv-{{ sig.level }}">{{ sig.label }}</span>{% endmacro %}
 <!doctype html>
 <html lang="en">
@@ -71,7 +74,9 @@
         <span class="sig-close">{{ ind(s, "close") }} {{ ind(s, "change_1d", true) }}</span>
       </div>
       <p class="sig-sum">{{ reason(s, s.signal.summary) }}</p>
-      {% if s.marks %}<p class="sig-lv">entry {{ mark(s, "entry") }} · {% if s.signal.strength > 0 %}stop{% else %}cancel above{% endif %} {{ mark(s, "stop") }} · target {{ mark(s, "target") }}</p>{% endif %}
+      {% if s.symbol in held %}{% set h = held[s.symbol] %}
+      <p class="sig-lv sig-held">{{ holding(h) }} · already held: a position to manage, not a new entry{% if h.stop is not none %} · {% if h.yours %}your {% endif %}stop {{ L(dollars(h.stop)) }} · target {{ L(dollars(h.target)) }}{% endif %} · <a href="/portfolio#real">portfolio</a></p>
+      {% elif s.marks %}<p class="sig-lv">entry {{ mark(s, "entry") }} · {% if s.signal.strength > 0 %}stop{% else %}cancel above{% endif %} {{ mark(s, "stop") }} · target {{ mark(s, "target") }}</p>{% endif %}
     </li>
     {% endfor %}
   </ul>
@@ -99,7 +104,7 @@
     <tbody>
     {% for s in stocks %}
       <tr{% if s.rank is none %} class="pinned"{% endif %}>
-        <th scope="row"><span class="sig-sym">{{ s.symbol }}</span> <span class="nm">{{ s.candidate.name }}</span></th>
+        <th scope="row"><span class="sig-sym">{{ s.symbol }}</span> <span class="nm">{{ s.candidate.name }}</span>{% if s.symbol in held %} <span class="held">HELD</span>{% endif %}</th>
         <td>{% if s.signal %}{{ signal(s, s.signal.label) }}{% else %}<span class="what">no signal</span>{% endif %}</td>
         <td>{{ ind(s, "close") }}</td>
         <td>{{ ind(s, "change_1d", true) }}</td>

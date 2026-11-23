@@ -2514,3 +2514,72 @@ button.n.lv-neutral {
   font-weight: 400;
   color: var(--dim);
 }
+
+/* ---- Loop 016: held stocks and the owner's levels at the broker ---------- */
+
+.held {
+  color: var(--text);
+  border: 1px solid var(--line-strong);
+  border-radius: 3px;
+  padding: 0 0.35em;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.sig-held {
+  color: var(--dim);
+}
+
+.yours {
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 0 0.3em;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+.broker {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.broker th[scope="col"]:first-child {
+  width: 22%;
+}
+
+.broker td,
+.broker th[scope="row"] {
+  vertical-align: top;
+}
+
+.broker .yv {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.broker .pl {
+  display: block;
+  font-size: 11px;
+  color: var(--faint);
+  white-space: nowrap;
+}
+
+.broker .yours {
+  display: table;
+  margin: 2px 0 1px auto;
+}
+
+.levels fieldset {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0 10px;
+}
+
+.levels label {
+  display: block;
+  font-size: 12px;
+  color: var(--dim);
+}
