@@ -53,17 +53,17 @@ flowchart TB
   bars["bars.py: Yahoo daily bars; a session still trading is left out"]
   ind["indicators.py: each value with its formula and sessions"]
   uni["universe.py: weekly top N by value traded"]
-  files[("/data/results: signals, decisions, ledger, discipline (uploaded)")]
+  files[("/data/results: signals, decisions, ledger, discipline (uploaded); levels (the owner's form)")]
   watch["watch.py: when to read bars and signal files"]
   sig["signals.py: the file format and its rules"]
   lv["levels.py: stop and target from ATR"]
   track["track.py: change after 5 and 20 sessions; stop or target first"]
   board["board.py: the state of the scanner; the dossier"]
   render["render.py, scan.html.j2: values and cards"]
-  pf["portfolio.py: rules, sizing, the simulated book, the real-orders ledger"]
+  pf["portfolio.py: rules, sizing, the simulated book, the real-orders ledger, the owner's levels"]
   sess["session.py: prices during the session for open positions, display only"]
   disc["discipline.py: the day's checklist, the journal, gaps from the ledger"]
-  web["web.py: login gate; /, /portfolio, /journal, /discipline, /api/upload, /health"]
+  web["web.py: login gate; /, /portfolio, /journal, /discipline, /levels, /api/upload, /health"]
   cli["__main__.py: dossier, check, portfolio and upload, for the scheduled run"]
   watch --> bars --> ind
   cands --> uni
@@ -79,7 +79,7 @@ flowchart TB
   cli --> web
 ```
 
-*Scope: `src/ipo_monitor/scan`. Last reviewed: 2026-11-22.* `board.build` is the one place that
+*Scope: `src/ipo_monitor/scan`. Last reviewed: 2026-11-23.* `board.build` is the one place that
 joins closes, the list and signal files; the page and the dossier both come from it. `signals.py`
 is the gate: a file is used only if every signal names a stock of the list in force (or the one
 before), types no digit, and gives every reason an indicator or a quoted source. Placeholders are
@@ -89,12 +89,13 @@ holiday costs one round), and result files every 15 minutes. Every page is behin
 (`auth.py`); the scheduled run uploads its files with a token to `/api/upload`, which applies the
 same rules before storing them in `/data/results` (Loop 013). `portfolio.py` replays the decision
 files on the closes into the simulated book; `discipline.py` keeps one checklist file a day and
-builds the journal of every trading day, with gaps between the plan and the real orders (Loop 014).
+builds the journal of every trading day, with gaps between the plan and the real orders (Loop 014). The owner's levels at the broker are kept in `levels.json` beside the ledger, written only by the `/levels` form; the page and the session panel read them, the simulation never does, and the scanner page is drawn again with the held stocks when they or the ledger change (Loop 016).
 
 | Choice | Why | Cost we accept | Decision |
 | --- | --- | --- | --- |
 | The AI writes JSON in a separate run | No AI key on the machine; every word checked before it shows | A day without a run shows the last signals, named as such | D-039 |
 | Result files uploaded to the server, never in git | Signals, decisions and the owner's orders stay private; the code stays public | No public history of results; the server's volume is the only copy besides the PC | D-052 |
+| The owner's levels in their own file | An upload of fills cannot erase them; the plan's levels stay beside them | Two files to read for one position | D-055 |
 | A checklist past days cannot change | The journal stays honest: a missed day stays missed | A day forgotten past the next trading day cannot be fixed | D-053 |
 | Stops and targets in code | The AI types no number; the same rule for every stock | Fixed multiples, not tuned per stock | D-042 |
 | Bars from Yahoo Finance | Free, a year of history per request, CAD | Unofficial, delayed, may limit; no history for CDRs | D-040, D-043 |

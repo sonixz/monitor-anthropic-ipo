@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Loop 016 — Your levels at the broker · monitor-anthropic-ipo</title>
+<style>
+:root{--bg:#f7f7f5;--fg:#202421;--muted:#5c645c;--accent:#3a6253;--card:#fff;--line:#dfe3dc}
+@media(prefers-color-scheme:dark){:root{--bg:#151816;--fg:#e8ebe7;--muted:#a3aba3;--accent:#8fc2a8;--card:#1d211e;--line:#2d332e}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.6 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+main{max-width:860px;margin:0 auto;padding:36px 16px 80px}
+h1{font-size:30px;margin:0 0 4px;letter-spacing:-.03em}h2{font-size:20px;margin:36px 0 10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+p.lead{color:var(--muted);margin-top:0}a{color:var(--accent)}blockquote{margin:12px 0;padding:8px 14px;border-left:3px solid var(--accent);background:var(--card)}
+code{font-family:ui-monospace,Menlo,monospace;font-size:14px;background:var(--card);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+figure{margin:18px 0}figure img{width:100%;border-radius:8px;border:1px solid var(--line);display:block}figcaption{color:var(--muted);font-size:13px;margin-top:6px}
+table{border-collapse:collapse;width:100%;font-size:14px}td,th{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+.nav{font-size:14px;color:var(--muted)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:14px}.pair figure{margin:0}
+.trio{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}.trio figure{margin:0}
+@media(max-width:640px){.pair,.trio{grid-template-columns:1fr}table{font-size:13px}}
+</style>
+</head>
+<body>
+<main>
+<p class="nav"><a href="index.html">← Devlog</a> · monitor-anthropic-ipo</p>
+<h1>Loop 016 — Your levels at the broker</h1>
+<p class="lead">2026-11-23 · The owner records the stop and the alerts actually entered at the broker, and the scanner knows which stocks are already held. Versions 0.19.0 and 0.19.1.</p>
+<h2>Why</h2>
+<blockquote><p>The price wasn't exact, so I should be able to adjust it in the interface to give me the right table of stop market orders and alerts. … How do we handle the signals that exist and the ones we already placed? We should show the position, no? Right now we see buy signals even when the positions are taken.</p></blockquote>
+<p><small>The owner's words, reworded in English, on the day of the first real orders.</small></p>
+<h2>What changed</h2>
+<div class="pair">
+  <figure><img src="img/loop-016-levels-phone.png" alt="The At the broker table on a phone: stop market, target alert and near-stop alert, each marked YOURS with the plan's level below."><figcaption>The owner's table on a phone.</figcaption></figure>
+  <figure><img src="img/loop-016-held-phone.png" alt="The scanner on a phone: a buy signal on RY reads HELD, REAL 1 at $264.10, a position to manage."><figcaption>A held stock on the scanner.</figcaption></figure>
+</div>
+<figure><img src="img/loop-016-levels-desktop.png" alt="The REAL section on a desktop."><figcaption>On a desktop.</figcaption></figure>
+<p><small>Invented prices and an invented position on a made-up day, from a local server.</small></p>
+<ul>
+  <li><strong>At the broker:</strong> for each real position, the stop market price, the target alert and an optional near-stop alert. The owner's level is marked <em>YOURS</em>, the plan's stays beside it; without one, the plan's applies.</li>
+  <li><strong>One form, one save:</strong> a comma or a dot is fine. A typo is refused with its reason (not a price, too far from the last price, stop above the target) and nothing is stored.</li>
+  <li><strong>The session panel uses them:</strong> a real position is near its stop at or below the owner's alert.</li>
+  <li><strong>HELD on the scanner:</strong> a buy on a stock already held reads as a position to manage, with the levels in force. The orders say when the simulation buys a stock already held for real.</li>
+  <li><strong>0.19.1:</strong> the REAL table showed Friday's close as "last" on Monday. It now shows the session price with its time, or names the close.</li>
+  <li><strong>Kept apart:</strong> the levels live in their own file next to the ledger; an upload of fills keeps them. The simulation never reads them.</li>
+</ul>
+<h2>A pitfall</h2>
+<p>A build during the session froze the 256 MB machine; the site was down about fifteen minutes until the machine was stopped and started. Before the next build only 15 MB were available, the service having grown during the day. The release went out with the service paused for the build, a few minutes. Building the release outside market hours, or a larger machine, is the way out.</p>
+<h2>Checks</h2>
+<table>
+  <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+  <tr><td>Unit and browser tests</td><td>passed</td><td>266 and 23; refusals, fallback to the plan, the owner's near-stop alert, held stocks, an upload keeping the levels.</td></tr>
+  <tr><td>Real use in a browser</td><td>passed</td><td>A typo refused, then levels saved with a comma on a phone, seen as YOURS; no horizontal scrolling at 390 px.</td></tr>
+  <tr><td>CI and CodeQL</td><td>passed</td><td>Green on both release commits.</td></tr>
+  <tr><td>Live after deploy</td><td>passed</td><td>Version 0.19.1, 50 stocks, session prices for DOL and FTS; /levels refuses without the login.</td></tr>
+  <tr><td>The owner's real levels saved on the live site</td><td>not run</td><td>The owner's to do, from a phone.</td></tr>
+</table>
+<p class="nav">Mission: <code>loops/016-mission.md</code> · Report: <code>loops/016-report.json</code></p>
+</main>
+</body>
+</html>

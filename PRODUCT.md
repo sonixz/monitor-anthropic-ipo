@@ -27,6 +27,8 @@ without saying why, and never show how their past calls turned out.
 | HOW | Who does what? | Code reads and computes, the AI judges, code checks; refused files named |
 | /portfolio | What would the signals do with $4,000? | A simulated envelope that follows the signals by fixed rules: next orders and their sizes, positions, results against the TSX |
 | IN SESSION | Where are my positions right now? | During market hours, each open position's recent price, its distance to stop and target, and a flag when a level is reached or near |
+| At the broker | What did I enter at my broker? | For each real position, the stop market price and the alerts the owner entered, marked YOURS beside the plan's; one form to change them |
+| HELD | Do I already own this? | On the scanner, a stock already held carries HELD with real shares and price; a buy on it reads as a position to manage |
 | TODAY checklist | Did I follow my plan today? | Three morning items, two evening items, a mood and a note, saved once a day |
 | /journal | Am I disciplined over time? | One row per trading day, missed days included; streak, best streak, assiduity, gaps between the plan and the real orders |
 
