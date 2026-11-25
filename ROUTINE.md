@@ -8,7 +8,10 @@ which checks and keeps them on the server. Nothing in the repository is changed 
 
 ## Steps
 
-1. **Set up.** `uv sync` (on WSL or a cloud box, the default environment is fine).
+1. **Set up.** `uv sync` (on WSL or a cloud box, the default environment is fine). Then
+   `uv run python -m ipo_monitor.scan pull`: the owner reports orders on the page (D-057), so the
+   server's ledger is the reference. It replaces `data/portfolio/ledger.json`; the decisions
+   below follow the owner's real positions.
 2. **Build the dossier.**
    `uv run python -m ipo_monitor.scan dossier --out /tmp/dossier.json`
    It reads a year of daily closes for the candidates from Yahoo Finance, ranks the list (top 50 of
@@ -54,6 +57,8 @@ which checks and keeps them on the server. Nothing in the repository is changed 
 9. **Upload, never commit.** Results live on the server only (Loop 013). Send each file with
    `uv run python -m ipo_monitor.scan upload data/signals/<session>.json`, then the decision file
    (and the review): the site checks it with the same rules and answers `stored` or the problems.
+   Never upload the ledger unless the owner asked for a correction; the server refuses a copy that
+   drops an order it holds (`scan pull` first).
    The token is in `~/.config/antipo/upload_token` (never print it). Keep the local copies: they
    are ignored by git and let `scan portfolio` replay the whole history on this PC.
 

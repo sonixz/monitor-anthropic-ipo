@@ -202,3 +202,46 @@ def test_levels_at_the_broker(browser: Browser, levels_url: str, viewport: objec
     _shot(page, "held-" + ("phone" if phone else "desktop"))
     assert errors == []
     context.close()
+
+
+@pytest.mark.parametrize("viewport", [PHONE, DESKTOP], ids=["phone", "desktop"])
+def test_report_a_sale(browser: Browser, orders_url: str, viewport: object) -> None:
+    """The owner reports a sale filled at the broker; the position closes and RESULTS counts it."""
+    phone = viewport == PHONE
+    context = browser.new_context(
+        viewport=viewport,  # type: ignore[arg-type]
+        device_scale_factor=2,
+        is_mobile=phone,
+        has_touch=phone,
+    )
+    page, errors = _open(context, orders_url, path="/portfolio")
+    form = page.locator("#report form")
+    expect(form.locator("input[name=side][value=sell]")).to_be_checked()
+    expect(form.locator("input[name=date]")).to_have_value("2026-11-23")
+    # A typo first: refused with its reason, nothing reported.
+    form.locator("input[name=symbol]").fill("RY")
+    form.locator("input[name=shares]").fill("3")
+    form.locator("input[name=price]").fill("270,00")
+    page.locator("#report").scroll_into_view_if_needed()
+    _shot(page, "report-" + ("phone" if phone else "desktop"))
+    form.locator("button[type=submit]").click()
+    expect(page.locator("#report .lede")).to_contain_text("RY: 3 shares sold, 1 held")
+    expect(page.locator("#real")).to_be_visible()
+    # Then the sale as filled.
+    form = page.locator("#report form")
+    form.locator("input[name=symbol]").fill("ry")
+    form.locator("input[name=shares]").fill("1")
+    form.locator("input[name=price]").fill("270,00" if phone else "270")
+    form.locator("button[type=submit]").click()
+    expect(page.locator("#report .lede")).to_contain_text("reported: sell 1 RY at 270.00")
+    expect(page.locator("#real")).to_have_count(0)
+    results = page.locator("#metrics")
+    results.locator("summary", has_text="Closed trades").click()
+    expect(results).to_contain_text("+$5.90")
+    found = page.evaluate(OVERFLOW)
+    assert found["wide"] == []
+    assert found["page"] <= viewport["width"]  # type: ignore[index]
+    results.scroll_into_view_if_needed()
+    _shot(page, "reported-" + ("phone" if phone else "desktop"))
+    assert errors == []
+    context.close()

@@ -2588,3 +2588,18 @@ button.n.lv-neutral {
   display: block;
   font-size: 11px;
 }
+
+/* ---- Loop 018: the owner reports an order ------------------------------- */
+
+.order-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+  gap: 0 10px;
+  margin-bottom: 10px;
+}
+
+.order-fields label {
+  display: block;
+  font-size: 12px;
+  color: var(--dim);
+}

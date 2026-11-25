@@ -4,9 +4,12 @@
     python -m ipo_monitor.scan check <signal file> [--bars yahoo|file:<folder>]
     python -m ipo_monitor.scan portfolio [--bars yahoo|file:<folder>]
     python -m ipo_monitor.scan upload <file> [--url https://antipo.watch]
+    python -m ipo_monitor.scan pull [--url https://antipo.watch]
 
 `upload` sends a signal, decision or ledger file to the site, which checks it and keeps it on the
 server only. The token comes from ANTIPO_UPLOAD_TOKEN or ~/.config/antipo/upload_token.
+`pull` downloads the ledger the server holds, with the orders the owner reported on the page,
+into data/portfolio/ledger.json; the server refuses a ledger upload that would drop one.
 
 `portfolio` replays the simulated envelope from the signal and decision files, says which signals
 the rules allow to buy after the latest session and which positions are open, and checks every
@@ -67,9 +70,13 @@ def main(argv: list[str] | None = None) -> int:
     four = sub.add_parser("upload", help="send a result file to the site")
     four.add_argument("file", type=Path)
     four.add_argument("--url", default="https://antipo.watch")
+    five = sub.add_parser("pull", help="download the server's ledger")
+    five.add_argument("--url", default="https://antipo.watch")
     args = parser.parse_args(argv)
     if args.command == "upload":
         return upload(args.file, args.url)
+    if args.command == "pull":
+        return pull(args.url)
 
     candidates = Candidates.load(args.candidates)
     watcher = ScanWatcher(candidates, bar_source(args.bars), [Folder(SIGNALS)], lambda _: None)
@@ -139,11 +146,44 @@ def portfolio(candidates: Candidates, watcher: ScanWatcher, now: datetime) -> in
     return 1 if board.refused_decisions else 0
 
 
-def upload(path: Path, base: str) -> int:
+def the_token() -> str:
     token = os.environ.get("ANTIPO_UPLOAD_TOKEN", "").strip()
     stored = Path.home() / ".config" / "antipo" / "upload_token"
     if not token and stored.is_file():
         token = stored.read_text("utf-8").strip()
+    return token
+
+
+def pull(base: str, target: Path = LEDGER) -> int:
+    token = the_token()
+    if not token:
+        print("no upload token: set ANTIPO_UPLOAD_TOKEN or ~/.config/antipo/upload_token")
+        return 1
+    request = urllib.request.Request(  # noqa: S310 - the site's own address
+        f"{base.rstrip('/')}/api/upload/ledger",
+        headers={"Authorization": f"Bearer {token}", "User-Agent": "antipo.watch upload"},
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=60) as answer:  # noqa: S310
+            body = answer.read()
+    except urllib.error.HTTPError as error:
+        print(f"refused ({error.code}): {error.read()[:400].decode('utf-8', 'replace')}")
+        return 1
+    except OSError as error:
+        print(f"could not reach the site: {type(error).__name__}")
+        return 1
+    ledger = Ledger.model_validate(json.loads(body))
+    before = 0
+    if target.is_file():
+        before = len(Ledger.model_validate(json.loads(target.read_text("utf-8"))).fills)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_bytes(body)
+    print(f"ledger from the server: {len(ledger.fills)} orders ({len(ledger.fills) - before:+d})")
+    return 0
+
+
+def upload(path: Path, base: str) -> int:
+    token = the_token()
     if not token:
         print("no upload token: set ANTIPO_UPLOAD_TOKEN or ~/.config/antipo/upload_token")
         return 1

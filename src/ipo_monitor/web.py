@@ -53,7 +53,9 @@ from ipo_monitor.scan.portfolio import (
     held_of,
     holdings,
     levels_from_form,
+    order_from_form,
     read_levels,
+    write_ledger,
     write_levels,
 )
 from ipo_monitor.scan.render import ScanPage, render_journal, render_portfolio, render_scan
@@ -76,12 +78,12 @@ def check_upload(
         if name != "ledger.json":
             return None
         try:
-            Ledger.model_validate(raw)
+            uploaded = Ledger.model_validate(raw)
         except ValidationError as error:
             return tuple(
                 f"{'.'.join(str(p) for p in e['loc'])}: {e['msg']}" for e in error.errors()
             )
-        return ()
+        return dropped_orders(settings.ledger, uploaded)
     if kind not in ("signals", "decisions") or not UPLOAD_NAME.fullmatch(name):
         return None
     now = datetime.now(UTC)
@@ -105,6 +107,24 @@ def check_upload(
         if refused == name:
             return problems
     return ()
+
+
+def dropped_orders(path: Path | None, uploaded: Ledger) -> tuple[str, ...]:
+    """An upload never erases an order already on the server, such as one the owner reported
+    on the page (D-057): the copy must be downloaded first (`scan pull`)."""
+    if path is None or not path.is_file():
+        return ()
+    try:
+        stored = Ledger.model_validate(json.loads(path.read_text("utf-8")))
+    except (OSError, ValueError, ValidationError):
+        return ()
+    kept = [f.model_dump(exclude={"note"}) for f in uploaded.fills]
+    lost = [f for f in stored.fills if f.model_dump(exclude={"note"}) not in kept]
+    return tuple(
+        f"the server holds {f.side} {f.shares} {f.symbol} on {f.date}, missing from this copy: "
+        "download it first with `scan pull`"
+        for f in lost
+    )
 
 
 def decision_sources(settings: Settings) -> list[scan_watch.SignalSource]:
@@ -637,6 +657,60 @@ def create_app(
         scan_changed(board)
         return Response(status_code=303, headers={"Location": "/portfolio?lsaved=1#real"})
 
+    @app.post("/orders", include_in_schema=False)
+    async def report_order(request: Request) -> Response:
+        """An order the owner placed at their broker: the envelope follows it (D-057)."""
+        if settings.ledger is None or scanner is None or scanner.board is None:
+            return JSONResponse({"error": "no ledger here"}, status_code=404)
+        board = scanner.board
+        if board.book is None:
+            return JSONResponse({"error": "the portfolio is not ready"}, status_code=404)
+        form = parse_qs((await request.body())[:8192].decode("utf-8", "replace"))
+        ledger = read_ledger() or Ledger.model_validate(
+            {"schema": "antipo.ledger/1", "real": True, "fills": []}
+        )
+        series = {s.symbol: s.series for s in board.stocks if s.series is not None}
+        held, cash = holdings(ledger, board.book, series)
+        now = datetime.now(UTC).astimezone(TORONTO)
+        today = settings.today or now.date().isoformat()
+        found = order_from_form(
+            form,
+            held=held,
+            prices={k: v.bars[-1].close for k, v in series.items() if v.bars},
+            cash=cash,
+            start=board.book.rules.start,
+            today=today,
+            known=list(ledger.fills),
+        )
+        if isinstance(found, str):
+            return Response(
+                status_code=303,
+                headers={"Location": "/portfolio?orefused=" + quote(found) + "#report"},
+            )
+        updated = ledger.model_copy(update={"fills": [*ledger.fills, found], "real": True})
+        await asyncio.to_thread(write_ledger, settings.ledger, updated)
+        log.event("order_reported", side=found.side)
+        ledger_seen[0] = settings.ledger.stat().st_mtime
+        scan_changed(await asyncio.to_thread(scanner.rebuild))
+        said = f"{found.side} {found.shares} {found.symbol} at {found.price:.2f}"
+        return Response(
+            status_code=303,
+            headers={"Location": "/portfolio?osaved=" + quote(said) + "#report"},
+        )
+
+    @app.get("/api/upload/ledger", include_in_schema=False)
+    async def ledger_copy(request: Request) -> Response:
+        """For the evening run: the ledger as the server holds it, by token."""
+        if not bearer(request.headers.get("authorization", ""), settings.upload_token):
+            return JSONResponse({"error": "not allowed"}, status_code=401)
+        if settings.ledger is None or not settings.ledger.is_file():
+            return JSONResponse({"error": "no ledger here"}, status_code=404)
+        return Response(
+            settings.ledger.read_bytes(),
+            media_type="application/json",
+            headers={"Cache-Control": "no-store"},
+        )
+
     @app.get("/api/upload/discipline", include_in_schema=False)
     async def discipline_status(request: Request) -> JSONResponse:
         """For the evening run: today's checklist, by token. No note, no mood."""
@@ -675,6 +749,8 @@ def create_app(
         refused: str = "",
         lsaved: str = "",
         lrefused: str = "",
+        osaved: str = "",
+        orefused: str = "",
     ) -> Response:
         ledger = settings.ledger
         changed = ledger.stat().st_mtime if ledger is not None and ledger.is_file() else 0.0
@@ -694,6 +770,8 @@ def create_app(
             now=clock(),
             levels_saved=lsaved == "1",
             levels_refused=lrefused[:200],
+            order_saved=osaved[:200],
+            order_refused=orefused[:200],
         )
         return Response(
             page.html, media_type="text/html; charset=utf-8", headers={"Cache-Control": "no-store"}

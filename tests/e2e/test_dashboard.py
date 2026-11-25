@@ -183,6 +183,12 @@ def levels_url() -> Iterator[str]:
     yield from _session_site()
 
 
+@pytest.fixture
+def orders_url() -> Iterator[str]:
+    """The same site, apart and fresh for each test: an order changes its ledger."""
+    yield from _session_site()
+
+
 @pytest.fixture(scope="module")
 def browser() -> Iterator[Browser]:
     with sync_playwright() as playwright:

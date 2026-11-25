@@ -4,6 +4,26 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.21.0] - 2026-11-25
+
+### Added
+
+- **Report an order on `/portfolio`** (D-057), proposed by Claude, approved by the owner ("Go").
+  Sold or bought, stock, shares, price (a comma or a dot), date (today by default). A sale needs
+  the shares held, a buy a stock of the scanner and the cash left; the price must be near the last
+  close and the date between the position's opening and today; the same order twice is refused.
+  A refusal says why and changes nothing. A stop reached, or advice to sell, fills in the stock
+  and the shares. Behind the login.
+- `scan pull` downloads the ledger the server holds (`GET /api/upload/ledger`, by token); the
+  evening run pulls it first.
+
+### Changed
+
+- The server refuses a ledger upload that would drop an order it holds.
+- RESULTS with the real envelope: the value is the cash plus the shares at their last price, so
+  a sale reported during the day counts at once; the note says the figures come from the
+  reported orders.
+
 ## [0.20.0] - 2026-11-24
 
 ### Changed

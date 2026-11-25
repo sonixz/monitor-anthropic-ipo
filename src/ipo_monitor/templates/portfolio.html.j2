@@ -53,7 +53,7 @@
   {% if alerts %}
   <ul class="sig-list">{% for p in alerts %}
     <li class="sig"><div class="sig-head"><span class="sig-sym">{{ p.symbol }}</span> <span class="lv lv-sell">stop reached</span> <span class="nm">{{ L(day(p.reached[1])) }}</span></div>
-      <p class="sig-sum">The session's low reached the stop at {{ L(money(p.stop)) }}. If your stop market sold, report the sale so the envelope stays right; if it did not, check the order at your broker.</p></li>
+      <p class="sig-sum">The session's low reached the stop at {{ L(money(p.stop)) }}. If your stop market sold, <a href="#report">report the sale</a> so the envelope stays right; if it did not, check the order at your broker.</p></li>
   {% endfor %}</ul>
   {% endif %}
   {% if book.pending or book.exits %}
@@ -161,6 +161,28 @@
 </section>
 {% endif %}
 
+{% if book.real %}
+<section class="panel wide-panel" id="report" tabindex="-1" aria-labelledby="report-h">
+  <h2 id="report-h">REPORT AN ORDER <span class="q">What did you buy or sell?</span></h2>
+  <p class="lede">Once an order is filled at your broker, report it here with the price you got: positions, cash and results follow it.{% if order_saved %} <span class="ok">reported: {{ L(order_saved) }}</span>{% endif %}{% if order_refused %} <span class="wait">not reported: {{ L(order_refused) }}</span>{% endif %}</p>
+  <form class="check order" method="post" action="/orders">
+    <fieldset class="choice"><legend>the order</legend>
+      <label><input type="radio" name="side" value="sell"{% if real %} checked{% endif %}> sold</label>
+      <label><input type="radio" name="side" value="buy"{% if not real %} checked{% endif %}> bought</label>
+    </fieldset>
+    <div class="order-fields">
+      <label>stock <input class="line" type="text" name="symbol" list="order-symbols" autocomplete="off" autocapitalize="characters" spellcheck="false" value="{{ suggest }}" required></label>
+      <label>shares <input class="line" type="text" name="shares" inputmode="numeric" autocomplete="off" value="{{ suggest_shares }}" required></label>
+      <label>price per share <input class="line" type="text" name="price" inputmode="decimal" autocomplete="off" required></label>
+      <label>date <input class="line" type="date" name="date" value="{{ today_iso }}" required></label>
+    </div>
+    <datalist id="order-symbols">{% for s in symbols %}<option value="{{ s }}"></option>{% endfor %}</datalist>
+    <button type="submit">report</button>
+  </form>
+  <p class="aside">A sale closes the position, or part of it, at your price; a buy opens one with the plan's stop and target. Nothing is deleted from this page: for a mistake, tell Claude, who corrects the ledger.</p>
+</section>
+{% endif %}
+
 <section class="panel wide-panel" id="metrics" tabindex="-1" aria-labelledby="metrics-h">
   <h2 id="metrics-h">RESULTS <span class="q">Is it working?</span></h2>
   <table class="lines">
@@ -174,7 +196,7 @@
       <tr><th scope="row">Average exposure<br><span class="nm">share of the envelope invested</span></th><td>{% if metrics.exposure is not none %}{{ L(whole(metrics.exposure)) }}{% else %}–{% endif %}</td></tr>
     </tbody>
   </table>
-  <p class="aside">{% if metrics.closed < enough %}<span class="wait">Too few trades to judge: these figures are mostly chance until there are a few dozen.</span> {% endif %}Every figure is recomputed the same way from the same daily bars and decision files.</p>
+  <p class="aside">{% if metrics.closed < enough %}<span class="wait">Too few trades to judge: these figures are mostly chance until there are a few dozen.</span> {% endif %}{% if book.real %}Every figure comes from the orders you reported, valued at each daily close; a position counts as closed once its sale is reported.{% else %}Every figure is recomputed the same way from the same daily bars and decision files.{% endif %}</p>
   {% if book.closed_positions %}
   <details class="fold"><summary>Closed trades</summary><div class="scroll"><table class="lines">
     <thead><tr><th scope="col">stock</th><th scope="col">shares</th><th scope="col">in</th><th scope="col">out</th><th scope="col">why</th><th scope="col">gain</th><th scope="col">R</th></tr></thead>

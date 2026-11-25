@@ -215,6 +215,11 @@ class Book:
     def metrics(self) -> Metrics:
         start = self.rules.capital
         equity = self.days[-1].equity if self.days else start
+        if self.real:  # an order reported after the last close counts at once
+            equity = self.cash + sum(
+                p.shares * (p.last if p.last is not None else p.entry or 0)
+                for p in self.open_positions
+            )
         bench = self.days[-1].benchmark if self.days else None
         closed = self.closed_positions
         wins = [p for p in closed if (p.pnl or 0) > 0]
@@ -730,6 +735,76 @@ def levels_from_form(
                 stop=values["stop"], target=values["target"], near=near, updated=updated
             )
     return found
+
+
+SHARES = re.compile(r"\d{1,6}")
+DAY = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+def write_ledger(path: Path, ledger: Ledger) -> None:
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(
+        ledger.model_dump_json(by_alias=True, exclude_none=True, indent=1), "utf-8"
+    )
+    temporary.replace(path)
+
+
+def order_from_form(
+    form: dict[str, list[str]],
+    *,
+    held: list[Holding],
+    prices: dict[str, float],
+    cash: float,
+    start: str,
+    today: str,
+    known: list[Fill],
+) -> Fill | str:
+    """One order the owner reports on the page (D-057), or the reason it is refused.
+    A sale needs the shares held; a buy, a stock of the scanner and the cash; both a price
+    near the last close and a session between the envelope's start and today."""
+
+    def typed(name: str) -> str:
+        return (form.get(name) or [""])[0].strip()
+
+    chosen = typed("side")
+    if chosen not in ("buy", "sell"):
+        return "choose bought or sold"
+    side: Literal["buy", "sell"] = "buy" if chosen == "buy" else "sell"
+    symbol = typed("symbol").upper().removesuffix(".TO")
+    if not symbol:
+        return "name the stock"
+    position = next((h for h in held if h.symbol == symbol), None)
+    if side == "sell" and position is None:
+        return f"{symbol[:12]} is not held"
+    if side == "buy" and symbol not in prices:
+        return f"{symbol[:12]} is not a stock of the scanner"
+    count = typed("shares").replace(" ", "")
+    if not SHARES.fullmatch(count) or int(count) <= 0:
+        return f"{count[:20]!r} is not a number of shares"
+    shares = int(count)
+    if position is not None and side == "sell" and shares > position.shares:
+        return f"{symbol}: {shares} shares sold, {position.shares} held"
+    price = _price(typed("price"))
+    if price is None:
+        return "give the price you got"
+    if isinstance(price, str):
+        return price
+    reference = prices.get(symbol) or (position.cost if position else price)
+    if abs(price / reference - 1) > FAR:
+        return f"{price:.2f} is too far from the last price, {reference:.2f}"
+    date = typed("date")
+    if not DAY.fullmatch(date):
+        return f"{date[:20]!r} is not a date"
+    if date > today:
+        return "the date is after today"
+    if date < start or (side == "sell" and position is not None and date < position.since):
+        return "the date is before the position was opened"
+    if side == "buy" and shares * price > cash + 0.005:
+        return f"{shares} × {price:.2f} is more than the cash left, {cash:.2f}"
+    fill = Fill(date=date, symbol=symbol, side=side, shares=shares, price=price)
+    if any(f.model_dump(exclude={"note"}) == fill.model_dump(exclude={"note"}) for f in known):
+        return "this order is already reported"
+    return fill
 
 
 @dataclass(frozen=True)

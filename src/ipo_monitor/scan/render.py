@@ -307,6 +307,8 @@ def render_portfolio(
     now: datetime | None = None,
     levels_saved: bool = False,
     levels_refused: str = "",
+    order_saved: str = "",
+    order_refused: str = "",
 ) -> ScanPage:
     """The portfolio's page: next orders, positions, trades, metrics, rules. With the owner's
     ledger (D-056) the envelope is their real money; otherwise a simulation."""
@@ -377,6 +379,11 @@ def render_portfolio(
                     near=near,
                 )
             )
+    # A sale the page expects: a stop reached, then a target or the time.
+    due = next(
+        (p for p in book.open_positions if p.reached and p.reached[0] == "stop"),
+        next((p for p, _ in book.exits), None) if book.real else None,
+    )
     written = ""
     if book.last_decision is not None:
         written = when(datetime.fromisoformat(book.last_decision.written_at.replace("Z", "+00:00")))
@@ -397,6 +404,12 @@ def render_portfolio(
         plan_near=plan_near,
         levels_saved=levels_saved,
         levels_refused=levels_refused,
+        order_saved=order_saved,
+        order_refused=order_refused,
+        symbols=sorted(s.symbol for s in board.stocks),
+        suggest=due.symbol if due else "",
+        suggest_shares=str(due.shares) if due else "",
+        today_iso=moment.astimezone(TORONTO).date().isoformat(),
         lives=lives,
         session=session,
         in_session=in_session(moment),
