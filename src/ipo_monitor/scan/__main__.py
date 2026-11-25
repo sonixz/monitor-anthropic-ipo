@@ -30,7 +30,7 @@ from pathlib import Path
 
 from ipo_monitor.scan.bars import BarSource, RecordedDaily, YahooDaily
 from ipo_monitor.scan.board import build, dossier
-from ipo_monitor.scan.portfolio import Rules, eligible
+from ipo_monitor.scan.portfolio import Ledger, Rules, eligible
 from ipo_monitor.scan.signals import read
 from ipo_monitor.scan.universe import Candidates
 from ipo_monitor.scan.watch import Folder, ScanWatcher
@@ -39,6 +39,7 @@ CANDIDATES = Path("data/scan/candidates.json")
 SIGNALS = Path("data/signals")
 DECISIONS = Path("data/portfolio/decisions")
 RULES = Path("data/portfolio/rules.json")
+LEDGER = Path("data/portfolio/ledger.json")
 
 
 def bar_source(setting: str) -> BarSource:
@@ -110,7 +111,13 @@ def portfolio(candidates: Candidates, watcher: ScanWatcher, now: datetime) -> in
     rules = Rules.load(RULES)
     signals = Folder(SIGNALS).files()
     decisions = Folder(DECISIONS).files()
-    board = build(candidates, watcher.series, signals, now, watcher.problems, decisions, rules)
+    fills = None
+    if LEDGER.is_file():  # the owner's orders, a copy of the server's (ignored by git)
+        ledger = Ledger.model_validate(json.loads(LEDGER.read_text("utf-8")))
+        fills = list(ledger.fills) if ledger.real else None
+    board = build(
+        candidates, watcher.series, signals, now, watcher.problems, decisions, rules, fills
+    )
     book = board.book
     if book is None:
         print("no portfolio")

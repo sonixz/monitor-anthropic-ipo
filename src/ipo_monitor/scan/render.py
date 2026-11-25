@@ -308,7 +308,8 @@ def render_portfolio(
     levels_saved: bool = False,
     levels_refused: str = "",
 ) -> ScanPage:
-    """The simulated portfolio's page: next orders, positions, trades, metrics, rules."""
+    """The portfolio's page: next orders, positions, trades, metrics, rules. With the owner's
+    ledger (D-056) the envelope is their real money; otherwise a simulation."""
     book = board.book
     if book is None:
         raise ValueError("no portfolio")
@@ -356,7 +357,7 @@ def render_portfolio(
     if session is not None:
         held = [
             (p.symbol, "simulated", p.entry, p.stop, p.target, p.last, None)
-            for p in book.open_positions
+            for p in ([] if book.real else book.open_positions)
         ] + [
             (h.symbol, "real", h.cost, h.stop_used, h.target_used, h.last, h.near_used)
             for h in real
@@ -390,6 +391,7 @@ def render_portfolio(
         real=real,
         real_cash=real_cash,
         real_symbols={h.symbol: h for h in real},
+        position_of={p.symbol: p for p in book.open_positions},
         now_of={v.symbol: v for v in lives if v.kind == "real" and v.time is not None},
         last_session=board.session,
         plan_near=plan_near,

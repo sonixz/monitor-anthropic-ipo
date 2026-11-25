@@ -26,7 +26,7 @@ from ipo_monitor import log
 from ipo_monitor.market import USER_AGENT, SourceError
 from ipo_monitor.scan.bars import BarSource, Series
 from ipo_monitor.scan.board import TORONTO, Board, build
-from ipo_monitor.scan.portfolio import Rules
+from ipo_monitor.scan.portfolio import Fill, Rules
 from ipo_monitor.scan.universe import Candidates
 
 REPOSITORY = "sonixz/monitor-anthropic-ipo"
@@ -143,6 +143,8 @@ class ScanWatcher:
     decision_sources: list[SignalSource] = field(default_factory=list)
     decisions: dict[str, object] = field(default_factory=dict)
     rules: Rules | None = None
+    # The owner's reported orders, when the envelope is their real money (D-056).
+    fills: Callable[[], list[Fill] | None] = field(default=lambda: None)
 
     def now(self) -> datetime:
         return datetime.fromtimestamp(self.clock(), UTC)
@@ -202,6 +204,7 @@ class ScanWatcher:
             self.problems,
             self.decisions,
             self.rules,
+            self.fills(),
         )
         for refused in self.board.refused:
             log.event(

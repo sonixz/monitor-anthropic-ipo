@@ -15,7 +15,7 @@ from zoneinfo import ZoneInfo
 from ipo_monitor.scan.bars import Series
 from ipo_monitor.scan.indicators import Indicator, compute
 from ipo_monitor.scan.levels import levels
-from ipo_monitor.scan.portfolio import Book, Rules, simulate
+from ipo_monitor.scan.portfolio import Book, Fill, Rules, simulate
 from ipo_monitor.scan.signals import Checked, Signal, SignalFile, check
 from ipo_monitor.scan.track import Outcome, Summary, outcomes, summarize
 from ipo_monitor.scan.universe import Candidate, Candidates, Universe, rank, universe, week_ends
@@ -120,6 +120,7 @@ def build(
     problems: tuple[str, ...] = (),
     decisions: dict[str, object] | None = None,
     rules: Rules | None = None,
+    fills: list[Fill] | None = None,
 ) -> Board:
     """The board from what was read. `files` maps a signal file's name to its parsed JSON."""
     listed = {c.symbol for c in candidates.candidates}
@@ -163,7 +164,7 @@ def build(
     if rules is not None:
         sectors = {c.symbol: c.sector or "" for c in candidates.candidates}
         book, refused_decisions = simulate(
-            rules, {f.session: f for f in good}, decisions or {}, series, sectors
+            rules, {f.session: f for f in good}, decisions or {}, series, sectors, fills
         )
     return Board(
         candidates=candidates,

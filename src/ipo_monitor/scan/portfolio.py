@@ -23,7 +23,7 @@ from __future__ import annotations
 import json
 import math
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import date as Date
 from pathlib import Path
 from typing import Literal
@@ -147,6 +147,7 @@ class Position:
     why_exit: str | None = None  # stop, target, time, signal, decision
     sessions: int = 0  # sessions held, counting the entry
     last: float | None = None  # the latest close while open
+    reached: tuple[str, str] | None = None  # real envelope: (stop, target or time; the session)
 
     @property
     def open(self) -> bool:
@@ -201,6 +202,7 @@ class Book:
     cash: float = 0.0
     last_decision: DecisionFile | None = None
     skipped: list[tuple[str, str]] = field(default_factory=list)  # (symbol, why) not bought
+    real: bool = False  # the owner's own money: positions come from the orders they report
 
     @property
     def open_positions(self) -> list[Position]:
@@ -306,15 +308,86 @@ def _bar(series: Series | None, day: str) -> Bar | None:
     return None
 
 
+def _plan_for(
+    symbol: str, day: str, signals: dict[str, SignalFile], series: dict[str, Series]
+) -> tuple[float, float, float] | None:
+    """Reference close, stop and target of the last buy advice before `day`, for an order the
+    owner placed without a pending order of the envelope."""
+    one = series.get(symbol)
+    if one is None:
+        return None
+    for session in sorted((s for s in signals if s < day), reverse=True):
+        signal = next((x for x in signals[session].signals if x.symbol == symbol), None)
+        if signal is None:
+            continue
+        at = one.upto(session)
+        if not at or at[-1].date != session:
+            continue
+        marks = levels("buy", compute(at, one.currency))
+        if "stop" in marks and "target" in marks:
+            return marks["entry"].value, marks["stop"].value, marks["target"].value
+    return None
+
+
+def _apply_fill(
+    book: Book,
+    fill: Fill,
+    signals: dict[str, SignalFile],
+    series: dict[str, Series],
+    advice: dict[str, Position],
+) -> None:
+    """One order the owner reported, applied to their envelope."""
+    rules = book.rules
+    held = next((p for p in book.open_positions if p.symbol == fill.symbol), None)
+    if fill.side == "sell":
+        book.cash += fill.price * fill.shares
+        if held is None:
+            book.skipped.append((fill.symbol, "a sale of shares not held"))
+            return
+        if fill.shares >= held.shares:
+            held.exited, held.exit = fill.date, fill.price
+            held.why_exit = held.reached[0] if held.reached else "sold"
+        else:
+            held.shares -= fill.shares
+        return
+    book.cash -= fill.price * fill.shares
+    if held is not None:
+        total = held.shares + fill.shares
+        held.entry = ((held.entry or fill.price) * held.shares + fill.price * fill.shares) / total
+        held.shares = total
+        return
+    order = advice.get(fill.symbol)
+    if order is not None:
+        stop, target, sizing = order.stop, order.target, order.sizing
+        decided = order.decided
+    else:
+        plan = _plan_for(fill.symbol, fill.date, signals, series)
+        close, stop, target = plan if plan else (fill.price, fill.price * 0.9, fill.price * 1.15)
+        equity = book.days[-1].equity if book.days else rules.capital
+        sizing = size(equity, book.cash + fill.price * fill.shares, close, stop, rules, "medium")
+        decided = fill.date
+    position = Position(fill.symbol, decided, sizing, stop, target)
+    position.entered, position.entry, position.shares = fill.date, fill.price, fill.shares
+    book.positions.append(position)
+
+
 def simulate(
     rules: Rules,
     signals: dict[str, SignalFile],
     decisions: dict[str, object],
     series: dict[str, Series],
     sectors: dict[str, str],
+    fills: list[Fill] | None = None,
 ) -> tuple[Book, list[tuple[str, tuple[str, ...]]]]:
-    """Replay the envelope from its start. Returns the book and the refused decision files."""
-    book = Book(rules, cash=rules.capital)
+    """Replay the envelope from its start. Returns the book and the refused decision files.
+
+    With `fills` (the owner's ledger), the envelope is the owner's real money: positions open
+    and close only with the orders they report, at the prices they got. The decisions become
+    advice for the next open; a stop, target or holding period reached is flagged, not filled.
+    """
+    real = fills is not None
+    book = Book(rules, cash=rules.capital, real=real)
+    waiting = sorted(fills or [], key=lambda f: f.date)
     refused: list[tuple[str, tuple[str, ...]]] = []
     bench = series.get(rules.benchmark)
     calendar = sorted(
@@ -323,6 +396,12 @@ def simulate(
     bench_shares = 0
     bench_cash = rules.capital
     for day in calendar:
+        if real:
+            # 1. The owner's orders up to this session; the advice was for this open.
+            advice = {p.symbol: p for p in book.pending}
+            while waiting and waiting[0].date <= day:
+                _apply_fill(book, waiting.pop(0), signals, series, advice)
+            book.pending, book.exits = [], []
         # 1. Orders decided after the previous session fill at this open.
         for position, reason in book.exits:
             bar = _bar(series.get(position.symbol), day)
@@ -356,6 +435,16 @@ def simulate(
             position.sessions += 1
             price: float | None = None
             why: str | None = None
+            if real:
+                if position.reached is None:
+                    if bar.low <= position.stop:
+                        position.reached = ("stop", day)
+                    elif bar.high >= position.target:
+                        position.reached = ("target", day)
+                    elif position.sessions >= HOLD:
+                        position.reached = ("time", day)
+                position.last = bar.close
+                continue
             if bar.low <= position.stop:
                 price, why = min(bar.open, position.stop), "stop"
             elif bar.high >= position.target:
@@ -382,6 +471,12 @@ def simulate(
         # 4. The decisions written after this close: orders for the next open.
         signal_file = signals.get(day)
         held = {p.symbol for p in book.open_positions}
+        if real:  # a target or the holding period reached: the plan is to sell at the next open
+            book.exits = [
+                (p, p.reached[0])
+                for p in book.open_positions
+                if p.reached and p.reached[0] in ("target", "time")
+            ]
         name = f"{day}.json"
         if name not in decisions:
             continue
@@ -395,7 +490,7 @@ def simulate(
         by_symbol = {s.symbol: s for s in signal_file.signals} if signal_file else {}
         for choice in file.positions:
             position = next(p for p in book.open_positions if p.symbol == choice.symbol)
-            if choice.action == "exit":
+            if choice.action == "exit" and position not in [q for q, _ in book.exits]:
                 book.exits.append((position, "decision"))
         for position in book.open_positions:
             signal = by_symbol.get(position.symbol)
@@ -436,6 +531,14 @@ def simulate(
             cash -= sizing.cost
             count += 1
             per_sector[sector] = per_sector.get(sector, 0) + 1
+    if real:  # orders reported after the last session read
+        advice = {p.symbol: p for p in book.pending}
+        for fill in waiting:
+            _apply_fill(book, fill, signals, series, advice)
+            book.pending = [p for p in book.pending if p.symbol != fill.symbol]
+            for bought in book.positions:
+                if bought.symbol == fill.symbol and bought.last is None:
+                    bought.last = fill.price
     return book, refused
 
 
@@ -640,6 +743,8 @@ class Held:
     stop: float | None = None  # in force: the owner's, else the plan's
     target: float | None = None
     yours: bool = False  # the stop or target is the owner's
+    since: str = ""  # the session of the first buy
+    sessions: int = 0  # sessions held, counting the entry
 
 
 def held_of(book: Book | None, real: list[Holding]) -> dict[str, Held]:
@@ -653,6 +758,12 @@ def held_of(book: Book | None, real: list[Holding]) -> dict[str, Held]:
             target=h.target_used,
             yours=bool(h.mine and (h.mine.stop or h.mine.target)),
         )
+    if book is not None and book.real:
+        for p in book.open_positions:
+            one = found.get(p.symbol)
+            if one is not None:
+                found[p.symbol] = replace(one, since=p.entered or "", sessions=p.sessions)
+        return found
     for p in book.open_positions if book else []:
         one = found.get(p.symbol)
         if one is None:

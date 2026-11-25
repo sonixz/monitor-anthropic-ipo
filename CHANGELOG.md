@@ -4,6 +4,22 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project follows
 [Semantic Versioning](https://semver.org/).
 
+## [0.20.0] - 2026-11-24
+
+### Changed
+
+- **The envelope is the owner's own money** (D-056). Owner: "there is no simulation; the 4,000 is
+  mine, my envelope at my broker." With the owner's ledger, `/portfolio` no longer keeps a paper
+  copy beside the real orders: positions open and close only with the orders the owner reports,
+  at the prices they got; cash, value, results and the comparison with the TSX fund come from
+  them. The evening's orders are advice for the owner to place at the next open; a stop reached
+  is flagged (asking for the sale to be reported), a target or the holding period reached becomes
+  advice to sell at the next open. One POSITIONS table (price of the moment, gain, R, day of the
+  holding period); IN SESSION shows one row a stock, no SIM rows. Without a ledger the code still
+  simulates, as before (tests).
+- The scanner names how long a stock has been held: "since Nov 23 · day 2 of 20".
+- Rules version 3: the same figures, the envelope marked as real.
+
 ## [0.19.1] - 2026-11-23
 
 ### Fixed

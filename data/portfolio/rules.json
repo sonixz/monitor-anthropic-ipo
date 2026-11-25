@@ -1,9 +1,9 @@
 {
  "schema": "antipo.rules/1",
- "version": 2,
- "approved": "2026-11-22",
- "approved_by": "owner: v1 from the Loop 012 answers; v2 'J'aime bien le point 1' (size by confidence), before the first fill",
- "simulated": true,
+ "version": 3,
+ "approved": "2026-11-24",
+ "approved_by": "owner: v1 from the Loop 012 answers; v2 'J'aime bien le point 1' (size by confidence), before the first fill; v3 'Il n'y a pas de simulation' (the envelope is the owner's own money at their broker)",
+ "simulated": false,
  "capital": 4000,
  "currency": "CAD",
  "start": "2026-11-20",
@@ -40,6 +40,11 @@
    "version": 2,
    "approved": "2026-11-22",
    "change": "The slot follows the signal's confidence: 20% at high, 10% at medium. Applies from the start, before the first fill."
+  },
+  {
+   "version": 3,
+   "approved": "2026-11-24",
+   "change": "The envelope is the owner's own money at their broker: positions open and close only with the orders they report, at the prices they got. The rules' figures do not change."
   }
  ]
 }

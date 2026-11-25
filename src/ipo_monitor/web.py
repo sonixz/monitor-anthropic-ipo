@@ -45,6 +45,7 @@ from ipo_monitor.scan.board import build as build_scan
 from ipo_monitor.scan.discipline import Journal, Store, from_form
 from ipo_monitor.scan.discipline import journal as journal_of
 from ipo_monitor.scan.portfolio import (
+    Fill,
     Holding,
     Ledger,
     LevelsFile,
@@ -98,6 +99,7 @@ def check_upload(
         scanner.problems,
         files_decisions,
         scanner.rules,
+        scanner.fills(),
     )
     for refused, problems in board.refused_decisions:
         if refused == name:
@@ -351,6 +353,14 @@ def create_app(
             return None
 
     levels_path = settings.ledger.parent / "levels.json" if settings.ledger else None
+
+    def real_fills() -> list[Fill] | None:
+        """The owner's orders: their envelope is real money when the ledger says so (D-056)."""
+        ledger = read_ledger()
+        return list(ledger.fills) if ledger is not None and ledger.real else None
+
+    if scanner is not None:
+        scanner.fills = real_fills
 
     def real_holdings(board: ScanBoard) -> list[Holding]:
         """The owner's open positions, with their levels at the broker."""
@@ -669,8 +679,8 @@ def create_app(
         ledger = settings.ledger
         changed = ledger.stat().st_mtime if ledger is not None and ledger.is_file() else 0.0
         if changed != ledger_seen[0] and scanner is not None and scanner.board is not None:
-            ledger_seen[0] = changed  # a reported order: draw the page again
-            scan_changed(scanner.board)
+            ledger_seen[0] = changed  # a reported order: the envelope changed
+            scan_changed(scanner.rebuild())
         if not folio or scanner is None or scanner.board is None or scanner.board.book is None:
             return JSONResponse({"error": "the portfolio is not ready"}, status_code=404)
         page = render_portfolio(

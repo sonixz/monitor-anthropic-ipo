@@ -1,4 +1,4 @@
-{# The simulated portfolio. No number is typed here: values come from the code, inside data-label. #}
+{# The portfolio: the owner's real envelope (D-056), or a simulation without a ledger. No number is typed here: values come from the code, inside data-label. #}
 {% macro L(text) %}<span data-label>{{ text }}</span>{% endmacro %}
 {% macro tag(kind) %}<span class="tag tag-{{ kind|lower }}">{{ kind }}</span>{% endmacro %}
 <!doctype html>
@@ -6,7 +6,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Simulated portfolio · antipo.watch</title>
+<title>{% if book.real %}Your portfolio{% else %}Simulated portfolio{% endif %} · antipo.watch</title>
 <meta name="description" content="A simulated portfolio that follows the AI signals of antipo.watch by fixed rules, scored against a TSX index fund. Not investment advice.">
 <meta name="color-scheme" content="dark">
 <meta name="robots" content="index,follow">
@@ -21,8 +21,8 @@
     <svg class="mark" viewBox="0 0 32 32" aria-hidden="true" focusable="false"><rect class="mk-frame" x="1" y="1" width="30" height="30" rx="4"/><path class="mk-line" d="M6 24 H12 V18 H18 V12 H26"/><circle class="mk-dot" cx="26" cy="12" r="2.4"/></svg>
     <h1><span class="w1">ANTIPO</span><span class="w2">.</span><span class="w3">WATCH</span></h1>
   </div>
-  <p class="tagline"><span class="sim">SIMULATED</span> portfolio guided by the AI signals · <a href="/">the scanner</a> · <a href="/journal">journal</a> · <a href="/logout">sign out</a></p>
-  <p class="disclaimer">Paper money, not the owner's account · not investment advice</p>
+  <p class="tagline">{% if book.real %}<span class="real">YOUR</span> envelope{% else %}<span class="sim">SIMULATED</span> portfolio{% endif %} guided by the AI signals · <a href="/">the scanner</a> · <a href="/journal">journal</a> · <a href="/logout">sign out</a></p>
+  <p class="disclaimer">{% if book.real %}Your money at your broker, from the orders you report · not investment advice{% else %}Paper money, not the owner's account · not investment advice{% endif %}</p>
 </header>
 
 <section class="sys" aria-label="The envelope at a glance">
@@ -49,23 +49,30 @@
 
 <section class="panel" id="orders" tabindex="-1" aria-labelledby="orders-h">
   <h2 id="orders-h">NEXT OPEN <span class="q">What to do at the next open?</span></h2>
+  {% set alerts = book.open_positions|selectattr("reached")|selectattr("reached.0", "equalto", "stop")|list if book.real else [] %}
+  {% if alerts %}
+  <ul class="sig-list">{% for p in alerts %}
+    <li class="sig"><div class="sig-head"><span class="sig-sym">{{ p.symbol }}</span> <span class="lv lv-sell">stop reached</span> <span class="nm">{{ L(day(p.reached[1])) }}</span></div>
+      <p class="sig-sum">The session's low reached the stop at {{ L(money(p.stop)) }}. If your stop market sold, report the sale so the envelope stays right; if it did not, check the order at your broker.</p></li>
+  {% endfor %}</ul>
+  {% endif %}
   {% if book.pending or book.exits %}
   <ul class="sig-list">
     {% for o in book.pending %}
     <li class="sig">
       <div class="sig-head"><span class="sig-sym">{{ o.symbol }}</span> <span class="lv lv-buy">buy {{ L(o.sizing.shares) }}</span> <span class="nm">{{ names.get(o.symbol, "") }}</span>
         <button type="button" class="n n-calc sig-close" popovertarget="sz-{{ o.symbol|replace('.', '-') }}">{{ L(money(o.sizing.cost)) }}<span class="vh"> (how the size was found)</span></button></div>
-      {% if o.symbol in real_symbols %}<p class="sig-lv"><span class="held">HELD</span> you already hold {{ L(real_symbols[o.symbol].shares) }} for real, bought at {{ L(money(real_symbols[o.symbol].cost)) }}: this order is the simulation's.</p>{% endif %}
+      {% if not book.real and o.symbol in real_symbols %}<p class="sig-lv"><span class="held">HELD</span> you already hold {{ L(real_symbols[o.symbol].shares) }} for real, bought at {{ L(money(real_symbols[o.symbol].cost)) }}: this order is the simulation's.</p>{% endif %}
       <p class="sig-lv">ref. close {{ L(money(o.sizing.close)) }} · stop {{ L(money(o.stop)) }} · target {{ L(money(o.target)) }} · risk {{ L(money(o.sizing.risk)) }}</p>
       {% for c in book.last_decision.entries if c.symbol == o.symbol %}<p class="sig-sum">{{ c.reason }}</p>{% endfor %}
     </li>
     {% endfor %}
     {% for p, why in book.exits %}
-    <li class="sig"><div class="sig-head"><span class="sig-sym">{{ p.symbol }}</span> <span class="lv lv-sell">sell {{ L(p.shares) }}</span> <span class="nm">{{ why }}</span></div>
+    <li class="sig"><div class="sig-head"><span class="sig-sym">{{ p.symbol }}</span> <span class="lv lv-sell">sell {{ L(p.shares) }}</span> <span class="nm">{% if why == "target" %}target reached{% elif why == "time" %}held {{ L(hold) }} sessions{% elif why == "signal" %}the signal turned to sell{% else %}decided{% endif %}</span></div>
       {% for c in book.last_decision.positions if c.symbol == p.symbol %}<p class="sig-sum">{{ c.reason }}</p>{% endfor %}</li>
     {% endfor %}
   </ul>
-  <p class="aside">Orders are filled in the simulation at the next session's open. Sizes come from the rules below; select an amount to see the arithmetic.</p>
+  <p class="aside">{% if book.real %}Orders for you to place at the next open; the envelope changes only with the orders you report. {% else %}Orders are filled in the simulation at the next session's open. {% endif %}Sizes come from the rules below; select an amount to see the arithmetic.</p>
   {% else %}
   <p class="lede">No order for the next open.</p>
   {% endif %}
@@ -83,7 +90,7 @@
   <ul class="live-list">
     {% for v in lives %}
     <li class="live live-{{ v.state }}{% if v.flag %} flag-{{ v.flag|replace(' ', '-') }}{% endif %}">
-      <div class="sig-head"><span class="sig-sym">{{ v.symbol }}</span> {% if v.kind == "real" %}<span class="real">REAL</span>{% else %}<span class="sim">SIM</span>{% endif %}
+      <div class="sig-head"><span class="sig-sym">{{ v.symbol }}</span> {% if book.real %}{% elif v.kind == "real" %}<span class="real">REAL</span>{% else %}<span class="sim">SIM</span>{% endif %}
         <span class="live-px">{{ L(money(v.price)) }}</span>
         <span class="nm">{% if v.time %}{{ L(clock(v.time)) }}{% if v.state == "late" %} · late{% endif %}{% else %}{{ states[v.state] }}{% endif %}</span>
         {% if v.flag %}<span class="live-flag">{{ flags[v.flag] }}</span>{% endif %}</div>
@@ -91,7 +98,7 @@
     </li>
     {% endfor %}
   </ul>
-  <p class="aside">Display only: the simulation fills stops and targets from daily bars, after the close. A stop protects a real position only when it is entered at the broker.</p>
+  <p class="aside">{% if book.real %}Display only. A stop protects a position only when it is entered at your broker.{% else %}Display only: the simulation fills stops and targets from daily bars, after the close. A stop protects a real position only when it is entered at the broker.{% endif %}</p>
 </section>
 {% endif %}
 
@@ -101,11 +108,11 @@
 {%- endmacro %}
 {% if real %}
 <section class="panel wide-panel" id="real" tabindex="-1" aria-labelledby="real-h">
-  <h2 id="real-h"><span class="real">REAL</span> YOUR ORDERS <span class="q">What you actually bought</span></h2>
+  <h2 id="real-h">{% if book.real %}POSITIONS <span class="q">What do you hold?</span>{% else %}<span class="real">REAL</span> YOUR ORDERS <span class="q">What you actually bought</span>{% endif %}</h2>
   <p class="lede">From the orders you reported. Cash left in the envelope {{ L(money(real_cash)) }}.{% if levels_saved %} <span class="ok">levels saved</span>{% endif %}{% if levels_refused %} <span class="wait">not saved: {{ L(levels_refused) }}</span>{% endif %}</p>
   <div class="scroll"><table class="lines scan-table">
-    <thead><tr><th scope="col">stock</th><th scope="col">shares</th><th scope="col">paid</th><th scope="col">vs advice</th><th scope="col">price</th><th scope="col">gain</th></tr></thead>
-    <tbody>{% for h in real %}{% set v = now_of.get(h.symbol) %}{% set px = v.price if v else h.last %}<tr><th scope="row"><span class="sig-sym">{{ h.symbol }}</span> <span class="nm">{{ L(day(h.since)) }}</span></th><td>{{ L(h.shares) }}</td><td>{{ L(money(h.cost)) }}</td><td><span class="chg {{ tone(-(h.slippage or 0)) }}">{{ L(signed(h.slippage, "%")) }}</span></td><td>{{ L(money(px)) }}<span class="nm px-when">{% if v %}{{ L(clock(v.time)) }}{% else %}close {{ L(day(last_session)) }}{% endif %}</span></td><td>{% if px is not none %}<span class="chg {{ tone((px - h.cost) * h.shares) }}">{{ L(signed((px - h.cost) * h.shares)) }}</span>{% else %}–{% endif %}</td></tr>{% endfor %}</tbody>
+    <thead><tr><th scope="col">stock</th><th scope="col">shares</th><th scope="col">paid</th><th scope="col">vs advice</th><th scope="col">price</th><th scope="col">gain</th>{% if book.real %}<th scope="col">R</th><th scope="col">day</th>{% endif %}</tr></thead>
+    <tbody>{% for h in real %}{% set v = now_of.get(h.symbol) %}{% set px = v.price if v else h.last %}{% set p = position_of.get(h.symbol) %}<tr><th scope="row"><span class="sig-sym">{{ h.symbol }}</span> <span class="nm">{{ L(day(h.since)) }}</span></th><td>{{ L(h.shares) }}</td><td>{{ L(money(h.cost)) }}</td><td><span class="chg {{ tone(-(h.slippage or 0)) }}">{{ L(signed(h.slippage, "%")) }}</span></td><td>{{ L(money(px)) }}<span class="nm px-when">{% if v %}{{ L(clock(v.time)) }}{% else %}close {{ L(day(last_session)) }}{% endif %}</span></td><td>{% if px is not none %}<span class="chg {{ tone((px - h.cost) * h.shares) }}">{{ L(signed((px - h.cost) * h.shares)) }}</span>{% else %}–{% endif %}</td>{% if book.real %}<td>{% if px is not none and h.stop_used is not none and h.cost > h.stop_used %}{{ L(signed((px - h.cost) / (h.cost - h.stop_used), "R")) }}{% else %}–{% endif %}</td><td>{% if p %}{{ L([p.sessions, 1]|max) }} / {{ L(hold) }}{% else %}–{% endif %}</td>{% endif %}</tr>{% endfor %}</tbody>
   </table></div>
   <h3 id="broker-h">At the broker · what to enter, and what you entered</h3>
   <table class="lines broker" aria-labelledby="broker-h">
@@ -117,7 +124,7 @@
       <td>{{ level(h.mine.near if h.mine else none, plan_near.get(h.symbol)) }}</td>
     </tr>{% endfor %}</tbody>
   </table>
-  <p class="aside"><span class="yours">YOURS</span> is a level you typed below, as entered at your broker; without it, the plan's level applies. The plan's levels come from the recommendation each order followed (the near-stop alert is half an ATR above the stop). The simulation never reads your levels.</p>
+  <p class="aside"><span class="yours">YOURS</span> is a level you typed below, as entered at your broker; without it, the plan's level applies. The plan's levels come from the recommendation each order followed (the near-stop alert is half an ATR above the stop). {% if book.real %}Your stop is the one the R column measures; the advice for the next open still follows the plan's levels.{% else %}The simulation never reads your levels.{% endif %}</p>
   <details class="fold"{% if levels_refused %} open{% endif %}>
     <summary>change your levels</summary>
     <form class="check levels" method="post" action="/levels">
@@ -136,6 +143,7 @@
 </section>
 {% endif %}
 
+{% if not book.real %}
 <section class="panel wide-panel" id="positions" tabindex="-1" aria-labelledby="positions-h">
   <h2 id="positions-h">POSITIONS <span class="q">What does the envelope hold?</span></h2>
   <p class="lede">Cash {{ L(money(book.cash)) }}{% if last %} · invested {{ L(money(last.invested)) }} at the {{ L(day(last.date)) }} close{% endif %}.</p>
@@ -146,6 +154,12 @@
   </table></div>
   {% else %}<p class="aside">No open position.</p>{% endif %}
 </section>
+{% elif not real %}
+<section class="panel wide-panel" id="positions" tabindex="-1" aria-labelledby="positions-h">
+  <h2 id="positions-h">POSITIONS <span class="q">What do you hold?</span></h2>
+  <p class="lede">No open position. Cash {{ L(money(book.cash)) }}.</p>
+</section>
+{% endif %}
 
 <section class="panel wide-panel" id="metrics" tabindex="-1" aria-labelledby="metrics-h">
   <h2 id="metrics-h">RESULTS <span class="q">Is it working?</span></h2>
@@ -172,10 +186,11 @@
 <section class="panel wide-panel" id="rules" tabindex="-1" aria-labelledby="rules-h">
   <h2 id="rules-h">RULES <span class="q">How is it decided?</span></h2>
   <ul class="how">
-    <li>A dedicated envelope of {{ L(money(rules.capital)) }} {{ rules.currency }}, simulated from {{ L(day(rules.start, "long")) }}; rules version {{ L(rules.version) }}, approved {{ L(day(rules.approved, "long")) }}.</li>
+    <li>A dedicated envelope of {{ L(money(rules.capital)) }} {{ rules.currency }}, {% if book.real %}your own money at your broker, from{% else %}simulated from{% endif %} {{ L(day(rules.start, "long")) }}; rules version {{ L(rules.version) }}, approved {{ L(day(rules.approved, "long")) }}.</li>
     <li>At most {{ L(rules.max_positions) }} positions; each entry {% for c, f in rules.slot_by_confidence.items() %}{{ L(pct(f)) }} of the envelope's value at {{ c }} confidence{% if not loop.last %}, {% endif %}{% else %}{{ L(pct(rules.slot_fraction)) }} of the envelope's value{% endfor %}; the loss at the stop never above {{ L(pct(rules.max_loss_fraction)) }} of it; whole shares; no leverage.</li>
     <li>{{ tag("AI") }} Claude decides buy, wait or pass among the signals the rules allow ({{ rules.entry_levels|join(" or ")|replace("_", " ") }}, {{ rules.entry_confidence|join(" or ") }} confidence, at most {{ L(rules.max_per_sector) }} per sector), and hold or exit for each position, with its reason.</li>
-    <li>{{ tag("CALC") }} Code sizes each order, fills it at the next open, and closes a position at its stop, its target, after {{ L(hold) }} sessions, or at the next open when the signal turns to {{ rules.exit_levels|join(" or ")|replace("_", " ") }}.</li>
+    {% if book.real %}<li>{{ tag("CALC") }} Code sizes each order for you to place at the next open. It flags a stop reached, and advises selling at the next open at the target, after {{ L(hold) }} sessions, or when the signal turns to {{ rules.exit_levels|join(" or ")|replace("_", " ") }}. A position opens and closes only with the orders you report, at the prices you got.</li>
+    {% else %}<li>{{ tag("CALC") }} Code sizes each order, fills it at the next open, and closes a position at its stop, its target, after {{ L(hold) }} sessions, or at the next open when the signal turns to {{ rules.exit_levels|join(" or ")|replace("_", " ") }}.</li>{% endif %}
     <li>Rule changes are proposed with figures in the weekly review and applied only after the owner's yes.{% for h in rules.history %} Version {{ L(h.version) }}, {{ L(day(h.approved)) }}: {{ L(h.change) }}{% endfor %}</li>
   </ul>
   {% if board.refused_decisions %}<p class="aside wait">Refused decision files: {% for name, problems in board.refused_decisions %}{{ name }}{% if not loop.last %}, {% endif %}{% endfor %}.</p>{% endif %}
@@ -184,7 +199,7 @@
 </main>
 
 <footer class="bottom">
-  <p>A simulation with paper money, following AI signals by fixed rules. Not the owner's account, not investment advice, not a recommendation to you.</p>
+  <p>{% if book.real %}The owner's envelope, following AI signals by fixed rules. Not investment advice, not a recommendation to you.{% else %}A simulation with paper money, following AI signals by fixed rules. Not the owner's account, not investment advice, not a recommendation to you.{% endif %}</p>
   <p><a href="{{ loop0_url }}" rel="noopener" data-label>Built with the Loop0 Method</a> · <a href="{{ repository_url }}" rel="noopener">Source code</a> · <span data-label>v{{ version }} · {{ release }}</span></p>
 </footer>
 
@@ -199,7 +214,7 @@
     <tr><th scope="row">cash available</th><td>{{ L(money(o.sizing.cash)) }} → {{ L(o.sizing.by_cash) }} shares</td></tr>
     <tr><th scope="row">shares = the smallest</th><td>{{ L(o.sizing.shares) }}, cost {{ L(money(o.sizing.cost)) }}, risk {{ L(money(o.sizing.risk)) }}</td></tr>
   </tbody></table>
-  <p class="src-note">Stop and target from the signal's ATR levels on the scanner. Filled in the simulation at the next open.</p>
+  <p class="src-note">Stop and target from the signal's ATR levels on the scanner. {% if book.real %}To place at the next open.{% else %}Filled in the simulation at the next open.{% endif %}</p>
   <p class="src-end"><button type="button" class="close" popovertarget="sz-{{ o.symbol|replace('.', '-') }}" popovertargetaction="hide">close</button></p>
 </div>
 {% endfor %}

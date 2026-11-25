@@ -2,7 +2,7 @@
 {% macro tag(kind) %}<span class="tag tag-{{ kind|lower }}">{{ kind }}</span>{% endmacro %}
 {% macro L(text) %}<span data-label>{{ text }}</span>{% endmacro %}
 {% macro holding(h) -%}
-<span class="held">HELD</span>{% if h.real_shares %} <span class="real">REAL</span> <span data-label>{{ h.real_shares }} at {{ dollars(h.real_cost) }}</span>{% endif %}{% if h.sim_shares %} <span class="sim">SIM</span> <span data-label>{{ h.sim_shares }}</span>{% endif %}
+<span class="held">HELD</span>{% if h.real_shares %} <span class="real">REAL</span> <span data-label>{{ h.real_shares }} at {{ dollars(h.real_cost) }}</span>{% endif %}{% if h.sim_shares %} <span class="sim">SIM</span> <span data-label>{{ h.sim_shares }}</span>{% endif %}{% if h.since %} · since <span data-label>{{ day(h.since) }}</span> · day <span data-label>{{ [h.sessions, 1]|max }}</span> of <span data-label>{{ hold }}</span>{% endif %}
 {%- endmacro %}
 {% macro level(sig) %}<span class="lv lv-{{ sig.level }}">{{ sig.label }}</span>{% endmacro %}
 <!doctype html>
@@ -36,7 +36,7 @@
     <h1><span class="w1">ANTIPO</span><span class="w2">.</span><span class="w3">WATCH</span></h1>
   </div>
   <p class="tagline">AI trading signals on the most traded Canadian stocks<span class="wide">, every reason tied to its source</span>.</p>
-  <p class="disclaimer">Unofficial · signals written by an AI · not investment advice · <a href="/portfolio">simulated portfolio</a> · <a href="/logout">sign out</a></p>
+  <p class="disclaimer">Unofficial · signals written by an AI · not investment advice · <a href="/portfolio">portfolio</a> · <a href="/logout">sign out</a></p>
 </header>
 
 <section class="sys" aria-label="Is the system working?">

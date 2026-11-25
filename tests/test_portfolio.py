@@ -22,8 +22,8 @@ def rules(**change: Any) -> Rules:
 
 def test_the_rules_file() -> None:
     assert (RULES.capital, RULES.max_positions, RULES.slot_fraction) == (4000, 5, 0.2)
-    assert (RULES.max_loss_fraction, RULES.leverage, RULES.simulated) == (0.1, False, True)
-    assert RULES.version == 2
+    assert (RULES.max_loss_fraction, RULES.leverage, RULES.simulated) == (0.1, False, False)
+    assert RULES.version == 3
     assert RULES.slot_by_confidence == {"high": 0.2, "medium": 0.1}
 
 
